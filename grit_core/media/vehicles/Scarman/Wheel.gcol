@@ -1,0 +1,16 @@
+TCOL1.0
+
+attributes {
+        mass 80;
+        angular_sleep_threshold 0.1;
+        linear_sleep_threshold 0.1;
+}
+
+compound {
+    cylinder {
+            material "/common/pmat/Rubber";
+            centre 0 0 0;
+            orientation .707 0 .707 0;
+            dimensions 0.708 0.708 .3;
+    }
+}

@@ -1,0 +1,19 @@
+---EXTERIOR---
+headlights - replace off texture with on texture emissive, directional spotlight cone with billboard 2dtexture halo, warm white or halogen varieties
+taillights - replace off texture with on texture emissive, low range falloff omni red with billboard 2dtexture halo, red
+brakelights - replace off texture with on texture emissive, low range falloff omni warm or cool white varieties, 2dtexture halo, warm or cool white 
+blinkers - replace off texture with on texture emissive, low range falloff orange omni blinking while turning or earlier for ped AI that anticipates turn
+Ground FX lighting RGB override of 2D shadow(?) - This is important. I don't care for them, but car modders do.
+
+---INTERIOR---
+dashboard - emissive or vertex colour, can be on at all times, only when car is running
+stereo - emissive or vertex color, some are not lit/not digital, some are animated - works only when car is running
+Interior lights - roof light and door lights, on when doors are open. Some cars turn off when door shut, some fade/dim to off over 5 seconds.
+boot light - I can't see any reason to open the boot, but if you want to, it should have a light. not the hood though.
+
+
+Many of these should be condensed into a single type of light that can be on, off, or fade for five seconds.
+That single type of light is bitmap dependant and has an on-off states, many headlights can be atlased to one sheet.
+lights are defined by being seperate meshes in the master hierarchy and dummies place the location of the omni or spot for each light element.
+I do not have thoughts yet on how to define what kind of lights, perhaps appended from the name of the mesh IE headlights_hallogen, headlights_white
+I would probably advice against omnis unless the car itself can be excluded from its light, or the falloff can be that small to not look weird.

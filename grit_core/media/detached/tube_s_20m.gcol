@@ -1,0 +1,74 @@
+TCOL1.0
+
+attributes {
+    static;
+}
+
+compound {
+}
+trimesh {
+    vertexes {
+        5.86244 1.55876 19.9925;
+        5.0519 2.3774 19.9626;
+        3.93648 2.0766 19.974;
+        3.64857 0.966571 20.0115;
+        4.45884 0.167632 20.0334;
+        5.557 0.458792 20.0259;
+        1.10719 0.296671 0.0;
+        0.296688 1.10719 -1.19209e-007;
+        -0.810533 0.810509 -1.19209e-007;
+        -1.10719 -0.296671 2.38419e-007;
+        -0.296672 -1.10719 3.57628e-007;
+        0.810521 -0.810521 3.57628e-007;
+        5.86179 1.5615 15.1705;
+        5.05126 2.37818 15.1556;
+        3.93781 2.07837 15.1612;
+        3.6478 0.969033 15.18;
+        4.45812 0.167298 15.191;
+        5.55847 0.459789 15.1872;
+        1.10784 0.293935 4.822;
+        0.297332 1.10641 4.80706;
+        -0.811865 0.808738 4.81276;
+        -1.10641 -0.299133 4.83152;
+        -0.295954 -1.10686 4.84246;
+        0.809056 -0.811518 4.83873;
+    }
+    faces {
+        0 12 13 "/common/pmat/Metal";
+        13 1 0 "/common/pmat/Metal";
+        1 13 14 "/common/pmat/Metal";
+        14 2 1 "/common/pmat/Metal";
+        2 14 15 "/common/pmat/Metal";
+        15 3 2 "/common/pmat/Metal";
+        3 15 16 "/common/pmat/Metal";
+        16 4 3 "/common/pmat/Metal";
+        4 16 17 "/common/pmat/Metal";
+        17 5 4 "/common/pmat/Metal";
+        0 5 17 "/common/pmat/Metal";
+        17 12 0 "/common/pmat/Metal";
+        6 7 19 "/common/pmat/Metal";
+        19 18 6 "/common/pmat/Metal";
+        7 8 20 "/common/pmat/Metal";
+        20 19 7 "/common/pmat/Metal";
+        8 9 21 "/common/pmat/Metal";
+        21 20 8 "/common/pmat/Metal";
+        9 10 22 "/common/pmat/Metal";
+        22 21 9 "/common/pmat/Metal";
+        10 11 23 "/common/pmat/Metal";
+        23 22 10 "/common/pmat/Metal";
+        11 6 18 "/common/pmat/Metal";
+        18 23 11 "/common/pmat/Metal";
+        12 18 19 "/common/pmat/Metal";
+        19 13 12 "/common/pmat/Metal";
+        13 19 20 "/common/pmat/Metal";
+        20 14 13 "/common/pmat/Metal";
+        14 20 21 "/common/pmat/Metal";
+        21 15 14 "/common/pmat/Metal";
+        15 21 22 "/common/pmat/Metal";
+        22 16 15 "/common/pmat/Metal";
+        16 22 23 "/common/pmat/Metal";
+        23 17 16 "/common/pmat/Metal";
+        17 23 18 "/common/pmat/Metal";
+        18 12 17 "/common/pmat/Metal";
+    }
+}

@@ -1,0 +1,1107 @@
+// (c) David Cunningham 2011, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
+
+#include <system/uber.cgh>
+#include <system/uber_recv.cgh>
+
+#if EMISSIVE_PART==1
+
+// {{{ EMISSIVE VERTEX PROGRAM
+void vp_main (
+        in float3 pos_os : POSITION,
+        in float3 normal_os : POSITION,
+        #if USE_EMISSIVE_MAP==1
+        in float2 uv0 : TEXCOORD0,
+        #endif
+        #if WORLD_GEOMETRY==1
+        in float3 inst_mat1 : TEXCOORD1,
+        in float3 inst_mat2 : TEXCOORD2,
+        in float3 inst_mat3 : TEXCOORD3,
+        in float3 inst_pos : TEXCOORD4,
+        in float visibility : TEXCOORD5,
+        #endif
+
+        #if BLENDED_BONES>0
+        in float4 bone : BLENDINDICES,
+        in float4 bone_weights : BLENDWEIGHT,
+        #endif
+        uniform float3x4 bone_matrixes[70],
+        uniform float4x4 world,
+        uniform float4x4 view,
+        uniform float4x4 proj,
+        uniform float3 camera_pos_ws,
+
+        out float4 out00 : TEXCOORD0,
+        out float4 for_rasteriser : POSITION
+) {
+        float2 uv0_ = float2(1,1);
+        #if USE_EMISSIVE_MAP==1
+                uv0_ = uv0;
+        #endif
+
+        #if WORLD_GEOMETRY==1
+        float4x4 inst_world = float4x4(inst_mat1[0], inst_mat1[1], inst_mat1[2], inst_pos[0],
+                                       inst_mat2[0], inst_mat2[1], inst_mat2[2], inst_pos[1],
+                                       inst_mat3[0], inst_mat3[1], inst_mat3[2], inst_pos[2],
+                                                0.0,          0.0,          0.0,         1.0);
+        world = mul(world, inst_world);
+        #endif
+
+        float3 pos_ws;
+        float3 normal_ws;
+        float3 tangent_ws;
+        float3 tangent_os;
+
+        #if BLENDED_BONES>0
+                transform_vertex_bones(bone_weights, bone_matrixes, bone, pos_os, normal_os, tangent_os,
+                                       pos_ws, normal_ws, tangent_ws);
+        #else
+                transform_vertex(world, pos_os, normal_os, tangent_os,
+                                 pos_ws, normal_ws, tangent_ws);
+        #endif;
+        pos_ws += ground_overlay_offset(pos_ws, normal_ws, camera_pos_ws);
+
+        float3 pos_vs = mul(view, float4(pos_ws,1)).xyz;
+        for_rasteriser = mul(proj, float4(pos_vs,1));
+
+        out00.xy = uv0_.xy;
+
+        #if WORLD_GEOMETRY==1
+                out00.z = visibility;
+        #endif
+
+        out00.w = -pos_vs.z;
+}
+// }}}
+
+// {{{ EMISSIVE FRAGMENT PROGRAM
+void fp_main (
+        in float4 out00 : TEXCOORD0,
+
+        in float2 wpos : WPOS,
+
+        sampler2D emissive_map0 : register(s0),
+
+        uniform float2 uv_animation0,
+        uniform float2 uv_scale0,
+
+        uniform float3 surf_emissive,
+
+        uniform float4 the_fog_params,
+        uniform float4 custom_param,
+        uniform float4 time,
+
+        out float4 pixel0 : COLOR0
+) {
+
+        float2 uv0_ = out00.xy;
+        #if WORLD_GEOMETRY==1
+        float visibility = out00.z;
+        #else
+        float visibility = custom_param.x;
+        #endif
+        float cam_dist = out00.w;
+
+        float3 emissive_colour = surf_emissive;
+        float emissive_alpha = 1;
+        #if USE_EMISSIVE_MAP==1
+                float2 uv = uv_scale0 * uv0_;
+                uv += time.x*uv_animation0;
+                float4 emi_texel = tex2D(emissive_map0, uv);
+                emissive_colour *= gamma_decode(emi_texel.rgb);
+                emissive_alpha *= emi_texel.a;
+        #endif
+
+        #if EMISSIVE_FADE==1
+        emissive_colour *= visibility;
+        emissive_colour *= fog_weakness(the_fog_params.x, cam_dist);
+        #endif
+
+        pixel0.rgb = emissive_colour * emissive_alpha;
+}
+// }}}
+
+#endif // EMISSIVE_PART==1
+
+
+#if FORWARD_PART==1 && DEFERRED_AMBIENT_SUN_PART==1
+
+// {{{ RECEIVER VERTEX PROGRAM
+void vp_main (
+        in float3 pos_os : POSITION,
+        in float3 normal_os : NORMAL,
+        #if USE_NORMAL_MAP==1
+        in float4 tangent_with_parity : TANGENT,
+        #endif
+        #if USE_SOME_MAP == 1
+        in float2 uv0 : TEXCOORD0,
+        #endif
+        #if USE_VERTEX_COLOURS==3
+        in float3 colour : COLOR,
+        #endif
+        #if USE_VERTEX_COLOURS==4
+        in float4 colour : COLOR,
+        #endif
+        #if BLEND>1
+        in float sharpness : TEXCOORD1,
+        in float3 blend0 : TEXCOORD2, // tex 1, 2, 3  (0 we get for free)
+        #endif
+        #if BLEND>4
+        in float3 blend1 : TEXCOORD3, // tex 4, 5, 6
+        #endif
+        #if BLEND>7
+        in float3 blend2 : TEXCOORD4, // tex 7, 8, 9
+        #endif
+        #if WORLD_GEOMETRY==1
+        in float3 inst_mat1 : TEXCOORD1,
+        in float3 inst_mat2 : TEXCOORD2,
+        in float3 inst_mat3 : TEXCOORD3,
+        in float3 inst_pos : TEXCOORD4,
+        in float visibility : TEXCOORD5,
+        #endif
+
+        #if BLENDED_BONES>0
+        in float4 bone : BLENDINDICES,
+        in float4 bone_weights : BLENDWEIGHT,
+        #endif
+        uniform float3x4 bone_matrixes[70],
+        uniform float4x4 world,
+        uniform float4x4 view,
+        uniform float4x4 proj,
+        uniform float4x4 shadow_view_proj1,
+        uniform float4x4 shadow_view_proj2,
+        uniform float4x4 shadow_view_proj3,
+        uniform float4 sun_pos_ws,
+        uniform float3 camera_pos_ws,
+
+        out float4 out00 : TEXCOORD0,
+        out float4 out01 : TEXCOORD1,
+        out float4 out02 : TEXCOORD2,
+        out float4 out03 : TEXCOORD3,
+        out float4 out04 : TEXCOORD4,
+        out float4 out05 : TEXCOORD5,
+        out float4 out06 : TEXCOORD6,
+        out float4 out07 : TEXCOORD7,
+        out float4 for_rasteriser : POSITION,
+        out float4 vert_colour : COLOR0
+) {
+        #if USE_NORMAL_MAP==1
+        float3 tangent_os = tangent_with_parity.xyz;
+        float tangent_parity = tangent_with_parity.w;
+        #endif
+
+        vert_colour = float4(1, 1, 1, 1);
+
+        #if USE_VERTEX_COLOURS>0
+                vert_colour.rgb *= colour.rgb;
+                #if USE_VERTEX_COLOURS==4
+                        vert_colour.a *= colour.a;
+                #endif
+        #endif
+
+        // we need the worldspace one in order to calculate the distance from the sun plane, which is the plane
+        // that is perpendicular to the sun direction and intersects (0,0,0).
+        // viewspace is not good enough because (0,0,0) is not the same as in the shadow casting phase.
+        float3 sun_dir_ws = sun_pos_ws.xyz;  // assume directional light, vector points towards sun
+
+        float2 uv0_ = float2(1,1);
+        #if USE_SOME_MAP == 1
+                uv0_ = uv0;
+        #endif
+
+
+        #if WORLD_GEOMETRY==1
+        float4x4 inst_world = float4x4(inst_mat1[0], inst_mat1[1], inst_mat1[2], inst_pos[0],
+                                       inst_mat2[0], inst_mat2[1], inst_mat2[2], inst_pos[1],
+                                       inst_mat3[0], inst_mat3[1], inst_mat3[2], inst_pos[2],
+                                                0.0,          0.0,          0.0,         1.0);
+        world = mul(world, inst_world);
+        #endif
+
+        float3 pos_ws;
+        float3 normal_ws;
+        float3 tangent_ws;
+        #if USE_NORMAL_MAP==0
+        float3 tangent_os;
+        #endif
+
+        #if BLENDED_BONES>0
+                transform_vertex_bones(bone_weights, bone_matrixes, bone, pos_os, normal_os, tangent_os,
+                                       pos_ws, normal_ws, tangent_ws);
+        #else
+                transform_vertex(world, pos_os, normal_os, tangent_os,
+                                 pos_ws, normal_ws, tangent_ws);
+        #endif
+        pos_ws += ground_overlay_offset(pos_ws, normal_ws, camera_pos_ws);
+
+        float3 camera_dir_ws = camera_pos_ws - pos_ws;
+
+        // pos position in light (sun) space for shadow mapping
+        #if RECEIVE_SHADOWS == 1
+                float4 pos_ls1 = mul(shadow_view_proj1, float4(pos_ws,1));
+                float3 pos_ls1_ = pos_ls1.xyw;
+                float4 pos_ls2 = mul(shadow_view_proj2, float4(pos_ws,1));
+                float3 pos_ls2_ = pos_ls2.xyw;
+                float4 pos_ls3 = mul(shadow_view_proj3, float4(pos_ws,1));
+                float3 pos_ls3_ = pos_ls3.xyw;
+        #endif
+
+        float3 pos_vs = mul(view, float4(pos_ws,1)).xyz;
+        for_rasteriser = mul(proj, float4(pos_vs,1));
+
+        float sun_dist_ = -dot(pos_ws,sun_dir_ws);
+
+        #if RENDER_OBJECT_NORMAL==1
+                vert_colour.rgb = zero(vert_colour.rgb) + direction_to_colour(normal_os);
+        #endif
+        #if RENDER_NORMAL==1
+                vert_colour.rgb = zero(vert_colour.rgb) + direction_to_colour(normal_ws);
+        #endif
+        #if RENDER_TANGENT==1
+                #if USE_NORMAL_MAP==1
+                        vert_colour.rgb = zero(vert_colour.rgb) + direction_to_colour(tangent_ws);
+                #endif
+        #endif
+
+        out00.xyz = (normal_ws);
+        out01.xyz = (sun_dir_ws);
+        out02.xyz = (camera_dir_ws);
+        #if USE_NORMAL_MAP==1
+                out03.xyz = (tangent_ws);
+                out04.x = tangent_parity;
+        #endif
+
+        out00.w = sun_dist_;
+        out01.w = -pos_vs.z;
+
+        out02.w = uv0_.x;
+
+        out03.w = uv0_.y;
+
+        out04.y = 0;
+        out04.z = 0;
+
+        #if RECEIVE_SHADOWS == 1
+                out05.xyz = pos_ls1_;
+                out06.xyz = pos_ls2_;
+                out07.xyz = pos_ls3_;
+        #endif
+
+        #if BLEND>1
+        // ranges from 1 (very smooth transition) to lots (sharp transition)
+        // This is used to exagerate (or soften) the blend
+                float contrast = 1/max((1-sharpness)*(1-sharpness), 0.0000001);
+        #endif
+
+        #if BLEND>1
+                out04.w = contrast;
+                
+                out05.w = blend0.r;
+                out06.w = blend0.g;
+                out07.w = blend0.b;
+        #endif
+
+        #if USE_MICROFLAKES == 1
+                out05.w = pos_os.x;
+                out06.w = pos_os.y;
+                out07.w = pos_os.z;
+        #endif
+
+        #if WORLD_GEOMETRY==1
+                out04.w = visibility;
+        #endif
+
+}
+// }}}
+
+// {{{ RECEIVE FRAGMENT PROGRAM
+void fp_main (
+        in float4 vert_colour : COLOR0,
+        in float face : FACE,
+        in float4 out00 : TEXCOORD0,
+        in float4 out01 : TEXCOORD1,
+        in float4 out02 : TEXCOORD2,
+        in float4 out03 : TEXCOORD3,
+        in float4 out04 : TEXCOORD4,
+        in float4 out05 : TEXCOORD5,
+        in float4 out06 : TEXCOORD6,
+        in float4 out07 : TEXCOORD7,
+
+        in float2 wpos : WPOS,
+
+        SHADOW_MAPS
+        ENV_MAPS
+
+        EXTRA_MAPS
+
+        BLEND_UNIFORMS
+
+        uniform float4 surf_diffuse,
+        uniform float surf_specular,
+        uniform float surf_gloss,
+
+        uniform float3 sun_diffuse,
+        uniform float3 sun_specular,
+        uniform float4 the_fog_params,
+        uniform float3 the_fog_colour,
+        uniform float4 custom_param,
+        uniform float alpha_rej,
+        uniform float4 time,
+        uniform float shadow_oblique_cutoff,
+        uniform float3 texture_size,
+        uniform float4 col1,
+        uniform float4 col2,
+        uniform float4 col3,
+        uniform float4 col4,
+        uniform float3 col_spec1,
+        uniform float3 col_spec2,
+        uniform float3 col_spec3,
+        uniform float3 col_spec4,
+        uniform float microflakes_mask,
+        uniform float render_target_flipping,
+
+        out float4 pixel0 : COLOR0
+) {
+
+
+        // {{{ decoding interpolators
+
+        float3 normal_ws = normalize(out00.xyz);
+        float3 sun_dir_ws = normalize(out01.xyz);
+        float3 camera_dir_ws = normalize(out02.xyz);
+        #if USE_NORMAL_MAP==1
+                float3 tangent_ws = normalize(out03.xyz);
+                float tangent_parity = out04.x;
+        #endif
+
+        float sun_dist = out00.w;
+        float cam_dist = out01.w;
+
+        float2 uv0_ = float2(out02.w, out03.w);
+
+        float3 pos_ls1_;
+        float3 pos_ls2_;
+        float3 pos_ls3_;
+        #if RECEIVE_SHADOWS == 1
+                pos_ls1_ = out05.xyz;
+                pos_ls2_ = out06.xyz;
+                pos_ls3_ = out07.xyz;
+        #endif
+
+        float2 screen_pos = wpos.xy;
+
+        #if BLEND <= 1
+                float blend[BLENDSZ] = {1};
+        #elif BLEND <= 4
+                float blend[BLENDSZ] = { 0.5, out05.w, out06.w, out07.w };
+                /* too many blends is bad for performance
+                #elif BLEND <= 7
+                float blend[7] = { 0.5, out05.w, out06.w, out07.w, out04.r, out04.g, out04.b };
+                #elif BLEND <= 10
+                float blend[10] = { 0.5, out05.w, out06.w, out07.w, out04.r, out04.g, out04.b, out03.r, out03.g, out03.b };
+                */
+        #endif
+        #if USE_MICROFLAKES==1
+                float3 pos_os = float3(out05.w, out06.w, out07.w);
+        #endif
+        #if WORLD_GEOMETRY==1
+        float visibility = out04.w;
+        #else
+        float visibility = custom_param.x;
+        #endif
+
+        #if BLEND <= 1
+                float contrast = 1;
+        #else
+                float contrast = out04.w;
+        #endif
+
+
+        // }}}
+
+        float3 diff_colour;
+        float specular;
+        float gloss;
+        float translucency;
+        float pixel_alpha;
+
+        #if ABUSING_DIFFUSE==1
+        surf_diffuse.rgb = vert_colour.rgb;
+        #endif
+
+        forward_pass(vert_colour.rgb, vert_colour.a,
+                     face,
+                     surf_diffuse.rgb, surf_diffuse.a, surf_specular, surf_gloss,
+                     alpha_rej,
+                     time,
+                     col1, col2, col3, col4,
+                     col_spec1, col_spec2, col_spec3, col_spec4,
+                     microflakes_mask,
+                     #if USE_MICROFLAKES==1
+                     pos_os,
+                     #endif
+                     render_target_flipping,
+                     contrast,
+                     #if USE_NORMAL_MAP==1
+                     tangent_ws,
+                     tangent_parity,
+                     #endif
+                     blend,
+                     visibility,
+                     screen_pos,
+                     texture_size,
+                     EXTRA_MAP_ARGS
+                     BLEND_UNIFORM_ARGS
+
+                     diff_colour, normal_ws, specular, gloss, translucency, pixel_alpha);
+
+        float env_scale = the_fog_params.y;
+
+        float3 pixel_colour = deferred_shading(env_scale,
+                                               diff_colour,
+                                               normalize(normal_ws),
+                                               specular,
+                                               gloss,
+                                               translucency,
+                                               cam_dist,
+  
+                                               sun_dir_ws,
+                                               camera_dir_ws,
+                                               shadow_oblique_cutoff,
+                                               sun_dist,
+                                               screen_pos,
+                                               #if RECEIVE_SHADOWS == 1
+                                               shadow_map1, shadow_map2, shadow_map3,
+                                               #if SHADOW_FILTER_NOISE == 1
+                                               shadow_filter_noise,
+                                               #endif
+                                               #endif
+                                               env_cube,
+                                               pos_ls1_, pos_ls2_, pos_ls3_,
+                                               sun_diffuse,
+                                               sun_specular,
+                                               the_fog_params.x,
+                                               the_fog_colour);
+
+        pixel0.rgb = pixel_colour;
+        pixel0.a = pixel_alpha;
+}
+// }}}
+
+#endif
+
+
+
+#if FORWARD_PART==1 && DEFERRED_AMBIENT_SUN_PART==0
+
+// {{{ FORWARD RECEIVER VERTEX PROGRAM
+void vp_main (
+        in float3 pos_os : POSITION,
+        in float3 normal_os : NORMAL,
+        #if USE_NORMAL_MAP==1
+        in float4 tangent_with_parity : TANGENT,
+        #endif
+        #if USE_SOME_MAP == 1
+        in float2 uv0 : TEXCOORD0,
+        #endif
+        #if USE_VERTEX_COLOURS==3
+        in float3 colour : COLOR,
+        #endif
+        #if USE_VERTEX_COLOURS==4
+        in float4 colour : COLOR,
+        #endif
+        #if BLEND>1
+        in float sharpness : TEXCOORD1,
+        in float3 blend0 : TEXCOORD2, // tex 1, 2, 3  (0 we get for free)
+        #endif
+        #if BLEND>4
+        in float3 blend1 : TEXCOORD3, // tex 4, 5, 6
+        #endif
+        #if BLEND>7
+        in float3 blend2 : TEXCOORD4, // tex 7, 8, 9
+        #endif
+        #if WORLD_GEOMETRY==1
+        in float3 inst_mat1 : TEXCOORD1,
+        in float3 inst_mat2 : TEXCOORD2,
+        in float3 inst_mat3 : TEXCOORD3,
+        in float3 inst_pos : TEXCOORD4,
+        in float visibility : TEXCOORD5,
+        #endif
+
+        #if BLENDED_BONES>0
+        in float4 bone : BLENDINDICES,
+        in float4 bone_weights : BLENDWEIGHT,
+        #endif
+        uniform float3x4 bone_matrixes[70],
+        uniform float4x4 world,
+        uniform float4x4 view,
+        uniform float4x4 proj,
+
+        uniform float3 camera_pos_ws,
+
+        out float4 out00 : TEXCOORD0,
+        out float4 out01 : TEXCOORD1,
+        out float4 out02 : TEXCOORD2,
+        out float4 out03 : TEXCOORD3,
+        out float4 out04 : TEXCOORD4,
+        out float4 out05 : TEXCOORD5,
+        out float4 out06 : TEXCOORD6,
+        out float4 out07 : TEXCOORD7,
+        out float4 for_rasteriser : POSITION,
+        out float4 vert_colour : COLOR0
+) {
+
+        #if USE_NORMAL_MAP==1
+        float3 tangent_os = tangent_with_parity.xyz;
+        float tangent_parity = tangent_with_parity.w;
+        #endif
+
+        vert_colour = float4(1,1,1, 1);
+
+        #if USE_VERTEX_COLOURS>0
+                vert_colour.rgb *= colour.rgb;
+                #if USE_VERTEX_COLOURS==4
+                        vert_colour.a *= colour.a;
+                #endif
+        #endif
+
+        float2 uv0_ = float2(1,1);
+        #if USE_SOME_MAP == 1
+                uv0_ = uv0;
+        #endif
+
+        #if WORLD_GEOMETRY==1
+        float4x4 inst_world = float4x4(inst_mat1[0], inst_mat1[1], inst_mat1[2], inst_pos[0],
+                                       inst_mat2[0], inst_mat2[1], inst_mat2[2], inst_pos[1],
+                                       inst_mat3[0], inst_mat3[1], inst_mat3[2], inst_pos[2],
+                                                0.0,          0.0,          0.0,         1.0);
+        world = mul(world, inst_world);
+        #endif
+
+
+        float3 pos_ws;
+        float3 normal_ws;
+        float3 tangent_ws;
+        #if USE_NORMAL_MAP==0
+        float3 tangent_os;
+        #endif
+
+        #if BLENDED_BONES>0
+                transform_vertex_bones(bone_weights, bone_matrixes, bone, pos_os, normal_os, tangent_os,
+                                       pos_ws, normal_ws, tangent_ws);
+        #else
+                transform_vertex(world, pos_os, normal_os, tangent_os,
+                                 pos_ws, normal_ws, tangent_ws);
+        #endif
+        pos_ws += ground_overlay_offset(pos_ws, normal_ws, camera_pos_ws);
+
+        float3 pos_vs = mul(view, float4(pos_ws,1)).xyz;
+        for_rasteriser = mul(proj, float4(pos_vs,1));
+
+        #if RENDER_OBJECT_NORMAL==1
+                vert_colour.rgb = zero(vert_colour.rgb) + direction_to_colour(normal_os);
+        #endif
+        #if RENDER_NORMAL==1
+                vert_colour.rgb = zero(vert_colour.rgb) + direction_to_colour(normal_ws);
+        #endif
+        #if RENDER_TANGENT==1
+                #if USE_NORMAL_MAP==1
+                        vert_colour.rgb = zero(vert_colour.rgb) + direction_to_colour(tangent_ws);
+                #endif
+        #endif
+
+        float3 normal_vs = mul(view, float4(normal_ws,0)).xyz;
+        #if USE_NORMAL_MAP==1
+                float3 tangent_vs = mul(view, float4(tangent_ws,0)).xyz;
+        #endif
+
+        out00.xyz = normal_vs;
+        #if USE_NORMAL_MAP==1
+                out03.xyz = (tangent_vs);
+                out04.x = tangent_parity;
+        #endif
+
+        out01.w = -pos_vs.z;
+
+        out02.w = uv0_.x;
+
+        out03.w = uv0_.y;
+
+        out04.y = 0;
+        out04.z = 0;
+
+        #if BLEND>1
+        // ranges from 1 (very smooth transition) to lots (sharp transition)
+        // This is used to exagerate (or soften) the blend
+                float contrast = 1/max((1-sharpness)*(1-sharpness), 0.0000001);
+        #endif
+
+        #if BLEND>1
+                out04.w = contrast;
+                
+                out05.w = blend0.r;
+                out06.w = blend0.g;
+                out07.w = blend0.b;
+        #endif
+
+        #if USE_MICROFLAKES == 1
+                out05.w = pos_os.x;
+                out06.w = pos_os.y;
+                out07.w = pos_os.z;
+        #endif
+
+        #if WORLD_GEOMETRY==1
+                out04.w = visibility;
+        #endif
+
+}
+// }}}
+
+// {{{ FORWARD RECEIVE FRAGMENT PROGRAM
+void fp_main (
+        in float4 vert_colour : COLOR0,
+        in float face : FACE,
+        in float4 out00 : TEXCOORD0,
+        in float4 out01 : TEXCOORD1,
+        in float4 out02 : TEXCOORD2,
+        in float4 out03 : TEXCOORD3,
+        in float4 out04 : TEXCOORD4,
+        in float4 out05 : TEXCOORD5,
+        in float4 out06 : TEXCOORD6,
+        in float4 out07 : TEXCOORD7,
+
+        in float2 wpos : WPOS,
+
+        EXTRA_MAPS
+
+        BLEND_UNIFORMS
+
+        uniform float4 surf_diffuse,
+        uniform float surf_specular,
+        uniform float surf_gloss,
+        uniform float shadow_oblique_cutoff,
+
+        uniform float4 custom_param,
+        uniform float alpha_rej,
+        uniform float4 time,
+        uniform float3 texture_size,
+        uniform float4 col1,
+        uniform float4 col2,
+        uniform float4 col3,
+        uniform float4 col4,
+        uniform float3 col_spec1,
+        uniform float3 col_spec2,
+        uniform float3 col_spec3,
+        uniform float3 col_spec4,
+        uniform float microflakes_mask,
+        uniform float render_target_flipping,
+        uniform float far_clip_distance,
+
+        out float4 pixel0 : COLOR0,
+        out float4 pixel1 : COLOR1,
+        out float4 pixel2 : COLOR2,
+        out float4 pixel3 : COLOR3
+) {
+
+        // {{{ decoding interpolators
+
+        float3 normal_vs = normalize(out00.xyz);
+        #if USE_NORMAL_MAP==1
+                float3 tangent_vs = normalize(out03.xyz);
+                float tangent_parity = out04.x;
+        #endif
+
+        float2 uv0_ = float2(out02.w, out03.w);
+        float cam_dist = out01.w;
+
+        float2 screen_pos = wpos.xy;
+
+        #if BLEND <= 1
+                float blend[BLENDSZ] = {1};
+        #elif BLEND <= 4
+                float blend[BLENDSZ] = { 0.5, out05.w, out06.w, out07.w };
+                /* too many blends is bad for performance
+                #elif BLEND <= 7
+                float blend[7] = { 0.5, out05.w, out06.w, out07.w, out04.r, out04.g, out04.b };
+                #elif BLEND <= 10
+                float blend[10] = { 0.5, out05.w, out06.w, out07.w, out04.r, out04.g, out04.b, out03.r, out03.g, out03.b };
+                */
+        #endif
+        #if USE_MICROFLAKES==1
+                float3 pos_os = float3(out05.w, out06.w, out07.w);
+        #endif
+        #if WORLD_GEOMETRY==1
+        float visibility = out04.w;
+        #else
+        float visibility = custom_param.x;
+        #endif
+
+        #if BLEND <= 1
+                float contrast = 1;
+        #else
+                float contrast = out04.w;
+        #endif
+
+        // }}}
+
+        float3 diff_colour;
+        float specular;
+        float gloss;
+        float translucency;
+        float pixel_alpha;
+
+        #if ABUSING_DIFFUSE==1
+        surf_diffuse.rgb = vert_colour.rgb;
+        #endif
+
+        forward_pass(vert_colour.rgb, vert_colour.a,
+                     face,
+                     surf_diffuse.rgb, surf_diffuse.a, surf_specular, surf_gloss,
+                     alpha_rej,
+                     time,
+                     col1, col2, col3, col4,
+                     col_spec1, col_spec2, col_spec3, col_spec4,
+                     microflakes_mask,
+                     #if USE_MICROFLAKES==1
+                     pos_os,
+                     #endif
+                     render_target_flipping,
+                     contrast,
+                     #if USE_NORMAL_MAP==1
+                     tangent_vs,
+                     tangent_parity,
+                     #endif
+                     blend,
+                     visibility,
+                     screen_pos,
+                     texture_size,
+                     EXTRA_MAP_ARGS
+                     BLEND_UNIFORM_ARGS
+
+                     diff_colour, normal_vs, specular, gloss, translucency, pixel_alpha);
+
+        cam_dist = cam_dist / far_clip_distance;
+
+        pack_deferred(pixel0, pixel1, pixel2, 
+                      shadow_oblique_cutoff, diff_colour, normal_vs, specular, cam_dist, gloss);
+
+
+}
+// }}}
+
+#endif
+
+
+
+#if FORWARD_PART==0 && DEFERRED_AMBIENT_SUN_PART==1
+
+// {{{ DEFERRED AMBIENT SUN VERTEX PROGRAM
+void vp_main (
+        in float2 pos_ss : POSITION,
+
+        //uniform float4x4 quad_proj,
+        uniform float3 top_left_ray,
+        uniform float3 top_right_ray,
+        uniform float3 bottom_left_ray,
+        uniform float3 bottom_right_ray,
+        uniform float render_target_flipping,
+        uniform float4 viewport_size,
+
+        out float2 uv0_ : TEXCOORD0,
+        out float3 ray_ : TEXCOORD1,
+        out float4 for_rasteriser : POSITION
+) {
+        //for_rasteriser = mul(quad_proj, pos_ss);
+        for_rasteriser = float4(pos_ss.xy, 0.5, 1);
+        for_rasteriser.y *= render_target_flipping;
+
+        // D3D9 notes:
+        // don't do 0.5 texel shift here, this is for the rays which are the edges of the frustum
+        uv0_ = pos_ss.xy * float2(0.5,-0.5) + float2(0.5,0.5);
+        ray_ = lerp(
+                lerp(top_left_ray,top_right_ray, uv0_.x),
+                lerp(bottom_left_ray,bottom_right_ray, uv0_.x),
+                uv0_.y);
+        // do texel shift here beca
+        if (d3d9() > 0) uv0_ += float2(0.5,0.5) * viewport_size.zw;
+}
+// }}}
+
+// {{{ DEFERRED AMBIENT SUN FRAGMENT PROGRAM
+void fp_main (
+
+        in float2 uv : TEXCOORD0,
+        in float3 ray : TEXCOORD1,
+        //in float3 ray2 : TEXCOORD2,
+        in float2 wpos : WPOS,
+
+        SHADOW_MAPS
+        ENV_MAPS
+
+        uniform float3 sun_diffuse,
+        uniform float3 sun_specular,
+        uniform float4 the_fog_params,
+        uniform float3 the_fog_colour,
+        uniform float4 sun_pos_ws,
+        uniform float4x4 shadow_view_proj1,
+        uniform float4x4 shadow_view_proj2,
+        uniform float4x4 shadow_view_proj3,
+        uniform float3 camera_pos_ws,
+        uniform float far_clip_distance,
+        uniform float near_clip_distance,
+
+        uniform float4x4 inv_view, // transform normals to ws
+        uniform float4x4 view_proj, // for depth
+
+        sampler2D tex0 : register(s0),
+        sampler2D tex1 : register(s1),
+        sampler2D tex2 : register(s2),
+
+        out float3 pixel : COLOR0,
+        out float depth : DEPTH
+) {
+
+        float shadow_oblique_cutoff;
+        float3 diff_colour;
+        float3 normal_vs;
+        float specular;
+        float normalised_cam_dist;
+        float gloss;
+        float4 texel0 = tex2D(tex0, uv);
+        float4 texel1 = tex2D(tex1, uv);
+        float4 texel2 = tex2D(tex2, uv);
+        unpack_deferred(texel0, texel1, texel2, shadow_oblique_cutoff, diff_colour, normal_vs, specular, normalised_cam_dist, gloss);
+        float translucency = 0;
+
+        if (normalised_cam_dist>=1) discard;
+
+        float3 pos_ws = camera_pos_ws + normalised_cam_dist*ray;
+        //float3 pos_vs = mul(view, float4(pos_ws,1)).rgb;
+
+        float cam_dist = normalised_cam_dist * far_clip_distance;
+        ray = normalize(ray);
+
+        float3 sun_dir_ws = sun_pos_ws.xyz;  // assume directional light, vector points towards sun
+        //float3 sun_dir_vs = mul(view,float4(sun_dir_ws,0)).xyz;  // assume directional light, vector points towards sun
+
+        float3 camera_dir_ws = -ray;
+        //float3 camera_dir_vs = mul(view,float4(camera_dir_ws,0)).rgb;
+
+        float sun_dist = -dot(pos_ws,sun_dir_ws);
+
+        float3 pos_ls1_;
+        float3 pos_ls2_;
+        float3 pos_ls3_;
+        #if RECEIVE_SHADOWS == 1
+                float4 pos_ls1 = mul(shadow_view_proj1, float4(pos_ws,1));
+                pos_ls1_ = pos_ls1.xyw;
+                float4 pos_ls2 = mul(shadow_view_proj2, float4(pos_ws,1));
+                pos_ls2_ = pos_ls2.xyw;
+                float4 pos_ls3 = mul(shadow_view_proj3, float4(pos_ws,1));
+                pos_ls3_ = pos_ls3.xyw;
+        #endif
+
+        float2 screen_pos = wpos.xy;
+        float env_scale = the_fog_params.y;
+
+        float3 normal_ws = mul(inv_view, float4(normal_vs,0)).xyz;
+        //float3 normal_ws = normal_vs;
+
+        float3 pixel_colour = deferred_shading(env_scale,
+                                               diff_colour,
+                                               normal_ws,
+                                               specular,
+                                               gloss,
+                                               translucency,
+                                               cam_dist,
+  
+                                               sun_dir_ws,
+                                               camera_dir_ws,
+                                               shadow_oblique_cutoff,
+                                               sun_dist,
+                                               screen_pos,
+                                               #if RECEIVE_SHADOWS == 1
+                                               shadow_map1, shadow_map2, shadow_map3,
+                                               #if SHADOW_FILTER_NOISE == 1
+                                               shadow_filter_noise,
+                                               #endif
+                                               #endif
+                                               env_cube,
+                                               pos_ls1_, pos_ls2_, pos_ls3_,
+                                               sun_diffuse,
+                                               sun_specular,
+                                               the_fog_params.x,
+                                               the_fog_colour);
+
+        //pixel_colour = zero(pixel_colour) + cam_dist/100;
+
+        pixel = pixel_colour;
+        //pixel_colour /= max(1, max(pixel_colour.r, max(pixel_colour.g, pixel_colour.b)));
+        // view space is right-handed -- negative Z is depth
+        //pos_vs.z = min(-near_clip_distance, pos_vs.z);
+        //pixel.rgb = zero(pixel.rgb) + float3(1,1,1) * mod(cam_dist,1);
+        //pixel.rgb = zero(pixel.rgb) + mod(float3(64,0,0) * texel0.rgb, 1);
+        //pixel.rgb = zero(pixel.rgb) + mod(dot(float3(256*256*255,256*255,255), texel0.rgb)/(256*256*256-1)*8, 1);
+        //if (texel0.g > 1.0001) pixel.rgb = float3(1,0,0);
+        //pixel.rgb = zero(pixel.rgb) + float3(-normalised_cam_dist,0,normalised_cam_dist);
+        //pixel.rgb = zero(pixel.rgb) + mod(pos_ws, 1.0);
+        //pixel.rgb = zero(pixel.rgb) + tex2D(tex0, uv).rgb;
+        //pixel.rgb = zero(pixel.rgb) + direction_to_colour(ray);
+        //pixel.rgb = zero(pixel.rgb) + gamma_encode(diff_colour);
+
+
+        float4 projected = mul(view_proj, float4(pos_ws,1));
+        // Whether we are using d3d9 or gl rendersystems,
+        // ogre gives us the view_proj in a 'standard' form, which is
+        // right-handed with a depth range of [-1,+1].
+        // Since we are outputing depth in the fragment shader, the range is [0,1]
+        depth = 0.5 + (projected.z / projected.w) / 2.0;
+        //depth = zero(depth) + 1;
+
+        #define DEBUG_GBUFFER 0
+        #if DEBUG_GBUFFER == 1
+        pixel = zero(pixel) + normalised_cam_dist * float3(1,1,1);
+        #elif DEBUG_GBUFFER == 2
+        pixel = zero(pixel) + shadow_oblique_cutoff * float3(1,1,1);
+        #elif DEBUG_GBUFFER == 3
+        pixel = zero(pixel) + direction_to_colour(normal_ws);
+        //pixel = zero(pixel) + texel1.xyz;
+        #elif DEBUG_GBUFFER == 4
+        pixel = zero(pixel) + gloss * float3(1,1,1);
+        #elif DEBUG_GBUFFER == 5
+        pixel = zero(pixel) + gamma_encode(diff_colour);
+        #elif DEBUG_GBUFFER == 6
+        pixel = zero(pixel) + gamma_encode(specular) * float3(1,1,1);
+        #endif
+}
+// }}}
+
+#endif
+
+
+#if DEFERRED_LIGHTS_PART==1
+
+// {{{ DEFERRED LIGHTS VERTEX PROGRAM
+void vp_main (
+        in float3 pos_ws : POSITION,
+        in float3 light_aim_ws : NORMAL,
+        in float3 diff_colour : COLOR0,
+        in float3 spec_colour : COLOR1,
+        in float3 light_pos_ws : TEXCOORD0,
+        in float3 light_param : TEXCOORD1,
+
+        uniform float4x4 view_proj,
+        uniform float render_target_flipping,
+
+        out float3 uv0_ : TEXCOORD0,
+        out float3 light_aim_ws_ : TEXCOORD2,
+        out float3 diff_colour_ : TEXCOORD3,
+        out float3 spec_colour_ : TEXCOORD4,
+        out float3 light_pos_ws_ : TEXCOORD5,
+        out float3 light_param_ : TEXCOORD6,
+        out float4 for_rasteriser : POSITION
+) {
+        for_rasteriser = mul(view_proj, float4(pos_ws,1));
+        uv0_ = for_rasteriser.xyw;
+        for_rasteriser.y *= render_target_flipping;
+
+        light_aim_ws_ = light_aim_ws;
+        diff_colour_ = diff_colour;
+        spec_colour_ = spec_colour;
+        light_pos_ws_ = light_pos_ws;
+        light_param_ = light_param;
+}
+// }}}
+
+// {{{ DEFERRED LIGHTS FRAGMENT PROGRAM
+void fp_main (
+
+        in float3 uv_ : TEXCOORD0,
+        //in float3 ray : TEXCOORD1,
+        in float3 light_aim_ws_ : TEXCOORD2,
+        in float3 diff_colour_ : TEXCOORD3,
+        in float3 spec_colour_ : TEXCOORD4,
+        in float3 light_pos_ws_ : TEXCOORD5,
+        in float3 light_param_ : TEXCOORD6,
+
+        uniform float3 top_left_ray,
+        uniform float3 top_right_ray,
+        uniform float3 bottom_left_ray,
+        uniform float3 bottom_right_ray,
+
+        uniform float4 the_fog_params, // attenuate light to hide it behind fog
+        uniform float3 camera_pos_ws,
+        uniform float far_clip_distance,
+        uniform float4 viewport_size,
+        uniform float4x4 inv_view,
+
+        sampler2D tex0 : register(s0),
+        sampler2D tex1 : register(s1),
+        sampler2D tex2 : register(s2),
+
+        out float3 pixel : COLOR0
+) {
+
+        float2 uv = uv_.xy/uv_.z;
+        uv = uv * float2(0.5,-0.5) + float2(0.5,0.5);
+        float3 ray = lerp(lerp(top_left_ray,top_right_ray, uv.x),
+                          lerp(bottom_left_ray,bottom_right_ray, uv.x),
+                          uv.y);
+        // hack to stop it 'shimmering' in d3d9
+        if (d3d9() > 0) uv += 0.5 * viewport_size.zw; // zw is 1/w 1/h
+
+        float shadow_oblique_cutoff;
+        float3 surf_diff_colour;
+        float3 normal_vs;
+        float surf_specular;
+        float normalised_cam_dist;
+        float gloss;
+        unpack_deferred(tex2D(tex0, uv), tex2D(tex1, uv), tex2D(tex2, uv),
+                        shadow_oblique_cutoff, surf_diff_colour, normal_vs, surf_specular, normalised_cam_dist, gloss);
+
+        if (normalised_cam_dist>=1) discard;
+
+        float3 pos_ws = camera_pos_ws + normalised_cam_dist*ray;
+
+        float3 normal_ws = mul(inv_view, float4(normal_vs,0)).xyz;
+
+        float cam_dist = normalised_cam_dist * far_clip_distance;
+        ray = normalize(ray);
+
+        float3 camera_dir_ws = -ray;
+
+        float3 light_ray_ws = light_pos_ws_ - pos_ws;
+        float light_dist = length(light_ray_ws);
+        float3 light_dir_ws = light_ray_ws / light_dist;
+
+        float inner = light_param_.x;
+        float outer = light_param_.y;
+        float range = light_param_.z;
+
+        float light_intensity = light_attenuation(light_param_.z, light_dist);
+
+        float angle = -dot(light_aim_ws_, light_dir_ws);
+        if (outer != inner) {
+                float occlusion = clamp((angle-inner)/(outer-inner), 0.0, 1.0);
+                light_intensity *= (1-occlusion);
+        }
+
+        
+        pixel = light_intensity * punctual_lighting(
+            diff_colour_,
+            spec_colour_,
+            surf_diff_colour,
+            surf_specular,
+            gloss,
+            normal_ws,
+            camera_dir_ws,
+            light_dir_ws
+        );
+
+        pixel *= fog_weakness(the_fog_params.x, cam_dist);
+}
+
+// }}}
+
+#endif
+
+// vim: ts=8:sw=8:et

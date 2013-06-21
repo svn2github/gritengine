@@ -1,0 +1,40 @@
+// (c) David Cunningham 2012, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
+
+#include <system/uber.cgh>
+
+void fp_main (
+    in float2 uv : TEXCOORD0,
+    sampler2D hdr : register(s0),
+    sampler3D lut : register(s1),
+    uniform float global_saturation,
+    uniform float3 global_exposure,
+    out float3 pixel : COLOR
+) {
+    float3 hdr_colour = tex2D(hdr, uv).rgb;
+
+    pixel = tone_map(lut, global_saturation, hdr_colour * global_exposure);
+
+    // todo: dithering
+    // probably a pattern like this
+    // gRgBgRgB
+    // GbGrGbGr
+    // gRgBgRgB
+    // GbGrGbGr
+/*
+    int2 screen_pos1 = int2(screen_pos_) % 2;
+    float3 offset = float3(0,0,0);
+    if (screen_pos1.x==0) {
+        if (screen_pos1.y==0) {
+            offset = float3(0,0,1);
+        } else {
+            offset = float3(0,0,-1);
+        }
+    } else {
+        if (screen_pos1.y==0) {
+            offset = float3(0,1,0);
+        } else {
+            offset = float3(0,-1,0);
+        }
+    }
+*/
+}

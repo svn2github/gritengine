@@ -1,0 +1,16 @@
+// (c) David Cunningham 2012, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
+
+#include <system/uber.cgh>
+
+void vp_main (
+    in float2 pos_ss : POSITION,
+    uniform float render_target_flipping,
+    uniform float4 viewport_size,
+    out float2 uv0_ : TEXCOORD0,
+    out float4 for_rasteriser : POSITION
+) {
+    for_rasteriser = float4(pos_ss, 0, 1);
+    for_rasteriser.y *= render_target_flipping;
+    uv0_ = pos_ss * float2(0.5,-0.5) + float2(0.5,0.5);
+    if (d3d9() > 0) uv0_ += 0.5 * viewport_size.zw; // zw is 1/w 1/h
+}

@@ -1,0 +1,109 @@
+TCOL1.0
+
+attributes {
+mass 1225.0;
+linear_damping 0.01;
+angular_damping 0.1;
+linear_sleep_threshold 0.0;
+angular_sleep_threshold 0.0;
+}
+
+compound {
+        //nose
+        cylinder {
+                material "/common/pmat/Metal";
+                orientation -0.730 0.707 0 0;
+                centre 0 0.8 0.3;
+                dimensions 1 1 1.8;
+        }
+        // port wing
+        box {
+                material "/common/pmat/Metal";
+                centre -2.3 -0.45 0.15;
+                orientation -0.04 -0.02 0.707 0;
+                dimensions 4.8 1.2 0.2;
+        }
+        // port wing (2)
+        box {
+                material "/common/pmat/Metal";
+                centre -2.3 -0.9 0.15;
+                orientation -0.04 0.06 0.707 0;
+                dimensions 4.3 1.2 0.2;
+        }
+        // starboard wing
+        box {
+                material "/common/pmat/Metal";
+                centre 2.3 -0.45 0.15;
+                orientation 0.04 0.02 0.707 0;
+                dimensions 4.8 1.2 0.2;
+        }
+        // starboard wing (2)
+        box {
+                material "/common/pmat/Metal";
+                centre 2.3 -0.9 0.15;
+                orientation 0.04 -0.06 0.707 0;
+                dimensions 4.3 1.2 0.2;
+        }
+        // tail wings
+        box {
+                material "/common/pmat/Metal";
+                centre 0 -4.85 0.55;
+                dimensions 3.5 1 0.2;
+        }
+        // tail fin
+        box {
+                material "/common/pmat/Metal";
+                centre 0 -4.95 1.25;
+                dimensions 0.2 0.7 1.6;
+                orientation -0.06 0.707 0 0;
+        }
+        // tail fin (2)
+        box {
+                material "/common/pmat/Metal";
+                centre 0 -4.7 1.25;
+                dimensions 0.2 0.7 1.6;
+                orientation -0.20 0.707 0 0;
+        }
+        // mid section
+        cylinder {
+                material "/common/pmat/Metal";
+                orientation -0.730 0.707 0 0;
+                centre 0 -0.9 0.4;
+                dimensions 1.4 1.4 1.5;
+        }
+        // aft section
+        cone {
+                material "/common/pmat/Metal";
+                centre 0 -3.5 0.5;
+                orientation 0.730 0.707 0 0;
+                radius 0.6;
+                height 4;
+        }
+        // cockpit
+        sphere {
+                material "/common/pmat/Metal";
+                centre 0 -0.4 0.45;
+                radius 0.6;
+        }
+        // front wheel stick
+        box {
+                material "/common/pmat/Metal";
+                centre 0 1.05 0.0;
+                dimensions 0.2 1.0 0.2;
+                orientation 0.0 1 0 0;
+        }
+        // port wheel stick
+        box {
+                material "/common/pmat/Metal";
+                centre -1.56 -0.73 -0.0;
+                dimensions 0.6 0.2 0.2;
+                orientation 0.1 0 -1 0;
+        }
+        // starboard wheel stick
+        box {
+                material "/common/pmat/Metal";
+                centre 1.56 -0.73 -0.0;
+                dimensions 0.6 0.2 0.2;
+                orientation 0.1 0 1 0;
+        }
+}

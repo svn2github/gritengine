@@ -1,0 +1,15 @@
+TCOL1.0
+
+attributes {
+    mass 30.0;
+}
+
+compound {
+    cylinder {
+        material "/common/pmat/Rubber";
+        margin 0.04;
+        centre -0.62455 0.769 -0.207;
+        dimensions 0.63843 0.63843 0.233158;
+        orientation 0.707107 0.0 -0.707107 0.0;
+    }
+}

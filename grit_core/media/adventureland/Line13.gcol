@@ -1,0 +1,148 @@
+TCOL1.0
+
+attributes {
+    static;
+}
+
+compound {
+}
+trimesh {
+    vertexes {
+        -0.241794 -0.246725 0.0;
+        -0.26161 -0.237634 0.00880395;
+        -0.261053 -0.214371 0.00544114;
+        -0.240893 -0.209084 -0.00544114;
+        -0.228991 -0.22908 -0.00880395;
+        0.05024 -0.129927 0.525619;
+        0.0297969 -0.121001 0.53318;
+        0.029217 -0.0980366 0.527566;
+        0.0493018 -0.0927691 0.516535;
+        0.0622946 -0.112478 0.515332;
+        0.222055 0.103359 0.9833;
+        -0.176144 -0.278066 -0.0170534;
+        -0.212412 -0.258471 -0.00925286;
+        -0.201896 -0.236678 -0.0125555;
+        -0.159129 -0.242805 -0.0223971;
+        -0.15666 -0.266756 -0.0264788;
+        0.194694 -0.354788 0.657496;
+        0.169817 -0.336434 0.663632;
+        0.180328 -0.314641 0.66032;
+        0.212574 -0.319525 0.643113;
+        0.215166 -0.343682 0.649866;
+        0.443393 -0.314017 1.35738;
+        0.427342 -0.296727 1.36468;
+        0.437776 -0.274933 1.36113;
+        0.45913 -0.278754 1.36346;
+        0.469526 -0.303609 1.34987;
+        0.713139 -0.382257 1.8059;
+        -0.222888 -0.257713 0.0194404;
+        -0.245033 -0.258539 0.0297037;
+        -0.258142 -0.239922 0.0208741;
+        -0.244099 -0.22759 0.00515375;
+        -0.222311 -0.238586 0.00426766;
+        -0.0760267 0.0109753 0.361401;
+        -0.0967698 0.00802055 0.367585;
+        -0.10915 0.0229162 0.357885;
+        -0.096059 0.0350769 0.345707;
+        -0.0755874 0.027697 0.34788;
+        -0.111469 0.236742 0.626131;
+        -0.162737 -0.30086 -0.0160116;
+        -0.171638 -0.326378 0.00195697;
+        -0.20092 -0.336045 -0.00816194;
+        -0.204395 -0.302025 -0.0318303;
+        -0.186519 -0.294755 -0.0372357;
+        -0.493806 0.157916 0.492051;
+        -0.498534 0.137651 0.491787;
+        -0.521869 0.132232 0.486163;
+        -0.540129 0.150333 0.469359;
+        -0.522029 0.166207 0.465184;
+        -0.605126 0.452657 0.975124;
+        -0.612949 0.4317 1.01007;
+        -0.635066 0.425053 0.994542;
+        -0.64369 0.441902 0.978698;
+        -0.626118 0.458961 0.976324;
+        -1.0385 0.786348 1.42141;
+    }
+    faces {
+        6 1 0 "/common/PolishedWood";
+        0 5 6 "/common/PolishedWood";
+        7 2 1 "/common/PolishedWood";
+        1 6 7 "/common/PolishedWood";
+        8 3 2 "/common/PolishedWood";
+        2 7 8 "/common/PolishedWood";
+        9 4 3 "/common/PolishedWood";
+        3 8 9 "/common/PolishedWood";
+        5 0 4 "/common/PolishedWood";
+        4 9 5 "/common/PolishedWood";
+        5 10 6 "/common/PolishedWood";
+        6 10 7 "/common/PolishedWood";
+        7 10 8 "/common/PolishedWood";
+        8 10 9 "/common/PolishedWood";
+        9 10 5 "/common/PolishedWood";
+        17 12 11 "/common/PolishedWood";
+        11 16 17 "/common/PolishedWood";
+        18 13 12 "/common/PolishedWood";
+        12 17 18 "/common/PolishedWood";
+        19 14 13 "/common/PolishedWood";
+        13 18 19 "/common/PolishedWood";
+        20 15 14 "/common/PolishedWood";
+        14 19 20 "/common/PolishedWood";
+        16 11 15 "/common/PolishedWood";
+        15 20 16 "/common/PolishedWood";
+        22 17 16 "/common/PolishedWood";
+        16 21 22 "/common/PolishedWood";
+        23 18 17 "/common/PolishedWood";
+        17 22 23 "/common/PolishedWood";
+        24 19 18 "/common/PolishedWood";
+        18 23 24 "/common/PolishedWood";
+        25 20 19 "/common/PolishedWood";
+        19 24 25 "/common/PolishedWood";
+        21 16 20 "/common/PolishedWood";
+        20 25 21 "/common/PolishedWood";
+        21 26 22 "/common/PolishedWood";
+        22 26 23 "/common/PolishedWood";
+        23 26 24 "/common/PolishedWood";
+        24 26 25 "/common/PolishedWood";
+        25 26 21 "/common/PolishedWood";
+        33 28 27 "/common/PolishedWood";
+        27 32 33 "/common/PolishedWood";
+        34 29 28 "/common/PolishedWood";
+        28 33 34 "/common/PolishedWood";
+        35 30 29 "/common/PolishedWood";
+        29 34 35 "/common/PolishedWood";
+        36 31 30 "/common/PolishedWood";
+        30 35 36 "/common/PolishedWood";
+        32 27 31 "/common/PolishedWood";
+        31 36 32 "/common/PolishedWood";
+        32 37 33 "/common/PolishedWood";
+        33 37 34 "/common/PolishedWood";
+        34 37 35 "/common/PolishedWood";
+        35 37 36 "/common/PolishedWood";
+        36 37 32 "/common/PolishedWood";
+        44 39 38 "/common/PolishedWood";
+        38 43 44 "/common/PolishedWood";
+        45 40 39 "/common/PolishedWood";
+        39 44 45 "/common/PolishedWood";
+        46 41 40 "/common/PolishedWood";
+        40 45 46 "/common/PolishedWood";
+        47 42 41 "/common/PolishedWood";
+        41 46 47 "/common/PolishedWood";
+        43 38 42 "/common/PolishedWood";
+        42 47 43 "/common/PolishedWood";
+        49 44 43 "/common/PolishedWood";
+        43 48 49 "/common/PolishedWood";
+        50 45 44 "/common/PolishedWood";
+        44 49 50 "/common/PolishedWood";
+        51 46 45 "/common/PolishedWood";
+        45 50 51 "/common/PolishedWood";
+        52 47 46 "/common/PolishedWood";
+        46 51 52 "/common/PolishedWood";
+        48 43 47 "/common/PolishedWood";
+        47 52 48 "/common/PolishedWood";
+        48 53 49 "/common/PolishedWood";
+        49 53 50 "/common/PolishedWood";
+        50 53 51 "/common/PolishedWood";
+        51 53 52 "/common/PolishedWood";
+        52 53 48 "/common/PolishedWood";
+    }
+}

@@ -1,0 +1,393 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Normal|Win32">
+      <Configuration>Normal</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{25549847-21C8-47EB-842D-6392F7E3FB77}</ProjectGuid>
+    <RootNamespace>ogre</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Normal|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <WholeProgramOptimization>false</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <WholeProgramOptimization>false</WholeProgramOptimization>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Normal|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)$(Configuration)\$(ProjectName)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)int\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Normal|Win32'">$(SolutionDir)$(Configuration)\$(ProjectName)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Normal|Win32'">$(OutDir)int\</IntDir>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(BOOST_ROOT);$(DXSDK_DIR)Include\;$(IncludePath)</IncludePath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(LibraryPath)</LibraryPath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Normal|Win32'">$(BOOST_ROOT);$(DXSDK_DIR)Include\;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <BuildLog />
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>$(SolutionDir)\dependencies\grit_ogre\OgreMain\include;$(SolutionDir)\dependencies\grit_ogre\OgreMain\src\nedmalloc;$(SolutionDir)\dependencies\grit_ogre\RenderSystems\GL\src\win32;$(SolutionDir)\dependencies\grit_ogre\RenderSystems\GL\src\nvparse;$(SolutionDir)\dependencies\grit_ogre\RenderSystems\GL\src\nvparse\winheaders;$(SolutionDir)\dependencies\grit_ogre\RenderSystems\GL\src\atifs\include;$(SolutionDir)\dependencies\grit_ogre\RenderSystems\GL\src\GLSL\include;$(SolutionDir)\dependencies\grit_ogre\RenderSystems\GL\include\;$(SolutionDir)\dependencies\grit_ogre\RenderSystems\Direct3D9\include;$(SolutionDir)\dependencies\grit_ogre\PlugIns\ParticleFX\include;$(SolutionDir)\dependencies\grit_ogre\PlugIns\OctreeSceneManager\include;$(SolutionDir)\dependencies\grit_ogre_dependencies\include;$(SolutionDir)\dependencies;$(SolutionDir)\dependencies\grit_ogre\PlugIns\CgProgramManager\include;$(SolutionDir)\dependencies\grit_ogre\Components\Overlay\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <StringPooling>true</StringPooling>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Normal|Win32'">
+    <BuildLog />
+    <ClCompile>
+      <AdditionalOptions>/MP %(AdditionalOptions)</AdditionalOptions>
+      <Optimization>MaxSpeed</Optimization>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <OmitFramePointers>true</OmitFramePointers>
+      <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
+      <AdditionalIncludeDirectories>$(SolutionDir)\dependencies\grit_ogre\OgreMain\include;$(SolutionDir)\dependencies\grit_ogre\OgreMain\src\nedmalloc;$(SolutionDir)\dependencies\grit_ogre\RenderSystems\GL\src\win32;$(SolutionDir)\dependencies\grit_ogre\RenderSystems\GL\src\nvparse;$(SolutionDir)\dependencies\grit_ogre\RenderSystems\GL\src\nvparse\winheaders;$(SolutionDir)\dependencies\grit_ogre\RenderSystems\GL\src\atifs\include;$(SolutionDir)\dependencies\grit_ogre\RenderSystems\GL\src\GLSL\include;$(SolutionDir)\dependencies\grit_ogre\RenderSystems\GL\include\;$(SolutionDir)\dependencies\grit_ogre\RenderSystems\Direct3D9\include;$(SolutionDir)\dependencies\grit_ogre\PlugIns\ParticleFX\include;$(SolutionDir)\dependencies\grit_ogre\PlugIns\OctreeSceneManager\include;$(SolutionDir)\dependencies\grit_ogre_dependencies\include;$(SolutionDir)\dependencies;$(SolutionDir)\dependencies\grit_ogre\PlugIns\CgProgramManager\include;$(SolutionDir)\dependencies\grit_ogre\Components\Overlay\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <StringPooling>true</StringPooling>
+      <MinimalRebuild>false</MinimalRebuild>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="grit_ogre\Components\Overlay\src\OgreBorderPanelOverlayElement.cpp" />
+    <ClCompile Include="grit_ogre\Components\Overlay\src\OgreFont.cpp" />
+    <ClCompile Include="grit_ogre\Components\Overlay\src\OgreFontManager.cpp" />
+    <ClCompile Include="grit_ogre\Components\Overlay\src\OgreOverlay.cpp" />
+    <ClCompile Include="grit_ogre\Components\Overlay\src\OgreOverlayContainer.cpp" />
+    <ClCompile Include="grit_ogre\Components\Overlay\src\OgreOverlayElement.cpp" />
+    <ClCompile Include="grit_ogre\Components\Overlay\src\OgreOverlayElementCommands.cpp" />
+    <ClCompile Include="grit_ogre\Components\Overlay\src\OgreOverlayElementFactory.cpp" />
+    <ClCompile Include="grit_ogre\Components\Overlay\src\OgreOverlayManager.cpp" />
+    <ClCompile Include="grit_ogre\Components\Overlay\src\OgreOverlayProfileSessionListener.cpp" />
+    <ClCompile Include="grit_ogre\Components\Overlay\src\OgreOverlaySystem.cpp" />
+    <ClCompile Include="grit_ogre\Components\Overlay\src\OgrePanelOverlayElement.cpp" />
+    <ClCompile Include="grit_ogre\Components\Overlay\src\OgreTextAreaOverlayElement.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreDualQuaternion.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreETC1Codec.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreHardwareCounterBuffer.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreHardwareUniformBuffer.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreProgressiveMeshGenerator.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreQueuedProgressiveMeshGenerator.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\GL\src\nvparse\_ps1.0_lexer.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\GL\src\nvparse\_ps1.0_parser.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\GL\src\nvparse\_rc1.0_lexer.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\GL\src\nvparse\_rc1.0_parser.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\GL\src\nvparse\_ts1.0_lexer.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\GL\src\nvparse\_ts1.0_parser.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\GL\src\nvparse\_vs1.0_lexer.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\GL\src\nvparse\_vs1.0_parser.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\GL\src\atifs\src\ATI_FS_GLGpuProgram.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\GL\src\nvparse\avp1.0_impl.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\GL\src\atifs\src\Compiler2Pass.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\GL\src\glew.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\GL\src\nvparse\nvparse.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\GL\src\nvparse\nvparse_errors.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreAlignedAllocator.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreAnimable.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreAnimation.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreAnimationState.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreAnimationTrack.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreArchiveManager.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreAutoParamDataSource.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreAxisAlignedBox.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreBillboard.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreBillboardChain.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreBillboardParticleRenderer.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreBillboardSet.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreBone.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreCamera.cpp" />
+    <ClCompile Include="grit_ogre\PlugIns\CgProgramManager\src\OgreCgFxScriptLoader.cpp" />
+    <ClCompile Include="grit_ogre\PlugIns\CgProgramManager\src\OgreCgPlugin.cpp" />
+    <ClCompile Include="grit_ogre\PlugIns\CgProgramManager\src\OgreCgProgram.cpp" />
+    <ClCompile Include="grit_ogre\PlugIns\CgProgramManager\src\OgreCgProgramFactory.cpp" />
+    <ClCompile Include="grit_ogre\PlugIns\CgProgramManager\src\OgreCgProgramManagerDll.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreCodec.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreColourValue.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreCommon.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreCompositionPass.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreCompositionTargetPass.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreCompositionTechnique.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreCompositor.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreCompositorChain.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreCompositorInstance.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreCompositorManager.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\WIN32\OgreConfigDialog.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreConfigFile.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreControllerManager.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreConvexBody.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\Direct3D9\src\OgreD3D9DepthBuffer.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\Direct3D9\src\OgreD3D9Device.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\Direct3D9\src\OgreD3D9DeviceManager.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\Direct3D9\src\OgreD3D9Driver.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\Direct3D9\src\OgreD3D9DriverList.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\Direct3D9\src\OgreD3D9GpuProgram.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\Direct3D9\src\OgreD3D9GpuProgramManager.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\Direct3D9\src\OgreD3D9HardwareBufferManager.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\Direct3D9\src\OgreD3D9HardwareIndexBuffer.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\Direct3D9\src\OgreD3D9HardwareOcclusionQuery.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\Direct3D9\src\OgreD3D9HardwarePixelBuffer.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\Direct3D9\src\OgreD3D9HardwareVertexBuffer.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\Direct3D9\src\OgreD3D9HLSLProgram.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\Direct3D9\src\OgreD3D9HLSLProgramFactory.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\Direct3D9\src\OgreD3D9Mappings.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\Direct3D9\src\OgreD3D9MultiRenderTarget.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\Direct3D9\src\OgreD3D9Plugin.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\Direct3D9\src\OgreD3D9RenderSystem.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\Direct3D9\src\OgreD3D9RenderWindow.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\Direct3D9\src\OgreD3D9Resource.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\Direct3D9\src\OgreD3D9ResourceManager.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\Direct3D9\src\OgreD3D9Texture.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\Direct3D9\src\OgreD3D9TextureManager.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\Direct3D9\src\OgreD3D9VertexDeclaration.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\Direct3D9\src\OgreD3D9VideoMode.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\Direct3D9\src\OgreD3D9VideoModeList.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreDataStream.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreDDSCodec.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreDefaultHardwareBufferManager.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreDefaultSceneQueries.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\Threading\OgreDefaultWorkQueueStandard.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreDepthBuffer.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreDistanceLodStrategy.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreDynLib.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreDynLibManager.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreEdgeListBuilder.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreEntity.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\WIN32\OgreErrorDialog.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreException.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreExternalTextureSource.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreExternalTextureSourceManager.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreFileSystem.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreFreeImageCodec.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreFrustum.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\GL\src\OgreGLATIFSInit.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\GL\src\OgreGLContext.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\GL\src\OgreGLDefaultHardwareBufferManager.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\GL\src\OgreGLDepthBuffer.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\GL\src\OgreGLFBOMultiRenderTarget.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\GL\src\OgreGLFBORenderTexture.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\GL\src\OgreGLFrameBufferObject.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\GL\src\OgreGLGpuNvparseProgram.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\GL\src\OgreGLGpuProgram.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\GL\src\OgreGLGpuProgramManager.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\GL\src\OgreGLHardwareBufferManager.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\GL\src\OgreGLHardwareIndexBuffer.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\GL\src\OgreGLHardwareOcclusionQuery.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\GL\src\OgreGLHardwarePixelBuffer.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\GL\src\OgreGLHardwareVertexBuffer.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\GL\src\OgreGLPBRenderTexture.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\GL\src\OgreGLPixelFormat.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\GL\src\OgreGLPlugin.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\GL\src\OgreGLRenderSystem.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\GL\src\OgreGLRenderTexture.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\GL\src\OgreGLRenderToVertexBuffer.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\GL\src\GLSL\src\OgreGLSLExtSupport.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\GL\src\GLSL\src\OgreGLSLGpuProgram.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\GL\src\GLSL\src\OgreGLSLLinkProgram.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\GL\src\GLSL\src\OgreGLSLLinkProgramManager.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\GL\src\GLSL\src\OgreGLSLPreprocessor.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\GL\src\GLSL\src\OgreGLSLProgram.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\GL\src\GLSL\src\OgreGLSLProgramFactory.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\GL\src\OgreGLSupport.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\GL\src\OgreGLTexture.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\GL\src\OgreGLTextureManager.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreGpuProgram.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreGpuProgramManager.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreGpuProgramParams.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreGpuProgramUsage.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreHardwareBufferManager.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreHardwareIndexBuffer.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreHardwareOcclusionQuery.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreHardwarePixelBuffer.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreHardwareVertexBuffer.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreHighLevelGpuProgram.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreHighLevelGpuProgramManager.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreImage.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreInstanceBatch.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreInstanceBatchHW.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreInstanceBatchHW_VTF.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreInstanceBatchShader.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreInstanceBatchVTF.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreInstancedEntity.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreInstancedGeometry.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreInstanceManager.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreKeyFrame.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreLight.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreLodStrategy.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreLodStrategyManager.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreLog.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreLogManager.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreManualObject.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreMaterial.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreMaterialManager.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreMaterialSerializer.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreMath.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreMatrix3.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreMatrix4.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreMemoryAllocatedObject.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreMemoryTracker.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreMesh.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreMeshManager.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreMeshSerializer.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreMeshSerializerImpl.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreMovableObject.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreMovablePlane.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreNode.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreNumerics.cpp" />
+    <ClCompile Include="grit_ogre\PlugIns\OctreeSceneManager\src\OgreOctree.cpp" />
+    <ClCompile Include="grit_ogre\PlugIns\OctreeSceneManager\src\OgreOctreeCamera.cpp" />
+    <ClCompile Include="grit_ogre\PlugIns\OctreeSceneManager\src\OgreOctreeNode.cpp" />
+    <ClCompile Include="grit_ogre\PlugIns\OctreeSceneManager\src\OgreOctreePlugin.cpp" />
+    <ClCompile Include="grit_ogre\PlugIns\OctreeSceneManager\src\OgreOctreeSceneManager.cpp" />
+    <ClCompile Include="grit_ogre\PlugIns\OctreeSceneManager\src\OgreOctreeSceneQuery.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreOptimisedUtil.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreOptimisedUtilGeneral.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreOptimisedUtilSSE.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreParticle.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreParticleEmitter.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreParticleEmitterCommands.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreParticleIterator.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreParticleSystem.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreParticleSystemManager.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgrePass.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgrePatchMesh.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgrePatchSurface.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgrePixelCountLodStrategy.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgrePixelFormat.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgrePlane.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgrePlatformInformation.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgrePolygon.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgrePose.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgrePrecompiledHeaders.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgrePredefinedControllers.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgrePrefabFactory.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreProfiler.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgrePVRTCCodec.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreQuaternion.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreRectangle2D.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreRenderQueue.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreRenderQueueInvocation.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreRenderQueueSortingGrouping.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreRenderSystem.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreRenderSystemCapabilities.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreRenderSystemCapabilitiesManager.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreRenderSystemCapabilitiesSerializer.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreRenderTarget.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreRenderTexture.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreRenderToVertexBuffer.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreRenderWindow.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreResource.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreResourceBackgroundQueue.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreResourceGroupManager.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreResourceManager.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreRibbonTrail.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreRoot.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreRotationSpline.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreSceneManager.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreSceneManagerEnumerator.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreSceneNode.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreSceneQuery.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreScriptCompiler.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreScriptLexer.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreScriptParser.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreScriptTranslator.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreSearchOps.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreSerializer.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreShadowCameraSetup.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreShadowCameraSetupFocused.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreShadowCameraSetupLiSPSM.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreShadowCameraSetupPlaneOptimal.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreShadowCameraSetupPSSM.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreShadowCaster.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreShadowTextureManager.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreShadowVolumeExtrudeProgram.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreSimpleRenderable.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreSimpleSpline.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreSkeleton.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreSkeletonInstance.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreSkeletonManager.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreSkeletonSerializer.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreSmallVector.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreStaticGeometry.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreStreamSerialiser.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreString.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreStringConverter.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreStringInterface.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreSubEntity.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreSubMesh.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreTagPoint.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreTangentSpaceCalc.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreTechnique.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreTexture.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreTextureManager.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreTextureUnitState.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\WIN32\OgreTimer.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreUnifiedHighLevelGpuProgram.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreUserObjectBindings.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreUTFString.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreVector2.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreVector3.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreVector4.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreVertexIndexData.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreViewport.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\GL\src\win32\OgreWin32Context.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\GL\src\OgreWin32GLSupport.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\GL\src\OgreWin32RenderTexture.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\GL\src\OgreWin32Window.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreWindowEventUtilities.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreWireBoundingBox.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreWorkQueue.cpp" />
+    <ClCompile Include="grit_ogre\OgreMain\src\OgreZip.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\GL\src\nvparse\ps1.0_program.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\GL\src\atifs\src\ps_1_4.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\GL\src\nvparse\rc1.0_combiners.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\GL\src\nvparse\rc1.0_final.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\GL\src\nvparse\rc1.0_general.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\GL\src\nvparse\ts1.0_inst.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\GL\src\nvparse\ts1.0_inst_list.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\GL\src\nvparse\vcp1.0_impl.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\GL\src\nvparse\vp1.0_impl.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\GL\src\nvparse\vs1.0_inst.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\GL\src\nvparse\vs1.0_inst_list.cpp" />
+    <ClCompile Include="grit_ogre\RenderSystems\GL\src\nvparse\vsp1.0_impl.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

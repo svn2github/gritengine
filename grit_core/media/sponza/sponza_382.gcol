@@ -1,0 +1,32 @@
+TCOL1.0
+
+attributes {
+    static;
+}
+
+compound {
+}
+trimesh {
+    vertexes {
+        19.0449 9.61979 -9.15598;
+        19.0449 -9.61978 -9.15598;
+        -19.0449 -9.61978 -9.15598;
+        -19.0449 9.61979 -9.15598;
+        19.0449 -9.61978 9.15598;
+        -19.0449 -9.61978 9.15598;
+        19.0449 9.61979 9.15598;
+        -19.0449 9.61979 9.15598;
+    }
+    faces {
+        2 3 0 "/common/pmat/Stone";
+        0 1 2 "/common/pmat/Stone";
+        5 2 1 "/common/pmat/Stone";
+        1 4 5 "/common/pmat/Stone";
+        0 6 4 "/common/pmat/Stone";
+        4 1 0 "/common/pmat/Stone";
+        0 3 7 "/common/pmat/Stone";
+        7 6 0 "/common/pmat/Stone";
+        3 2 5 "/common/pmat/Stone";
+        5 7 3 "/common/pmat/Stone";
+    }
+}

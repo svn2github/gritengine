@@ -1,0 +1,9 @@
+you need xoliul shader 1.5
+
+http://www.laurenscorijn.com/viewportshader
+
+hierarchy is still not worked, the parenting of the bones isn't set correctly yet (only partly) - it should work similar to GTA's bones, chassis being the parent of em all
+
+i think thats all
+
+-jv

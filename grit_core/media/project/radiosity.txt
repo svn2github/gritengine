@@ -1,0 +1,7 @@
+radiosity parameters
+logarithmic exposure control
+
+brigthness 58
+contrast 85
+mid tones 0,5
+physical scale 1500

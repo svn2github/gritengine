@@ -1,0 +1,94 @@
+TCOL1.0
+
+attributes {
+    static;
+}
+
+compound {
+}
+trimesh {
+    vertexes {
+        -0.741898 -0.907758 -0.00499997;
+        0.00914332 -0.775329 -0.00499997;
+        -0.874353 -0.156569 -0.00499997;
+        -0.123312 -0.0241398 -0.00499997;
+        -0.741898 -0.907758 0.755;
+        0.00914332 -0.775329 0.755;
+        -0.874353 -0.156569 0.755;
+        -0.123312 -0.0241398 0.755;
+        0.491962 -0.898769 -0.005;
+        0.591387 0.0471934 -0.005;
+        -0.0229212 -0.844653 -0.005;
+        0.0765034 0.10131 -0.005;
+        0.491962 -0.898769 0.505;
+        0.591387 0.0471934 0.505;
+        -0.0229212 -0.844653 0.505;
+        0.0765034 0.10131 0.505;
+        0.407243 0.156205 0.0290331;
+        0.539241 0.648827 0.0290331;
+        -0.0853791 0.288202 0.0290331;
+        0.0466187 0.780825 0.0290331;
+        0.407243 0.156205 0.539033;
+        0.539241 0.648827 0.539033;
+        -0.0853791 0.288202 0.539033;
+        0.0466187 0.780825 0.539033;
+        -0.269817 -0.0956239 0.00131857;
+        0.023336 0.355792 0.00131857;
+        -1.03208 0.399393 0.00131857;
+        -0.738924 0.85081 0.00131857;
+        -0.269817 -0.0956239 0.654905;
+        0.023336 0.355792 0.654905;
+        -1.03208 0.399393 0.654905;
+        -0.738924 0.85081 0.654905;
+    }
+    faces {
+        0 2 3 "/common/pmat/Metal";
+        3 1 0 "/common/pmat/Metal";
+        4 5 7 "/common/pmat/Metal";
+        7 6 4 "/common/pmat/Metal";
+        0 1 5 "/common/pmat/Metal";
+        5 4 0 "/common/pmat/Metal";
+        1 3 7 "/common/pmat/Metal";
+        7 5 1 "/common/pmat/Metal";
+        3 2 6 "/common/pmat/Metal";
+        6 7 3 "/common/pmat/Metal";
+        2 0 4 "/common/pmat/Metal";
+        4 6 2 "/common/pmat/Metal";
+        8 10 11 "/common/pmat/Metal";
+        11 9 8 "/common/pmat/Metal";
+        12 13 15 "/common/pmat/Metal";
+        15 14 12 "/common/pmat/Metal";
+        8 9 13 "/common/pmat/Metal";
+        13 12 8 "/common/pmat/Metal";
+        9 11 15 "/common/pmat/Metal";
+        15 13 9 "/common/pmat/Metal";
+        11 10 14 "/common/pmat/Metal";
+        14 15 11 "/common/pmat/Metal";
+        10 8 12 "/common/pmat/Metal";
+        12 14 10 "/common/pmat/Metal";
+        16 18 19 "/common/pmat/Metal";
+        19 17 16 "/common/pmat/Metal";
+        20 21 23 "/common/pmat/Metal";
+        23 22 20 "/common/pmat/Metal";
+        16 17 21 "/common/pmat/Metal";
+        21 20 16 "/common/pmat/Metal";
+        17 19 23 "/common/pmat/Metal";
+        23 21 17 "/common/pmat/Metal";
+        19 18 22 "/common/pmat/Metal";
+        22 23 19 "/common/pmat/Metal";
+        18 16 20 "/common/pmat/Metal";
+        20 22 18 "/common/pmat/Metal";
+        24 26 27 "/common/pmat/Metal";
+        27 25 24 "/common/pmat/Metal";
+        28 29 31 "/common/pmat/Metal";
+        31 30 28 "/common/pmat/Metal";
+        24 25 29 "/common/pmat/Metal";
+        29 28 24 "/common/pmat/Metal";
+        25 27 31 "/common/pmat/Metal";
+        31 29 25 "/common/pmat/Metal";
+        27 26 30 "/common/pmat/Metal";
+        30 31 27 "/common/pmat/Metal";
+        26 24 28 "/common/pmat/Metal";
+        28 30 26 "/common/pmat/Metal";
+    }
+}

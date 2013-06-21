@@ -1,0 +1,42 @@
+# 3ds Max Wavefront OBJ Exporter v0.97b - (c)2007 guruware
+# File Created: 04.02.2011 19:32:40
+
+newmtl barrier3
+	Ns 32.000000
+	Ni 1.500000
+	d 1.000000
+	Tr 0.000000
+	Tf 1.000000 1.000000 1.000000 
+	illum 2
+	Ka 0.023529 0.529412 0.023529
+	Kd 0.023529 0.529412 0.023529
+	Ks 0.350000 0.350000 0.350000
+	Ke 0.000000 0.000000 0.000000
+	map_Ka C:\Users\Kimd41\Documents\3dsmax\textures\barrier3.jpg
+	map_Kd C:\Users\Kimd41\Documents\3dsmax\textures\barrier3.jpg
+
+newmtl barrierS
+	Ns 9.999999
+	Ni 1.500000
+	d 1.000000
+	Tr 0.000000
+	Tf 1.000000 1.000000 1.000000 
+	illum 2
+	Ka 0.588235 0.588235 0.588235
+	Kd 0.588235 0.588235 0.588235
+	Ks 0.000000 0.000000 0.000000
+	Ke 0.000000 0.000000 0.000000
+	map_Ka C:\Users\Kimd41\Documents\3dsmax\textures\barrierS.jpg
+	map_Kd C:\Users\Kimd41\Documents\3dsmax\textures\barrierS.jpg
+
+newmtl _common_Stone
+	Ns 9.999999
+	Ni 1.500000
+	d 1.000000
+	Tr 0.000000
+	Tf 1.000000 1.000000 1.000000 
+	illum 2
+	Ka 0.588235 0.588235 0.588235
+	Kd 0.588235 0.588235 0.588235
+	Ks 0.000000 0.000000 0.000000
+	Ke 0.000000 0.000000 0.000000

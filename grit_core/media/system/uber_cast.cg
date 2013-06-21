@@ -1,0 +1,134 @@
+// (c) David Cunningham 2009, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
+
+#include <system/uber.cgh>
+
+void caster_vp_main (
+        in float3 pos_os : POSITION,
+        #if USE_DIFFUSE_MAP==1
+        in float2 uv0 : TEXCOORD0,
+        #endif
+        #if WORLD_GEOMETRY==1
+        in float3 inst_mat1 : TEXCOORD1,
+        in float3 inst_mat2 : TEXCOORD2,
+        in float3 inst_mat3 : TEXCOORD3,
+        in float3 inst_pos : TEXCOORD4,
+        in float visibility : TEXCOORD5,
+        #endif
+
+        uniform float4x4 view_proj,
+        uniform float4 light_pos_ws,
+        uniform float3 camera_pos_ws,
+
+        #if BLENDED_BONES>0
+        float4 bone : BLENDINDICES,
+        float4 bone_weights : BLENDWEIGHT,
+        uniform float3x4 bone_matrixes[70],
+        #endif
+        uniform float4x4 world,
+
+        out float2 uv0_ : TEXCOORD0,
+        out float light_dist_ : TEXCOORD1,
+        #if WORLD_GEOMETRY==1
+        out float visibility_ : TEXCOORD2,
+        #endif
+
+        out float4 for_rasteriser : POSITION
+) {
+
+        uv0_ = float2(0,0);
+        #if USE_DIFFUSE_MAP==1
+        uv0_ = uv0;
+        #endif
+
+        #if WORLD_GEOMETRY==1
+        float4x4 inst_world = float4x4(inst_mat1[0], inst_mat1[1], inst_mat1[2], inst_pos[0],
+                                       inst_mat2[0], inst_mat2[1], inst_mat2[2], inst_pos[1],
+                                       inst_mat3[0], inst_mat3[1], inst_mat3[2], inst_pos[2],
+                                                0.0,          0.0,          0.0,         1.0);
+        world = mul(world, inst_world);
+        #endif
+
+        float3 pos_ws;
+        float3 normal_ws;
+        float3 tangent_ws;
+        float3 normal_os = float3(0,0,0);
+        float3 tangent_os = float3(0,0,0);
+
+        #if BLENDED_BONES>0
+                transform_vertex_bones(bone_weights, bone_matrixes, bone, pos_os, normal_os, tangent_os,
+                                       pos_ws, normal_ws, tangent_ws);
+        #else
+                transform_vertex(world, pos_os, normal_os, tangent_os,
+                                 pos_ws, normal_ws, tangent_ws);
+        #endif
+        pos_ws += ground_overlay_offset(pos_ws, normal_ws, camera_pos_ws);
+
+        for_rasteriser = mul(view_proj, float4(pos_ws,1));
+        light_dist_ = -dot(pos_ws,light_pos_ws.xyz);
+        #if WORLD_GEOMETRY==1
+        visibility_ = visibility;
+        #endif
+}
+
+
+void caster_fp_main (
+        in float2 uv0_ : TEXCOORD0,
+        in float light_dist_ : TEXCOORD1,
+        in float2 screen_pos_ : WPOS,
+        #if WORLD_GEOMETRY==1
+        in float visibility_ : TEXCOORD2,
+        #endif
+
+        CASTER_PARAMS
+
+        #if WORLD_GEOMETRY==0
+        uniform float4 visibility,
+        #endif
+        uniform float alpha_rej,
+        uniform float bias_offset,
+
+        out float pixel : COLOR
+) {
+        // filter kernel is a square
+        float auto_bias = abs(ddx(light_dist_)) + abs(ddy(light_dist_));
+
+        // on large flat surfaces, with the light coming in at an
+        // oblique angle, the required bias can get very high
+        // may need to review this cap of 1m
+        // especially for the 3rd shadow zone where the shadow texels
+        // cover a large amount of space
+        // (low resolutions too)
+        // - the 0.5 is the error due to the rounding to discrete texels
+        light_dist_ += min(bias_offset+(0.5+SPREAD)*auto_bias, 1);
+
+        float alpha = 1;
+        float2 screen_pos = screen_pos_;
+
+        #if USE_DIFFUSE_MAP==1
+        alpha *= tex2D(diffuse_map, uv0_).a;
+        #endif
+
+        if (alpha <= alpha_rej) discard;
+
+        #if USE_STIPPLE_TEXTURE==1
+        #if WORLD_GEOMETRY==1
+        float v = visibility_;
+        // it seems that the rasteriser is a bit lossy, what goes in as 1.0 comes out a bit smaller
+        v += 0.5/256;
+        #else
+        float v = visibility.x;
+        #endif
+
+        if (v<1) {
+                int x = int(screen_pos.x) % 8;
+                int y = int(screen_pos.y) % 8;
+                if (stipple(x,y,v,stipple_map)) discard;
+        }
+        #endif
+
+
+        pixel = light_dist_ / SHADOW_FACTOR;
+
+}
+
+// vim: ts=8:sw=8:et

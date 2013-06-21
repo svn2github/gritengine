@@ -1,0 +1,66 @@
+TCOL1.0
+
+attributes {
+    static;
+}
+
+compound {
+}
+trimesh {
+    vertexes {
+        -13.757 -4.79939 2.57598;
+        -13.2166 -3.90341 2.68501;
+        12.9307 -3.90341 2.68501;
+        13.757 -4.79939 2.57598;
+        12.9307 3.79477 2.68501;
+        13.757 4.79939 2.57598;
+        -13.2166 3.79477 2.68501;
+        -13.757 4.79939 2.57598;
+        -13.757 -4.79939 -2.68502;
+        -13.757 4.79939 -2.68502;
+        13.757 -4.79939 -2.68502;
+        12.1043 -3.00744 -2.68502;
+        -12.6763 -3.00744 -2.68502;
+        13.757 4.79939 -2.68502;
+        12.1043 2.79015 -2.68502;
+        -12.6763 2.79015 -2.68502;
+        -12.6763 -3.00744 2.53592;
+        12.1043 -3.00744 2.53592;
+        12.1043 2.79015 2.53592;
+        -12.6763 2.79015 2.53592;
+    }
+    faces {
+        2 3 0 "/common/pmat/Stone";
+        0 1 2 "/common/pmat/Stone";
+        4 5 3 "/common/pmat/Stone";
+        3 2 4 "/common/pmat/Stone";
+        4 6 7 "/common/pmat/Stone";
+        7 5 4 "/common/pmat/Stone";
+        1 0 7 "/common/pmat/Stone";
+        7 6 1 "/common/pmat/Stone";
+        8 9 7 "/common/pmat/Stone";
+        7 0 8 "/common/pmat/Stone";
+        11 12 8 "/common/pmat/Stone";
+        8 10 11 "/common/pmat/Stone";
+        13 14 11 "/common/pmat/Stone";
+        11 10 13 "/common/pmat/Stone";
+        14 13 9 "/common/pmat/Stone";
+        9 15 14 "/common/pmat/Stone";
+        9 8 12 "/common/pmat/Stone";
+        12 15 9 "/common/pmat/Stone";
+        8 0 3 "/common/pmat/Stone";
+        3 10 8 "/common/pmat/Stone";
+        10 3 5 "/common/pmat/Stone";
+        5 13 10 "/common/pmat/Stone";
+        13 5 7 "/common/pmat/Stone";
+        7 9 13 "/common/pmat/Stone";
+        1 16 17 "/common/pmat/Stone";
+        17 2 1 "/common/pmat/Stone";
+        17 18 4 "/common/pmat/Stone";
+        4 2 17 "/common/pmat/Stone";
+        19 6 4 "/common/pmat/Stone";
+        4 18 19 "/common/pmat/Stone";
+        6 19 16 "/common/pmat/Stone";
+        16 1 6 "/common/pmat/Stone";
+    }
+}

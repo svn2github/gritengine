@@ -1,0 +1,427 @@
+-- (c) David Cunningham 2009, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
+
+local function actor_cast (pos, ray, radius, height, body)
+        --return physics_sweep_sphere(radius, pos, ray, true, 0, body)
+        return physics_sweep_cylinder(radius, height, quat(1,0,0,0), pos, ray, true, 0, body)
+end
+
+local function vector_without_component (v, n)
+    return v - dot(v, n) * n
+end
+
+local function cast_cylinder_with_deflection (body, radius, height, pos, movement)
+
+    --echo("cast with "..pos)
+
+    local ret_body, ret_normal, ret_pos
+
+    for i = 0,4 do
+    
+        local walk_fraction, wall, wall_normal = actor_cast(pos, movement, radius - i*0.0005, height - 0.0001, body)
+        if walk_fraction ~= nil then
+            if ret_body == nil then
+                ret_body = wall
+                ret_normal = wall_normal
+                ret_pos = pos + walk_fraction*movement
+            end
+            wall_normal = norm(wall_normal * vector3(1,1,0))
+            movement = movement*walk_fraction + vector_without_component(movement*(1-walk_fraction), wall_normal)
+        else
+            return i, movement, ret_body, ret_normal, ret_pos
+        end 
+    end 
+    
+    return false, V_ZERO, ret_body, ret_normal, ret_pos
+    
+end 
+
+
+-- extend ColClass so we have a physics representation that can receive rays, etc
+DetachedCharacterClass = extends (ColClass) {
+
+    renderingDistance = 80.0;
+
+    castShadows = true;
+
+    height = 1.8;
+    crouchHeight = 1;
+    radius = 0.3;
+    terminalVelocity = 50;
+    camHeight = 1.4;
+    stepHeight = 0.3;
+    jumpVelocity = 6;
+    jumpsAllowed = 2;
+    pushForce = 1000;
+    runPushForce = 1000;
+    
+    walkSpeedFactor = 1;
+    runSpeedFactor = 1;
+    crouchSpeedFactor = 1;
+
+    walkStrideLength = 1.6;
+    runStrideLength = 1.866666;
+    crouchStrideLength = 1;
+
+    maxGradient = 1.5;
+    
+    mass = 80; 
+    
+
+    activate = function(self, instance)
+        ColClass.activate(self, instance)
+
+        self.needsStepCallbacks = true
+
+        instance.isActor = true;
+        instance.pushState = 0
+        instance.pullState = 0
+        instance.strafeLeftState = 0
+        instance.strafeRightState = 0
+        instance.runState = false
+        instance.crouchState = false
+        instance.jumpHappened = false
+        instance.jumpsDone = 0
+        instance.keyboardMove = V_ZERO
+        instance.offGround = false
+        instance.fallVelocity = 0
+        instance.speed = 0
+        instance.bearing = self.bearing or 0
+        instance.bearingAim = self.bearing or 0
+        instance.timeSinceLastJump = 0
+        
+        instance.controlState = vector3(0,0,0) -- still/move, walk/run, stand/crouch
+        instance.stridePos = 0 -- between 0 and 1, where 0.25 is left foot extended, and 0.75 is right foot extended
+        instance.fallingPos = 0
+        instance.crouchIdlePos = math.random()
+        instance.crouchIdleRate = 1/(instance.gfx:getAnimationLength("crouch")*(math.random(1)*0.2+0.9))
+        instance.idlePos = math.random()
+        instance.idleRate = 1/(instance.gfx:getAnimationLength("idle")*(math.random(1)*0.2+0.9))
+        
+        instance.walkSpeed = self.walkSpeedFactor * self.walkStrideLength / instance.gfx:getAnimationLength("walk")
+        instance.runSpeed = self.runSpeedFactor * self.runStrideLength / instance.gfx:getAnimationLength("run")
+        instance.crouchSpeed = self.crouchSpeedFactor * self.crouchStrideLength / instance.gfx:getAnimationLength("crouch_walk")
+
+        self:updateMovementState()
+        local body = instance.body
+        
+
+        body.ghost = true
+
+        local old_update_callback = body.updateCallback
+        body.updateCallback = function (p,q)
+            old_update_callback(p,q)
+            instance.camAttachPos = p + vector3(0,0,self.camHeight-self.originAboveFeet)
+        end
+
+    end;
+
+    deactivate = function (self)
+        self.needsStepCallbacks = false;
+        ColClass.deactivate(self)
+    end;
+
+    stepCallback = function (self, elapsed)
+
+        local instance = self.instance
+        local body = instance.body
+        local gfx = instance.gfx
+        local control_state = instance.controlState
+        
+        local regular_movement = 1
+
+        -- interpolate movement characteristics based on control state
+        local blended_speed = control_state.x * lerp(lerp(instance.walkSpeed,instance.runSpeed,control_state.y), instance.crouchSpeed, control_state.z)
+        local blended_stride_length = control_state.x * lerp(lerp(self.walkStrideLength,self.runStrideLength,control_state.y), self.crouchStrideLength, control_state.z)
+
+        local height = lerp(self.height, self.crouchHeight, control_state.z)
+
+        --echo('-------------')
+
+        -- check foot and height at source
+        -- check pa    t to destination above step hieght
+        -- 
+        local curr_foot = body.worldPosition - vector3(0,0,self.originAboveFeet)
+        local old_foot = curr_foot
+        local half_height = height/2
+        local curr_centre = curr_foot + vector3(0,0,half_height)
+
+        local radius = self.radius
+
+        
+        if instance.jumpHappened then
+            if not instance.offGround then
+                instance.timeSinceLastJump = 0
+            end
+            if instance.jumpsDone < self.jumpsAllowed then
+                instance.jumpsDone = instance.jumpsDone + 1
+                instance.fallVelocity = instance.fallVelocity + self.jumpVelocity
+            end
+            instance.jumpHappened = false
+        end
+
+        local gravity = physics_get_gravity().z
+
+        local old_fall_velocity = instance.fallVelocity
+        instance.fallVelocity = clamp(instance.fallVelocity + elapsed * gravity, -self.terminalVelocity, self.terminalVelocity)
+
+        --echo('fallVelocity: '..instance.fallVelocity)
+
+        -- FALL / JUMP
+        -- shoot sphere from centre of capsule
+        local fall_vect = elapsed * vector3(0,0,instance.fallVelocity)
+        local fall_fraction, floor, floor_normal = actor_cast(curr_centre, fall_vect, radius - 0.01, height, body)
+        local floor_impulse = 0
+        if fall_fraction == nil then
+            instance.offGround = true
+            fall_fraction = 1
+        else
+            instance.offGround = false
+            floor_impulse = self.mass * old_fall_velocity
+            instance.fallVelocity = 0
+            instance.jumpsDone = 0
+        end
+        --echo('fall_dist: '..(fall_fraction * fall_vect).."  off_ground: "..tostring(instance.offGround))
+        curr_foot = curr_foot + fall_fraction * fall_vect
+
+        local no_step_up = instance.offGround
+
+        if not instance.offGround then
+
+            instance.timeSinceLastJump = nil
+
+            local floor_gradient = 1/floor_normal.z
+            -- special case for vertical walls -- helps going up steps
+            if floor_gradient < 5 and floor_gradient > self.maxGradient then
+                no_step_up = true
+            end
+
+            -- apply force to ground
+            --gravity
+            local ground_force = vector3(0,0,self.mass * gravity)
+            ground_force = math.min(#ground_force, floor.mass * 5) * norm(ground_force)
+            floor:force(ground_force, curr_foot)
+            if floor_impulse ~= 0 then
+                --landing force
+                local ground_impulse = vector3(0,0, floor_impulse)
+                ground_impulse = math.min(#ground_impulse, floor.mass * elapsed * 100) * norm(ground_impulse)
+                floor:impulse(ground_impulse, curr_foot)
+            end
+        end
+
+        
+        local dist_try_to_move = blended_speed * elapsed
+
+        -- MOVE in a given direction
+        if dist_try_to_move > 0 then
+            local walk_dir = quat(player_ctrl.camYaw, V_DOWN)
+            local walk_vect = dist_try_to_move * (walk_dir * norm(instance.keyboardMove))
+            if dist_try_to_move > 0.00001 then
+                local walk_vect_norm = norm(walk_vect)
+                instance.bearingAim = math.deg(math.atan2(walk_vect_norm.x, walk_vect_norm.y))
+            end
+
+            local step_height = self.stepHeight
+
+            local walk_cyl_height = height - step_height
+            local walk_cyl_centre = curr_centre + vector3(0,0,step_height/2)
+            if no_step_up then
+                walk_cyl_height = height
+                walk_cyl_centre = curr_centre
+            end
+            local retries, new_walk_vect, collision_body, collision_normal, collision_pos = cast_cylinder_with_deflection(body, radius, walk_cyl_height, walk_cyl_centre, walk_vect)
+
+            if collision_body then
+                local push_force = instance.runState and self.runPushForce or self.pushForce
+                local magnitude = math.min(self.pushForce, collision_body.mass * 15) * -collision_normal
+                collision_body:force(magnitude, collision_pos)
+            end
+            --echo('first walk test:   retries: '..tostring(retries).." tried_vect:"..walk_vect.."  vect:"..new_walk_vect)
+
+            curr_foot = curr_foot + new_walk_vect
+            curr_centre = curr_foot + vector3(0,0,height/2)
+
+            
+        
+            if retries and not no_step_up then
+                -- just using this position is no good, will ghost through steps
+                -- always adding on step_height to z is no good either -- actual step may be less than this (or zero)
+                -- so we shoot a ray down to find the actual amount we have stepped up
+                local step_check_fraction = actor_cast(curr_centre+vector3(0,0,step_height/2), vector3(0,0,-step_height), radius-0.01, height-step_height, body)
+                step_check_fraction = step_check_fraction or 1 -- might not hit the ground due to rounding errors etc
+                local actual_step_height = step_height*(1-step_check_fraction)
+
+                -- if we hvae an upwards velocity, work out if we would have made the step or not
+                -- if not, set velocity to 0 so that we don't give an unnatural boost
+                local parabolic_height = instance.fallVelocity^2  / 2 / gravity
+                --echo("fail", instance.fallVelocity, parabolic_height, actual_step_height)
+                if parabolic_height > 0 and parabolic_height <  actual_step_height then
+                    instance.fallVelocity = 0
+                end
+
+                --echo('actual step height:'..actual_step_height)
+                curr_foot = curr_foot + vector3(0,0, actual_step_height)
+            end
+
+            instance.stridePos = (instance.stridePos + dist_try_to_move/blended_stride_length) % 1
+
+        else
+
+            instance.stridePos = 0.0
+
+        end
+
+        -- transitioning between moving/running/crouching states
+        local control_state_desired = vector3(instance.moving and 1 or 0, instance.runState and 1 or 0, (instance.crouchState and not instance.runState) and 1 or 0)
+        
+        local control_state_dir = control_state_desired - control_state
+        local max_dist = elapsed*4
+        if #control_state_dir > max_dist then
+            control_state_dir = control_state_dir / #control_state_dir * max_dist
+        end
+        control_state = control_state + control_state_dir
+        instance.controlState = control_state
+
+        --local falling = (clamp(-instance.fallVelocity, 1, 5) -1)/4
+
+        if instance.timeSinceLastJump then
+
+            local jump_len = gfx:getAnimationLength("jump")
+
+            if instance.timeSinceLastJump < jump_len then
+                local mask = math.min(1, instance.timeSinceLastJump / 0.2)
+                regular_movement = regular_movement * (1 - mask)
+                gfx:setAnimationMask("jump", mask)
+                gfx:setAnimationMask("landing", 0)
+                gfx:setAnimationMask("falling", 0)
+                gfx:setAnimationPos("jump", instance.timeSinceLastJump)
+                instance.fallingPos = 0
+            else
+                local fly_len = instance.timeSinceLastJump - jump_len
+                regular_movement = 0
+                --gfx:setAnimationMask("jump", instance.jumpPos)
+                --gfx:setAnimationMask("landing", 0)
+                --gfx:setAnimationPos("jump", instance.timeSinceLastJump)
+
+                gfx:setAnimationMask("jump", 1)
+                gfx:setAnimationMask("landing", 0)
+                gfx:setAnimationMask("falling", 0)
+
+                --instance.fallingPos = instance.fallingPos + elapsed
+                --gfx:setAnimationPos("falling", instance.fallingPos)
+
+            end
+                
+            
+--[[
+            if instance.jumpPos < 1 then
+                gfx:setAnimationMask("jump", instance.jumpPos)
+                gfx:setAnimationMask("landing", 0)
+                gfx:setAnimationPos("jump", 0)
+            elseif instance.jumpPos < 2 then
+                gfx:setAnimationMask("jump", 1)
+                gfx:setAnimationMask("landing", 0)
+                gfx:setAnimationPosNormalised("jump", instance.jumpPos - 1)
+            elseif instance.jumpPos < 3 then
+                gfx:setAnimationMask("jump", 1)
+                gfx:setAnimationMask("landing", 0)
+                gfx:setAnimationPosNormalised("jump", 0.99999)
+            else
+                gfx:setAnimationMask("jump", 0)
+                gfx:setAnimationMask("landing", 1)
+                gfx:setAnimationPosNormalised("landing", instance.jumpPos - 3)
+            end
+
+]]
+
+            instance.timeSinceLastJump = instance.timeSinceLastJump + elapsed
+
+        else
+            gfx:setAnimationMask("jump", 0)
+            gfx:setAnimationMask("landing", 0)
+            gfx:setAnimationMask("falling", 0)
+        end
+            
+
+        gfx:setAnimationMask("idle",        lerp3(1,0,1,0,0,0,0,0, control_state) * regular_movement)
+        gfx:setAnimationMask("walk",        lerp3(0,1,0,0,0,0,0,0, control_state) * regular_movement)
+        gfx:setAnimationMask("run",         lerp3(0,0,0,1,0,0,0,0, control_state) * regular_movement)
+        gfx:setAnimationMask("crouch",      lerp3(0,0,0,0,1,0,1,0, control_state) * regular_movement)
+        gfx:setAnimationMask("crouch_walk", lerp3(0,0,0,0,0,1,0,1, control_state) * regular_movement)
+
+        gfx:setAnimationPosNormalised("walk", instance.stridePos)
+        gfx:setAnimationPosNormalised("run", instance.stridePos)
+        gfx:setAnimationPosNormalised("crouch_walk", instance.stridePos)
+
+        -- two idle anims
+        instance.crouchIdlePos = (instance.crouchIdlePos + elapsed * instance.crouchIdleRate) % 1
+        gfx:setAnimationPosNormalised("crouch", instance.crouchIdlePos)
+        instance.idlePos = (instance.idlePos + elapsed * instance.idleRate) % 1
+        gfx:setAnimationPosNormalised("idle", instance.idlePos)
+
+        body.worldPosition = curr_foot + vector3(0,0,self.originAboveFeet)
+        local bearing_diff = instance.bearingAim - instance.bearing
+        while bearing_diff > 180 do bearing_diff = bearing_diff - 360 end
+        while bearing_diff < -180 do bearing_diff = bearing_diff + 360 end
+        bearing_diff = clamp(bearing_diff, -360*elapsed, 360*elapsed)
+        instance.bearing = (instance.bearing + bearing_diff) % 360
+        while instance.bearing > 180 do instance.bearing = instance.bearing - 360 end
+        while instance.bearing < -180 do instance.bearing = instance.bearing + 360 end
+        body.worldOrientation = quat(instance.bearing+180, V_DOWN)
+        
+        instance.speed = #(curr_foot - old_foot) / elapsed
+    end;
+
+    updateMovementState = function (self)
+        local ins = self.instance
+        ins.moving = math.abs(ins.strafeRightState - ins.strafeLeftState)>0.5 or math.abs(ins.pushState - ins.pullState)>0.5
+        if ins.moving then
+            ins.keyboardMove = (vector3(ins.strafeRightState - ins.strafeLeftState, ins.pushState - ins.pullState, 0))
+        end
+    end;
+    
+    getSpeed = function(self)
+        return self.instance.speed
+    end;
+
+    setForwards=function(self, v)
+        self.instance.pushState = v and 1 or 0
+        self:updateMovementState()
+    end;
+    setBackwards=function(self, v)
+        self.instance.pullState = v and 1 or 0
+        self:updateMovementState()
+    end;
+    setStrafeLeft=function(self, v)
+        self.instance.strafeLeftState = v and 1 or 0
+        self:updateMovementState()
+    end;
+    setStrafeRight=function(self, v)
+        self.instance.strafeRightState = v and 1 or 0
+        self:updateMovementState()
+    end;
+    setRun=function(self, v)
+        self.instance.runState = v
+    end;
+    setCrouch=function(self, v)
+        if v then
+            self.instance.crouchState = not self.instance.crouchState
+        end
+    end;
+    setJump=function(self, v)
+        if self.instance.crouchState then
+            self.instance.crouchState = false
+            if not self.instance.runState then
+                return
+            end
+        end
+        if v then
+            self.instance.jumpHappened = true
+        end
+    end;
+
+}
+
+include "robot_heavy/init.lua"
+include "robot_med/init.lua"
+include "robot_scout/init.lua"
+

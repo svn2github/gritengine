@@ -1,0 +1,169 @@
+// (c) David Cunningham 2009, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
+
+#define SHADOW_FACTOR 5000 // max distance from 0,0,0 to any point (in direction of sun)
+
+#define NO_OPTIMISE 0
+
+#define PI 3.1415926535897932385f
+
+// uses a variable (as far as the optimiser is concerned) without actually using it
+float4 zero(float4 var) { return min(float4(0,0,0,0),max(float4(0,0,0,0),var)); }
+float3 zero(float3 var) { return min(float3(0,0,0),max(float3(0,0,0),var)); }
+float2 zero(float2 var) { return min(float2(0,0),max(float2(0,0),var)); }
+float  zero(float var)  { return min(0,max(0,var)); }
+float4 one(float4 var) { return min(float4(1,1,1,1),max(float4(1,1,1,1),var)); }
+float3 one(float3 var) { return min(float3(1,1,1),max(float3(1,1,1),var)); }
+float2 one(float2 var) { return min(float2(1,1),max(float2(1,1),var)); }
+float  one(float var)  { return min(1,max(1,var)); }
+
+gp4vp gp4gp gp4fp glslg glslv glslf arbvp1 arbfp1 vp40 fp40 vp30 fp30 vp20 fp20 float d3d9 () { return -1; }
+
+hlslv hlslf gs_4_0 vs_4_0 ps_4_0 vs_3_0 ps_3_0 vs_2_x ps_2_x vs_2_0 ps_2_0 vs_1_1 ps_1_3 ps_1_2 ps_1_1 float d3d9 () { return 1; }
+
+float process_face (float render_target_flipping, float face) { return -render_target_flipping * d3d9() * sign(face); }
+
+#if NO_TEXTURE_LOOKUPS==1
+float4 FAKEtex2D(sampler2D tex, float2 uv, float2 dx, float2 dy) { float r = uv.x + uv.y + dx.x + dx.y + dy.x + dy.y; return float4(r,r,r,r); }
+#else
+float4 FAKEtex2D(sampler2D tex, float2 uv, float2 dx, float2 dy) { return tex2D(tex, uv, dx, dy); }
+#endif
+/*
+float4 FAKEtex2D(sampler2D tex, float2 uv, float2 dx, float2 dy) {
+        float4 r = float4(0,0,0,0);
+        float total = 0;
+        r += tex2D(tex, float2( uv.x, uv.y), dx, dy); total++;
+        if (uv.x == uv.y) {
+        r += tex2D(tex, float2(-uv.x, uv.y), dx, dy); total++;
+        r += tex2D(tex, float2( uv.x,-uv.y), dx, dy); total++;
+        r += tex2D(tex, float2(-uv.x,-uv.y), dx, dy); total++;
+        r += tex2D(tex, 2*float2( uv.x, uv.y), dx, dy); total++;
+        r += tex2D(tex, 2*float2(-uv.x, uv.y), dx, dy); total++;
+        r += tex2D(tex, 2*float2( uv.x,-uv.y), dx, dy); total++;
+        r += tex2D(tex, 2*float2(-uv.x,-uv.y), dx, dy); total++;
+        r += tex2D(tex, 3*float2( uv.x, uv.y), dx, dy); total++;
+        r += tex2D(tex, 3*float2(-uv.x, uv.y), dx, dy); total++;
+        r += tex2D(tex, 3*float2( uv.x,-uv.y), dx, dy); total++;
+        r += tex2D(tex, 3*float2(-uv.x,-uv.y), dx, dy); total++;
+        }
+        return r/total;
+}
+*/
+
+float4 sample2D(float4 col, float2 coords) { return col; }
+float4 sample2D(sampler2D tex, float2 coords) { return tex2D(tex, coords); }
+float4 sample2D(float4 col, float2 coords, float2 ddx, float2 ddy) { return col; }
+float4 sample2D(sampler2D tex, float2 coords, float2 ddx, float2 ddy) { return tex2D(tex, coords, ddx, ddy); }
+
+
+
+#if USE_STIPPLE_TEXTURE==1
+bool stipple (int x, int y, float v, sampler2D tex)
+{
+    v *= 16.0; // 16 possibilities
+    float2 uv = float2(x,y);
+    // uv points to top left square now
+    uv.x += 8.0 * (int(v)%4);
+    uv.y += 8.0 * int(v/4);
+    return FAKEtex2D(tex,uv/32.0,float2(0.0,0.0),float2(0.0,0.0)).r < 0.5;
+}
+#endif
+
+float3 compute_z(float2 v) { return float3(v, sqrt(1 - dot(v,v))); }
+
+// make a gamma-encoded image look normal again
+float3 gamma_decode (float3 x) { return pow(x,2.2); }
+float gamma_decode (float x) { return pow(x,2.2); }
+
+// make dark colours brighter
+float3 gamma_encode (float3 x) { return pow(x,1.0/2.2); }
+float gamma_encode (float x) { return pow(x,1.0/2.2); }
+
+float greyscale (float3 col) { return (col.r+col.g+col.b)/3; }
+
+float3 direction_to_colour (float3 dir)
+{
+        return dir/float3(-2,2,2) + float3(.5,.5,.5);
+}
+
+float fog_weakness (float fog_param, float cam_dist)
+{
+        float clarity = fog_param * cam_dist;
+        clarity = clamp(exp(-clarity * clarity),0.0,1.0);
+        return clarity;
+}
+
+void transform_vertex_bones (float4 bone_weights, float3x4 bone_matrixes[70], float4 bone, float3 pos_os, float3 normal_os, float3 tangent_os,
+                             out float3 pos_ws, out float3 normal_ws, out float3 tangent_ws)
+{
+        pos_ws = float3(0,0,0);
+        normal_ws = float3(0,0,0);
+        tangent_ws = float3(0,0,0);
+        float total = 0;
+        for (int i=0 ; i<BLENDED_BONES ; ++i) {
+                pos_ws += bone_weights[i] * mul(bone_matrixes[bone[i]],float4(pos_os,1));
+                normal_ws += bone_weights[i] * mul(bone_matrixes[bone[i]],float4(normal_os,0));
+                tangent_ws += bone_weights[i] * mul(bone_matrixes[bone[i]],float4(tangent_os,0));
+                total += bone_weights[i];
+        }
+        pos_ws /= total;
+        //debug output
+        //ambient = ambient * 0.00001 + float4(bone_weights.xyz,1);
+        //ambient = ambient * 0.00001 + float4(bone.xy,0,1);
+}
+
+void transform_vertex (float4x4 world, float3 pos_os, float3 normal_os, float3 tangent_os,
+                       out float3 pos_ws, out float3 normal_ws, out float3 tangent_ws)
+{
+        pos_ws = mul(world,float4(pos_os,1)).xyz;
+        normal_ws = mul(world,float4(normal_os,0)).xyz;
+        tangent_ws = mul(world,float4(tangent_os,0)).xyz;
+}
+
+float3 ground_overlay_offset (float3 vert_pos, float3 vert_normal, float3 cam_pos)
+{
+        #if USE_OVERLAY_OFFSET == 1
+        float cam_dist = dot(cam_pos - vert_pos, vert_normal);
+        float offset = clamp(cam_dist / 400 * 0.1, 0.001, 0.1);
+        return offset * vert_normal;
+        #else
+        return float3(0,0,0);
+        #endif
+}
+
+float strength (float p, float n) 
+{
+    return pow(max(0.00000001, p), n);
+}
+
+// this one requires 0 <= sat <= 1
+float3 desaturate (float3 colour, float sat)
+{
+    float grey = (colour.r + colour.g + colour.b)/3;
+    return lerp(float3(grey,grey,grey), colour, sat);
+}
+
+// this one can handle sat > 1
+float3 set_saturation (float3 colour, float sat)
+{
+    float grey = (colour.r + colour.g + colour.b)/3;
+    // avoid dropping below zero for colours that are already quite saturated
+    float the_min = min(min(colour.r, colour.g), colour.b);
+    float saturation = min(grey/(grey - the_min), sat);
+    return lerp(float3(grey,grey,grey), colour, saturation);
+}
+
+#define LUT_SZ 32
+
+float3 tone_map (sampler3D lut, float global_saturation, float3 c)
+{
+    c = c/(1+c);
+
+    c = gamma_encode(c);
+
+    c = tex3D(lut, c * float3(LUT_SZ-1,LUT_SZ-1,LUT_SZ-1)/LUT_SZ + float3(0.5,0.5,0.5)/LUT_SZ).rgb;
+
+    c = desaturate(c, global_saturation);
+
+    return c;
+}
+

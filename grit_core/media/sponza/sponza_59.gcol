@@ -1,0 +1,84 @@
+TCOL1.0
+
+attributes {
+    static;
+}
+
+compound {
+}
+trimesh {
+    vertexes {
+        0.225872 -0.220927 0.262437;
+        0.225872 0.144483 0.262437;
+        0.225873 0.144483 -0.575018;
+        0.225873 -0.220927 -0.575018;
+        0.555214 0.220928 0.533947;
+        0.596284 0.220928 0.575016;
+        0.596284 0.220928 -0.575018;
+        0.555213 0.220928 -0.575018;
+        0.596284 -0.220927 0.575016;
+        0.596284 -0.220927 -0.575018;
+        0.492505 0.144483 0.471236;
+        0.492504 0.144483 -0.575018;
+        -0.0186567 0.144483 0.262437;
+        -0.0186567 0.144483 0.471236;
+        -0.0186567 0.220928 0.533945;
+        -0.0186567 -0.220927 0.262437;
+        -0.0186567 0.220928 0.575016;
+        -0.0186567 -0.220927 0.575016;
+        -0.263187 0.144483 -0.575018;
+        -0.263187 0.144483 0.262437;
+        -0.263187 -0.220927 0.262437;
+        -0.263187 -0.220927 -0.575018;
+        -0.596281 0.220928 -0.575018;
+        -0.596285 0.220928 0.575016;
+        -0.555212 0.220928 0.533947;
+        -0.555212 0.220928 -0.575018;
+        -0.596285 -0.220927 0.575016;
+        -0.596281 -0.220927 -0.575018;
+        -0.492503 0.144483 -0.575018;
+        -0.492503 0.144483 0.471236;
+    }
+    faces {
+        2 3 0 "/common/pmat/Stone";
+        0 1 2 "/common/pmat/Stone";
+        7 4 5 "/common/pmat/Stone";
+        5 6 7 "/common/pmat/Stone";
+        6 5 8 "/common/pmat/Stone";
+        8 9 6 "/common/pmat/Stone";
+        1 10 11 "/common/pmat/Stone";
+        11 2 1 "/common/pmat/Stone";
+        11 10 4 "/common/pmat/Stone";
+        4 7 11 "/common/pmat/Stone";
+        10 1 12 "/common/pmat/Stone";
+        12 13 10 "/common/pmat/Stone";
+        10 13 14 "/common/pmat/Stone";
+        14 4 10 "/common/pmat/Stone";
+        0 15 12 "/common/pmat/Stone";
+        12 1 0 "/common/pmat/Stone";
+        16 5 4 "/common/pmat/Stone";
+        4 14 16 "/common/pmat/Stone";
+        5 16 17 "/common/pmat/Stone";
+        17 8 5 "/common/pmat/Stone";
+        18 19 20 "/common/pmat/Stone";
+        20 21 18 "/common/pmat/Stone";
+        22 23 24 "/common/pmat/Stone";
+        24 25 22 "/common/pmat/Stone";
+        23 22 27 "/common/pmat/Stone";
+        27 26 23 "/common/pmat/Stone";
+        29 19 18 "/common/pmat/Stone";
+        18 28 29 "/common/pmat/Stone";
+        28 25 24 "/common/pmat/Stone";
+        24 29 28 "/common/pmat/Stone";
+        12 19 29 "/common/pmat/Stone";
+        29 13 12 "/common/pmat/Stone";
+        24 14 13 "/common/pmat/Stone";
+        13 29 24 "/common/pmat/Stone";
+        19 12 15 "/common/pmat/Stone";
+        15 20 19 "/common/pmat/Stone";
+        23 16 14 "/common/pmat/Stone";
+        14 24 23 "/common/pmat/Stone";
+        23 26 17 "/common/pmat/Stone";
+        17 16 23 "/common/pmat/Stone";
+    }
+}

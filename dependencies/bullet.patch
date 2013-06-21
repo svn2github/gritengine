@@ -1,0 +1,162 @@
+Index: src/BulletDynamics/ConstraintSolver/btTypedConstraint.h
+===================================================================
+--- src/BulletDynamics/ConstraintSolver/btTypedConstraint.h	(revision 2099)
++++ src/BulletDynamics/ConstraintSolver/btTypedConstraint.h	(working copy)
+@@ -151,7 +151,8 @@
+ 	}
+ 
+ 	///internal method used by the constraint solver, don't use them directly
+-	virtual	void	solveConstraintObsolete(btRigidBody& bodyA,btRigidBody& bodyB,btScalar	timeStep) {};
++	virtual	void	solveConstraintObsolete(btRigidBody& bodyA,btRigidBody& bodyB,btScalar	timeStep)
++    { (void)bodyA; (void)bodyB; (void) timeStep; }
+ 
+ 	
+ 	const btRigidBody& getRigidBodyA() const
+Index: src/BulletDynamics/Dynamics/btDiscreteDynamicsWorld.cpp
+===================================================================
+--- src/BulletDynamics/Dynamics/btDiscreteDynamicsWorld.cpp	(revision 2099)
++++ src/BulletDynamics/Dynamics/btDiscreteDynamicsWorld.cpp	(working copy)
+@@ -842,7 +842,7 @@
+ 			if (body->getCcdSquareMotionThreshold() && body->getCcdSquareMotionThreshold() < squareMotion)
+ 			{
+ 				BT_PROFILE("CCD motion clamping");
+-				if (body->getCollisionShape()->isConvex())
++				if (true || body->getCollisionShape()->isConvex())
+ 				{
+ 					gNumClampedCcdMotions++;
+ 					
+Index: src/BulletCollision/Gimpact/btGImpactCollisionAlgorithm.cpp
+===================================================================
+--- src/BulletCollision/Gimpact/btGImpactCollisionAlgorithm.cpp	(revision 2099)
++++ src/BulletCollision/Gimpact/btGImpactCollisionAlgorithm.cpp	(working copy)
+@@ -701,12 +701,16 @@
+ 	int i = shape1->getNumChildShapes();
+ 	while(i--)
+ 	{
++		assert(i >= 0);
++		assert(i < shape1->getNumChildShapes());
+ 
+ 		btCollisionShape * colshape1 = shape1->getChildShape(i);
+ 		btTransform childtrans1 = orgtrans1*shape1->getChildTransform(i);
+ 
+ 		body1->setWorldTransform(childtrans1);
+ 
++		(swapped ? m_triface0 : m_triface1) = i;
++
+ 		//collide child shape
+ 		gimpact_vs_shape(body0, body1,
+ 					  shape0,colshape1,swapped);
+@@ -838,16 +842,31 @@
+ }
+ 
+ 
++template<class T> static void swap(T &a, T &b) { T tmp = a; a = b; b = tmp; }
+ 
+ void btGImpactCollisionAlgorithm::processCollision (btCollisionObject* body0,btCollisionObject* body1,const btDispatcherInfo& dispatchInfo,btManifoldResult* resultOut)
+ {
+     clearCache();
+ 
+     m_resultOut = resultOut;
++	m_triface0 = m_resultOut->m_index0;
++	m_part0 = m_resultOut->m_partId0;
++	m_triface1 = m_resultOut->m_index1;
++	m_part1 = m_resultOut->m_partId1;
+ 	m_dispatchInfo = &dispatchInfo;
+     btGImpactShapeInterface * gimpactshape0;
+     btGImpactShapeInterface * gimpactshape1;
+ 
++    // if the gimpact shape is nested in a compound shape, we can be given a swapped body0 and body1
++    // so ensure this is not the case
++    if (m_resultOut->getBody0Internal() == body1)
++    {
++        swap(body0, body1);
++        swap(m_triface0, m_triface1);
++        swap(m_part0, m_part1);
++    }
++
++
+ 	if (body0->getCollisionShape()->getShapeType()==GIMPACT_SHAPE_PROXYTYPE)
+ 	{
+ 		gimpactshape0 = static_cast<btGImpactShapeInterface *>(body0->getCollisionShape());
+@@ -868,6 +887,10 @@
+ 	{
+ 		gimpactshape1 = static_cast<btGImpactShapeInterface *>(body1->getCollisionShape());
+ 
++        // hack: swap the original values, they get swapped back again later
++        swap(m_triface0, m_triface1);
++        swap(m_part0, m_part1);
++
+ 		gimpact_vs_shape(body1,body0,gimpactshape1,body0->getCollisionShape(),true);
+ 	}
+ }
+Index: src/BulletCollision/CollisionDispatch/btManifoldResult.h
+===================================================================
+--- src/BulletCollision/CollisionDispatch/btManifoldResult.h	(revision 2099)
++++ src/BulletCollision/CollisionDispatch/btManifoldResult.h	(working copy)
+@@ -44,14 +44,14 @@
+ 
+ 	btCollisionObject* m_body0;
+ 	btCollisionObject* m_body1;
++
++public:
+ 	int	m_partId0;
+ 	int m_partId1;
+ 	int m_index0;
+ 	int m_index1;
+ 	
+ 
+-public:
+-
+ 	btManifoldResult()
+ #ifdef DEBUG_PART_INDEX
+ 		:
+Index: src/BulletCollision/CollisionDispatch/btInternalEdgeUtility.cpp
+===================================================================
+--- src/BulletCollision/CollisionDispatch/btInternalEdgeUtility.cpp	(revision 2099)
++++ src/BulletCollision/CollisionDispatch/btInternalEdgeUtility.cpp	(working copy)
+@@ -2,6 +2,7 @@
+ 
+ #include "BulletCollision/CollisionShapes/btBvhTriangleMeshShape.h"
+ #include "BulletCollision/CollisionShapes/btTriangleShape.h"
++#include "BulletCollision/CollisionShapes/btCompoundShape.h"
+ #include "BulletCollision/CollisionDispatch/btCollisionObject.h"
+ #include "BulletCollision/NarrowPhaseCollision/btManifoldPoint.h"
+ #include "LinearMath/btIDebugDraw.h"
+@@ -456,7 +457,24 @@
+ 	if (colObj0->getCollisionShape()->getShapeType() != TRIANGLE_SHAPE_PROXYTYPE)
+ 		return;
+ 
+-	btBvhTriangleMeshShape* trimesh = (btBvhTriangleMeshShape*)colObj0->getRootCollisionShape();
++	const btCollisionShape *root = colObj0->getRootCollisionShape();
++	if (root->getShapeType() == COMPOUND_SHAPE_PROXYTYPE) {
++		const btCompoundShape *compound = (const btCompoundShape*) root;
++		// hunt for a trimesh in the compound
++		int found = 0;
++		for (int i=0 ; i<compound->getNumChildShapes() ; ++i) {
++			const btCollisionShape *s = compound->getChildShape(i);
++			if (s->getShapeType() == TRIANGLE_MESH_SHAPE_PROXYTYPE) {
++				found++;
++				root = s;
++			}
++		}
++		assert(found==1);
++	}
++
++    assert(root->getShapeType() == TRIANGLE_MESH_SHAPE_PROXYTYPE);
++
++	btBvhTriangleMeshShape* trimesh = (btBvhTriangleMeshShape*)root;
+ 	btTriangleInfoMap* triangleInfoMapPtr = (btTriangleInfoMap*) trimesh->getTriangleInfoMap();
+ 	if (!triangleInfoMapPtr)
+ 		return;
+Index: src/LinearMath/btHashMap.h
+===================================================================
+--- src/LinearMath/btHashMap.h	(revision 2099)
++++ src/LinearMath/btHashMap.h	(working copy)
+@@ -213,6 +213,7 @@
+ 
+ 	void	growTables(const Key& key)
+ 	{
++        (void) key;
+ 		int newCapacity = m_valueArray.capacity();
+ 
+ 		if (m_hashTable.size() < newCapacity)

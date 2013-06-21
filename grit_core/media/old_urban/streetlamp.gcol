@@ -1,0 +1,29 @@
+TCOL1.0
+
+attributes {
+    static;
+}
+
+compound {
+    box {
+        material "/common/pmat/Stone";
+        margin 0.04;
+        centre -0.00306529 0.00206219 0.179034;
+        dimensions 0.35 0.35 0.358068;
+        orientation 1.0 0.0 0.0 0.0;
+    }
+    cylinder {
+        material "/common/pmat/Stone";
+        margin 0.033897;
+        centre 0.0 0.0 3.23925;
+        dimensions 0.135588 0.135588 5.95718;
+        orientation 1.0 0.0 0.0 0.0;
+    }
+    box {
+        material "/common/pmat/Stone";
+        margin 0.0318368;
+        centre 0.00122598 -1.62349 7.91218;
+        dimensions 0.25907 0.56614 0.127347;
+        orientation 0.996195 -0.0871557 0.0 0.0;
+    }
+}
