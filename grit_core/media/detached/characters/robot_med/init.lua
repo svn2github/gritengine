@@ -20,9 +20,7 @@ class "../robot_med" (DetachedCharacterClass) {
 	-- distance travelled in one repeating period of gait
 	walkStrideLength = 2.5;
 	runStrideLength = 6.5;
-	crouchStrideLength = 2.3;
-
-	strafeStrideLength = 1;
+	crouchStrideLength = 2.5;
 	
 	-- animation playback rate factors.
 	walkSpeedFactor = 1.0;

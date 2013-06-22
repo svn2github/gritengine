@@ -19,11 +19,9 @@ class "../robot_scout" (DetachedCharacterClass) {
 	colMesh = "robot_scout/robot_scout.gcol";
 	
 	-- distance travelled in one repeating period of gait
-	walkStrideLength = 3.0;
-	runStrideLength = 6;
-	crouchStrideLength = 3;
-
-	strafeStrideLength = 1;
+	walkStrideLength = 2.5;
+	runStrideLength = 6.5;
+	crouchStrideLength = 2.5;
 	
 	-- animation playback rate factors.
 	walkSpeedFactor = 1.0;
@@ -45,7 +43,7 @@ class "../robot_scout" (DetachedCharacterClass) {
 	
     maxGradient = 1.3;
 
-    originAboveFeet = 0.89;
-    placementZOffset = 0.89;
+    originAboveFeet = 1.112;
+    placementZOffset = 1.112;
 }
 

@@ -88,6 +88,7 @@ DetachedCharacterClass = extends (ColClass) {
         instance.bearing = self.bearing or 0
         instance.bearingAim = self.bearing or 0
         instance.timeSinceLastJump = 0
+        instance.timeSinceLastLand = 0
         
         instance.controlState = vector3(0,0,0) -- still/move, walk/run, stand/crouch
         instance.stridePos = 0 -- between 0 and 1, where 0.25 is left foot extended, and 0.75 is right foot extended
@@ -187,7 +188,10 @@ DetachedCharacterClass = extends (ColClass) {
 
         if not instance.offGround then
 
-            instance.timeSinceLastJump = nil
+            if instance.timeSinceLastJump ~= nil then
+                instance.timeSinceLastJump = nil
+                instance.timeSinceLastLand = 0
+            end
 
             local floor_gradient = 1/floor_normal.z
             -- special case for vertical walls -- helps going up steps
@@ -281,7 +285,7 @@ DetachedCharacterClass = extends (ColClass) {
         control_state = control_state + control_state_dir
         instance.controlState = control_state
 
-        --local falling = (clamp(-instance.fallVelocity, 1, 5) -1)/4
+        local falling = (clamp(-instance.fallVelocity, 1, 5) -1)/4
 
         if instance.timeSinceLastJump then
 
@@ -298,10 +302,6 @@ DetachedCharacterClass = extends (ColClass) {
             else
                 local fly_len = instance.timeSinceLastJump - jump_len
                 regular_movement = 0
-                --gfx:setAnimationMask("jump", instance.jumpPos)
-                --gfx:setAnimationMask("landing", 0)
-                --gfx:setAnimationPos("jump", instance.timeSinceLastJump)
-
                 gfx:setAnimationMask("jump", 1)
                 gfx:setAnimationMask("landing", 0)
                 gfx:setAnimationMask("falling", 0)
@@ -311,29 +311,26 @@ DetachedCharacterClass = extends (ColClass) {
 
             end
                 
-            
+            instance.timeSinceLastJump = instance.timeSinceLastJump + elapsed
+
+        elseif instance.timeSinceLastLand ~= nil then
+
 --[[
-            if instance.jumpPos < 1 then
-                gfx:setAnimationMask("jump", instance.jumpPos)
-                gfx:setAnimationMask("landing", 0)
-                gfx:setAnimationPos("jump", 0)
-            elseif instance.jumpPos < 2 then
-                gfx:setAnimationMask("jump", 1)
-                gfx:setAnimationMask("landing", 0)
-                gfx:setAnimationPosNormalised("jump", instance.jumpPos - 1)
-            elseif instance.jumpPos < 3 then
-                gfx:setAnimationMask("jump", 1)
-                gfx:setAnimationMask("landing", 0)
-                gfx:setAnimationPosNormalised("jump", 0.99999)
-            else
+            local land_len = gfx:getAnimationLength("land")
+
+            if instance.timeSinceLastLand < jump_len then
                 gfx:setAnimationMask("jump", 0)
                 gfx:setAnimationMask("landing", 1)
-                gfx:setAnimationPosNormalised("landing", instance.jumpPos - 3)
+                gfx:setAnimationMask("falling", 0)
+                instance.timeSinceLastLand = instance.timeSinceLastLand + elapsed
+            else
+                instance.timeSinceLastLand = nil
             end
-
+            
 ]]
-
-            instance.timeSinceLastJump = instance.timeSinceLastJump + elapsed
+            gfx:setAnimationMask("jump", 0)
+            gfx:setAnimationMask("landing", 0)
+            gfx:setAnimationMask("falling", 0)
 
         else
             gfx:setAnimationMask("jump", 0)

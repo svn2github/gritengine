@@ -26,11 +26,9 @@ class "../robot_heavy" (DetachedCharacterClass) {
 	colMesh = "robot_heavy/robot_heavy.gcol";
 	
 	-- distance travelled in one repeating period of gait
-	walkStrideLength = 2.25;
-	runStrideLength = 5.5;
-	crouchStrideLength = 2;
-
-	strafeStrideLength = 1;
+	walkStrideLength = 2.5;
+	runStrideLength = 6.5;
+	crouchStrideLength = 2.5;
 	
 	-- animation playback rate factors.
 	walkSpeedFactor = 1;
@@ -52,7 +50,7 @@ class "../robot_heavy" (DetachedCharacterClass) {
 	
     maxGradient = 1.3;
 
-    originAboveFeet = 0.89;
-    placementZOffset = 0.89;
+    originAboveFeet = 1.112;
+    placementZOffset = 1.112;
 }
 
