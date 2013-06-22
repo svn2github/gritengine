@@ -1,7 +1,7 @@
 -- (c) David Cunningham 2013, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
 hud_class "Speedo" {
-	metricUnits = false;
+	--metricUnits = false; --uses user_cfg value for convinience
     init = function (self)
 		self.alpha = 0
         self.needsFrameCallbacks = true
@@ -29,7 +29,7 @@ hud_class "Speedo" {
 			self.labels.contents[2].text.text = speed_amount
 		else
 			local speed_units
-			if self.metricUnits then
+			if user_cfg.metricUnits then
 			   speed_amount = speed_amount*60*60/1000
 			   speed_units="KPH"
 			else

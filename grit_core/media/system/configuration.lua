@@ -52,7 +52,7 @@ local user_cfg_default = {
     anaglyphLeftMask = {1,0,0};
     anaglyphRightMask = {0,1,1};
     lowPowerMode = false;
-	useMetricSpeedo = false;
+	metricUnits = false;
     audioMasterVolume = 1;
     vehicleCameraTrack = true;
 	topDownCam = false;
@@ -97,7 +97,7 @@ local user_cfg_doc = {
     anaglyphLeftMask = "todo";
     anaglyphRightMask = "todo";
     lowPowerMode = "Reduce FPS and physics accuracy";
-	useMetricSpeedo = "Use the km/h instead of mph for speedometer units";
+	metricUnits = "Use the km/h units instead of mph units for HUD";
     audioMasterVolume = "Master audio volume";
     vehicleCameraTrack = "Camera automatically follows vehicles";
     topDownCam = "Whether or not to use top down camera style"
@@ -142,7 +142,7 @@ local user_cfg_spec = {
     anaglyphLeftMask = { "table", 3, {"range", 0, 1}, {"range", 0, 1} };
     anaglyphRightMask =  { "table", 3, {"range", 0, 1}, {"range", 0, 1} };
     lowPowerMode = { "one of", false, true };
-	useMetricSpeedo = { "one of", false, true };
+	metricUnits = { "one of", false, true };
     audioMasterVolume =  { "range", 0, 1 }; 
 	vehicleCameraTrack = { "one of", false, true };
 	topDownCam = { "one of", false, true };
@@ -651,8 +651,8 @@ local function commit(c, p, flush, partial)
                     physics_option("STEP_SIZE", 0.005)
                     physics_option("SOLVER_ITERATIONS", 15)
                 end
-			elseif k == "useMetricSpeedo" then
-					player_ctrl.metricUnits = v
+            elseif k == "metricUnits" then
+                --
             elseif k == "audioMasterVolume" then
                 audio_option("MASTER_VOLUME",v)
             elseif k == "vehicleCameraTrack" then
