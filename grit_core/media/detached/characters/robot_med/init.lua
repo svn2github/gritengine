@@ -44,7 +44,7 @@ class "../robot_med" (DetachedCharacterClass) {
 	
     maxGradient = 1.3;
 
-    originAboveFeet = 0.89;
-    placementZOffset = 0.89;
+    originAboveFeet = 1.112;
+    placementZOffset = 1.112;
 }
 
