@@ -366,7 +366,7 @@ DetachedCharacterClass = extends (ColClass) {
         instance.bearing = (instance.bearing + bearing_diff) % 360
         while instance.bearing > 180 do instance.bearing = instance.bearing - 360 end
         while instance.bearing < -180 do instance.bearing = instance.bearing + 360 end
-        body.worldOrientation = quat(instance.bearing+180, V_DOWN)
+        body.worldOrientation = quat(instance.bearing, V_DOWN)
         
         instance.speed = #(curr_foot - old_foot) / elapsed
     end;
