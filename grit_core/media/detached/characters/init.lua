@@ -6,6 +6,7 @@
     *   control while airborne more like projectile
     *   getting stuck on some stairways
     *   second jump only at top of first jump
+    *   don't push the thing you're standing on (currently possible if it is a concave shape)
 ]]
 
 local function actor_cast (pos, ray, radius, height, body)
