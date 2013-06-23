@@ -5,13 +5,4 @@
 ---- Watermark logo ----
 ------------------------
 
-hud_class "watermark" {
- init = function (self)
-        self.needsFrameCallbacks = false
-        self.texture = "textures/logo_detached_prealpha.png"
-    end;
-frameCallback = function (self, elapsed)
-    end;
-}
-
-watermark = gfx_hud_object_add("watermark", {parent=hud_top_left, position=vector2(128,-32)})
+watermark = gfx_hud_object_add("/common/hud/Rect", {parent=hud_top_left, position=vector2(128,-32), texture="textures/logo_detached_prealpha.png"})
