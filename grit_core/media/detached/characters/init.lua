@@ -1,5 +1,13 @@
 -- (c) David Cunningham 2009, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
+--[[ TODO:
+    *   ground moves up under actor, actor moves up
+    *   ground move sideways under actor, actor moves accordingly (difference between two speeds must not exceed e.g. walking pace)
+    *   control while airborne more like projectile
+    *   getting stuck on some stairways
+    *   second jump only at top of first jump
+]]
+
 local function actor_cast (pos, ray, radius, height, body)
         --return physics_sweep_sphere(radius, pos, ray, true, 0, body)
         return physics_sweep_cylinder(radius, height, quat(1,0,0,0), pos, ray, true, 0, body)
@@ -87,8 +95,8 @@ DetachedCharacterClass = extends (ColClass) {
         instance.speed = 0
         instance.bearing = self.bearing or 0
         instance.bearingAim = self.bearing or 0
-        instance.timeSinceLastJump = 0
-        instance.timeSinceLastLand = 0
+        instance.timeSinceLastJump = nil
+        instance.timeSinceLastLand = nil
         
         instance.controlState = vector3(0,0,0) -- still/move, walk/run, stand/crouch
         instance.stridePos = 0 -- between 0 and 1, where 0.25 is left foot extended, and 0.75 is right foot extended
@@ -286,6 +294,8 @@ DetachedCharacterClass = extends (ColClass) {
         instance.controlState = control_state
 
         local falling = (clamp(-instance.fallVelocity, 1, 5) -1)/4
+        gfx:setAnimationMask("falling", falling)
+        regular_movement = regular_movement * (1-falling)
 
         if instance.timeSinceLastJump then
 
@@ -294,9 +304,8 @@ DetachedCharacterClass = extends (ColClass) {
             if instance.timeSinceLastJump < jump_len then
                 local mask = math.min(1, instance.timeSinceLastJump / 0.2)
                 regular_movement = regular_movement * (1 - mask)
-                gfx:setAnimationMask("jump", mask)
+                gfx:setAnimationMask("jump", mask*(1-falling))
                 gfx:setAnimationMask("landing", 0)
-                gfx:setAnimationMask("falling", 0)
                 gfx:setAnimationPos("jump", instance.timeSinceLastJump)
                 instance.fallingPos = 0
             else
@@ -304,10 +313,7 @@ DetachedCharacterClass = extends (ColClass) {
                 regular_movement = 0
                 gfx:setAnimationMask("jump", 1)
                 gfx:setAnimationMask("landing", 0)
-                gfx:setAnimationMask("falling", 0)
 
-                --instance.fallingPos = instance.fallingPos + elapsed
-                --gfx:setAnimationPos("falling", instance.fallingPos)
 
             end
                 
@@ -315,28 +321,27 @@ DetachedCharacterClass = extends (ColClass) {
 
         elseif instance.timeSinceLastLand ~= nil then
 
---[[
-            local land_len = gfx:getAnimationLength("land")
+            local landing_len = gfx:getAnimationLength("landing")
 
-            if instance.timeSinceLastLand < jump_len then
-                gfx:setAnimationMask("jump", 0)
-                gfx:setAnimationMask("landing", 1)
-                gfx:setAnimationMask("falling", 0)
-                instance.timeSinceLastLand = instance.timeSinceLastLand + elapsed
-            else
+            local mask = math.min(1, (landing_len - instance.timeSinceLastLand) / 0.2)
+
+            regular_movement = regular_movement * (1 - mask)
+
+            gfx:setAnimationMask("jump", 0)
+            gfx:setAnimationMask("landing", mask*(1-falling))
+            gfx:setAnimationPos("landing", instance.timeSinceLastLand)
+        
+            instance.timeSinceLastLand = instance.timeSinceLastLand + elapsed
+
+            if instance.timeSinceLastLand >= landing_len then
                 instance.timeSinceLastLand = nil
             end
-            
-]]
-            gfx:setAnimationMask("jump", 0)
-            gfx:setAnimationMask("landing", 0)
-            gfx:setAnimationMask("falling", 0)
-
         else
             gfx:setAnimationMask("jump", 0)
             gfx:setAnimationMask("landing", 0)
-            gfx:setAnimationMask("falling", 0)
         end
+
+
             
 
         gfx:setAnimationMask("idle",        lerp3(1,0,1,0,0,0,0,0, control_state) * regular_movement)
@@ -354,6 +359,10 @@ DetachedCharacterClass = extends (ColClass) {
         gfx:setAnimationPosNormalised("crouch", instance.crouchIdlePos)
         instance.idlePos = (instance.idlePos + elapsed * instance.idleRate) % 1
         gfx:setAnimationPosNormalised("idle", instance.idlePos)
+
+        -- falling is a lot like an idle anim
+        instance.fallingPos = instance.fallingPos + elapsed
+        gfx:setAnimationPos("falling", instance.fallingPos)
 
         body.worldPosition = curr_foot + vector3(0,0,self.originAboveFeet)
         local bearing_diff = instance.bearingAim - instance.bearing
