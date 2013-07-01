@@ -4,6 +4,7 @@
 material "rocket_launcher" { 
 	filterMip = "NONE",filterMag="NONE";
 	shadowBias = 0.1;
+	diffuseMap="../../textures/rocket_launcher.tga";
 }
 
 class "Rocket" (BaseClass) {
