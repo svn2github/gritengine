@@ -1,12 +1,9 @@
 -- (c) David Cunningham 2009, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
 --[[ TODO:
-    *   ground moves up under actor, actor moves up
     *   ground move sideways under actor, actor moves accordingly (difference between two speeds must not exceed e.g. walking pace)
     *   control while airborne more like projectile
     *   getting stuck on some stairways
-    *   second jump only at top of first jump
-    *   don't push the thing you're standing on (currently possible if it is a concave shape)
 ]]
 
 local function actor_cast (pos, ray, radius, height, body)
@@ -91,7 +88,7 @@ DetachedCharacterClass = extends (ColClass) {
         instance.jumpHappened = false
         instance.jumpsDone = 0
         instance.keyboardMove = V_ZERO
-        instance.offGround = false
+        instance.groundBody = nil
         instance.fallVelocity = 0
         instance.speed = 0
         instance.bearing = self.bearing or 0
@@ -153,18 +150,21 @@ DetachedCharacterClass = extends (ColClass) {
         local curr_foot = body.worldPosition - vector3(0,0,self.originAboveFeet)
         local old_foot = curr_foot
         local half_height = height/2
-        local curr_centre = curr_foot + vector3(0,0,half_height)
 
         local radius = self.radius
 
         
         if instance.jumpHappened then
-            if not instance.offGround then
+            if instance.groundBody ~= nil then
                 instance.timeSinceLastJump = 0
             end
             if instance.jumpsDone < self.jumpsAllowed then
-                instance.jumpsDone = instance.jumpsDone + 1
-                instance.fallVelocity = instance.fallVelocity + self.jumpVelocity
+                if math.abs(instance.fallVelocity) > 0.6 then
+                    instance.jumpsDone = self.jumpsAllowed
+                else
+                    instance.jumpsDone = instance.jumpsDone + 1
+                    instance.fallVelocity = instance.fallVelocity + self.jumpVelocity
+                end
             end
             instance.jumpHappened = false
         end
@@ -176,26 +176,29 @@ DetachedCharacterClass = extends (ColClass) {
 
         --echo('fallVelocity: '..instance.fallVelocity)
 
-        -- FALL / JUMP
-        -- shoot sphere from centre of capsule
-        local fall_vect = elapsed * vector3(0,0,instance.fallVelocity)
-        local fall_fraction, floor, floor_normal = actor_cast(curr_centre, fall_vect, radius - 0.01, height, body)
-        local floor_impulse = 0
+        -- VERTICAL MOTION
+        -- cast a thin disc down from the very top to the bottom + the fall distance
+        local head_height = 0.1 -- the top part of teh cylinder to cast downwards
+        local fall_dist = elapsed*instance.fallVelocity -- max distance it can fall (if there is no object in the way), always negative
+        local cast_vect = vector3(0,0,fall_dist - height + head_height)
+        local fall_fraction, ground, floor_normal = actor_cast(curr_foot+vector3(0,0,height-head_height/2), cast_vect, radius - 0.01, head_height, body)
+        local landing_momentum = 0
         if fall_fraction == nil then
-            instance.offGround = true
+            instance.groundBody = nil
             fall_fraction = 1
         else
-            instance.offGround = false
-            floor_impulse = self.mass * old_fall_velocity
+            instance.groundBody = ground
+            landing_momentum = self.mass * old_fall_velocity
             instance.fallVelocity = 0
             instance.jumpsDone = 0
         end
         --echo('fall_dist: '..(fall_fraction * fall_vect).."  off_ground: "..tostring(instance.offGround))
-        curr_foot = curr_foot + fall_fraction * fall_vect
+        curr_foot = curr_foot + vector3(0,0,height-head_height) + fall_fraction * cast_vect 
+        local curr_centre = curr_foot + vector3(0,0,half_height)
 
-        local no_step_up = instance.offGround
+        local no_step_up = instance.groundBody == nil
 
-        if not instance.offGround then
+        if instance.groundBody ~= nil then
 
             if instance.timeSinceLastJump ~= nil then
                 instance.timeSinceLastJump = nil
@@ -211,20 +214,20 @@ DetachedCharacterClass = extends (ColClass) {
             -- apply force to ground
             --gravity
             local ground_force = vector3(0,0,self.mass * gravity)
-            ground_force = math.min(#ground_force, floor.mass * 5) * norm(ground_force)
-            floor:force(ground_force, curr_foot)
-            if floor_impulse ~= 0 then
+            ground_force = math.min(#ground_force, ground.mass * 5) * norm(ground_force)
+            ground:force(ground_force, curr_foot)
+            if landing_momentum ~= 0 then
                 --landing force
-                local ground_impulse = vector3(0,0, floor_impulse)
-                ground_impulse = math.min(#ground_impulse, floor.mass * elapsed * 100) * norm(ground_impulse)
-                floor:impulse(ground_impulse, curr_foot)
+                local ground_impulse = vector3(0,0, landing_momentum)
+                ground_impulse = math.min(#ground_impulse, ground.mass * elapsed * 100) * norm(ground_impulse)
+                ground:impulse(ground_impulse, curr_foot)
             end
         end
 
         
         local dist_try_to_move = blended_speed * elapsed
 
-        -- MOVE in a given direction
+        -- LATERAL PERSONALLY CONTROLLED MOTION (in a given direction)
         if dist_try_to_move > 0 then
             local walk_dir = quat(player_ctrl.camYaw, V_DOWN)
             local walk_vect = dist_try_to_move * (walk_dir * norm(instance.keyboardMove))
@@ -243,7 +246,8 @@ DetachedCharacterClass = extends (ColClass) {
             end
             local retries, new_walk_vect, collision_body, collision_normal, collision_pos = cast_cylinder_with_deflection(body, radius, walk_cyl_height, walk_cyl_centre, walk_vect)
 
-            if collision_body then
+            -- push objects along
+            if collision_body~=nil and collision_body ~= ground then
                 local push_force = instance.runState and self.runPushForce or self.pushForce
                 local magnitude = math.min(self.pushForce, collision_body.mass * 15) * -collision_normal
                 collision_body:force(magnitude, collision_pos)
