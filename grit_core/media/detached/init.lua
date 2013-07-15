@@ -59,8 +59,11 @@ include "materials.lua"
 include "characters/init.lua"
 include "comet/init.lua"
 include "classes.lua"
-include "obj_area_a.lua"
+--include "obj_area_a.lua"
 include "weapons/init.lua"
+include "map/whitebox_definitions.lua"
+include "map/area_core.lua"
+
 
 --test cars
 object "/detached/comet" (41, -27, 17.0) { name="test_comet1" }

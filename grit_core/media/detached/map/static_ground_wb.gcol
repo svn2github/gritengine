@@ -1,0 +1,58 @@
+TCOL1.0
+
+attributes {
+    static;
+}
+
+compound {
+}
+trimesh {
+    vertexes {
+        -24.1389 -30.0 0.0;
+        24.1389 -30.0 0.0;
+        -30.0 24.1389 0.0;
+        30.0 24.1389 0.0;
+        -24.1389 -30.0 1.0;
+        30.0 -24.1389 1.0;
+        -30.0 24.1389 1.0;
+        24.1389 30.0 1.0;
+        -30.0 -24.1389 0.0;
+        30.0 -24.1389 0.0;
+        -24.1389 30.0 0.0;
+        24.1389 30.0 0.0;
+        -30.0 -24.1389 1.0;
+        24.1389 -30.0 1.0;
+        -24.1389 30.0 1.0;
+        30.0 24.1389 1.0;
+    }
+    faces {
+        8 2 10 "concrete";
+        10 11 3 "concrete";
+        8 10 3 "concrete";
+        3 9 1 "concrete";
+        8 3 1 "concrete";
+        0 8 1 "concrete";
+        4 13 5 "concrete";
+        5 15 7 "concrete";
+        4 5 7 "concrete";
+        7 14 6 "concrete";
+        4 7 6 "concrete";
+        12 4 6 "concrete";
+        0 1 13 "concrete";
+        13 4 0 "concrete";
+        9 3 15 "concrete";
+        15 5 9 "concrete";
+        11 10 14 "concrete";
+        14 7 11 "concrete";
+        2 8 12 "concrete";
+        12 6 2 "concrete";
+        1 9 5 "concrete";
+        5 13 1 "concrete";
+        4 12 8 "concrete";
+        8 0 4 "concrete";
+        3 11 7 "concrete";
+        7 15 3 "concrete";
+        10 2 6 "concrete";
+        6 14 10 "concrete";
+    }
+}
