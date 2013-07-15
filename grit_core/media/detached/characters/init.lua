@@ -4,6 +4,8 @@
     *   ground move sideways under actor, actor moves accordingly (difference between two speeds must not exceed e.g. walking pace)
     *   control while airborne more like projectile
     *   getting stuck on some stairways
+    *   don't fall down stairs (gradual descent, in-line with gradient of ground)
+    *   cap horizontal motion while playing landing anim
 ]]
 
 local function actor_cast (pos, ray, radius, height, body)
