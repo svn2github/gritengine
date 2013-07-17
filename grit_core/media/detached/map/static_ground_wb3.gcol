@@ -1,0 +1,58 @@
+TCOL1.0
+
+attributes {
+    static;
+}
+
+compound {
+}
+trimesh {
+    vertexes {
+        -25.14 -16.0 0.500004;
+        16.14 -25.0 0.500004;
+        25.14 16.0 0.500004;
+        -16.14 25.0 0.500004;
+        -16.14 -25.0 0.500004;
+        25.14 -16.0 0.500004;
+        16.14 25.0 0.500004;
+        -25.14 16.0 0.500004;
+        -25.14 -16.0 -0.499996;
+        16.14 -25.0 -0.499996;
+        25.14 16.0 -0.499996;
+        -16.14 25.0 -0.499996;
+        -16.14 -25.0 -0.499996;
+        25.14 -16.0 -0.499996;
+        16.14 25.0 -0.499996;
+        -25.14 16.0 -0.499996;
+    }
+    faces {
+        6 3 7 "/common/pmat/Metal";
+        7 0 4 "/common/pmat/Metal";
+        6 7 4 "/common/pmat/Metal";
+        4 1 5 "/common/pmat/Metal";
+        6 4 5 "/common/pmat/Metal";
+        6 5 2 "/common/pmat/Metal";
+        15 11 14 "/common/pmat/Metal";
+        14 10 13 "/common/pmat/Metal";
+        13 9 12 "/common/pmat/Metal";
+        14 13 12 "/common/pmat/Metal";
+        15 14 12 "/common/pmat/Metal";
+        15 12 8 "/common/pmat/Metal";
+        12 9 1 "/common/pmat/Metal";
+        1 4 12 "/common/pmat/Metal";
+        9 13 5 "/common/pmat/Metal";
+        5 1 9 "/common/pmat/Metal";
+        13 10 2 "/common/pmat/Metal";
+        2 5 13 "/common/pmat/Metal";
+        10 14 6 "/common/pmat/Metal";
+        6 2 10 "/common/pmat/Metal";
+        14 11 3 "/common/pmat/Metal";
+        3 6 14 "/common/pmat/Metal";
+        11 15 7 "/common/pmat/Metal";
+        7 3 11 "/common/pmat/Metal";
+        8 12 4 "/common/pmat/Metal";
+        4 0 8 "/common/pmat/Metal";
+        15 8 0 "/common/pmat/Metal";
+        0 7 15 "/common/pmat/Metal";
+    }
+}
