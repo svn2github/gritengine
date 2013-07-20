@@ -24,6 +24,22 @@ trimesh {
         25.14 -16.0 -0.499996;
         16.14 25.0 -0.499996;
         -25.14 16.0 -0.499996;
+        -20.0095 -16.2774 -11.6166;
+        20.0095 -16.2774 -11.6166;
+        -20.0095 16.2774 -11.6166;
+        20.0095 16.2774 -11.6166;
+        -20.0095 -16.2774 -0.233089;
+        20.0095 -16.2774 -0.233089;
+        -20.0095 16.2774 -0.233089;
+        20.0095 16.2774 -0.233089;
+        -16.4475 -4.20709 -22.9745;
+        -16.4475 3.255 -22.9745;
+        16.3686 3.255 -22.9745;
+        16.3686 -4.20709 -22.9745;
+        16.3686 -4.20709 -11.591;
+        -16.4475 -4.20709 -11.591;
+        16.3686 3.255 -11.591;
+        -16.4475 3.255 -11.591;
     }
     faces {
         6 3 7 "/common/pmat/Metal";
@@ -54,5 +70,25 @@ trimesh {
         4 0 8 "/common/pmat/Metal";
         15 8 0 "/common/pmat/Metal";
         0 7 15 "/common/pmat/Metal";
+        16 18 19 "/common/pmat/Metal";
+        19 17 16 "/common/pmat/Metal";
+        16 17 21 "/common/pmat/Metal";
+        21 20 16 "/common/pmat/Metal";
+        17 19 23 "/common/pmat/Metal";
+        23 21 17 "/common/pmat/Metal";
+        19 18 22 "/common/pmat/Metal";
+        22 23 19 "/common/pmat/Metal";
+        18 16 20 "/common/pmat/Metal";
+        20 22 18 "/common/pmat/Metal";
+        24 25 26 "/common/pmat/Metal";
+        26 27 24 "/common/pmat/Metal";
+        24 27 28 "/common/pmat/Metal";
+        28 29 24 "/common/pmat/Metal";
+        27 26 30 "/common/pmat/Metal";
+        30 28 27 "/common/pmat/Metal";
+        26 25 31 "/common/pmat/Metal";
+        31 30 26 "/common/pmat/Metal";
+        25 24 29 "/common/pmat/Metal";
+        29 31 25 "/common/pmat/Metal";
     }
 }
