@@ -3,7 +3,6 @@
 --[[ TODO:
     *   ground move sideways under actor, actor moves accordingly (difference between two speeds must not exceed e.g. walking pace)
     *   control while airborne more like projectile
-    *   getting stuck on some stairways
     *   don't fall down stairs (gradual descent, in-line with gradient of ground)
     *   cap horizontal motion while playing landing anim
 ]]
@@ -70,7 +69,7 @@ DetachedCharacterClass = extends (ColClass) {
     runStrideLength = 1.866666;
     crouchStrideLength = 1;
 
-    maxGradient = 1.5;
+    maxGradient = 60;
     
     mass = 80; 
     
@@ -155,7 +154,8 @@ DetachedCharacterClass = extends (ColClass) {
 
         local radius = self.radius
 
-        
+
+        -- HANDLE JUMP (if pressed since last iteration)
         if instance.jumpHappened then
             if instance.groundBody ~= nil then
                 instance.timeSinceLastJump = 0
@@ -171,19 +171,20 @@ DetachedCharacterClass = extends (ColClass) {
             instance.jumpHappened = false
         end
 
-        local gravity = physics_get_gravity().z
 
+        -- VERTICAL MOTION
+
+        local gravity = physics_get_gravity().z
         local old_fall_velocity = instance.fallVelocity
         instance.fallVelocity = clamp(instance.fallVelocity + elapsed * gravity, -self.terminalVelocity, self.terminalVelocity)
 
         --echo('fallVelocity: '..instance.fallVelocity)
 
-        -- VERTICAL MOTION
         -- cast a thin disc down from the very top to the bottom + the fall distance
         local head_height = 0.1 -- the top part of teh cylinder to cast downwards
         local fall_dist = elapsed*instance.fallVelocity -- max distance it can fall (if there is no object in the way), always negative
         local cast_vect = vector3(0,0,fall_dist - height + head_height)
-        local fall_fraction, ground, floor_normal = actor_cast(curr_foot+vector3(0,0,height-head_height/2), cast_vect, radius - 0.01, head_height, body)
+        local fall_fraction, ground = actor_cast(curr_foot+vector3(0,0,height-head_height/2), cast_vect, radius - 0.01, head_height, body)
         local landing_momentum = 0
         if fall_fraction == nil then
             instance.groundBody = nil
@@ -196,7 +197,6 @@ DetachedCharacterClass = extends (ColClass) {
         end
         --echo('fall_dist: '..(fall_fraction * fall_vect).."  off_ground: "..tostring(instance.offGround))
         curr_foot = curr_foot + vector3(0,0,height-head_height) + fall_fraction * cast_vect 
-        local curr_centre = curr_foot + vector3(0,0,half_height)
 
         local no_step_up = instance.groundBody == nil
 
@@ -207,19 +207,15 @@ DetachedCharacterClass = extends (ColClass) {
                 instance.timeSinceLastLand = 0
             end
 
-            local floor_gradient = 1/floor_normal.z
-            -- special case for vertical walls -- helps going up steps
-            if floor_gradient < 5 and floor_gradient > self.maxGradient then
-                no_step_up = true
-            end
+            -- apply downward force to ground
 
-            -- apply force to ground
             --gravity
             local ground_force = vector3(0,0,self.mass * gravity)
             ground_force = math.min(#ground_force, ground.mass * 5) * norm(ground_force)
             ground:force(ground_force, curr_foot)
+
+            --landing force
             if landing_momentum ~= 0 then
-                --landing force
                 local ground_impulse = vector3(0,0, landing_momentum)
                 ground_impulse = math.min(#ground_impulse, ground.mass * elapsed * 100) * norm(ground_impulse)
                 ground:impulse(ground_impulse, curr_foot)
@@ -229,7 +225,7 @@ DetachedCharacterClass = extends (ColClass) {
         
         local dist_try_to_move = blended_speed * elapsed
 
-        -- LATERAL PERSONALLY CONTROLLED MOTION (in a given direction)
+        -- LATERAL PERSONALLY DIRECTED MOVEMENT (walking, running, etc)
         if dist_try_to_move > 0 then
             local walk_dir = quat(player_ctrl.camYaw, V_DOWN)
             local walk_vect = dist_try_to_move * (walk_dir * norm(instance.keyboardMove))
@@ -240,13 +236,18 @@ DetachedCharacterClass = extends (ColClass) {
 
             local step_height = self.stepHeight
 
-            local walk_cyl_height = height - step_height
-            local walk_cyl_centre = curr_centre + vector3(0,0,step_height/2)
+            local curr_centre = curr_foot + vector3(0,0,half_height)
+            local walk_cyl_height, walk_cyl_centre
             if no_step_up then
                 walk_cyl_height = height
                 walk_cyl_centre = curr_centre
+            else
+                walk_cyl_height = height - step_height
+                walk_cyl_centre = curr_centre + vector3(0,0,step_height/2)
             end
-            local retries, new_walk_vect, collision_body, collision_normal, collision_pos = cast_cylinder_with_deflection(body, radius, walk_cyl_height, walk_cyl_centre, walk_vect)
+            local clear_dist = step_height / self.maxGradient
+            local cast_vect = walk_vect
+            local retries, new_walk_vect, collision_body, collision_normal, collision_pos = cast_cylinder_with_deflection(body, radius, walk_cyl_height, walk_cyl_centre, cast_vect)
 
             -- push objects along
             if collision_body~=nil and collision_body ~= ground then
@@ -254,31 +255,46 @@ DetachedCharacterClass = extends (ColClass) {
                 local magnitude = math.min(self.pushForce, collision_body.mass * 15) * -collision_normal
                 collision_body:force(magnitude, collision_pos)
             end
-            --echo('first walk test:   retries: '..tostring(retries).." tried_vect:"..walk_vect.."  vect:"..new_walk_vect)
 
-            curr_foot = curr_foot + new_walk_vect
-            curr_centre = curr_foot + vector3(0,0,height/2)
+            local cast_foot = curr_foot + new_walk_vect
+            local cast_centre = cast_foot + vector3(0,0,height/2)
 
             
-        
+            -- if retries is false, that means we are jammed in a corner and did not move at all
             if retries and not no_step_up then
                 -- just using this position is no good, will ghost through steps
                 -- always adding on step_height to z is no good either -- actual step may be less than this (or zero)
-                -- so we shoot a ray down to find the actual amount we have stepped up
-                local step_check_fraction = actor_cast(curr_centre+vector3(0,0,step_height/2), vector3(0,0,-step_height), radius-0.01, height-step_height, body)
-                step_check_fraction = step_check_fraction or 1 -- might not hit the ground due to rounding errors etc
+                -- so we cast a cylinder down to find the actual amount we have stepped up
+                -- if stepped off a cliff, we may not actually hit the ground with this ray
+                local step_check_fraction = actor_cast(cast_centre+vector3(0,0,step_height/2), vector3(0,0,-step_height), radius-0.01, height-step_height, body)
+                step_check_fraction = step_check_fraction or 1 
                 local actual_step_height = step_height*(1-step_check_fraction)
 
-                -- if we hvae an upwards velocity, work out if we would have made the step or not
-                -- if not, set velocity to 0 so that we don't give an unnatural boost
-                local parabolic_height = instance.fallVelocity^2  / 2 / gravity
-                --echo("fail", instance.fallVelocity, parabolic_height, actual_step_height)
-                if parabolic_height > 0 and parabolic_height <  actual_step_height then
-                    instance.fallVelocity = 0
+                local floor_gradient = 0
+                -- we also need the normal from the ground to test hte gradient, but can only get the true normal with a ray
+                local _, _, floor_normal = physics_cast(cast_centre,  vector3(0,0,-height/2 - step_height/2), true, 0, body)
+                if floor_normal ~= nil then
+                    floor_gradient = math.deg(math.acos(floor_normal.z))
                 end
 
-                --echo('actual step height:'..actual_step_height)
-                curr_foot = curr_foot + vector3(0,0, actual_step_height)
+                if floor_gradient <= self.maxGradient then
+                    curr_foot = cast_foot + vector3(0,0, actual_step_height)
+                end
+
+                --[[
+                    -- if we hvae an upwards velocity, work out if we would have made the step or not
+                    -- if not, set velocity to 0 so that we don't give an unnatural boost
+                    local parabolic_height = instance.fallVelocity^2  / 2 / gravity
+                    --echo("fail", instance.fallVelocity, parabolic_height, actual_step_height)
+                    if parabolic_height > 0 and parabolic_height <  actual_step_height then
+                        instance.fallVelocity = 0
+                    end
+                ]]
+
+            else
+
+                curr_foot = cast_foot
+    
             end
 
             instance.stridePos = (instance.stridePos + dist_try_to_move/blended_stride_length) % 1
@@ -288,6 +304,13 @@ DetachedCharacterClass = extends (ColClass) {
             instance.stridePos = 0.0
 
         end
+
+        instance.speed = #(curr_foot - old_foot) / elapsed
+
+
+        ------------
+        -- ANIMATION
+        ------------
 
         -- transitioning between moving/running/crouching states
         local control_state_desired = vector3(instance.moving and 1 or 0, instance.runState and 1 or 0, (instance.crouchState and not instance.runState) and 1 or 0)
@@ -381,7 +404,6 @@ DetachedCharacterClass = extends (ColClass) {
         while instance.bearing < -180 do instance.bearing = instance.bearing + 360 end
         body.worldOrientation = quat(instance.bearing, V_DOWN)
         
-        instance.speed = #(curr_foot - old_foot) / elapsed
     end;
 
     updateMovementState = function (self)

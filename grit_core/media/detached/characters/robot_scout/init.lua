@@ -41,7 +41,7 @@ class "../robot_scout" (DetachedCharacterClass) {
     pushForce = 1000;
     runPushForce = 2000;
 	
-    maxGradient = 1.3;
+    maxGradient = 50;
 
     originAboveFeet = 1.112;
     placementZOffset = 1.112;

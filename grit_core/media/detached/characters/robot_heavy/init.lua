@@ -48,7 +48,7 @@ class "../robot_heavy" (DetachedCharacterClass) {
     pushForce = 7500;
     runPushForce = 15000;
 	
-    maxGradient = 1.3;
+    maxGradient = 50;
 
     originAboveFeet = 1.112;
     placementZOffset = 1.112;

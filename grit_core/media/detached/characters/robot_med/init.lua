@@ -40,7 +40,7 @@ class "../robot_med" (DetachedCharacterClass) {
     pushForce = 5000;
     runPushForce = 10000;
 	
-    maxGradient = 1.3;
+    maxGradient = 50;
 
     originAboveFeet = 1.112;
     placementZOffset = 1.112;
