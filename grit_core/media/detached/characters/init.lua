@@ -1,9 +1,8 @@
--- (c) David Cunningham 2009, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
-
 --[[ TODO:
-    *   ground move sideways under actor, actor moves accordingly (difference between two speeds must not exceed e.g. walking pace)
     *   control while airborne more like projectile
+
     *   cap horizontal motion while playing landing anim
+    *   jump anim adds height to graphics, not reflected in physical representation
 ]]
 
 local function actor_cast (pos, ray, radius, height, body)
@@ -70,6 +69,9 @@ DetachedCharacterClass = extends (ColClass) {
 
     maxGradient = 60;
 
+    maxRideSpeed = 15; 
+    maxRideSpeedCrouched = 30; 
+
     jumpRepeatSpeed = 1; --abs(vel.z) under which a second jump is allowed (apex of last jump)
     
     mass = 80; 
@@ -92,6 +94,7 @@ DetachedCharacterClass = extends (ColClass) {
         instance.keyboardMove = V_ZERO
         instance.groundBody = nil
         instance.fallVelocity = 0
+        instance.slopeAmount = 0
         instance.speed = 0
         instance.bearing = self.bearing or 0
         instance.bearingAim = self.bearing or 0
@@ -184,9 +187,14 @@ DetachedCharacterClass = extends (ColClass) {
 
         -- cast a thin disc down from the very top to the bottom + the fall distance
         local head_height = 0.1 -- the top part of teh cylinder to cast downwards
-        local fall_dist = elapsed*instance.fallVelocity -- max distance it can fall (if there is no object in the way), always negative
+        local fall_dist = elapsed*instance.fallVelocity + instance.slopeAmount -- max distance it can fall (if there is no object in the way)
+        -- this allows us to stay 'attached' to a surface, so that forces etc can be applied consistently
+        if fall_dist < 0 and fall_dist > -0.1 then
+            fall_dist = -0.1
+        end
         local cast_vect = vector3(0,0,fall_dist - height + head_height)
-        local fall_fraction, ground = actor_cast(curr_foot+vector3(0,0,height-head_height/2), cast_vect, radius - 0.01, head_height, body)
+        -- this ground_normal is not necessarily the normal of the triangle you're standing on!  can be on an edge.
+        local fall_fraction, ground, ground_normal = actor_cast(curr_foot+vector3(0,0,height-head_height/2), cast_vect, radius - 0.01, head_height, body)
         local landing_momentum = 0
         if fall_fraction == nil then
             instance.groundBody = nil
@@ -199,10 +207,17 @@ DetachedCharacterClass = extends (ColClass) {
         end
         --echo('fall_dist: '..(fall_fraction * fall_vect).."  off_ground: "..tostring(instance.offGround))
         curr_foot = curr_foot + vector3(0,0,height-head_height) + fall_fraction * cast_vect 
+        if ground ~= nil  and ground_normal.z > 0.7 then
+            local ground_vel = ground:getLocalVelocity(curr_foot, true) * vector3(1,1,0)
+            local max_ride_speed = instance.crouchState and self.maxRideSpeedCrouched or self.maxRideSpeed
+            if #ground_vel < max_ride_speed then
+                curr_foot = curr_foot + ground_vel*elapsed
+            end
+        end
 
-        local no_step_up = instance.groundBody == nil
+        local no_step_up = ground == nil
 
-        if instance.groundBody ~= nil then
+        if ground ~= nil then
 
             if instance.timeSinceLastJump ~= nil then
                 instance.timeSinceLastJump = nil
@@ -212,14 +227,20 @@ DetachedCharacterClass = extends (ColClass) {
             -- apply downward force to ground
 
             --gravity
-            local ground_force = vector3(0,0,self.mass * gravity)
-            ground_force = math.min(#ground_force, ground.mass * 5) * norm(ground_force)
-            ground:force(ground_force, curr_foot)
+            --local ground_force = vector3(0,0,self.mass * gravity)
+            --ground_force = math.min(#ground_force, ground.mass * 5) * norm(ground_force)
+            --ground:force(ground_force, curr_foot)
 
             --landing force
+            -- because the velocity is integrated already, this should already include some approximation of gravity
             if landing_momentum ~= 0 then
                 local ground_impulse = vector3(0,0, landing_momentum)
-                ground_impulse = math.min(#ground_impulse, ground.mass * elapsed * 100) * norm(ground_impulse)
+                if ground.mass * 3 < self.mass then
+                    ground_impulse = math.min(#ground_impulse, ground.mass * elapsed * 5) * norm(ground_impulse)
+                else
+                    ground_impulse = math.min(#ground_impulse, ground.mass * 5) * norm(ground_impulse)
+                end
+                --echo(instance.fallVelocity, ground_impulse)
                 ground:impulse(ground_impulse, curr_foot)
             end
 
@@ -291,14 +312,19 @@ DetachedCharacterClass = extends (ColClass) {
     
             end
 
-            if instance.groundBody ~= nil and floor_normal ~= nil then
-                instance.fallVelocity = math.min(0, -dot(new_walk_vect, floor_normal) / elapsed)
+            if floor_normal ~= nil then
+                instance.slopeAmount = math.min(0, -dot(new_walk_vect, floor_normal))
+            end
+
+            if instance.groundBody ~= nil then
+                instance.fallVelocity = 0
             end
 
             instance.stridePos = (instance.stridePos + dist_try_to_move/blended_stride_length) % 1
 
         else
 
+            instance.slopeAmount = 0
             if instance.groundBody ~= nil then
                 instance.fallVelocity = 0
             end

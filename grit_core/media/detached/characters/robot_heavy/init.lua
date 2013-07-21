@@ -36,7 +36,7 @@ class "../robot_heavy" (DetachedCharacterClass) {
 	crouchSpeedFactor = 1; 
 
 	-- general character motion stuff
-	mass = 500;	
+	mass = 250;	
     radius = 0.4;
 	height = 2.25;
 	crouchHeight = 1.85;

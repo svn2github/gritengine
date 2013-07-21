@@ -29,7 +29,7 @@ class "../robot_scout" (DetachedCharacterClass) {
 	crouchSpeedFactor = 1; 
 
 	-- general character motion stuff
-	mass = 100;	
+	mass = 60;	
     radius = 0.2;
 	height = 2.0;
 	crouchHeight = 1.55;

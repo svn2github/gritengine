@@ -28,7 +28,7 @@ class "../robot_med" (DetachedCharacterClass) {
 	crouchSpeedFactor = 1; 
 
 	-- general character motion stuff
-	mass = 250;	
+	mass = 90;	
     radius = 0.3;
 	height = 2.2;
 	crouchHeight = 1.55;
