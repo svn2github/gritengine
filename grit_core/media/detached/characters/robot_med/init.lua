@@ -42,6 +42,8 @@ class "../robot_med" (DetachedCharacterClass) {
 	
     maxGradient = 50;
 
+    jumpRepeatSpeed = 1.5;
+
     originAboveFeet = 1.112;
     placementZOffset = 1.112;
 }

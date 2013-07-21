@@ -43,6 +43,8 @@ class "../robot_scout" (DetachedCharacterClass) {
 	
     maxGradient = 50;
 
+    jumpRepeatSpeed = 2;
+
     originAboveFeet = 1.112;
     placementZOffset = 1.112;
 }
