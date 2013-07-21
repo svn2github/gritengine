@@ -49,6 +49,8 @@ function soul_mode(on)
     soul_mode_status = on
 end
 
+map_ghost_spawn(vector3(0, -185, 5))
+
 ui:bind("F2", function() soul_mode(not soul_mode_status) end)
 
 time_of_day()
