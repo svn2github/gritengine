@@ -3,7 +3,6 @@
 --[[ TODO:
     *   ground move sideways under actor, actor moves accordingly (difference between two speeds must not exceed e.g. walking pace)
     *   control while airborne more like projectile
-    *   don't fall down stairs (gradual descent, in-line with gradient of ground)
     *   cap horizontal motion while playing landing anim
 ]]
 
@@ -70,6 +69,8 @@ DetachedCharacterClass = extends (ColClass) {
     crouchStrideLength = 1;
 
     maxGradient = 60;
+
+    jumpRepeatSpeed = 1; --abs(vel.z) under which a second jump is allowed (apex of last jump)
     
     mass = 80; 
     
@@ -94,6 +95,7 @@ DetachedCharacterClass = extends (ColClass) {
         instance.speed = 0
         instance.bearing = self.bearing or 0
         instance.bearingAim = self.bearing or 0
+        instance.timeSinceLastGrounded = 0
         instance.timeSinceLastJump = nil
         instance.timeSinceLastLand = nil
         
@@ -161,7 +163,8 @@ DetachedCharacterClass = extends (ColClass) {
                 instance.timeSinceLastJump = 0
             end
             if instance.jumpsDone < self.jumpsAllowed then
-                if math.abs(instance.fallVelocity) > 0.6 then
+                if math.abs(instance.fallVelocity) > self.jumpRepeatSpeed then
+                    -- missed the boost jump
                     instance.jumpsDone = self.jumpsAllowed
                 else
                     instance.jumpsDone = instance.jumpsDone + 1
@@ -175,7 +178,6 @@ DetachedCharacterClass = extends (ColClass) {
         -- VERTICAL MOTION
 
         local gravity = physics_get_gravity().z
-        local old_fall_velocity = instance.fallVelocity
         instance.fallVelocity = clamp(instance.fallVelocity + elapsed * gravity, -self.terminalVelocity, self.terminalVelocity)
 
         --echo('fallVelocity: '..instance.fallVelocity)
@@ -191,8 +193,8 @@ DetachedCharacterClass = extends (ColClass) {
             fall_fraction = 1
         else
             instance.groundBody = ground
-            landing_momentum = self.mass * old_fall_velocity
-            instance.fallVelocity = 0
+            landing_momentum = self.mass * instance.fallVelocity
+            instance.timeSinceLastGrounded = 0
             instance.jumpsDone = 0
         end
         --echo('fall_dist: '..(fall_fraction * fall_vect).."  off_ground: "..tostring(instance.offGround))
@@ -220,6 +222,10 @@ DetachedCharacterClass = extends (ColClass) {
                 ground_impulse = math.min(#ground_impulse, ground.mass * elapsed * 100) * norm(ground_impulse)
                 ground:impulse(ground_impulse, curr_foot)
             end
+
+        else
+
+            instance.timeSinceLastGrounded = instance.timeSinceLastGrounded + elapsed
         end
 
         
@@ -259,6 +265,11 @@ DetachedCharacterClass = extends (ColClass) {
             local cast_foot = curr_foot + new_walk_vect
             local cast_centre = cast_foot + vector3(0,0,height/2)
 
+            -- we also need the normal from the ground to test hte gradient, but can only get the true normal with a ray
+            local _, _, floor_normal = physics_cast(cast_centre,  vector3(0,0,-height/2 - step_height), true, 0, body)
+            if floor_normal ~= nil then
+                instance.lastFloorNormal = floor_normal
+            end
             
             -- if retries is false, that means we are jammed in a corner and did not move at all
             if retries and not no_step_up then
@@ -270,26 +281,9 @@ DetachedCharacterClass = extends (ColClass) {
                 step_check_fraction = step_check_fraction or 1 
                 local actual_step_height = step_height*(1-step_check_fraction)
 
-                local floor_gradient = 0
-                -- we also need the normal from the ground to test hte gradient, but can only get the true normal with a ray
-                local _, _, floor_normal = physics_cast(cast_centre,  vector3(0,0,-height/2 - step_height/2), true, 0, body)
-                if floor_normal ~= nil then
-                    floor_gradient = math.deg(math.acos(floor_normal.z))
-                end
-
-                if floor_gradient <= self.maxGradient then
+                if floor_normal == nil or math.deg(math.acos(floor_normal.z)) <= self.maxGradient then
                     curr_foot = cast_foot + vector3(0,0, actual_step_height)
                 end
-
-                --[[
-                    -- if we hvae an upwards velocity, work out if we would have made the step or not
-                    -- if not, set velocity to 0 so that we don't give an unnatural boost
-                    local parabolic_height = instance.fallVelocity^2  / 2 / gravity
-                    --echo("fail", instance.fallVelocity, parabolic_height, actual_step_height)
-                    if parabolic_height > 0 and parabolic_height <  actual_step_height then
-                        instance.fallVelocity = 0
-                    end
-                ]]
 
             else
 
@@ -297,9 +291,17 @@ DetachedCharacterClass = extends (ColClass) {
     
             end
 
+            if instance.groundBody ~= nil and floor_normal ~= nil then
+                instance.fallVelocity = math.min(0, -dot(new_walk_vect, floor_normal) / elapsed)
+            end
+
             instance.stridePos = (instance.stridePos + dist_try_to_move/blended_stride_length) % 1
 
         else
+
+            if instance.groundBody ~= nil then
+                instance.fallVelocity = 0
+            end
 
             instance.stridePos = 0.0
 
@@ -323,7 +325,7 @@ DetachedCharacterClass = extends (ColClass) {
         control_state = control_state + control_state_dir
         instance.controlState = control_state
 
-        local falling = (clamp(-instance.fallVelocity, 1, 5) -1)/4
+        local falling = clamp(instance.timeSinceLastGrounded - 0.3, 0, 1)
         gfx:setAnimationMask("falling", falling)
         regular_movement = regular_movement * (1-falling)
 
@@ -403,7 +405,7 @@ DetachedCharacterClass = extends (ColClass) {
         while instance.bearing > 180 do instance.bearing = instance.bearing - 360 end
         while instance.bearing < -180 do instance.bearing = instance.bearing + 360 end
         body.worldOrientation = quat(instance.bearing, V_DOWN)
-        
+
     end;
 
     updateMovementState = function (self)
