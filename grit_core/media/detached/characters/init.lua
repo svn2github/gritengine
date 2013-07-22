@@ -209,8 +209,10 @@ DetachedCharacterClass = extends (ColClass) {
         curr_foot = curr_foot + vector3(0,0,height-head_height) + fall_fraction * cast_vect 
         if ground ~= nil  and ground_normal.z > 0.7 then
             local ground_vel = ground:getLocalVelocity(curr_foot, true) * vector3(1,1,0)
-            local max_ride_speed = instance.crouchState and self.maxRideSpeedCrouched or self.maxRideSpeed
-            if #ground_vel < max_ride_speed then
+            local ground_speed = #ground_vel
+            if ground_speed > 0 then
+                local max_ride_speed = instance.crouchState and self.maxRideSpeedCrouched or self.maxRideSpeed
+                ground_vel = norm(ground_vel) * math.min(max_ride_speed, ground_speed)
                 curr_foot = curr_foot + ground_vel*elapsed
             end
         end
@@ -302,8 +304,15 @@ DetachedCharacterClass = extends (ColClass) {
                 step_check_fraction = step_check_fraction or 1 
                 local actual_step_height = step_height*(1-step_check_fraction)
 
-                if floor_normal == nil or math.deg(math.acos(floor_normal.z)) <= self.maxGradient then
+                if floor_normal == nil then
+                    -- know nothing about the slope of the floor -- just let step up (or walk forwards if actual_step_height is 0)
                     curr_foot = cast_foot + vector3(0,0, actual_step_height)
+                else
+                    if dot(floor_normal, walk_vect) > 0 or math.deg(math.acos(floor_normal.z)) <= self.maxGradient then
+                        curr_foot = cast_foot + vector3(0,0, actual_step_height)
+                    else
+                        --echo(dot(floor_normal, walk_vect), math.deg(math.acos(floor_normal.z)))
+                    end
                 end
 
             else
