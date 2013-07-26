@@ -2,7 +2,8 @@
     *   control while airborne more like projectile
 
     *   cap horizontal motion while playing landing anim
-    *   jump anim adds height to graphics, not reflected in physical representation
+    *   new jump anims
+    *   attach rpg to R_Hand euler(172,172,90)
 ]]
 
 local function actor_cast (pos, ray, radius, height, body)
@@ -98,8 +99,8 @@ DetachedCharacterClass = extends (ColClass) {
         instance.speed = 0
         instance.bearing = self.bearing or 0
         instance.bearingAim = self.bearing or 0
-        instance.timeSinceLastGrounded = 0
-        instance.timeSinceLastJump = nil
+        instance.timeSinceLastGrounded = nil -- nil if on the ground, non-nil if in the air
+        instance.timeSinceLastJump = nil -- nil unless the jump key has been pressed and the jump animation is playing, returns to nil after play
         instance.timeSinceLastLand = nil
         
         instance.controlState = vector3(0,0,0) -- still/move, walk/run, stand/crouch
@@ -159,19 +160,39 @@ DetachedCharacterClass = extends (ColClass) {
 
         local radius = self.radius
 
+        local jump_len = gfx:getAnimationLength("jump")
+        local jump_glide_len = gfx:getAnimationLength("jump") + gfx:getAnimationLength("glide")
+
+        if instance.timeSinceLastJump ~= nil then
+            instance.timeSinceLastJump = instance.timeSinceLastJump + elapsed
+            if instance.timeSinceLastJump + elapsed >= jump_len and instance.timeSinceLastJump < jump_len then
+                instance.fallVelocity = instance.fallVelocity + self.jumpVelocity
+            end
+            if instance.timeSinceLastJump >= jump_glide_len then
+                instance.timeSinceLastJump = nil
+            end
+        end
+
+        if instance.timeSinceLastGrounded ~= nil then
+            instance.timeSinceLastGrounded = instance.timeSinceLastGrounded + elapsed
+        end
 
         -- HANDLE JUMP (if pressed since last iteration)
         if instance.jumpHappened then
-            if instance.groundBody ~= nil then
+            if instance.jumpsDone == 0 then
+                -- on the ground last tick
                 instance.timeSinceLastJump = 0
-            end
-            if instance.jumpsDone < self.jumpsAllowed then
-                if math.abs(instance.fallVelocity) > self.jumpRepeatSpeed then
-                    -- missed the boost jump
-                    instance.jumpsDone = self.jumpsAllowed
-                else
-                    instance.jumpsDone = instance.jumpsDone + 1
-                    instance.fallVelocity = instance.fallVelocity + self.jumpVelocity
+                instance.jumpsDone = 1
+            else
+                -- repeat jump
+                if instance.jumpsDone < self.jumpsAllowed then
+                    if math.abs(instance.fallVelocity) > self.jumpRepeatSpeed then
+                        -- missed the boost jump
+                        instance.jumpsDone = self.jumpsAllowed
+                    else
+                        instance.jumpsDone = instance.jumpsDone + 1
+                        instance.fallVelocity = instance.fallVelocity + self.jumpVelocity
+                    end
                 end
             end
             instance.jumpHappened = false
@@ -183,75 +204,73 @@ DetachedCharacterClass = extends (ColClass) {
         local gravity = physics_get_gravity().z
         instance.fallVelocity = clamp(instance.fallVelocity + elapsed * gravity, -self.terminalVelocity, self.terminalVelocity)
 
-        --echo('fallVelocity: '..instance.fallVelocity)
 
         -- cast a thin disc down from the very top to the bottom + the fall distance
         local head_height = 0.1 -- the top part of teh cylinder to cast downwards
-        local fall_dist = elapsed*instance.fallVelocity + instance.slopeAmount -- max distance it can fall (if there is no object in the way)
+        local max_fall_z = elapsed*instance.fallVelocity + instance.slopeAmount -- max distance it can fall (if there is no object in the way)
         -- this allows us to stay 'attached' to a surface, so that forces etc can be applied consistently
-        if fall_dist < 0 and fall_dist > -0.1 then
-            fall_dist = -0.1
+        local fall_ray_z = max_fall_z
+        if fall_ray_z < 0 and fall_ray_z > -0.1 then
+            fall_ray_z = -0.1
         end
-        local cast_vect = vector3(0,0,fall_dist - height + head_height)
+        fall_ray_z = fall_ray_z - (height - head_height)
         -- this ground_normal is not necessarily the normal of the triangle you're standing on!  can be on an edge.
-        local fall_fraction, ground, ground_normal = actor_cast(curr_foot+vector3(0,0,height-head_height/2), cast_vect, radius - 0.01, head_height, body)
-        local landing_momentum = 0
-        if fall_fraction == nil then
-            instance.groundBody = nil
-            fall_fraction = 1
-        else
-            instance.groundBody = ground
-            landing_momentum = self.mass * instance.fallVelocity
-            instance.timeSinceLastGrounded = 0
-            instance.jumpsDone = 0
+        local fall_fraction, ground, ground_normal = actor_cast(curr_foot+vector3(0,0,height-head_height/2), vector3(0,0,fall_ray_z), radius - 0.01, head_height, body)
+        local fall_z = (fall_fraction or 1) * fall_ray_z + (height - head_height)
+        if fall_z < 0 and fall_z < max_fall_z then
+            fall_z = max_fall_z
         end
-        --echo('fall_dist: '..(fall_fraction * fall_vect).."  off_ground: "..tostring(instance.offGround))
-        curr_foot = curr_foot + vector3(0,0,height-head_height) + fall_fraction * cast_vect 
-        if ground ~= nil  and ground_normal.z > 0.7 then
-            local ground_vel = ground:getLocalVelocity(curr_foot, true) * vector3(1,1,0)
-            local ground_speed = #ground_vel
-            if ground_speed > 0 then
-                local max_ride_speed = instance.crouchState and self.maxRideSpeedCrouched or self.maxRideSpeed
-                ground_vel = norm(ground_vel) * math.min(max_ride_speed, ground_speed)
-                curr_foot = curr_foot + ground_vel*elapsed
-            end
-        end
-
-        local no_step_up = ground == nil
+        instance.groundBody = ground
+        curr_foot = curr_foot + vector3(0, 0, fall_z)
 
         if ground ~= nil then
+            -- on the ground
 
-            if instance.timeSinceLastJump ~= nil then
-                instance.timeSinceLastJump = nil
-                instance.timeSinceLastLand = 0
+            if instance.timeSinceLastGrounded ~= nil then
+                -- wasn't on the ground last tick
+                if instance.fallVelocity < -5 or instance.jumpsDone > 0 then
+                    instance.timeSinceLastLand = 0
+                end
+                instance.jumpsDone = 0
+                instance.timeSinceLastGrounded = nil
             end
 
+            local landing_momentum = self.mass * instance.fallVelocity
+            instance.fallVelocity = 0
+
+            if ground_normal.z > 0.7 then
+                -- 'stick' to moving ground
+                local ground_vel = ground:getLocalVelocity(curr_foot, true) * vector3(1,1,0)
+                local ground_speed = #ground_vel
+                if ground_speed > 0 then
+                    local max_ride_speed = instance.crouchState and self.maxRideSpeedCrouched or self.maxRideSpeed
+                    ground_vel = norm(ground_vel) * math.min(max_ride_speed, ground_speed)
+                    curr_foot = curr_foot + ground_vel*elapsed
+                end
+            end
+
+
+
             -- apply downward force to ground
-
-            --gravity
-            --local ground_force = vector3(0,0,self.mass * gravity)
-            --ground_force = math.min(#ground_force, ground.mass * 5) * norm(ground_force)
-            --ground:force(ground_force, curr_foot)
-
-            --landing force
             -- because the velocity is integrated already, this should already include some approximation of gravity
             if landing_momentum ~= 0 then
                 local ground_impulse = vector3(0,0, landing_momentum)
                 if ground.mass * 3 < self.mass then
+                    -- different logic when standing on small object
                     ground_impulse = math.min(#ground_impulse, ground.mass * elapsed * 5) * norm(ground_impulse)
                 else
                     ground_impulse = math.min(#ground_impulse, ground.mass * 5) * norm(ground_impulse)
                 end
-                --echo(instance.fallVelocity, ground_impulse)
                 ground:impulse(ground_impulse, curr_foot)
             end
 
         else
+            if instance.timeSinceLastGrounded == nil then
+                instance.timeSinceLastGrounded = 0
+            end
 
-            instance.timeSinceLastGrounded = instance.timeSinceLastGrounded + elapsed
         end
 
-        
         local dist_try_to_move = blended_speed * elapsed
 
         -- LATERAL PERSONALLY DIRECTED MOVEMENT (walking, running, etc)
@@ -267,7 +286,7 @@ DetachedCharacterClass = extends (ColClass) {
 
             local curr_centre = curr_foot + vector3(0,0,half_height)
             local walk_cyl_height, walk_cyl_centre
-            if no_step_up then
+            if ground == nil then
                 walk_cyl_height = height
                 walk_cyl_centre = curr_centre
             else
@@ -295,7 +314,7 @@ DetachedCharacterClass = extends (ColClass) {
             end
             
             -- if retries is false, that means we are jammed in a corner and did not move at all
-            if retries and not no_step_up then
+            if retries and ground~=nil then
                 -- just using this position is no good, will ghost through steps
                 -- always adding on step_height to z is no good either -- actual step may be less than this (or zero)
                 -- so we cast a cylinder down to find the actual amount we have stepped up
@@ -325,18 +344,11 @@ DetachedCharacterClass = extends (ColClass) {
                 instance.slopeAmount = math.min(0, -dot(new_walk_vect, floor_normal))
             end
 
-            if instance.groundBody ~= nil then
-                instance.fallVelocity = 0
-            end
-
             instance.stridePos = (instance.stridePos + dist_try_to_move/blended_stride_length) % 1
 
         else
 
             instance.slopeAmount = 0
-            if instance.groundBody ~= nil then
-                instance.fallVelocity = 0
-            end
 
             instance.stridePos = 0.0
 
@@ -360,42 +372,60 @@ DetachedCharacterClass = extends (ColClass) {
         control_state = control_state + control_state_dir
         instance.controlState = control_state
 
-        local falling = clamp(instance.timeSinceLastGrounded - 0.3, 0, 1)
-        gfx:setAnimationMask("falling", falling)
-        regular_movement = regular_movement * (1-falling)
+        local airborne = instance.timeSinceLastGrounded ~= nil
 
-        if instance.timeSinceLastJump then
+        -- two kinds of airborne:
+        -- 1) post-jump, holding glide pose until start falling
+        -- 2) walked (or thrown) off ledge, keep regular movement until falling
 
-            local jump_len = gfx:getAnimationLength("jump")
+        local glide_mask
+        if airborne then
+            if instance.jumpsDone > 0 then
+                regular_movement = 0
+                glide_mask = 1
+            else
+                glide_mask = 0
+            end
+        else
+            glide_mask = 0
+        end
+
+        -- play jump anim
+        if instance.timeSinceLastJump ~= nil then
 
             if instance.timeSinceLastJump < jump_len then
-                local mask = math.min(1, instance.timeSinceLastJump / 0.2)
+                -- user has pressed the jump key, better play out that anim
+
+                -- fade in the anim over 0.1 seconds
+                local mask = math.min(1, instance.timeSinceLastJump / 0.1)
                 regular_movement = regular_movement * (1 - mask)
-                gfx:setAnimationMask("jump", mask*(1-falling))
-                gfx:setAnimationMask("landing", 0)
+                glide_mask = 0
+
+                gfx:setAnimationMask("jump", mask)
                 gfx:setAnimationPos("jump", instance.timeSinceLastJump)
-                instance.fallingPos = 0
+
             else
-                local fly_len = instance.timeSinceLastJump - jump_len
-                regular_movement = 0
-                gfx:setAnimationMask("jump", 1)
-                gfx:setAnimationMask("landing", 0)
 
+                glide_mask = glide_mask * math.min(1, (instance.timeSinceLastJump-jump_len) / 0.1)
+                regular_movement = regular_movement * (1 - glide_mask)
 
+                gfx:setAnimationMask("jump", 1-glide_mask)
+                gfx:setAnimationPos("glide", instance.timeSinceLastJump - jump_len)
             end
-                
-            instance.timeSinceLastJump = instance.timeSinceLastJump + elapsed
 
-        elseif instance.timeSinceLastLand ~= nil then
+        end
+                
+        if instance.timeSinceLastLand ~= nil then
 
             local landing_len = gfx:getAnimationLength("landing")
 
-            local mask = math.min(1, (landing_len - instance.timeSinceLastLand) / 0.2)
+            local in_mask = 1
+            local out_mask = math.min(1, (landing_len - instance.timeSinceLastLand) / 0.2)
 
-            regular_movement = regular_movement * (1 - mask)
+            regular_movement = regular_movement * (1 - out_mask)
+            glide_mask = glide_mask * (1 - in_mask)
 
-            gfx:setAnimationMask("jump", 0)
-            gfx:setAnimationMask("landing", mask*(1-falling))
+            gfx:setAnimationMask("landing", in_mask*out_mask)
             gfx:setAnimationPos("landing", instance.timeSinceLastLand)
         
             instance.timeSinceLastLand = instance.timeSinceLastLand + elapsed
@@ -403,13 +433,23 @@ DetachedCharacterClass = extends (ColClass) {
             if instance.timeSinceLastLand >= landing_len then
                 instance.timeSinceLastLand = nil
             end
+
         else
-            gfx:setAnimationMask("jump", 0)
+
             gfx:setAnimationMask("landing", 0)
+
         end
 
 
+        local falling_mask = 0
+        if airborne then
+            falling_mask = clamp((-10-instance.fallVelocity)/5, 0, 1) * clamp((instance.timeSinceLastGrounded or 0)/0.5, 0, 1)
+            regular_movement = regular_movement * (1-falling_mask)
+            glide_mask = glide_mask * (1-falling_mask)
+        end
             
+        gfx:setAnimationMask("falling", falling_mask)
+        gfx:setAnimationMask("glide", glide_mask)
 
         gfx:setAnimationMask("idle",        lerp3(1,0,1,0,0,0,0,0, control_state) * regular_movement)
         gfx:setAnimationMask("walk",        lerp3(0,1,0,0,0,0,0,0, control_state) * regular_movement)
@@ -426,11 +466,11 @@ DetachedCharacterClass = extends (ColClass) {
         gfx:setAnimationPosNormalised("crouch", instance.crouchIdlePos)
         instance.idlePos = (instance.idlePos + elapsed * instance.idleRate) % 1
         gfx:setAnimationPosNormalised("idle", instance.idlePos)
-
-        -- falling is a lot like an idle anim
         instance.fallingPos = instance.fallingPos + elapsed
         gfx:setAnimationPos("falling", instance.fallingPos)
 
+
+        -- update rigid body (and therefore graphics) with new position
         body.worldPosition = curr_foot + vector3(0,0,self.originAboveFeet)
         local bearing_diff = instance.bearingAim - instance.bearing
         while bearing_diff > 180 do bearing_diff = bearing_diff - 360 end
@@ -441,6 +481,7 @@ DetachedCharacterClass = extends (ColClass) {
         while instance.bearing < -180 do instance.bearing = instance.bearing + 360 end
         body.worldOrientation = quat(instance.bearing, V_DOWN)
 
+        
     end;
 
     updateMovementState = function (self)

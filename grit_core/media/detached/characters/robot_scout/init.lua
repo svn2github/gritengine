@@ -37,7 +37,7 @@ class "../robot_scout" (DetachedCharacterClass) {
 
     terminalVelocity = 80/60/60*METRES_PER_MILE;
     stepHeight = 0.3;
-    jumpVelocity = 7.5;
+    jumpVelocity = 9.5;
     pushForce = 1000;
     runPushForce = 2000;
 	
