@@ -41,6 +41,8 @@ local function cast_cylinder_with_deflection (body, radius, height, pos, movemen
     
 end 
 
+disk_resource_load_indefinitely("/detached/weapons/rocket_launcher/rocket_launcher.mesh")
+
 
 -- extend ColClass so we have a physics representation that can receive rays, etc
 DetachedCharacterClass = extends (ColClass) {
@@ -80,6 +82,11 @@ DetachedCharacterClass = extends (ColClass) {
 
     activate = function(self, instance)
         ColClass.activate(self, instance)
+
+        instance.weapons = { }
+        instance.weapons[1] = instance.gfx:makeChild("/detached/weapons/rocket_launcher/rocket_launcher.mesh")
+        instance.weapons[1].parentBone = "R_Hand"
+        instance.weapons[1].localOrientation = euler(172,172,90)
 
         self.needsStepCallbacks = true
 
