@@ -331,7 +331,7 @@ function table.dump(tab, n, d,ind_level, colour)
                 r = r .. ' }'
         else
                 local keys, counter, max_key_len = table.keys(tab, n)
-                table.sort(keys)
+                table.sort(keys, function(a,b) return tostring(a) < tostring(b) end)
                 r = r .. ind .. '{'
                 for k,v in ipairs(keys) do
                         --if k > 1 then
