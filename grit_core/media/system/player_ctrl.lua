@@ -78,7 +78,7 @@ ui.pointerGrabCallbacks:insert("player_ctrl",function (rel_x,rel_y)
 end)
 
 local function ghost_cast (pos, ray, radius)
-	local fraction, _, n = physics_sweep_sphere(radius, pos, ray, true, 1)
+	local fraction, _, n = physics_sweep_sphere(radius*.15, pos, ray, true, 1)
 	return fraction, n
 end
 
@@ -105,16 +105,16 @@ function player_ctrl:update (elapsed)
 			local d = self.camDir * vector3(dist*right, dist*forwards, 0) + vector3(0,0,dist*up)
 			
 
-			local fraction, n = ghost_cast(self.camFocus, d, 0.15)
+			local fraction, n = ghost_cast(self.camFocus, d, 1)
 
 			if not self.ghostMode and fraction ~= nil then
 				local n = norm(n)
 				d = d - dot(d,n) * n
-				local fraction2, n2 = ghost_cast(self.camFocus, d, 0.145)
+				local fraction2, n2 = ghost_cast(self.camFocus, d, .95)
 				if fraction2 ~= nil then
 					n2 = norm(n2)
 					d = d - dot(d,n2) * n2
-					local fraction3, n3 = ghost_cast(self.camFocus, d, 0.14)
+					local fraction3, n3 = ghost_cast(self.camFocus, d, .9)
 					if fraction3 ~= nil then
 						echo("nowhere to go")
 						return 0
@@ -239,40 +239,48 @@ function player_ctrl:grab()
     end
 end
 
+-- tell me how far in a given direction i can place the camera without it clipping anything
+-- also tell me the normal so i can use that to slide along obstacles
+function player_ctrl:camRay(pos, q, ray, min_dist, ...)
+    local nc = gfx_option("NEAR_CLIP")
+    local rect = gfx_window_size_in_scene()
+    local tolerance = 0.05 -- this is the distance that we use to account for differences between colmesh and gfx mesh, as well as inaccuracies in the algorithm itself
+    local box = vector3(rect.x + tolerance, tolerance, rect.y + tolerance) -- y is the direction of the ray
+    local fraction, normal = physics_sweep_box(box, q, pos, ray, true, 1, ...)
+    if fraction == nil then return end
+    return math.max(min_dist, (#ray * fraction + tolerance/2 + nc))
+end
+
 function player_ctrl:handleChaseCam(pitch, cam_attach_pos, ...)
 
-        local last_cam_focus = self.camFocus
-        self.camFocus = cam_attach_pos
+    local last_cam_focus = self.camFocus
+    self.camFocus = cam_attach_pos
 
 
-        -- handle chase cam
+    -- handle chase cam
 
-        local last_cam_pos = last_cam_focus + self.camDir * vector3(0,-self.currentBoomLength,0)
-        local new_cam_rel = self.camFocus - last_cam_pos
+    local last_cam_pos = last_cam_focus + self.camDir * vector3(0,-self.currentBoomLength,0)
+    local new_cam_rel = self.camFocus - last_cam_pos
 
-        self.currentBoomLength = clamp(#new_cam_rel, 0.6*self.boomLength, self.boomLength)
+    self.currentBoomLength = clamp(#new_cam_rel, self.boomLength, self.boomLength)
 
-        if self.mode == 1 and user_cfg.vehicleCameraTrack and player_ctrl.vehicle.cameraTrack and seconds() - self.lastMouseMoveTime > 1 then
+    if self.mode == 1 and user_cfg.vehicleCameraTrack and player_ctrl.vehicle.cameraTrack and seconds() - self.lastMouseMoveTime > 1 then
 
-                self.camPitch = lerp(self.camPitch, self.playerCamPitch + pitch, 0.1)
-                -- test avoids degenerative case where x and y are both 0
-                -- if we are looking straight down at the car then the yaw doesn't really matter
-                -- you can't see where you are going anyway
-                if math.abs(self.camPitch) < 80 then
-                        self.camYaw = yaw(new_cam_rel.x, new_cam_rel.y)
-                end
-                self.camDir = quat(self.camYaw,V_DOWN) * quat(self.camPitch,V_EAST)
-                --echo(self.camYaw, self.camPitch, self.camDir)
+        self.camPitch = lerp(self.camPitch, self.playerCamPitch + pitch, 0.1)
+        -- test avoids degenerative case where x and y are both 0
+        -- if we are looking straight down at the car then the yaw doesn't really matter
+        -- you can't see where you are going anyway
+        if math.abs(self.camPitch) < 80 then
+                self.camYaw = yaw(new_cam_rel.x, new_cam_rel.y)
         end
+        self.camDir = quat(self.camYaw,V_DOWN) * quat(self.camPitch,V_EAST)
+        --echo(self.camYaw, self.camPitch, self.camDir)
+    end
 
 
-        self.currentBoomLength =
-                physics_sweep_sphere(self.boomRayRadius,
-                        self.camFocus,
-                        self.camDir * vector3(0,-self.currentBoomLength,0),
-                        true, 1, ...) or self.currentBoomLength
+    self.currentBoomLength = self:camRay(self.camFocus, self.camDir, self.camDir * vector3(0,-self.currentBoomLength,0), 0.5, ...) or self.currentBoomLength
 
-        self.camPos = self.camFocus + self.camDir * vector3(0, -self.currentBoomLength, 0)
+    self.camPos = self.camFocus + self.camDir * vector3(0, -self.currentBoomLength, 0)
 
 end
 
