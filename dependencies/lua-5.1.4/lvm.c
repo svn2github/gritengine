@@ -153,19 +153,19 @@ void luaV_gettable (lua_State *L, const TValue *t, TValue *key, StkId val) {
         } else if (strcmp(k,"w")==0) {
           setnvalue(val, f4.w);
         } else if (strcmp(k,"xy")==0) {
-          lua_Float4 f4_ = {f4.x, f4.y, 0, 0};
+          lua_Float4 f4_ = {0, f4.x, f4.y, 0};
           setv2value(val, f4_);
         } else if (strcmp(k,"yz")==0) {
-          lua_Float4 f4_ = {f4.y, f4.z, 0, 0};
+          lua_Float4 f4_ = {0, f4.y, f4.z, 0};
           setv2value(val, f4_);
         } else if (strcmp(k,"zw")==0) {
-          lua_Float4 f4_ = {f4.z, f4.w, 0, 0};
+          lua_Float4 f4_ = {0, f4.z, f4.w, 0};
           setv2value(val, f4_);
         } else if (strcmp(k,"xyz")==0) {
-          lua_Float4 f4_ = {f4.x, f4.y, 0, 0};
+          lua_Float4 f4_ = {0, f4.x, f4.y, 0};
           setv3value(val, f4_);
         } else if (strcmp(k,"yzw")==0) {
-          lua_Float4 f4_ = {f4.y, f4.z, 0, 0};
+          lua_Float4 f4_ = {0, f4.y, f4.z, 0};
           setv3value(val, f4_);
         } else {
           luaG_typeerror(L, t, "index");
@@ -180,10 +180,10 @@ void luaV_gettable (lua_State *L, const TValue *t, TValue *key, StkId val) {
         } else if (strcmp(k,"z")==0) {
           setnvalue(val, f4.z);
         } else if (strcmp(k,"xy")==0) {
-          lua_Float4 f4_ = {f4.x, f4.y, 0, 0};
+          lua_Float4 f4_ = {0, f4.x, f4.y, 0};
           setv2value(val, f4_);
         } else if (strcmp(k,"yz")==0) {
-          lua_Float4 f4_ = {f4.y, f4.z, 0, 0};
+          lua_Float4 f4_ = {0, f4.y, f4.z, 0};
           setv2value(val, f4_);
         } else {
           luaG_typeerror(L, t, "index");
