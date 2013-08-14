@@ -2,6 +2,10 @@
 
 Vehicle = extends (ColClass) {
 
+        controlable = true;
+        boomLengthMin = 3;
+        boomLengthMax = 15;
+
         castShadows = true;
         renderingDistance=100;
 
@@ -174,6 +178,8 @@ function Vehicle.activate (persistent,instance)
         instance.parked = persistent.parked or true
         instance.lightsOverride = persistent.lightsOverride or false
         if persistent.canDrive == false then instance.canDrive = false else instance.canDrive = true end
+
+        instance.boomLengthSelected = (persistent.boomLengthMax + persistent.boomLengthMin)/2
 
         instance.numWheels = 0
         if persistent.bonedWheelInfo then
@@ -495,18 +501,6 @@ function Vehicle.setBoost (persistent, v)
         if not persistent.activated then error("Not activated: "..persistent.name) end
 end
 
-function Vehicle.abandon (persistent)
-        if not persistent.activated then return end
-        local instance = persistent.instance
-        local body = instance.body
-		local speed = dot(body.linearVelocity, (body.worldOrientation * V_FORWARDS))
-        persistent.instance.parked = speed < 5 and speed > -5
-        instance.brake = false
-        instance.engine.gear = 0
-        instance.push = 0
-        instance.handbrake = false
-end
-
 function Vehicle.changePush (persistent)
         if not persistent.activated then error("Not activated: "..persistent.name) end
         persistent.instance.parked = false -- if we push/pull the vehicle at all then it becomes unparked until abandoned
@@ -560,7 +554,7 @@ end
 
 function Vehicle.reset (persistent)
         if not persistent.activated then error("Not activated: "..persistent.name) end
-        local was_driving = player_ctrl.vehicle == persistent
+        local was_driving = player_ctrl.controlObj == persistent
         persistent.spawnPos = persistent.instance.body.worldPosition
         persistent.rot = persistent.instance.body.worldOrientation
         persistent:deactivate()
@@ -596,8 +590,8 @@ end
 
 function Vehicle.onExplode (persistent)
         local instance = persistent.instance
-        if player_ctrl.vehicle == persistent then
-                player_ctrl:abandonVehicle()
+        if player_ctrl.controlObj == persistent then
+                player_ctrl:abandonControlObj()
         end
         instance.gfx:setAllMaterials("/common/mat/Burnt")
         if instance.wheels then
@@ -632,7 +626,42 @@ function Vehicle.getStatistics (persistent)
         end
 
         return tot_triangles, tot_batches
-end;
+end
+
+Vehicle.controlZoomIn = regular_chase_cam_zoom_in
+Vehicle.controlZoomOut = regular_chase_cam_zoom_out
+Vehicle.controlUpdate = regular_chase_cam_update
+
+function Vehicle.controlProcessKey (persistent, key)
+    player_ctrl.driveBinds:process(key)
+end
+
+function Vehicle.controlFlush (persistent)
+    player_ctrl.driveBinds:flush()
+end
+
+
+function Vehicle.controlBegin (persistent)
+    if not persistent.activated then return end
+    if persistent.instance.canDrive then
+        --local v_pitch = pitch((obj.instance.body.worldOrientation * V_FORWARDS).z)
+        --self.playerCamPitch = self.playerCamPitch - v_pitch
+        return true
+    end
+end
+function Vehicle.controlAbandon (persistent)
+    if not persistent.activated then return end
+    local instance = persistent.instance
+    local body = instance.body
+    local speed = dot(body.linearVelocity, (body.worldOrientation * V_FORWARDS))
+    persistent.instance.parked = speed < 5 and speed > -5
+    instance.brake = false
+    instance.engine.gear = 0
+    instance.push = 0
+    instance.handbrake = false
+    --local v_pitch = pitch((vehicle.instance.body.worldOrientation * V_FORWARDS).z)
+    --self.playerCamPitch = self.playerCamPitch + v_pitch
+end
 
 
 

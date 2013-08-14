@@ -1,4 +1,9 @@
 Plane = extends (ColClass) {
+
+    controlable = true;
+    boomLengthMin = 3;
+    boomLengthMax = 15;
+
     castShadows = true;
     renderingDistance = 200;
 
@@ -74,6 +79,7 @@ function Plane.activate (persistent,instance)
     instance.push = 0
     instance.parked = true
     instance.canDrive = true
+    instance.boomLengthSelected = (persistent.boomLengthMax + persistent.boomLengthMin)/2
 
     -- 0 means retracted, 1 means down
     instance.gearState = 0.999
@@ -524,21 +530,6 @@ function Plane.setBoost (persistent, v)
     if not persistent.activated then error("Not activated: "..persistent.name) end
 end
 
-function Plane.abandon (persistent)
-    if not persistent.activated then return end
-    local instance = persistent.instance
-    local body = instance.body
-    instance.parked = dot(body.linearVelocity, body.worldOrientation * V_FORWARDS) < 0.5
-    instance.brake = false
-    instance.push = 0
-    instance.handbrake = false
-
-    -- prevent thrust calculation if we abandoned vehicle
-    for i,tp in ipairs(instance.currentThrust) do
-        instance.currentThrust[i] = 0
-    end
-end
-
 function Plane.setPull(persistent, v)
     if not persistent.activated then error("Not activated: "..persistent.name) end
 
@@ -648,8 +639,8 @@ function Plane.beingFired (persistent)
 end
 
 function Plane.onExplode (persistent)
-        if player_ctrl.vehicle == persistent then
-                player_ctrl:abandonVehicle()
+        if player_ctrl.controlObj == persistent then
+                player_ctrl:abandonControlObj()
         end
         local instance = persistent.instance
         instance.gfx:setAllMaterials("/common/mat/Burnt")
@@ -669,3 +660,36 @@ function Plane.onExplode (persistent)
         ColClass.onExplode(persistent)
 end
 
+Plane.controlZoomIn = regular_chase_cam_zoom_in
+Plane.controlZoomOut = regular_chase_cam_zoom_out
+Plane.controlUpdate = regular_chase_cam_update
+
+function Plane.controlProcessKey (persistent, key)
+    player_ctrl.driveBinds:process(key)
+end
+
+function Plane.controlFlush (persistent)
+    player_ctrl.driveBinds:flush()
+end
+
+
+function Plane.controlBegin (persistent)
+    if not persistent.activated then return end
+    if persistent.instance.canDrive then
+        return true
+    end
+end
+function Plane.controlAbandon (persistent)
+    if not persistent.activated then return end
+    local instance = persistent.instance
+    local body = instance.body
+    instance.parked = dot(body.linearVelocity, body.worldOrientation * V_FORWARDS) < 0.5
+    instance.brake = false
+    instance.push = 0
+    instance.handbrake = false
+
+    -- prevent thrust calculation if we abandoned vehicle
+    for i,tp in ipairs(instance.currentThrust) do
+        instance.currentThrust[i] = 0
+    end
+end

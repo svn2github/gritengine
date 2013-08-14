@@ -12,12 +12,10 @@ if physics == nil then
             maxSteps = 50;
             allocs = 0;
             debugWorld = false;
-            prodding = false;
             stepCallbacks = CallbackReg.new();
         }
 else
         physics.stepCallbacks:removeByName("Core")
-        physics.stepCallbacks:removeByName("Prod")
         main.frameCallbacks:removeByName("physics")
 end
 
@@ -49,14 +47,12 @@ function physics_frame_step (step_size, elapsed_time)
 	physics.leftOver = elapsed
 end
 
-local function core (step_size)
-    object_do_step_callbacks(step_size)
-    gfx_particle_pump(step_size)
-    do_events(step_size)
+physics.stepCallbacks:insert("Core", function (elapsed)
+    object_do_step_callbacks(elapsed)
+    gfx_particle_pump(elapsed)
+    do_events(elapsed)
     physics_update()
-
-end
-physics.stepCallbacks:insert("Core", core)
+end)
 
 
 local function frameCallback()
@@ -80,17 +76,5 @@ local function frameCallback()
     return true
 end
 main.frameCallbacks:insert("physics", frameCallback)
-
-local function prod (time)
-        if physics.prodding then
-                local dist, body, nx, ny, nz, _ = cam_ray()
-                if dist~= nil then
-                        local dir = player_ctrl.camDir*V_FORWARDS
-                        local pos = player_ctrl.camPos + dist * dir
-                        body:impulse(time * (player_ctrl.fast and 100 or 10)*body.mass * dir, pos)
-                end
-        end
-end
-physics.stepCallbacks:insert("Prod", prod)
 
 

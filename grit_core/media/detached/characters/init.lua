@@ -51,6 +51,10 @@ DetachedCharacterClass = extends (ColClass) {
 
     castShadows = true;
 
+    controlable = true;
+    boomLengthMin = 3;
+    boomLengthMax = 15;
+
     height = 1.8;
     crouchHeight = 1;
     radius = 0.3;
@@ -89,6 +93,8 @@ DetachedCharacterClass = extends (ColClass) {
         instance.weapons[1].localOrientation = euler(172,172,90)
 
         self.needsStepCallbacks = true
+
+        instance.boomLengthSelected = (self.boomLengthMax + self.boomLengthMin)/2
 
         instance.isActor = true;
         instance.pushState = 0
@@ -537,6 +543,24 @@ DetachedCharacterClass = extends (ColClass) {
         if v then
             self.instance.jumpHappened = true
         end
+    end;
+
+    controlZoomIn = regular_chase_cam_zoom_in;
+    controlZoomOut = regular_chase_cam_zoom_out;
+    controlUpdate = regular_chase_cam_update;
+
+    controlProcessKey = function(persistent, key)
+        player_ctrl.footBinds:process(key)
+    end;
+
+    controlFlush = function (persistent)
+        player_ctrl.footBinds:flush()
+    end;
+
+    controlBegin = function (persistent)
+        return true
+    end;
+    controlAbandon = function(persistent)
     end;
 
 }

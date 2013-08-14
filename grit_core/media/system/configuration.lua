@@ -165,11 +165,10 @@ local debug_cfg_default = {
     vertexDiffuse = true;
     fog = true;
     fixedFunction = false;
-    boundingBoxes = false;
     FOV = 55;
     farClip = 800;
     polygonMode = "SOLID";
-    physicsWireFrame = false;
+    physicsWireFrame = true;
     physicsDebugWorld = true;
     textureAnimation = true;
     textureScale = true;
@@ -192,7 +191,6 @@ local debug_cfg_doc = {
     vertexDiffuse = "whether to use the diffuse channel in the meshes";
     fog = "enable distance fog";
     fixedFunction = "use the classic fixed function pipeline";
-    boundingBoxes = "show octree culling abstractions";
     FOV = "field of view in degrees";
     farClip = "how far away is maximum depth";
     polygonMode = "wireframe, etc";
@@ -220,7 +218,6 @@ local debug_cfg_spec = {
     vertexDiffuse = { "one of", false, true };
     fog = { "one of", false, true };
     fixedFunction = { "one of", false, true };
-    boundingBoxes = { "one of", false, true };
     FOV = { "range", 0, 120 };
     farClip = { "range", 1, 10000 };
     physicsWireFrame = { "one of", false, true };
@@ -242,7 +239,6 @@ local default_user_core_bindings = {
     gameLogicStep = "F11";
 	gameLogicFrameStep = "C+F11";
     wireFrame = "F8";
-    boundingBoxes = "C+F8";
     physicsWireFrame = "F7";
     physicsDebugWorld = "C+F7";
     skyPause = "F5";
@@ -250,7 +246,7 @@ local default_user_core_bindings = {
     clearPlaced = "F3";
     clearProjectiles = "F4";
     toggleFullScreen = "A+Return";
-    fast = "right";
+    toggleVSync = "F1";
 }
 
 local default_user_ghost_bindings = {
@@ -266,6 +262,8 @@ local default_user_ghost_bindings = {
     simpleMenuShow = "`";
     placementEditor = "e";
     grab = "g";
+    fast = "right";
+    prod = "middle";
 }
 
 local default_user_drive_bindings = {
@@ -312,17 +310,12 @@ local core_binding_functions = {
         physics.enabled = not physics.enabled
         echo("Physics enabled: "..tostring(physics.enabled))
     end;
-    physicsSplitImpulse = function ()
-        physics_option("SOLVER_SPLIT_IMPULSE", not physics_option("SOLVER_SPLIT_IMPULSE"))
-        echo("Physics splitImpulse: "..tostring(physics_option("SOLVER_SPLIT_IMPULSE")))
-    end;
     physicsOneToOne = function ()
         physics.oneToOne = not physics.oneToOne
         echo("Physics one-to-one: "..tostring(physics.oneToOne))
     end;
     gameLogicStep = { function () physics_step(physics_option("STEP_SIZE")) end, nil, true };
     gameLogicFrameStep = { function () physics_frame_step(physics_option("STEP_SIZE"), 1/60) end, nil, true };
-    boundingBoxes = function() debug_cfg.boundingBoxes = not debug_cfg.boundingBoxes end;
     wireFrame = function()
         local pm = debug_cfg.polygonMode
         if pm == "SOLID" then
@@ -351,55 +344,64 @@ local core_binding_functions = {
         ui:flush("Alt")
         ui:flush("Return")
     end;
-    fast = {function() player_ctrl.fast = true end, function() player_ctrl.fast = false end};
+    toggleVSync = function ()
+    user_cfg.vsync = not user_cfg.vsync
+        if user_cfg.vsync then
+            echo("vsync on")
+        else
+            echo("vsync off")
+        end
+    end;
 }
 
 local ghost_binding_functions = {
-    forwards = {function() player_ctrl.forwards=1 end, function() player_ctrl.forwards = 0 end};
-    backwards = {function() player_ctrl.backwards=1 end, function() player_ctrl.backwards = 0 end};
-    strafeLeft = {function() player_ctrl.left=1 end, function() player_ctrl.left = 0 end};
-    strafeRight = {function() player_ctrl.right=1 end, function() player_ctrl.right = 0 end};
-    board = function() player_ctrl:pickDrive() end;
-    ascend = {function() player_ctrl.up=1 end, function() player_ctrl.up = 0 end};
-    descend = {function() player_ctrl.down=1 end, function() player_ctrl.down = 0 end};
+    forwards = {function() ghost.forwards=1 end, function() ghost.forwards = 0 end};
+    backwards = {function() ghost.backwards=1 end, function() ghost.backwards = 0 end};
+    strafeLeft = {function() ghost.left=1 end, function() ghost.left = 0 end};
+    strafeRight = {function() ghost.right=1 end, function() ghost.right = 0 end};
+    board = function() ghost:pickDrive() end;
+    ascend = {function() ghost.up=1 end, function() ghost.up = 0 end};
+    descend = {function() ghost.down=1 end, function() ghost.down = 0 end};
     teleportUp = {function() player_ctrl.camFocus = player_ctrl.camFocus+V_UP end, nil, true};
     teleportDown = {function() player_ctrl.camFocus = player_ctrl.camFocus+V_DOWN end, nil, true};
     simpleMenuShow = {function() simple_menu:show(simple_menu.Main_menu) end, nil};
     placementEditor = function() placement_editor:manip(pick_obj_safe()) end;
-    grab = function() player_ctrl:grab() end;
+    grab = function() ghost:grab() end;
+    fast = {function() ghost.fast = true end, function() ghost.fast = false end};
+    prod = {function() ghost.prodding = true end, function() ghost.prodding = false end};
 }
 
 local drive_binding_functions = {
-    forwards = {function() player_ctrl.vehicle:setPush(true) end, function() player_ctrl.vehicle:setPush(false) end};
-    backwards = {function() player_ctrl.vehicle:setPull(true) end, function() player_ctrl.vehicle:setPull(false) end};
-    steerLeft = {function() player_ctrl.vehicle:setShouldSteerLeft(true) end, function() player_ctrl.vehicle:setShouldSteerLeft(false) end};
-    steerRight = {function() player_ctrl.vehicle:setShouldSteerRight(true) end, function() player_ctrl.vehicle:setShouldSteerRight(false) end};
-    abandon = function() player_ctrl:abandonVehicle() end;
-    handbrake = {function() player_ctrl.vehicle:setHandbrake(true) end, function() player_ctrl.vehicle:setHandbrake(false) end};
-    boost = {function() player_ctrl.vehicle:setBoost(true) end, function() player_ctrl.vehicle:setBoost(false) end};
-    zoomIn = {function() player_ctrl:zoomIn() end, nil, true};
-    zoomOut = {function() player_ctrl:zoomOut() end, nil, true};
-    realign = {function() player_ctrl.vehicle:realign() end, nil, true};
-    specialUp = {function() player_ctrl.vehicle:setSpecialUp(true) end, function() player_ctrl.vehicle:setSpecialUp(false) end};
-    specialDown = {function() player_ctrl.vehicle:setSpecialDown(true) end, function() player_ctrl.vehicle:setSpecialDown(false) end};
-    specialLeft = {function() player_ctrl.vehicle:setSpecialLeft(true) end, function() player_ctrl.vehicle:setSpecialLeft(false) end};
-    specialRight = {function() player_ctrl.vehicle:setSpecialRight(true) end, function() player_ctrl.vehicle:setSpecialRight(false) end};
-    altUp = {function() player_ctrl.vehicle:setAltUp(true) end, function() player_ctrl.vehicle:setAltUp(false) end};
-    altDown = {function() player_ctrl.vehicle:setAltDown(true) end, function() player_ctrl.vehicle:setAltDown(false) end};
-    altLeft = {function() player_ctrl.vehicle:setAltLeft(true) end, function() player_ctrl.vehicle:setAltLeft(false) end};
-    altRight = {function() player_ctrl.vehicle:setAltRight(true) end, function() player_ctrl.vehicle:setAltRight(false) end};
-    specialToggle = function() player_ctrl.vehicle:special() end;
+    forwards = {function() player_ctrl.controlObj:setPush(true) end, function() player_ctrl.controlObj:setPush(false) end};
+    backwards = {function() player_ctrl.controlObj:setPull(true) end, function() player_ctrl.controlObj:setPull(false) end};
+    steerLeft = {function() player_ctrl.controlObj:setShouldSteerLeft(true) end, function() player_ctrl.controlObj:setShouldSteerLeft(false) end};
+    steerRight = {function() player_ctrl.controlObj:setShouldSteerRight(true) end, function() player_ctrl.controlObj:setShouldSteerRight(false) end};
+    abandon = function() player_ctrl:abandonControlObj() end;
+    handbrake = {function() player_ctrl.controlObj:setHandbrake(true) end, function() player_ctrl.controlObj:setHandbrake(false) end};
+    boost = {function() player_ctrl.controlObj:setBoost(true) end, function() player_ctrl.controlObj:setBoost(false) end};
+    zoomIn = {function() player_ctrl.controlObj:controlZoomIn() end, nil, true};
+    zoomOut = {function() player_ctrl.controlObj:controlZoomOut() end, nil, true};
+    realign = {function() player_ctrl.controlObj:realign() end, nil, true};
+    specialUp = {function() player_ctrl.controlObj:setSpecialUp(true) end, function() player_ctrl.controlObj:setSpecialUp(false) end};
+    specialDown = {function() player_ctrl.controlObj:setSpecialDown(true) end, function() player_ctrl.controlObj:setSpecialDown(false) end};
+    specialLeft = {function() player_ctrl.controlObj:setSpecialLeft(true) end, function() player_ctrl.controlObj:setSpecialLeft(false) end};
+    specialRight = {function() player_ctrl.controlObj:setSpecialRight(true) end, function() player_ctrl.controlObj:setSpecialRight(false) end};
+    altUp = {function() player_ctrl.controlObj:setAltUp(true) end, function() player_ctrl.controlObj:setAltUp(false) end};
+    altDown = {function() player_ctrl.controlObj:setAltDown(true) end, function() player_ctrl.controlObj:setAltDown(false) end};
+    altLeft = {function() player_ctrl.controlObj:setAltLeft(true) end, function() player_ctrl.controlObj:setAltLeft(false) end};
+    altRight = {function() player_ctrl.controlObj:setAltRight(true) end, function() player_ctrl.controlObj:setAltRight(false) end};
+    specialToggle = function() player_ctrl.controlObj:special() end;
 }
 
 local foot_binding_functions = {
-    forwards = {function() player_ctrl.actor:setForwards(true) end, function() player_ctrl.actor:setForwards(false) end};
-    backwards = {function() player_ctrl.actor:setBackwards(true) end, function() player_ctrl.actor:setBackwards(false) end};
-    strafeLeft = {function() player_ctrl.actor:setStrafeLeft(true) end, function() player_ctrl.actor:setStrafeLeft(false) end};
-    strafeRight = {function() player_ctrl.actor:setStrafeRight(true) end, function() player_ctrl.actor:setStrafeRight(false) end};
-    abandon = function() player_ctrl:abandonVehicle() end;
-    jump = {function() player_ctrl.actor:setJump(true) end, function() player_ctrl.actor:setJump(false) end};
-    run = {function() player_ctrl.actor:setRun(true) end, function() player_ctrl.actor:setRun(false) end};
-    crouch = {function() player_ctrl.actor:setCrouch(true) end, function() player_ctrl.actor:setCrouch(false) end};
+    forwards = {function() player_ctrl.controlObj:setForwards(true) end, function() player_ctrl.controlObj:setForwards(false) end};
+    backwards = {function() player_ctrl.controlObj:setBackwards(true) end, function() player_ctrl.controlObj:setBackwards(false) end};
+    strafeLeft = {function() player_ctrl.controlObj:setStrafeLeft(true) end, function() player_ctrl.controlObj:setStrafeLeft(false) end};
+    strafeRight = {function() player_ctrl.controlObj:setStrafeRight(true) end, function() player_ctrl.controlObj:setStrafeRight(false) end};
+    abandon = function() player_ctrl:abandonControlObj() end;
+    jump = {function() player_ctrl.controlObj:setJump(true) end, function() player_ctrl.controlObj:setJump(false) end};
+    run = {function() player_ctrl.controlObj:setRun(true) end, function() player_ctrl.controlObj:setRun(false) end};
+    crouch = {function() player_ctrl.controlObj:setCrouch(true) end, function() player_ctrl.controlObj:setCrouch(false) end};
     zoomIn = {function() player_ctrl:zoomIn() end, nil, true};
     zoomOut = {function() player_ctrl:zoomOut() end, nil, true};
 }
@@ -453,7 +455,7 @@ local function process_bindings(bindings, functions, tab)
 end
 
 process_bindings(user_core_bindings, core_binding_functions, ui.coreBinds)
-process_bindings(user_ghost_bindings, ghost_binding_functions, player_ctrl.ghostBinds)
+process_bindings(user_ghost_bindings, ghost_binding_functions, ghost.binds)
 process_bindings(user_drive_bindings, drive_binding_functions, player_ctrl.driveBinds)
 process_bindings(user_foot_bindings, foot_binding_functions, player_ctrl.footBinds)
 
@@ -600,8 +602,6 @@ local function commit(c, p, flush, partial)
             elseif k == "fog" then
                 gfx_option("FOG",v)
                 reset_shaders = true
-            elseif k == "boundingBoxes" then
-                sm.showBoundingBoxes = v
             elseif k == "physicsWireFrame" then
                 physics_option("DEBUG_WIREFRAME", v)
             elseif k == "physicsDebugWorld" then

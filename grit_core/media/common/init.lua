@@ -23,17 +23,6 @@ include "veg/init.lua"
 include "ramps/init.lua"
 
 
-
-ui:bind("F1", function()
-    user_cfg.vsync = not user_cfg.vsync
-    if user_cfg.vsync then
-        echo("vsync on")
-    else
-        echo("vsync off")
-    end
-end)
-ui:bind("middle", function() physics.prodding = true end, function() physics.prodding = false end)
-
 -- Object placement bindings...
 
 local tab = {

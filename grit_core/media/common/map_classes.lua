@@ -254,6 +254,87 @@ BaseClass = {
 
 }
 
+
+-----------------------
+-- REGULAR CHASE CAM --
+-----------------------
+
+-- to use these functions, persistent must have a boomLengthMin and Max fields.
+-- instance must have boomLengthSelected initialised to something sensible.
+-- persistent must be at least of type ColClass
+-- 
+
+function regular_chase_cam_zoom_in(persistent)
+    local instance = persistent.instance
+    instance.boomLengthSelected = clamp(instance.boomLengthSelected*0.83, persistent.boomLengthMin, persistent.boomLengthMax)
+end
+
+function regular_chase_cam_zoom_out(persistent)
+    local instance = persistent.instance
+    instance.boomLengthSelected = clamp(instance.boomLengthSelected*1.2, persistent.boomLengthMin, persistent.boomLengthMax)
+end
+
+--[[
+-- FOV Scale Trick
+if persistent.fovScale then
+    local fovPlot = Plot {
+        [0] = debug_cfg.FOV;
+        [30] = debug_cfg.FOV+25;
+        [30.0001] = debug_cfg.FOV+25;
+    }
+    gfx_option("FOV", fovPlot[self.speedoSpeed])
+end
+]]
+--[[
+-- top down cam
+    --  local vehicle_point = instance.body.worldOrientation * V_FORWARDS
+    --  if vehicle_point.x~=0 or vehicle_point.y~=0 then
+    --      player_ctrl.camDir = quat(V_FORWARDS, vehicle_point*vector3(1,1,0))*Q_DOWN
+    --  end
+    --  player_ctrl.camPos = instance.camAttachPos + V_UP*player_ctrl.boomLength
+]]
+
+function regular_chase_cam_update(persistent)
+
+    local instance = persistent.instance
+
+    local body = instance.body
+
+    local vehicle_bearing, vehicle_pitch = yaw_pitch(body.worldOrientation * V_FORWARDS)
+    local vehicle_vel = body.linearVelocity
+
+    -- modify the player_ctrl.camPitch and player_ctrl.camYaw to track the direction a vehicle is travelling
+    if user_cfg.vehicleCameraTrack and persistent.cameraTrack and seconds() - player_ctrl.lastMouseMoveTime > 1  and #vehicle_vel > 5 then
+    
+        player_ctrl.camPitch = lerp(player_ctrl.camPitch, player_ctrl.playerCamPitch + vehicle_pitch, 0.1)
+        
+        -- test avoids degenerative case where x and y are both 0 
+        -- if we are looking straight down at the car then the yaw doesn't really matter
+        -- you can't see where you are going anyway
+        if math.abs(player_ctrl.camPitch) < 80 then
+                --local new_cam_rel = self.camFocus - last_cam_pos
+                local ideal_yaw = yaw(vehicle_vel.x, vehicle_vel.y)
+                local current_yaw = player_ctrl.camYaw
+                if math.abs(ideal_yaw - current_yaw) > 180 then
+                    if ideal_yaw < current_yaw then
+                        ideal_yaw = ideal_yaw + 360
+                    else
+                        current_yaw = current_yaw + 360
+                    end 
+                end 
+                local new_yaw = lerp(player_ctrl.camYaw, ideal_yaw, 0.1) % 360
+                    
+                player_ctrl.camYaw = new_yaw
+        end     
+        player_ctrl.camDir = quat(player_ctrl.camYaw,V_DOWN) * quat(player_ctrl.camPitch,V_EAST)
+    end 
+    
+    player_ctrl.camFocus = instance.camAttachPos
+    local boom_length = math.max(persistent.boomLengthMin, cam_box_ray(player_ctrl.camFocus, player_ctrl.camDir, instance.boomLengthSelected, player_ctrl.camDir*V_BACKWARDS, body))
+    player_ctrl.camPos = player_ctrl.camFocus + player_ctrl.camDir * vector3(0, -boom_length, 0)
+
+end
+
 ColClass = extends (BaseClass) {
         receiveImpulse = function (persistent, impulse, wpos)
                 if persistent.health and persistent.impulseDamageThreshold then

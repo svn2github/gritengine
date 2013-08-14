@@ -32,6 +32,10 @@ FlyingCar = extends (ColClass) {
     cameraTrack = true;
     fovScale = true;
 
+    controlable = true;
+    boomLengthMin = 3;
+    boomLengthMax = 15;
+
     wobblePeriod = 4; -- seconds
     wobbleAmplitude = 0.04; -- metres
     floatingHeightDeviationAllowed = 0.06; -- move more than this in 1 tick, and vehicle 'forgets' where it used to be
@@ -63,6 +67,8 @@ FlyingCar = extends (ColClass) {
         persistent.needsStepCallbacks = true;
 
         instance.canDrive = true;
+        instance.boomLengthSelected = (persistent.boomLengthMax + persistent.boomLengthMin)/2
+
         instance.wantHeight = instance.body.worldPosition.z
         instance.wantBearing = 0
 
@@ -297,6 +303,29 @@ FlyingCar = extends (ColClass) {
     setAltDown = do_nothing;
     setAltLeft = do_nothing;
     setAltRight = do_nothing;
+
+    controlZoomIn = regular_chase_cam_zoom_in;
+    controlZoomOut = regular_chase_cam_zoom_out;
+    controlUpdate = regular_chase_cam_update;
+
+    controlProcessKey = function(persistent, key)
+        player_ctrl.driveBinds:process(key)
+    end;
+
+    controlFlush = function (persistent)
+        player_ctrl.driveBinds:flush()
+    end;
+
+    controlBegin = function (persistent)
+        if not persistent.activated then return end
+        if persistent.instance.canDrive then
+            return true
+        end
+    end;
+    controlAbandon = function(persistent)
+    end;
+
+
 }
 
 class "../comet" (FlyingCar) {
