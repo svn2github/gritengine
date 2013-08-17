@@ -5,6 +5,7 @@ hud_class "Speedo" {
     init = function (self)
 		self.alpha = 0
         self.needsFrameCallbacks = true
+        self.needsInputCallbacks = true
 		local width = 108
 		self.labels = gfx_hud_object_add("StackY", {
 			parent = self,
@@ -38,5 +39,15 @@ hud_class "Speedo" {
 			end       
 			self.labels.contents[2].text.text = string.format("%d %s", speed_amount, speed_units)
 		end
+    end;
+
+    mouseMoveCallback = function (self, local_pos, screen_pos, inside)
+        self.inside = inside
+    end;
+
+    buttonCallback = function (self, ev)
+        if ev == "+left" and self.inside then
+            user_cfg.metricUnits = not user_cfg.metricUnits
+        end
     end;
 }
