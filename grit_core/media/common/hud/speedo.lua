@@ -5,12 +5,12 @@ hud_class "Speedo" {
     init = function (self)
 		self.alpha = 0
         self.needsFrameCallbacks = true
-		local sz = vector2(108,12)
+		local width = 108
 		self.labels = gfx_hud_object_add("StackY", {
 			parent = self,
 			padding = -1,
-			gfx_hud_object_add("Label", {font = "TinyFont", size=sz }),
-			gfx_hud_object_add("Label", {font = "TinyFont", size=sz }),
+			gfx_hud_object_add("Label", {font = "TinyFont", size=vector2(width, 10) }),
+			gfx_hud_object_add("Label", {font = "/system/misc.fixed", size=vector2(width, 15) }),
 		})
 		self.size = self.labels.size
     end;
