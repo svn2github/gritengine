@@ -29,13 +29,13 @@ hud_class "../Button" {
     refreshState = function (self)
         if self.dragging and self.inside then
             self.texture = self.textureDown
-            self.text.colour = vector3(.8,.8,1)
+            self.text.colour = vector3(1,1,1)
         elseif self.inside then
             self.texture = self.textureHover
-            self.text.colour = vector3(1,1,.8)
+            self.text.colour = vector3(1,1,1)
         else
             self.texture = self.textureUp
-            self.text.colour = vector3(.8,.8,1)
+            self.text.colour = vector3(1,1,1)
         end
     end;
 

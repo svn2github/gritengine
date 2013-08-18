@@ -19,9 +19,6 @@ end
 
 local mat
 
--- for the overlay that displays shadowmaps, etc.  Probably saving them to disk for examination in gimp is a better approach.
-mat = do_create_hud_material("/system/DebugTexture")
-
 -- For overlays.  Get rid of this when we move to new overlay system
 mat = do_create_hud_material("system/ConsoleBorder")
 mat:setSceneBlending(0,0,"SRC_ALPHA", "ONE_MINUS_SRC_ALPHA")

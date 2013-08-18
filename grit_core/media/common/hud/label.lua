@@ -55,6 +55,7 @@ hud_class "Label" (extends (BorderPane) {
     textColour = vector3(0,0,0);
     font = "/system/misc.fixed";
     value = "No label";
+    alignment = "CENTRE";
 
     init = function (self)
 		BorderPane.init(self)
@@ -75,9 +76,21 @@ hud_class "Label" (extends (BorderPane) {
 		BorderPane.destroy(self)
     end;
 
+    setText = function (self, text)
+        self.text.text = text
+        self:updateChildrenSize()
+    end;
+
     updateChildrenSize = function (self)
         BorderPane.updateChildrenSize(self)
-        self.text.position = self.size/2 - math.floor(self.size/2)
+        local centre = self.size/2 - math.floor(self.size/2)
+        if self.alignment == "CENTRE" then
+            self.text.position = centre
+        elseif self.alignment == "LEFT" then
+            self.text.position = centre - vector2(self.size.x/2 -4 - self.text.size.x/2, 0)
+        elseif self.alignment == "RIGHT" then
+            self.text.position = centre + vector2(self.size.x/2 -4 - self.text.size.x/2, 0)
+        end
     end;
 
 })
