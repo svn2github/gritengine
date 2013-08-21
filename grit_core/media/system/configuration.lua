@@ -402,8 +402,8 @@ local foot_binding_functions = {
     jump = {function() player_ctrl.controlObj:setJump(true) end, function() player_ctrl.controlObj:setJump(false) end};
     run = {function() player_ctrl.controlObj:setRun(true) end, function() player_ctrl.controlObj:setRun(false) end};
     crouch = {function() player_ctrl.controlObj:setCrouch(true) end, function() player_ctrl.controlObj:setCrouch(false) end};
-    zoomIn = {function() player_ctrl:zoomIn() end, nil, true};
-    zoomOut = {function() player_ctrl:zoomOut() end, nil, true};
+    zoomIn = {function() player_ctrl.controlObj:controlZoomIn() end, nil, true};
+    zoomOut = {function() player_ctrl.controlObj:controlZoomOut() end, nil, true};
 }
 
 
