@@ -302,16 +302,17 @@ function regular_chase_cam_update(persistent)
 
     local vehicle_bearing, vehicle_pitch = yaw_pitch(body.worldOrientation * V_FORWARDS)
     local vehicle_vel = body.linearVelocity
+    local vehicle_vel_xy_speed = #(vehicle_vel * vector3(1,1,0))
 
     -- modify the player_ctrl.camPitch and player_ctrl.camYaw to track the direction a vehicle is travelling
-    if user_cfg.vehicleCameraTrack and persistent.cameraTrack and seconds() - player_ctrl.lastMouseMoveTime > 1  and #vehicle_vel > 5 then
+    if user_cfg.vehicleCameraTrack and persistent.cameraTrack and seconds() - player_ctrl.lastMouseMoveTime > 1  and vehicle_vel_xy_speed > 5 then
     
         player_ctrl.camPitch = lerp(player_ctrl.camPitch, player_ctrl.playerCamPitch + vehicle_pitch, 0.1)
         
         -- test avoids degenerative case where x and y are both 0 
         -- if we are looking straight down at the car then the yaw doesn't really matter
         -- you can't see where you are going anyway
-        if math.abs(player_ctrl.camPitch) < 80 then
+        if math.abs(player_ctrl.camPitch) < 60 then
                 --local new_cam_rel = self.camFocus - last_cam_pos
                 local ideal_yaw = yaw(vehicle_vel.x, vehicle_vel.y)
                 local current_yaw = player_ctrl.camYaw
@@ -332,6 +333,9 @@ function regular_chase_cam_update(persistent)
     player_ctrl.camFocus = instance.camAttachPos
     local boom_length = math.max(persistent.boomLengthMin, cam_box_ray(player_ctrl.camFocus, player_ctrl.camDir, instance.boomLengthSelected, player_ctrl.camDir*V_BACKWARDS, body))
     player_ctrl.camPos = player_ctrl.camFocus + player_ctrl.camDir * vector3(0, -boom_length, 0)
+
+    player_ctrl.speedoPos = instance.camAttachPos
+    player_ctrl.speedoSpeed = #vehicle_vel
 
 end
 
