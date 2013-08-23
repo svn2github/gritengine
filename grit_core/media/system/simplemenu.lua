@@ -20,44 +20,44 @@ do
 	local file = io.open(filename, "r")	
 	if file ~= nil then
 		file:close()
-		print "Reading user_menu.lua: success"
 		include("/"..filename)
-	else
-		print "Reading user_menu.lua: fail"
-	
+		print "Reading user_menu.lua: success"
+	else	
 		-- clean up. if it's not needed remove this shame, please :P
 		filename = nil
 		file = nil
+		print "Reading user_menu.lua: fail"
 	end
 end
 
 function simple_menu:load_keybinds()
 	-- checks whether file exists
-			--if exists include settings from it and return
-			--else write defaults to that file and include them and return
+    --if exists include settings from it and return
+    --else write defaults to that file and include them and return
 	local filename = "user_menu_keybinds.lua"
 	local file = io.open(filename, "r")
 	if file ~= nil then
 		file:close()
 		print("Reading "..filename)
 		include("/"..filename)
-
-		local isloaded
-		if simple_menu.Entries ~= nil then -- check if succesfly loaded keybinds
-			--[[
+ 
+        -- assume we loaded them
+        local isloaded = true
+        -- now lets check if succesfly loaded all the keybinds
+		if simple_menu.Entries ~= nil then
 			for i=0, 9, 1 do
-				echo(i.." "..simple_menu.Entries[i])
+				--echo(i.." "..simple_menu.Entries[i])
 		 		if simple_menu.Entries[i] == nil then
-					echo(simple_menu.Entries[i])
-					local isloaded = false
+					--echo(simple_menu.Entries[i])
+                    print("simplemenu user keybind not bound for entry "..tostring(i))
+					isloaded = false
 					print(filename.." is corrupted.")
 					break
 				end				
 			end
-			if isloaded ~= nil and isloaded ~= false then
-			--]]
+			if isloaded then
 				return
-			--end
+			end
 		end
 	end
 
@@ -154,11 +154,6 @@ end
 function simple_menu:callback(key)
 	--echo "simplemenu callback called"
 	--echo ("key:"..key)
-
-	if player_ctrl.mode ~= 0 and self.showingMenu ~= nil then --if not in ghost mode hide the menu and return
-		self:show(nil)
-		return
-	end
 
 	--echo "simple menu processing keypresses"
 	
