@@ -530,6 +530,39 @@ static int luaB_vectorn (lua_State *L, int sz, float *input) {
   return counter == sz;
 }
 
+static int luaB_vec (lua_State *L) {
+  float input[4] = { 0 };
+  switch (lua_gettop(L)) {
+    case 4:
+    input[3] = lua_tonumber(L, 4);
+    case 3:
+    input[2] = lua_tonumber(L, 3);
+    case 2:
+    input[1] = lua_tonumber(L, 2);
+    case 1:
+    input[0] = lua_tonumber(L, 1);
+    break;
+    default:
+    luaL_error(L, "vec(...) takes 1 to 4 number arguments only");
+  }
+  switch (lua_gettop(L)) {
+    case 4:
+    lua_pushvector4(L, input[0], input[1], input[2], input[3]);
+    break;
+    case 3:
+    lua_pushvector3(L, input[0], input[1], input[2]);
+    break;
+    case 2:
+    lua_pushvector2(L, input[0], input[1]);
+    break;
+    case 1:
+    lua_pushnumber(L, input[0]);
+    break;
+    default:;
+  }
+  return 1;
+}
+
 static int luaB_vector2 (lua_State *L) {
   float input[2];
   if (!luaB_vectorn(L, 2, input)) luaL_error(L, "vector2(...) requires exactly 2 numbers");
@@ -795,6 +828,10 @@ static const luaL_Reg base_funcs[] = {
   {"unpack", luaB_unpack},
   {"xpcall", luaB_xpcall},
 
+  {"vec", luaB_vec},
+  {"vec4", luaB_vector4},
+  {"vec3", luaB_vector3},
+  {"vec2", luaB_vector2},
   {"vector4", luaB_vector4},
   {"vector3", luaB_vector3},
   {"vector2", luaB_vector2},
