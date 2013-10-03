@@ -124,6 +124,47 @@ static void callTM (lua_State *L, const TValue *f, const TValue *p1,
   luaD_call(L, L->top - 4, 0);
 }
 
+void luaV_assignf4 (lua_Float4 *to, int index, lua_Number n) {
+  switch (index) {
+    case 0: to->x = n; break;
+    case 1: to->y = n; break;
+    case 2: to->z = n; break;
+    case 3: to->w = n; break;
+    default:;
+  }
+}
+
+int luaV_swizzle (const char *key, lua_Float4 *from, int from_sz, lua_Float4 *to) {
+    int counter = 0;
+    while (key[counter] != '\0') {
+        switch (key[counter]) {
+            case 'x':
+            if (from_sz < 1) return 0;
+            luaV_assignf4(to, counter, from->x);
+            break;
+
+            case 'y':
+            if (from_sz < 2) return 0;
+            luaV_assignf4(to, counter, from->y);
+            break;
+
+            case 'z':
+            if (from_sz < 3) return 0;
+            luaV_assignf4(to, counter, from->z);
+            break;
+
+            case 'w':
+            if (from_sz < 4) return 0;
+            luaV_assignf4(to, counter, from->w);
+            break;
+
+            default: return 0;
+        }
+        counter++;
+        if (counter>4) return 0;
+    }
+    return counter;
+}
 
 void luaV_gettable (lua_State *L, const TValue *t, TValue *key, StkId val) {
   int loop;
@@ -144,59 +185,50 @@ void luaV_gettable (lua_State *L, const TValue *t, TValue *key, StkId val) {
       if (stringkey && ttisvector4(t)) {  
         lua_Float4 f4 = v4value(t);
         const char *k = svalue(key);
-        if (strcmp(k,"x")==0) {
-          setnvalue(val, f4.x);
-        } else if (strcmp(k,"y")==0) {
-          setnvalue(val, f4.y);
-        } else if (strcmp(k,"z")==0) {
-          setnvalue(val, f4.z);
-        } else if (strcmp(k,"w")==0) {
-          setnvalue(val, f4.w);
-        } else if (strcmp(k,"xy")==0) {
-          lua_Float4 f4_ = {0, f4.x, f4.y, 0};
-          setv2value(val, f4_);
-        } else if (strcmp(k,"yz")==0) {
-          lua_Float4 f4_ = {0, f4.y, f4.z, 0};
-          setv2value(val, f4_);
-        } else if (strcmp(k,"zw")==0) {
-          lua_Float4 f4_ = {0, f4.z, f4.w, 0};
-          setv2value(val, f4_);
-        } else if (strcmp(k,"xyz")==0) {
-          lua_Float4 f4_ = {0, f4.x, f4.y, 0};
-          setv3value(val, f4_);
-        } else if (strcmp(k,"yzw")==0) {
-          lua_Float4 f4_ = {0, f4.y, f4.z, 0};
-          setv3value(val, f4_);
-        } else {
-          luaG_typeerror(L, t, "index");
+        lua_Float4 out;
+        switch (luaV_swizzle(k, &f4, 4, &out)) {
+          case 1: setnvalue(val, out.x); break;
+          case 2: setv2value(val, out); break;
+          case 3: setv3value(val, out); break;
+          case 4: setv4value(val, out); break;
+          default:
+          if (strcmp(k,"dim")==0) {
+            setnvalue(val, 4);
+          } else {
+            luaG_typeerror(L, t, "index");
+          }
         }
       } else if (stringkey && ttisvector3(t)) {  
         lua_Float4 f4 = v3value(t);
         const char *k = svalue(key);
-        if (strcmp(k,"x")==0) {
-          setnvalue(val, f4.x);
-        } else if (strcmp(k,"y")==0) {
-          setnvalue(val, f4.y);
-        } else if (strcmp(k,"z")==0) {
-          setnvalue(val, f4.z);
-        } else if (strcmp(k,"xy")==0) {
-          lua_Float4 f4_ = {0, f4.x, f4.y, 0};
-          setv2value(val, f4_);
-        } else if (strcmp(k,"yz")==0) {
-          lua_Float4 f4_ = {0, f4.y, f4.z, 0};
-          setv2value(val, f4_);
-        } else {
-          luaG_typeerror(L, t, "index");
+        lua_Float4 out;
+        switch (luaV_swizzle(k, &f4, 3, &out)) {
+          case 1: setnvalue(val, out.x); break;
+          case 2: setv2value(val, out); break;
+          case 3: setv3value(val, out); break;
+          case 4: setv4value(val, out); break;
+          default:
+          if (strcmp(k,"dim")==0) {
+            setnvalue(val, 3);
+          } else {
+            luaG_typeerror(L, t, "index");
+          }
         }
       } else if (stringkey && ttisvector2(t)) {  
         lua_Float4 f4 = v2value(t);
         const char *k = svalue(key);
-        if (strcmp(k,"x")==0) {
-          setnvalue(val, f4.x);
-        } else if (strcmp(k,"y")==0) {
-          setnvalue(val, f4.y);
-        } else {
-          luaG_typeerror(L, t, "index");
+        lua_Float4 out;
+        switch (luaV_swizzle(k, &f4, 2, &out)) {
+          case 1: setnvalue(val, out.x); break;
+          case 2: setv2value(val, out); break;
+          case 3: setv3value(val, out); break;
+          case 4: setv4value(val, out); break;
+          default:
+          if (strcmp(k,"dim")==0) {
+            setnvalue(val, 2);
+          } else {
+            luaG_typeerror(L, t, "index");
+          }
         }
       } else if (stringkey && ttisquat(t)) {  
         lua_Float4 f4 = qvalue(t);
@@ -223,6 +255,22 @@ void luaV_gettable (lua_State *L, const TValue *t, TValue *key, StkId val) {
           setv3value(val, v);
         } else {
           luaG_typeerror(L, t, "index");
+        }
+      } else if (stringkey && ttisnumber(t)) {
+        lua_Float4 f4 = { 0, nvalue(t), 0, 0 };
+        const char *k = svalue(key);
+        lua_Float4 out;
+        switch (luaV_swizzle(k, &f4, 1, &out)) {
+          case 1: setnvalue(val, out.x); break;
+          case 2: setv2value(val, out); break;
+          case 3: setv3value(val, out); break;
+          case 4: setv4value(val, out); break;
+          default:
+          if (strcmp(k,"dim")==0) {
+            setnvalue(val, 1);
+          } else {
+            luaG_typeerror(L, t, "index");
+          }
         }
       } else {
         luaG_typeerror(L, t, "index");
