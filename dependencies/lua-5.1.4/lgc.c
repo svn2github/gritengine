@@ -627,6 +627,7 @@ void luaC_step (lua_State *L) {
     }
   }
   else {
+    luaC_callGCTM(L);
     lua_assert(g->totalbytes >= g->estimate);
     setthreshold(g);
   }
