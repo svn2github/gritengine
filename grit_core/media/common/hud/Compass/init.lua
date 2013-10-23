@@ -22,32 +22,33 @@ hud_class "../Compass" {
         self.text.position = vector2(48,-50)
         self.text.colour = vector3(0,0,0)
 
-        self.letterInset = vector2(5, 5)
+        self.letterInset = vector2(2, 2)
 
         --the cardinal directions
-        self.N = gfx_hud_text_add("TinyFont")
+        local cardinalLettersFont = "/system/misc.fixed"
+        self.N = gfx_hud_text_add(cardinalLettersFont)
         self.N.text = "N"
         self.N.parent = self
         self.N.position = vector2(0, self.size.y/2-self.N.size.y/2-self.letterInset.y)
         self.N.colour = vector3(1,0,0)
 
-        self.S = gfx_hud_text_add("TinyFont")
+        self.S = gfx_hud_text_add(cardinalLettersFont)
         self.S.text = "S"
         self.S.parent = self
         self.S.position = vector2(0, -(self.size.y/2-self.S.size.y/2-self.letterInset.y))
-        self.S.colour = vector3(0.5,0.5,0.5)
+        self.S.colour = vector3(0,0,0)
 
-        self.W = gfx_hud_text_add("TinyFont")
+        self.W = gfx_hud_text_add(cardinalLettersFont)
         self.W.text = "W"
         self.W.parent = self
         self.W.position = vector2(-(self.size.x/2-self.W.size.x/2-self.letterInset.x), 0)
-        self.W.colour = vector3(0.5,0.5,0.5)
+        self.W.colour = vector3(0,0,0)
 
-        self.E = gfx_hud_text_add("TinyFont")
+        self.E = gfx_hud_text_add(cardinalLettersFont)
         self.E.text = "E"
         self.E.parent = self
         self.E.position = vector2(self.size.x/2-self.W.size.x-self.letterInset.x, 0)
-        self.E.colour = vector3(0.5,0.5,0.5)
+        self.E.colour = vector3(0,0,0)
     end;
     destroy = function (self)
         safe_destroy(self.pointer)
