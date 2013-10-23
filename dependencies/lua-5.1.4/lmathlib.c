@@ -268,15 +268,54 @@ static int math_max (lua_State *L) {
   return 1;
 }
 
+static float do_clamp (float a, float b, float c)
+{
+  if (a<b) return b;
+  if (a>c) return c;
+  return a;
+}
+
 static int math_clamp (lua_State *L) {
-  lua_Number a, b, c;
   if (lua_gettop(L)!=3) return luaL_error(L, "wrong number of arguments");
-  a = luaL_checknumber(L,1);
-  b = luaL_checknumber(L,2);
-  c = luaL_checknumber(L,3);
-  if (a<b) a = b;
-  if (a>c) a = c;
-  lua_pushnumber(L, a);
+  switch (lua_type(L,1)) {
+    case LUA_TNUMBER: {
+      lua_Number a, b, c;
+      a = luaL_checknumber(L,1);
+      b = luaL_checknumber(L,2);
+      c = luaL_checknumber(L,3);
+      if (a<b) a = b;
+      if (a>c) a = c;
+      lua_pushnumber(L, a);
+    } break;
+    case LUA_TVECTOR2: {
+      float xa, ya;
+      float xb, yb;
+      float xc, yc;
+      lua_checkvector2(L, 1, &xa, &ya);
+      lua_checkvector2(L, 2, &xb, &yb);
+      lua_checkvector2(L, 3, &xc, &yc);
+      lua_pushvector2(L, do_clamp(xa,xb,xc), do_clamp(ya,yb,yc));
+    } break;
+    case LUA_TVECTOR3: {
+      float xa, ya, za;
+      float xb, yb, zb;
+      float xc, yc, zc;
+      lua_checkvector3(L, 1, &xa, &ya, &za);
+      lua_checkvector3(L, 2, &xb, &yb, &zb);
+      lua_checkvector3(L, 3, &xc, &yc, &zc);
+      lua_pushvector3(L, do_clamp(xa,xb,xc), do_clamp(ya,yb,yc), do_clamp(za,zb,zc));
+    } break;
+    case LUA_TVECTOR4: {
+      float xa, ya, za, wa;
+      float xb, yb, zb, wb;
+      float xc, yc, zc, wc;
+      lua_checkvector4(L, 1, &xa, &ya, &za, &wa);
+      lua_checkvector4(L, 2, &xb, &yb, &zb, &wb);
+      lua_checkvector4(L, 3, &xc, &yc, &zc, &wc);
+      lua_pushvector4(L, do_clamp(xa,xb,xc), do_clamp(ya,yb,yc), do_clamp(za,zb,zc), do_clamp(wa,wb,wc));
+    } break;
+    default: return luaL_error(L, "clamp only works on numeric types");
+  }
   return 1;
 }
 

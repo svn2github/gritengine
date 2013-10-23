@@ -485,12 +485,15 @@ static float subf (float x, float y) { return x - y; }
 static float mulf (float x, float y) { return x * y; }
 static float divf (float x, float y) { return x / y; }
 
-#define PW2(f)     r.x = f(nb.x, nc.x); r.y = f(nb.y, nc.y);
-#define SCALAR2(f) r.x = f(nb.x, nc  ); r.y = f(nb.y, nc  );
-#define PW3(f)     r.x = f(nb.x, nc.x); r.y = f(nb.y, nc.y); r.z = f(nb.z, nc.z); 
-#define SCALAR3(f) r.x = f(nb.x, nc  ); r.y = f(nb.y, nc  ); r.z = f(nb.z, nc  ); 
-#define PW4(f)     r.x = f(nb.x, nc.x); r.y = f(nb.y, nc.y); r.z = f(nb.z, nc.z);  r.w = f(nb.w, nc.w);
-#define SCALAR4(f) r.x = f(nb.x, nc  ); r.y = f(nb.y, nc  ); r.z = f(nb.z, nc  );  r.w = f(nb.w, nc  );
+#define PW2(f)      r.x = f(nb.x, nc.x); r.y = f(nb.y, nc.y);
+#define SCALAR2(f)  r.x = f(nb.x, nc  ); r.y = f(nb.y, nc  );
+#define SCALAR2B(f) r.x = f(nc,   nb.x); r.y = f(nc,   nb.y);
+#define PW3(f)      r.x = f(nb.x, nc.x); r.y = f(nb.y, nc.y); r.z = f(nb.z, nc.z); 
+#define SCALAR3(f)  r.x = f(nb.x, nc  ); r.y = f(nb.y, nc  ); r.z = f(nb.z, nc  ); 
+#define SCALAR3B(f) r.x = f(nc,   nb.x); r.y = f(nc,   nb.y); r.z = f(nc,   nb.z); 
+#define PW4(f)      r.x = f(nb.x, nc.x); r.y = f(nb.y, nc.y); r.z = f(nb.z, nc.z);  r.w = f(nb.w, nc.w);
+#define SCALAR4(f)  r.x = f(nb.x, nc  ); r.y = f(nb.y, nc  ); r.z = f(nb.z, nc  );  r.w = f(nb.w, nc  );
+#define SCALAR4B(f) r.x = f(nc,   nb.x); r.y = f(nc,   nb.y); r.z = f(nc,   nb.z);  r.w = f(nc,   nb.w);
 
 static void Arith (lua_State *L, StkId ra, const TValue *rb,
                    const TValue *rc, TMS op) {
@@ -569,6 +572,8 @@ static void Arith (lua_State *L, StkId ra, const TValue *rb,
     lua_Float4 r;
     switch (op) {
       case TM_MUL: SCALAR2(mulf); break;
+      case TM_ADD: SCALAR2(addf); break;
+      case TM_SUB: SCALAR2(subf); break;
       case TM_DIV:
         if (nc==0.0) {
           luaG_runerror(L, "division by zero");
@@ -586,6 +591,8 @@ static void Arith (lua_State *L, StkId ra, const TValue *rb,
     lua_Float4 r;
     switch (op) {
       case TM_MUL: SCALAR3(mulf); break;
+      case TM_ADD: SCALAR3(addf); break;
+      case TM_SUB: SCALAR3(subf); break;
       case TM_DIV:
         if (nc==0.0) {
           luaG_runerror(L, "division by zero");
@@ -603,6 +610,8 @@ static void Arith (lua_State *L, StkId ra, const TValue *rb,
     lua_Float4 r;
     switch (op) {
       case TM_MUL: SCALAR4(mulf); break;
+      case TM_ADD: SCALAR4(addf); break;
+      case TM_SUB: SCALAR4(subf); break;
       case TM_DIV:
         if (nc==0.0) {
           luaG_runerror(L, "division by zero");
@@ -619,7 +628,16 @@ static void Arith (lua_State *L, StkId ra, const TValue *rb,
     float nc = (float)nvalue(rb);
     lua_Float4 r;
     switch (op) {
-      case TM_MUL: SCALAR2(mulf); break;
+      case TM_MUL: SCALAR2B(mulf); break;
+      case TM_ADD: SCALAR2B(addf); break;
+      case TM_SUB: SCALAR2B(subf); break;
+      case TM_DIV:
+        if (nb.x==0.0 || nb.y==0.0) {
+          luaG_runerror(L, "division by zero");
+        }
+        SCALAR2B(divf);
+        break;
+      case TM_POW: SCALAR2B(powf); break;
       default: luaG_runerror(L, "Cannot use that op with number and vector2");
     }
     setv2value(ra, r);
@@ -628,7 +646,16 @@ static void Arith (lua_State *L, StkId ra, const TValue *rb,
     float nc = (float)nvalue(rb);
     lua_Float4 r;
     switch (op) {
-      case TM_MUL: SCALAR3(mulf); break;
+      case TM_MUL: SCALAR3B(mulf); break;
+      case TM_ADD: SCALAR3B(addf); break;
+      case TM_SUB: SCALAR3B(subf); break;
+      case TM_DIV:
+        if (nb.x==0.0 || nb.y==0.0 || nb.z==0.0) {
+          luaG_runerror(L, "division by zero");
+        }
+        SCALAR3B(divf);
+        break;
+      case TM_POW: SCALAR3B(powf); break;
       default: luaG_runerror(L, "Cannot use that op with number and vector3");
     }
     setv3value(ra, r);
@@ -637,7 +664,16 @@ static void Arith (lua_State *L, StkId ra, const TValue *rb,
     float nc = (float)nvalue(rb);
     lua_Float4 r;
     switch (op) {
-      case TM_MUL: SCALAR4(mulf); break;
+      case TM_MUL: SCALAR4B(mulf); break;
+      case TM_ADD: SCALAR4B(addf); break;
+      case TM_SUB: SCALAR4B(subf); break;
+      case TM_DIV:
+        if (nb.x==0.0 || nb.y==0.0 || nb.z==0.0 || nb.w==0.0) {
+          luaG_runerror(L, "division by zero");
+        }
+        SCALAR4B(divf);
+        break;
+      case TM_POW: SCALAR4B(powf); break;
       default: luaG_runerror(L, "Cannot use that op with number and vector4");
     }
     setv4value(ra, r);
@@ -870,6 +906,11 @@ void luaV_execute (lua_State *L, int nexeccalls) {
         switch (ttype(rb)) {
           case LUA_TTABLE: {
             setnvalue(ra, cast_num(luaH_getn(hvalue(rb))));
+            break;
+          }
+          case LUA_TNUMBER: {
+            lua_Number n = nvalue(rb);
+            setnvalue(ra, fabs(n));
             break;
           }
           case LUA_TVECTOR2: {
