@@ -71,7 +71,11 @@ end
 function ConsolePrompt:triggerResize()
         self.root:triggerResize()
 end
-function ConsolePrompt:update()
+function ConsolePrompt:update(dontForgetCompletion)
+        if not dontForgetCompletion then
+            self.lastCompletionList = nil
+            self.lastCompletionIndex = 0
+        end
         if not self.freshFrame then
                 self.freshFrame = nil
                 return
@@ -183,6 +187,18 @@ function ConsolePrompt:execute()
 end
 
 function ConsolePrompt:autocomplete()
+    --incremental upon last result
+    if self.lastCompletionList then
+        local i = self.lastCompletionIndex + 1
+        if i > #self.lastCompletionList then --loop around
+            i = 1
+        end
+        self.before = self.before:gsub(self.lastCompletionList[self.lastCompletionIndex].."$", self.lastCompletionList[i])
+        self.lastCompletionIndex = i
+        self:update(true)
+        return
+    end
+
     local splits = {}
 
     for m in self.before:gmatch("[^\.:]+")  do
@@ -203,23 +219,27 @@ function ConsolePrompt:autocomplete()
                     completionList[#completionList+1] = k
                 end
             end
-            
-            table.sort(completionList)
-            
+
             if #completionList == 0 then
                 return
             end
 
-            for _, completion in ipairs(completionList) do
+            table.sort(completionList)
+            
+            self.lastCompletionList = completionList
+
+            for ii, completion in ipairs(completionList) do
                 if v == "" then
                     --first suggestion if the last character was . or :
                     self.before = self.before .. completion
-                    self:update()
+                    self.lastCompletionIndex = ii
+                    self:update(true)
                     return
                 end
                 if completion ~= v then
                     self.before = self.before:gsub(v.."$", completion)
-                    self:update()
+                    self.lastCompletionIndex = ii
+                    self:update(true)
                     return
                 end
             end
