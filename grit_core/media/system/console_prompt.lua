@@ -182,3 +182,53 @@ function ConsolePrompt:execute()
         console:update()
 end
 
+function ConsolePrompt:autocomplete()
+    local splits = {}
+
+    for m in self.before:gmatch("[^\.:]+")  do
+        splits[#splits+1] = m
+    end
+    if self.before:find("[\.:]$") then
+        splits[#splits+1] = ""
+    end
+
+    local parent = _G
+
+    for i,v in ipairs(splits) do
+
+        if i == #splits then
+            local completionList = {}
+            for k in pairs(parent) do
+                if v == "" or k:find(v, 1, true) == 1 then
+                    completionList[#completionList+1] = k
+                end
+            end
+            
+            table.sort(completionList)
+            
+            if #completionList == 0 then
+                return
+            end
+
+            for _, completion in ipairs(completionList) do
+                if v == "" then
+                    --first suggestion if the last character was . or :
+                    self.before = self.before .. completion
+                    self:update()
+                    return
+                end
+                if completion ~= v then
+                    self.before = self.before:gsub(v.."$", completion)
+                    self:update()
+                    return
+                end
+            end
+        end
+
+        local c = rawget(parent, v)
+        if (not c) or (type(c) ~= "table") then
+            return
+        end
+        parent = c
+    end
+end

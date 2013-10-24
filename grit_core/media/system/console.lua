@@ -175,6 +175,8 @@ function Console.callback(key,self)
                 self.prompt:deleteWord()
         elseif ui:ctrl() and key2=="d" then
                 self.prompt:delete()
+        elseif ui:ctrl() and key2=="Space" then
+                self.prompt:autocomplete()
         elseif key2=="Delete" then
                 self.prompt:delete()
         elseif key2=="BackSpace" then
