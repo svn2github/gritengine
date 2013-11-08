@@ -25,6 +25,7 @@
 
 #include <iostream>
 #include <string>
+#include <sstream>
 
 extern "C" {
         #include "lua.h"
@@ -33,9 +34,10 @@ extern "C" {
 #include <unicode/unistr.h>
 #include <unicode/regex.h>
 
-#include "lua_utf8.h"
-#include "lua_wrappers_common.h"
+#include "console.h"
 #include "lua_util.h"
+#include "lua_wrappers_common.h"
+#include "lua_utf8.h"
 
 // UTILITIES
 
@@ -89,6 +91,18 @@ static int lua_utf8_len (lua_State *L)
         check_args(L,1);
         UnicodeString ustr = checkustring(L,1);
         lua_pushnumber(L, ustr.countChar32());
+        return 1;
+}
+        
+static int lua_utf8_char (lua_State *L)
+{
+        int n = lua_gettop(L);  /* number of arguments */
+        UnicodeString ustr;
+        for (int i=1; i<=n; i++) {
+                lua_Number cp = luaL_checknumber(L, i);
+                ustr.append((UChar32)cp);
+        }
+        pushustring(L, ustr);
         return 1;
 }
         
@@ -160,7 +174,7 @@ static int lua_utf8_sub (lua_State *L)
 */
 
         start--;
-        //APP_ASSERT(start>=0); assert(len==0 || start<len); assert(limit>=0); assert(limit<=len); assert(start<=limit);
+        APP_ASSERT(start>=0); assert(len==0 || start<len); assert(limit>=0); assert(limit<=len); assert(start<=limit);
         UnicodeString target;
         ustr.extractBetween(start, limit, target);
         pushustring(L, target);
@@ -351,20 +365,17 @@ TOSTRING_ADDR_MACRO(regex_matcher,RegexMatcher,REGEX_MATCHER_TAG)
 
 static int regex_matcher_gc (lua_State *L)
 {
-TRY_START
         check_args(L,1);
         GET_UD_MACRO_OFFSET(RegexMatcher,self,1,REGEX_MATCHER_TAG,0);
         if (self==NULL) return 0;
         delete &self->input();
         delete self;
         return 0;
-TRY_END
 }
 
 
 static int regex_matcher_index(lua_State *L)
 {
-TRY_START
         check_args(L,2);
         GET_UD_MACRO(RegexMatcher,self,1,REGEX_MATCHER_TAG);
         std::string key  = check_string(L,2);
@@ -376,7 +387,6 @@ TRY_START
                 my_lua_error(L, "Not a readable RegexMatcher member: "+key);
         }
         return 1;
-TRY_END
 }
 
 EQ_PTR_MACRO(RegexMatcher,regex_matcher,REGEX_MATCHER_TAG)
@@ -564,22 +574,23 @@ void utf8_lua_init (lua_State *L)
 {
         lua_getglobal(L, "string");
 
-        lua_getfield(L, -1, "reverse"); lua_setfield(L, -2, "_reverse"); push_cfunction(L, lua_utf8_reverse); lua_setfield(L, -2, "reverse");
-        lua_getfield(L, -1, "len"); lua_setfield(L, -2, "_len"); push_cfunction(L, lua_utf8_len); lua_setfield(L, -2, "len");
-        lua_getfield(L, -1, "upper"); lua_setfield(L, -2, "_upper"); push_cfunction(L, lua_utf8_upper); lua_setfield(L, -2, "upper");
-        lua_getfield(L, -1, "lower"); lua_setfield(L, -2, "_lower"); push_cfunction(L, lua_utf8_lower); lua_setfield(L, -2, "lower");
-        lua_getfield(L, -1, "sub"); lua_setfield(L, -2, "_sub"); push_cfunction(L, lua_utf8_sub); lua_setfield(L, -2, "sub");
-        lua_getfield(L, -1, "find"); lua_setfield(L, -2, "_find"); push_cfunction(L, lua_utf8_find); lua_setfield(L, -2, "find");
-        lua_getfield(L, -1, "match"); lua_setfield(L, -2, "_match"); push_cfunction(L, lua_utf8_match); lua_setfield(L, -2, "match");
-        lua_getfield(L, -1, "gmatch"); lua_setfield(L, -2, "_gmatch"); push_cfunction(L, lua_utf8_gmatch); lua_setfield(L, -2, "gmatch");
-        lua_getfield(L, -1, "gsub"); lua_setfield(L, -2, "_gsub"); push_cfunction(L, lua_utf8_gsub); lua_setfield(L, -2, "gsub");
+        lua_getfield(L, -1, "reverse"); lua_setfield(L, -2, "_reverse"); lua_pushcfunction(L, lua_utf8_reverse); lua_setfield(L, -2, "reverse");
+        lua_getfield(L, -1, "char"); lua_setfield(L, -2, "_char"); lua_pushcfunction(L, lua_utf8_char); lua_setfield(L, -2, "char");
+        lua_getfield(L, -1, "len"); lua_setfield(L, -2, "_len"); lua_pushcfunction(L, lua_utf8_len); lua_setfield(L, -2, "len");
+        lua_getfield(L, -1, "upper"); lua_setfield(L, -2, "_upper"); lua_pushcfunction(L, lua_utf8_upper); lua_setfield(L, -2, "upper");
+        lua_getfield(L, -1, "lower"); lua_setfield(L, -2, "_lower"); lua_pushcfunction(L, lua_utf8_lower); lua_setfield(L, -2, "lower");
+        lua_getfield(L, -1, "sub"); lua_setfield(L, -2, "_sub"); lua_pushcfunction(L, lua_utf8_sub); lua_setfield(L, -2, "sub");
+        lua_getfield(L, -1, "find"); lua_setfield(L, -2, "_find"); lua_pushcfunction(L, lua_utf8_find); lua_setfield(L, -2, "find");
+        lua_getfield(L, -1, "match"); lua_setfield(L, -2, "_match"); lua_pushcfunction(L, lua_utf8_match); lua_setfield(L, -2, "match");
+        lua_getfield(L, -1, "gmatch"); lua_setfield(L, -2, "_gmatch"); lua_pushcfunction(L, lua_utf8_gmatch); lua_setfield(L, -2, "gmatch");
+        lua_getfield(L, -1, "gsub"); lua_setfield(L, -2, "_gsub"); lua_pushcfunction(L, lua_utf8_gsub); lua_setfield(L, -2, "gsub");
         lua_pop(L,1);
 
         lua_pushstring(L, "");
         lua_getmetatable(L,-1);
-        push_cfunction(L, lua_utf8_mt_len);
+        lua_pushcfunction(L, lua_utf8_mt_len);
         lua_setfield(L,-2,"__len");
-        lua_pop(L,1);
+        lua_pop(L,2);
 
         luaL_newmetatable(L, REGEX_MATCHER_TAG);
         luaL_register(L, NULL, regex_matcher_meta_table); 

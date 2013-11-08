@@ -23,7 +23,6 @@
 #define lua_wrappers_common_h
 
 #include <string>
-#include <OgreException.h>
 
 extern "C" {
         #include "lua.h"
@@ -31,6 +30,7 @@ extern "C" {
         #include <lualib.h>
 }
 
+#include "lua_util.h"
 #include "lua_util.h"
 
 
@@ -55,14 +55,12 @@ static inline void *ensure_valid (lua_State *L, void *ptr, const char *tag)
 #define TOSTRING_MACRO(name,type,tag) \
 static int name##_tostring (lua_State *L) \
 { \
-TRY_START \
         check_args(L,1); \
         GET_UD_MACRO(type,ud,1,tag); \
         std::stringstream ss; \
         ss << ud; \
         lua_pushstring(L, ss.str().c_str()); \
         return 1; \
-TRY_END \
 }
 
 #define TOSTRING_SMART_PTR_MACRO(name,type,tag) \
@@ -103,37 +101,31 @@ static int name##_tostring (lua_State *L) \
 #define GC_MACRO(type, name, tag) \
 static int name##_gc (lua_State *L) \
 { \
-TRY_START \
         check_args(L,1); \
         GET_UD_MACRO(type,ud,1,tag); \
         delete &ud; \
         return 0; \
-TRY_END \
 }
 
 #define EQ_MACRO(type, name, tag) \
 static int name##_eq (lua_State *L) \
 { \
-TRY_START \
         check_args(L,2); \
         GET_UD_MACRO(type,self,1,tag); \
         GET_UD_MACRO(type,other,2,tag); \
         lua_pushboolean(L,self==other); \
         return 1; \
-TRY_END \
 }
 
 
 #define EQ_PTR_MACRO(type, name, tag) \
 static int name##_eq (lua_State *L) \
 { \
-TRY_START \
         check_args(L,2); \
         GET_UD_MACRO(type,self,1,tag); \
         GET_UD_MACRO(type,other,2,tag); \
         lua_pushboolean(L,&self==&other); \
         return 1; \
-TRY_END \
 }
 
 
@@ -186,20 +178,6 @@ const luaL_reg name##_meta_table[] = { \
         {NULL, NULL} \
 }
 
-
-
-#define TRY_START try {
-#define TRY_END } catch (Ogre::Exception &e) { \
-        std::string msg = e.getFullDescription(); \
-        my_lua_error(L,msg); \
-        return 0; \
-} catch (GritException &e) { \
-        my_lua_error(L,e.longMessage()); \
-        return 0; \
-}
-
-
-#define LUA_ARRAY_BASE 1
 
 static inline void push (lua_State *L, void *v, const char *tag)
 {

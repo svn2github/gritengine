@@ -57,19 +57,24 @@ int encode_utf8 (unsigned long x, std::string &here)
         }
 }
 
-// FIXME: Needs to ensure there are no overruns!!!!!
 unsigned long decode_utf8 (const std::string &str, size_t &i)
 {
         char c0 = str[i];
         if ((c0 & 0x80) == 0) { //0xxxxxxx
                 return c0;
         } else if ((c0 & 0xE0) == 0xC0) { //110yyyxx 10xxxxxx
+                if (i+1 >= str.length()) {
+                        return UNICODE_ERROR_CODEPOINT;
+                }
                 char c1 = str[++i];
                 if ((c1 & 0xC0) != 0x80) {
                         return UNICODE_ERROR_CODEPOINT;
                 }
                 return ((c0 & 0x1F) << 6ul) | (c1 & 0x3F);
         } else if ((c0 & 0xF0) == 0xE0) { //1110yyyy 10yyyyxx 10xxxxxx
+                if (i+2 >= str.length()) {
+                        return UNICODE_ERROR_CODEPOINT;
+                }
                 char c1 = str[++i];
                 if ((c1 & 0xC0) != 0x80) {
                         return UNICODE_ERROR_CODEPOINT;
@@ -80,6 +85,9 @@ unsigned long decode_utf8 (const std::string &str, size_t &i)
                 }
                 return ((c0 & 0xF) << 12ul) | ((c1 & 0x3F) << 6) | (c2 & 0x3F);
         } else if ((c0 & 0xF8) == 0xF) { //11110zzz 10zzyyyy 10yyyyxx 10xxxxxx
+                if (i+3 >= str.length()) {
+                        return UNICODE_ERROR_CODEPOINT;
+                }
                 char c1 = str[++i];
                 if ((c1 & 0xC0) != 0x80) {
                         return UNICODE_ERROR_CODEPOINT;
@@ -94,8 +102,7 @@ unsigned long decode_utf8 (const std::string &str, size_t &i)
                 }
                 return ((c0 & 0x7) << 24ul) | ((c1 & 0x3F) << 12ul) | ((c2 & 0x3F) << 6) | (c3 & 0x3F);
         } else {
-                fprintf(stderr, "UTF-8 internal decoding error\n");
-                exit(EXIT_FAILURE);
+                return UNICODE_ERROR_CODEPOINT;
         }
 
 }
@@ -130,6 +137,9 @@ unsigned long decode_utf16 (const std::wstring &str, size_t &i)
                 return UNICODE_ERROR_CODEPOINT;
         }
         if (first >= 0xd800 && first < 0xdc00) {
+                if (i+1 >= str.length()) {
+                        return UNICODE_ERROR_CODEPOINT;
+                }
                 // first part of surrogate pair
                 wchar_t second = str[++i];
                 if (second >= 0xdc00 && second < 0xe000) {

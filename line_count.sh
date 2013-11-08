@@ -1,7 +1,7 @@
 #!/bin/bash
 
 (
-    find starbox grit_core/src gtasa/src  \( -name '*.cpp' -o -name '*.h' -o -name '*.c' \) |
+    find high_freq_noise/ launcher/ starbox/ grit_core/src gtasa/src dependencies/util luaimg/  \( -name '*.cpp' -o -name '*.h' -o -name '*.c' \) |
     grep -v 'tex_dups.\(h\|cpp\)' |
     grep -v 'TColLexer.cpp' |
     grep -v 'TColLexer-core-engine.cpp'
@@ -17,4 +17,6 @@
     grep -v 'gtasa\/non_cars[.]lua'
 
     find exporters  \( -name '*.ms' \)
+
+    find exporters  \( -name '*.py' \)
 ) | xargs wc -l

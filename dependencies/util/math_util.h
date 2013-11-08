@@ -22,6 +22,9 @@
 #ifndef MATH_UTIL_H
 #define MATH_UTIL_H
 
+#include <string>
+#include <iostream>
+
 struct Radian;
 struct Degree;
 struct Quaternion;
@@ -29,8 +32,6 @@ struct Vector3;
 
 #include <cmath>
 #include <cfloat>
-
-#include "CentralisedLog.h"
 
 #ifdef WIN32
 #define my_isnan _isnan

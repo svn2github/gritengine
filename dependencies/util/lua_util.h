@@ -23,6 +23,7 @@
 #define lua_util_h_
 
 #include <string>
+#include <sstream>
 #include <limits>
 #include <vector>
 
@@ -32,7 +33,6 @@ extern "C" {
 #include <lualib.h>
 }
 
-#include "CentralisedLog.h"
 #include "math_util.h"
 
 #ifdef min
@@ -67,6 +67,29 @@ luaL_newmetatable(L, tag); \
 luaL_register(L, NULL, name##_meta_table); \
 lua_pop(L,1); } while(0)
 
+
+// convert anything to a std::string
+template<class T>
+static inline std::string str (const T &v)
+{   
+    std::stringstream ss;
+    ss << v;
+    return ss.str();
+}
+
+template<class T> T* check_ptr (lua_State *L, int index, const char *tag)
+{ return *static_cast<T**>(luaL_checkudata(L, index, tag)); }   
+
+bool is_ptr (lua_State *L, int index, const char *tag);
+
+
+std::string type_name (lua_State *L, int index);
+
+void check_is_function (lua_State *L, int index);
+
+
+
+
 static inline Vector2 check_v2 (lua_State *L, int idx)
 { Vector2 v; lua_checkvector2(L, idx, &v.x, &v.y); return v; } 
 static inline void push_v2 (lua_State *L, const Vector2 &v)
@@ -95,8 +118,6 @@ void check_args_min(lua_State *l, int expected);
 void check_args_max(lua_State *l, int expected);
 
 bool check_bool (lua_State *l, int stack_index);
-
-std::string check_path (lua_State *l, int stack_index);
 
 bool has_tag(lua_State *l, int index, const char* tag);
 
