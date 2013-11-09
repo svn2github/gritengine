@@ -3,8 +3,8 @@ print("Initialising misc.fixed font")
 -- the zero width and wide info was taken using wcwidth on GNU C Library (EGLIBC) stable release version 2.10.1, by Roland McGrath et al.
 -- with LC_CTYPE=en_GB.UTF-8
 
-local zero = {}
-local wide = {}
+zero = {}
+wide = {}
 
 zero[0x0] = true
 zero[0x300] = true

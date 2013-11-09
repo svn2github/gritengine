@@ -94,6 +94,26 @@ static int lua_utf8_len (lua_State *L)
         return 1;
 }
         
+static int lua_utf8_codepoint (lua_State *L)
+{
+        int posi = 1;
+        if (lua_gettop(L) >= 2) {
+                posi = check_t<int>(L, 2);
+        }
+        if (posi <= 0) posi = 1;
+        int pose = posi;
+        if (lua_gettop(L) >= 3) {
+                pose = check_t<int>(L, 3);
+        }
+        if (pose <= posi) pose = posi;
+        UnicodeString ustr = checkustring(L,1);
+        if (pose > ustr.countChar32()) pose = ustr.countChar32();
+        for (int i=posi ; i<=pose ; ++i) {
+                lua_pushnumber(L, ustr[i-1]);
+        }
+        return pose-posi+1;
+}
+        
 static int lua_utf8_char (lua_State *L)
 {
         int n = lua_gettop(L);  /* number of arguments */
@@ -574,16 +594,27 @@ void utf8_lua_init (lua_State *L)
 {
         lua_getglobal(L, "string");
 
-        lua_getfield(L, -1, "reverse"); lua_setfield(L, -2, "_reverse"); lua_pushcfunction(L, lua_utf8_reverse); lua_setfield(L, -2, "reverse");
+        // rename old functions to prefix an underscore
+        // set new functions
+
+        //byte is less useful now but it's still available
+        //introduce bytes() function (an alias of _len)
+        lua_getfield(L, -1, "len"); lua_setfield(L, -2, "bytes");
+        lua_pushcfunction(L, lua_utf8_codepoint); lua_setfield(L, -2, "codepoint");
         lua_getfield(L, -1, "char"); lua_setfield(L, -2, "_char"); lua_pushcfunction(L, lua_utf8_char); lua_setfield(L, -2, "char");
-        lua_getfield(L, -1, "len"); lua_setfield(L, -2, "_len"); lua_pushcfunction(L, lua_utf8_len); lua_setfield(L, -2, "len");
-        lua_getfield(L, -1, "upper"); lua_setfield(L, -2, "_upper"); lua_pushcfunction(L, lua_utf8_upper); lua_setfield(L, -2, "upper");
-        lua_getfield(L, -1, "lower"); lua_setfield(L, -2, "_lower"); lua_pushcfunction(L, lua_utf8_lower); lua_setfield(L, -2, "lower");
-        lua_getfield(L, -1, "sub"); lua_setfield(L, -2, "_sub"); lua_pushcfunction(L, lua_utf8_sub); lua_setfield(L, -2, "sub");
+        //dump just works as is
         lua_getfield(L, -1, "find"); lua_setfield(L, -2, "_find"); lua_pushcfunction(L, lua_utf8_find); lua_setfield(L, -2, "find");
-        lua_getfield(L, -1, "match"); lua_setfield(L, -2, "_match"); lua_pushcfunction(L, lua_utf8_match); lua_setfield(L, -2, "match");
+        //format just works as is
+        //gfind
         lua_getfield(L, -1, "gmatch"); lua_setfield(L, -2, "_gmatch"); lua_pushcfunction(L, lua_utf8_gmatch); lua_setfield(L, -2, "gmatch");
         lua_getfield(L, -1, "gsub"); lua_setfield(L, -2, "_gsub"); lua_pushcfunction(L, lua_utf8_gsub); lua_setfield(L, -2, "gsub");
+        lua_getfield(L, -1, "len"); lua_setfield(L, -2, "_len"); lua_pushcfunction(L, lua_utf8_len); lua_setfield(L, -2, "len");
+        lua_getfield(L, -1, "lower"); lua_setfield(L, -2, "_lower"); lua_pushcfunction(L, lua_utf8_lower); lua_setfield(L, -2, "lower");
+        lua_getfield(L, -1, "match"); lua_setfield(L, -2, "_match"); lua_pushcfunction(L, lua_utf8_match); lua_setfield(L, -2, "match");
+        //rep just works as is
+        lua_getfield(L, -1, "reverse"); lua_setfield(L, -2, "_reverse"); lua_pushcfunction(L, lua_utf8_reverse); lua_setfield(L, -2, "reverse");
+        lua_getfield(L, -1, "sub"); lua_setfield(L, -2, "_sub"); lua_pushcfunction(L, lua_utf8_sub); lua_setfield(L, -2, "sub");
+        lua_getfield(L, -1, "upper"); lua_setfield(L, -2, "_upper"); lua_pushcfunction(L, lua_utf8_upper); lua_setfield(L, -2, "upper");
         lua_pop(L,1);
 
         lua_pushstring(L, "");
