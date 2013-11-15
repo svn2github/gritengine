@@ -32,6 +32,7 @@ extern "C" {
 }
 
 #include <unicode/unistr.h>
+#include <unicode/uchar.h>
 #include <unicode/regex.h>
 
 #include "console.h"
@@ -92,6 +93,25 @@ static int lua_utf8_len (lua_State *L)
         UnicodeString ustr = checkustring(L,1);
         lua_pushnumber(L, ustr.countChar32());
         return 1;
+}
+        
+static int lua_utf8_get_property (lua_State *L)
+{
+        check_args(L,2);
+        UnicodeString ustr = checkustring(L,1);
+        const char *prop_ = luaL_checkstring(L,2);
+
+        for (int i=0 ; i<ustr.countChar32() ; ++i) {
+                UChar32 c = ustr[i];
+
+                UProperty prop = u_getPropertyEnum(prop_);
+                int32_t value = u_getIntPropertyValue(c, prop);
+                const char *value_ = u_getPropertyValueName(prop, value, U_SHORT_PROPERTY_NAME);
+                if (value_ == NULL)
+                        value_ = u_getPropertyValueName(prop, value, U_LONG_PROPERTY_NAME);
+                lua_pushstring(L, value_);
+        }
+        return ustr.countChar32();
 }
         
 static int lua_utf8_codepoint (lua_State *L)
@@ -601,6 +621,7 @@ void utf8_lua_init (lua_State *L)
         //introduce bytes() function (an alias of _len)
         lua_getfield(L, -1, "len"); lua_setfield(L, -2, "bytes");
         lua_pushcfunction(L, lua_utf8_codepoint); lua_setfield(L, -2, "codepoint");
+        lua_pushcfunction(L, lua_utf8_get_property); lua_setfield(L, -2, "getProperty");
         lua_getfield(L, -1, "char"); lua_setfield(L, -2, "_char"); lua_pushcfunction(L, lua_utf8_char); lua_setfield(L, -2, "char");
         //dump just works as is
         lua_getfield(L, -1, "find"); lua_setfield(L, -2, "_find"); lua_pushcfunction(L, lua_utf8_find); lua_setfield(L, -2, "find");
