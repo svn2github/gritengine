@@ -2,19 +2,20 @@
 -- (c) Dave Cunningham and the Grit Game Engine Project, licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
 hud_class "../Compass" {
-	size = vector2(128,128);
+    size = vector2(128,128);
+    alpha = 0;
+
     init = function (self)
         self.needsFrameCallbacks = true
 
-        self.texture = "Compass/Body.png"
-		
         --pointer is the notch at the top of the compass that marks where you're looking
         self.pointer = gfx_hud_object_add("Rect", {texture = "Compass/Pointer.png", zOrder = 7})
         self.pointer.parent = self
         self.pointer.position = vec(0, self.size.y/2-24)
 
         -- compass orientation (what makes N point towards north) 
-        self.ring = gfx_hud_object_add("Rect", {alpha=0, size=self.size})
+        self.ring = gfx_hud_object_add("Rect", {texture="Compass/Body.png", size=self.size})
+        self.ring.texture = "Compass/Body.png"
         self.ring.parent = self
 
         --player denotes the player model direction (if any)
@@ -36,7 +37,7 @@ hud_class "../Compass" {
         self.N = gfx_hud_text_add(cardinalLettersFont)
         self.N.text = "N"
         self.N.parent = self.ring
-        self.N.colour = vector3(1,0,0)
+        self.N.colour = vector3(0.8,0,0)
         self.N.position = inner_sz * vec (0,0.5)
         self.N.inheritOrientation = false
 
