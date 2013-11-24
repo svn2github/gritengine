@@ -8,7 +8,7 @@ hud_class "../ColourPicker" {
         local on_change = function() self:childChanged() end
 
         self.hue = gfx_hud_object_add("Scale", { onChange = on_change, size=vector2(388,20), value=0, bgTexture="EnvCycleEditor/bg_hue.png",   bgColour=vector3(1,1,1) })
-        self.sat = gfx_hud_object_add("Scale", { onChange = on_change, size=vector2(388,20), value=1, bgTexture="EnvCycleEditor/bg_sat.png",   bgColour=vector3(1,0,0) })
+        self.sat = gfx_hud_object_add("Scale", { onChange = on_change, size=vector2(388,20), value=1, bgColour=vector3(1,0,0), mgTexture="EnvCycleEditor/bg_sat.png", mgAlpha=1 })
         self.val = gfx_hud_object_add("Scale", { onChange = on_change, size=vector2(388,20), value=1, bgTexture="EnvCycleEditor/bg_val.png",   bgColour=vector3(1,1,1), gamma=true, maxValue=10 })
         self.a   = gfx_hud_object_add("Scale", { onChange = on_change, size=vector2(388,20), value=1, bgTexture="EnvCycleEditor/bg_alpha.png", bgColour=vector3(1,1,1) })
 
