@@ -111,7 +111,6 @@ end
 sm = get_sm()
 
 
-include("font_misc_fixed.lua")
 include("unicode_test_strings.lua")
 
 

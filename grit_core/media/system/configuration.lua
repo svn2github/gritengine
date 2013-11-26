@@ -52,10 +52,10 @@ local user_cfg_default = {
     anaglyphLeftMask = {1,0,0};
     anaglyphRightMask = {0,1,1};
     lowPowerMode = false;
-	metricUnits = false;
+    metricUnits = false;
     audioMasterVolume = 1;
     vehicleCameraTrack = true;
-	topDownCam = false;
+    topDownCam = false;
 }
 
 local user_cfg_doc = {
@@ -97,7 +97,7 @@ local user_cfg_doc = {
     anaglyphLeftMask = "todo";
     anaglyphRightMask = "todo";
     lowPowerMode = "Reduce FPS and physics accuracy";
-	metricUnits = "Use the km/h units instead of mph units for HUD";
+    metricUnits = "Use the km/h units instead of mph units for HUD";
     audioMasterVolume = "Master audio volume";
     vehicleCameraTrack = "Camera automatically follows vehicles";
     topDownCam = "Whether or not to use top down camera style"
@@ -142,10 +142,10 @@ local user_cfg_spec = {
     anaglyphLeftMask = { "table", 3, {"range", 0, 1}, {"range", 0, 1} };
     anaglyphRightMask =  { "table", 3, {"range", 0, 1}, {"range", 0, 1} };
     lowPowerMode = { "one of", false, true };
-	metricUnits = { "one of", false, true };
+    metricUnits = { "one of", false, true };
     audioMasterVolume =  { "range", 0, 1 }; 
-	vehicleCameraTrack = { "one of", false, true };
-	topDownCam = { "one of", false, true };
+    vehicleCameraTrack = { "one of", false, true };
+    topDownCam = { "one of", false, true };
 }           
             
 
@@ -237,12 +237,10 @@ local default_user_core_bindings = {
     physicsSplitImpulse = "C+F10";
     physicsOneToOne = "F10";
     gameLogicStep = "F11";
-	gameLogicFrameStep = "C+F11";
+    gameLogicFrameStep = "C+F11";
     wireFrame = "F8";
     physicsWireFrame = "F7";
     physicsDebugWorld = "C+F7";
-    skyPause = "F5";
-    skyEdit = "C+F5";
     clearPlaced = "F3";
     clearProjectiles = "F4";
     toggleFullScreen = "A+Return";
@@ -332,8 +330,6 @@ local core_binding_functions = {
     physicsDebugWorld = function()
         physics.debugWorld = not physics.debugWorld
     end;
-    skyPause = function() env.clockTicking = not env.clockTicking end;
-    skyEdit = function() env:toggleEditMode() end;
     clearPlaced = clear_placed;
     clearProjectiles = clear_temporary;
     toggleFullScreen = function ()

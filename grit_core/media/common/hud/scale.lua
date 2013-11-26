@@ -119,9 +119,13 @@ hud_class "Scale" {
             self.sliderInside.colour = vector3(0.65, 0.65, 0.65)
         else
             self.sliderBackground.colour = self.bgColour
-            self.sliderBackground.texture = self.bgTexture
+            if self.bgTexture ~= nil then
+                self.sliderBackground.texture = fqn_ex(self.bgTexture, self.className)
+            end
             self.sliderMidground.colour = self.mgColour
-            self.sliderMidground.texture = self.mgTexture
+            if self.mgTexture ~= nil then
+                self.sliderMidground.texture = fqn_ex(self.mgTexture, self.className)
+            end
             self.sliderMidground.alpha = self.mgAlpha
             self.sliderMidground.enabled = true
             self.slider.colour = vector3(0,0,0)

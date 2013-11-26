@@ -43,6 +43,11 @@ hud_class "StackY" {
 		end
 		self.size = vector2(w,h)
 	end;
+        setAllGreyed = function (self, v)
+		for k,v in ipairs(self.contents or { }) do
+			v:setGreyed(v)
+		end
+        end;
 	destroy = function (self)
 		for k,v in ipairs(self.contents or { }) do
 			safe_destroy(v)
@@ -97,6 +102,11 @@ hud_class "StackX" {
 		end
 		self.size = vector2(w,h)
 	end;
+        setAllGreyed = function (self, v)
+		for k,v in ipairs(self.contents or { }) do
+			v:setGreyed(v)
+		end
+        end;
 	destroy = function (self)
 		for k,v in ipairs(self.contents or { }) do
 			safe_destroy(v)

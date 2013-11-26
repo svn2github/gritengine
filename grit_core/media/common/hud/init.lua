@@ -10,6 +10,7 @@ include "EnvCycleEditor/init.lua"
 
 include "Compass/init.lua"
 include "speedo.lua"
+include "clock.lua"
 include "stats.lua"
 
 -- Crosshair
@@ -19,6 +20,8 @@ ch = gfx_hud_object_add("Rect", {texture="CrossHair.png", parent=hud_center})
 compass = gfx_hud_object_add("Compass", {parent=hud_top_right, position=vector2(-64, -64)})
 speedo = gfx_hud_object_add("Speedo", {parent=hud_top_right})
 speedo.position=vector2(-64, -128 - speedo.size.y/2)
+clock = gfx_hud_object_add("Clock", { parent=hud_top_right})
+clock.position=vector2(-140, -12)
 
 safe_destroy(stats)
 stats = gfx_hud_object_add("Stats", {
@@ -36,14 +39,6 @@ stats = gfx_hud_object_add("Stats", {
             local colour = vector3(red, green, 0)
             return text, colour
         end;
-
-        time = function() 
-            local secs = env.secondsSinceMidnight
-            return string.format("Time of day: %02d:%02d:%02d", math.mod(math.floor(secs/60/60),24),
-                                                   math.mod(math.floor(secs/60),60),
-                                                   math.mod(secs,60))
-        end;
-
 
         micros = function()
             local max_ft = nonzero(1000000*gfx.frameTime:calcMax())
@@ -99,7 +94,7 @@ stats = gfx_hud_object_add("Stats", {
     minimal = true;
     onClick = function (self)
         if self.minimal then
-            self:setSelection{"fps", "time", "micros", "streamer", "mem", "shadow", "gbuffer", "deferred", "total", "lua" }
+            self:setSelection{"fps", "micros", "streamer", "mem", "shadow", "gbuffer", "deferred", "total", "lua" }
         else
             self:setSelection{"fps"}
         end

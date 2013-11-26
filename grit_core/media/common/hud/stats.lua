@@ -6,7 +6,7 @@ hud_class "Stats" {
     defaultColour = vector3(1,1,1)*.75;
 
     init = function (self)
-		self.alpha = 0
+        self.alpha = 0
         self.size = vector2(0,0)
         self.needsFrameCallbacks = true
         self.needsInputCallbacks = true
@@ -31,20 +31,20 @@ hud_class "Stats" {
         end
         self.labels = {}
         local tab = {
-			parent = self,
-			padding = -1,
+            parent = self,
+            padding = -1,
         }
         for k,name in ipairs(self.keys) do
             local stat = self.stats[name]
             if stat ~= nil then
-                local label = gfx_hud_object_add("/common/hud/Label", {font = "/system/misc.fixed", size=vector2(self.width, 15), alignment = "RIGHT" })
+                local label = gfx_hud_object_add("/common/hud/Label", { size=vector2(self.width, 15), alignment = "RIGHT" })
                 self.labels[name] = label
                 tab[k] = label
             end
         end
         self.stack = gfx_hud_object_add("/common/hud/StackY", tab)
 
-		self.stack.position = self.stack.size/2 * vector2(-1,1)
+        self.stack.position = self.stack.size/2 * vector2(-1,1)
     end;
 
     destroy = function (self)

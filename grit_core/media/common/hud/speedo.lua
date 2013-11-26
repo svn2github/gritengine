@@ -11,7 +11,7 @@ hud_class "Speedo" {
 			parent = self,
 			padding = -1,
 			gfx_hud_object_add("Label", {font = "TinyFont", size=vector2(width, 10) }),
-			gfx_hud_object_add("Label", {font = "/system/misc.fixed", size=vector2(width, 15) }),
+			gfx_hud_object_add("Label", {font = "/common/fonts/misc.fixed", size=vector2(width, 15) }),
 		})
 		self.size = self.labels.size
     end;

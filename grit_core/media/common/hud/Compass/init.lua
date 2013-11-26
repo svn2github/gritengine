@@ -33,7 +33,7 @@ hud_class "../Compass" {
         local inner_sz = self.size - vec(20,20)
 
         --the cardinal directions
-        local cardinalLettersFont = "/system/misc.fixed"
+        local cardinalLettersFont = "/common/fonts/misc.fixed"
         self.N = gfx_hud_text_add(cardinalLettersFont)
         self.N.text = "N"
         self.N.parent = self.ring

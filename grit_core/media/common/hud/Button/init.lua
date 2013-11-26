@@ -7,7 +7,7 @@ hud_class "../Button" {
     textureHover = "Button/Hover.png";
 
     caption = "Button";
-    captionFont = "/system/misc.fixed";
+    captionFont = "/common/fonts/misc.fixed";
 
     init = function (self)
         self.needsInputCallbacks = true
@@ -18,24 +18,35 @@ hud_class "../Button" {
 
         self.dragging = false;
         self.inside = false
+        if self.greyed == nil then self.greyed = false end
 
         self:refreshState();
     end;
-	
-	destroy = function (self)
-		safe_destroy(self.text)
-	end;
+    
+    destroy = function (self)
+        safe_destroy(self.text)
+    end;
+
+    setGreyed = function (self, v)
+        self.greyed = v
+        self:refreshState();
+    end;
 
     refreshState = function (self)
-        if self.dragging and self.inside then
-            self.texture = self.textureDown
-            self.text.colour = vector3(1,1,1)
-        elseif self.inside then
-            self.texture = self.textureHover
-            self.text.colour = vector3(1,1,1)
+        if self.greyed then
+                self.texture = fqn_ex(self.textureUp, self.className)
+                self.text.colour = vector3(0.7,0.7,0.7)
         else
-            self.texture = self.textureUp
-            self.text.colour = vector3(1,1,1)
+            if self.dragging and self.inside then
+                self.texture = fqn_ex(self.textureDown, self.className)
+                self.text.colour = vector3(1,1,1)
+            elseif self.inside then
+                self.texture = fqn_ex(self.textureHover, self.className)
+                self.text.colour = vector3(1,1,1)
+            else
+                self.texture = fqn_ex(self.textureUp, self.className)
+                self.text.colour = vector3(1,1,1)
+            end
         end
     end;
 
@@ -48,7 +59,7 @@ hud_class "../Button" {
         if ev == "+left" and self.inside then
             self.dragging = true
         elseif ev == "-left" then
-            if self.dragging and self.inside then
+            if self.dragging and self.inside and not self.greyed then
                 self:pressedCallback()
             end
             self.dragging = false
