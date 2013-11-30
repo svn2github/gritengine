@@ -1,5 +1,14 @@
 -- (c) David Cunningham 2013, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
+--[[
+TODO:
+* Indicate current grad1-6 being edited somehow
+* Fix edit boxes for ValueControl
+* Colour palette
+* Actually edit sky_cycle.lua
+* Save functionality
+--]]
+
 hud_class "../ColourPicker" {
 
     init = function (self)
@@ -7,53 +16,34 @@ hud_class "../ColourPicker" {
 
         local on_change = function() self:childChanged() end
 
-        self.hue = gfx_hud_object_add("Scale", { onChange = on_change, size=vector2(388,20), value=0, bgTexture="EnvCycleEditor/bg_hue.png",   bgColour=vector3(1,1,1) })
-        self.sat = gfx_hud_object_add("Scale", { onChange = on_change, size=vector2(388,20), value=1, bgColour=vector3(1,0,0), mgTexture="EnvCycleEditor/bg_sat.png", mgAlpha=1 })
-        self.val = gfx_hud_object_add("Scale", { onChange = on_change, size=vector2(388,20), value=1, bgTexture="EnvCycleEditor/bg_val.png",   bgColour=vector3(1,1,1), gamma=true, maxValue=10 })
-        self.a   = gfx_hud_object_add("Scale", { onChange = on_change, size=vector2(388,20), value=1, bgTexture="EnvCycleEditor/bg_alpha.png", bgColour=vector3(1,1,1) })
+        local scalesz = vec(388,20)
+        local labsz = vec(41,20)
+
+        self.hueScale = gfx_hud_object_add("Scale", { onChange = on_change, size=scalesz, bgTexture="EnvCycleEditor/bg_hue.png",   bgColour=vec(1,1,1) })
+        self.satScale = gfx_hud_object_add("Scale", { onChange = on_change, size=scalesz, bgColour=vector3(1,0,0), mgTexture="EnvCycleEditor/bg_sat.png", mgAlpha=1 })
+        self.valScale = gfx_hud_object_add("Scale", { onChange = on_change, size=scalesz, bgTexture="EnvCycleEditor/bg_val.png",   bgColour=vec(1,1,1), gamma=true, maxValue=10 })
+        self.aScale   = gfx_hud_object_add("Scale", { onChange = on_change, size=scalesz, mgTexture="EnvCycleEditor/bg_alpha.png", mgColour=vec(1,1,1), mgAlpha=1, bgColour=vec(1,1,1) })
 
         -- why did putting a comma on the end of the line cause this file not to be included and error suppressed?
-        self.hueLabel = gfx_hud_object_add("Label", { size=vector2(41,20), value="Hue" })
-        self.satLabel = gfx_hud_object_add("Label", { size=vector2(41,20), value="Sat" })
-        self.valLabel = gfx_hud_object_add("Label", { size=vector2(41,20), value="Val" })
-        self.aLabel = gfx_hud_object_add("Label", { size=vector2(41,20), value="Alpha" })
+        self.hueLabel = gfx_hud_object_add("Label", { size=labsz, value="Hue" })
+        self.satLabel = gfx_hud_object_add("Label", { size=labsz, value="Sat" })
+        self.valLabel = gfx_hud_object_add("Label", { size=labsz, value="Val" })
+        self.aLabel = gfx_hud_object_add("Label", { size=labsz, value="Alpha" })
 
         self.contents = gfx_hud_object_add("StackY", {
             parent = self, 
             padding = -1,
-            gfx_hud_object_add("StackX", {
-                padding = -1,
-                self.hueLabel,
-                self.hue,
-            }),
-            gfx_hud_object_add("StackX", {
-                padding = -1,
-                self.satLabel,
-                self.sat,
-            }),
-            gfx_hud_object_add("StackX", {
-                padding = -1,
-                self.valLabel,
-                self.val,
-            }),
-            gfx_hud_object_add("StackX", {
-                padding = -1,
-                self.aLabel,
-                self.a,
-            }),
+            gfx_hud_object_add("StackX", { padding = -1, self.hueLabel, self.hueScale, }),
+            gfx_hud_object_add("StackX", { padding = -1, self.satLabel, self.satScale, }),
+            gfx_hud_object_add("StackX", { padding = -1, self.valLabel, self.valScale, }),
+            gfx_hud_object_add("StackX", { padding = -1, self.aLabel, self.aScale, }),
         })
 
         self.size = self.contents.size
 
-        if self.greyed == nil then
-             self.greyed = false
-        end
-        if self.colGreyed == nil then
-             self.colGreyed = false
-        end
-        if self.aGreyed == nil then
-             self.aGreyed = false
-        end
+        self.greyed = not not self.greyed
+        self.aGreyed = not not self.aGreyed
+        self.hsvGreyed = not not self.hsvGreyed
 
     end;
     
@@ -62,52 +52,77 @@ hud_class "../ColourPicker" {
         self:updateAppearance()
     end;
 
-    setGreyedColAlpha = function (self, col, alpha)
-        self.colGreyed = col
-        self.aGreyed = alpha
-        self:updateAppearance()
-    end;
-
     updateAppearance = function (self)
-        self.hue:setGreyed(self.greyed or self.colGreyed)
-        self.hueLabel:setGreyed(self.greyed or self.colGreyed)
-        self.sat:setGreyed(self.greyed or self.colGreyed)
-        self.satLabel:setGreyed(self.greyed or self.colGreyed)
-        self.val:setGreyed(self.greyed or self.colGreyed)
-        self.valLabel:setGreyed(self.greyed or self.colGreyed)
-        self.a:setGreyed(self.greyed or self.aGreyed)
+        self.hueScale:setGreyed(self.greyed or self.hsvGreyed)
+        self.hueLabel:setGreyed(self.greyed or self.hsvGreyed)
+        self.satScale:setGreyed(self.greyed or self.hsvGreyed)
+        self.satLabel:setGreyed(self.greyed or self.hsvGreyed)
+        self.valScale:setGreyed(self.greyed or self.hsvGreyed)
+        self.valLabel:setGreyed(self.greyed or self.hsvGreyed)
+        self.aScale:setGreyed(self.greyed or self.aGreyed)
         self.aLabel:setGreyed(self.greyed or self.aGreyed)
     end;
 
     destroy = function (self)
         self.contents = safe_destroy(self.contents)
     end;
+
+    updateBgColour = function (self)
+        local hsv = self:getColourHSV() or vec(1,1,1)
+        self.satScale:setBackgroundColour(HSVtoRGB(vec(hsv.x, 1, 1)))
+        self.valScale:setBackgroundColour(HSVtoRGB(vec3(hsv.xy, 1)))
+        self.aScale:setBackgroundColour(HSVtoRGB(vec3(hsv.xy, math.min(1,hsv.z))))
+    end;
     
     childChanged = function (self)
         if self.contents == nil then return end
-        self.sat.sliderBackground.colour = HSVtoRGB(vector3(self.hue.value, 1, 1))
+        self:updateBgColour()
         self:onChange()
     end;
     
-    getColour = function (self)
-        return HSVtoRGB(vector3(self.hue.value, self.sat.value, self.val.value))
+    getColourHSV = function (self)
+        if self.hsvGreyed then return nil end
+        return vec(self.hueScale.value, self.satScale.value, self.valScale.value)
     end;
-    setColour = function (self, c)
-        local hsl = RGBtoHSV(c)
-        self.hue:setValue(hsl.x)
-        self.sat:setValue(hsl.y)
-        self.val:setValue(hsl.z)
+    getColourRGB = function (self)
+        if self.hsvGreyed then return nil end
+        return HSVtoRGB(self:getColourHSV())
+    end;
+    setColourRGB = function (self, c)
+        if c == nil then
+            self.hsvGreyed = true
+            self.hueScale:setValue(0)
+            self.satScale:setValue(0)
+            self.valScale:setValue(1)
+        else
+            local hsv = RGBtoHSV(c)
+            self.hsvGreyed = false
+            self.hueScale:setValue(hsv.x)
+            self.satScale:setValue(hsv.y)
+            self.valScale:setValue(hsv.z)
+            self:updateBgColour()
+        end
+        self:updateAppearance()
     end;
 
     getAlpha = function (self)
-        return self.a.value
+        if self.aGreyed then return nil end
+        return self.aScale.value
     end;
-    setAlpha = function (self, v)
-        self.a:setValue(v)
+    setAlpha = function (self, a)
+        if a == nil then
+            self.aGreyed = true
+            self.aScale:setValue(1)
+        else
+            self.aGreyed = false
+            self.aScale:setValue(a)
+            self:updateBgColour()
+        end
+        self:updateAppearance()
     end;
     
     onChange = function (self)
-        echo("Colour: "..self:getColour().."  Alpha: "..self:getAlpha())
+        echo("Colour: "..self:getColourRGB().."  Alpha: "..self:getAlpha())
     end;
     
 }
@@ -118,27 +133,32 @@ hud_class "../EnvCycleEditor" (extends (BorderPane) {
 
     colour=vector3(0,0,0),
 
-    alpha=0.5,
+    alpha=0.7,
     
     controlClicked = function (self, caption)
         if caption == nil then
-            self.colourPicker:setGreyedColAlpha(true, true)
+            -- click in empty space
+            self.colourPicker:setGreyed(true)
             return
         end
         local control = self.byCaption[caption]
         if control.className == "/common/hud/ColourControl" then
+            self.colourPicker:setGreyed(false)
             self.currentlyClicked = nil
             if control.needsAlpha then
-                self.colourPicker:setGreyedColAlpha(false, false)
-                self.colourPicker:setColour(control.colour)
+                self.colourPicker:setColourRGB(control.colour)
                 self.colourPicker:setAlpha(control.a)
             else
-                self.colourPicker:setGreyedColAlpha(false, true)
-                self.colourPicker:setColour(control.colour)
+                self.colourPicker:setColourRGB(control.colour)
+                self.colourPicker:setAlpha(nil)
             end
             self.currentlyClicked = caption
+        elseif control.className == "/common/hud/EnumControl" then
+            control:advanceValue()
         else
-            self.colourPicker:setGreyedColAlpha(true, true)
+            -- clicked on something else (what?)
+            -- treat the same as empty space
+            self.colourPicker:setGreyed(true)
         end
     end;
     
@@ -146,17 +166,19 @@ hud_class "../EnvCycleEditor" (extends (BorderPane) {
         if self.currentlyClicked == nil then return end
         local caption = self.currentlyClicked
         local control = self.byCaption[caption]
-        if control.needsAlpha then
-            control:setColour(self.colourPicker:getColour(), self.colourPicker:getAlpha())
-        else
-            control:setColour(self.colourPicker:getColour())
-        end
+        control:setColour(self.colourPicker:getColourRGB(), self.colourPicker:getAlpha())
+    end;
+
+    currentInstant = function (self)
+        return sky_cycle[self.editIndex or 1] or sky_cycle[1]
     end;
 
     init = function (self)
         BorderPane.init(self)
         
         self.needsInputCallbacks = true
+
+        self.editIndex = 1
         
         self.byCaption = { }
         local function add (kind, caption, tab)
@@ -168,142 +190,168 @@ hud_class "../EnvCycleEditor" (extends (BorderPane) {
         
         self.title = gfx_hud_text_add("/common/fonts/Impact24")
         --self.title.text = "Ｅｎｖｉｒｏｎｍｅｎｔ  Ｃｙｃｌｅ  Ｅｄｉｔｏｒ"
-        self.title.text = "Environment Cycle Editor"
+        -- fix spacing when font is fixed
+        self.title.text = "ENVIRONMENT    CYCLE      EDITOR"
 
         self.colourPicker = gfx_hud_object_add("ColourPicker", { onChange = function () self:colourPickerChanged() end } )
-        self.colourPicker:setGreyed(true, true)
         
+        self.timeDescLabel = gfx_hud_object_add("Label", {
+            value = "Editting time:";
+            size = vec(96,20);
+        })
+        self.timeLabel = gfx_hud_object_add("Label", {
+            size = vec(60,20);
+        })
+        self.timeLeftButton = gfx_hud_object_add("Button", {
+            caption = "◄";
+            pressedCallback = function (self2)
+                self:timeChange(-1)
+            end;
+            size = vec(16,20);
+        })
+        self.timeRightButton = gfx_hud_object_add("Button", {
+            caption = "►";
+            pressedCallback = function (self2)
+                self:timeChange(1)
+            end;
+            size = vec(16,20);
+        })
+        self.clockSetButton = gfx_hud_object_add("Button", {
+            caption = "Copy to clock";
+            pressedCallback = function (self2)
+                env.secondsSinceMidnight = self:currentInstant().time * 60 * 60
+            end;
+            size = vec(100,20);
+        })
+        self.topControls = gfx_hud_object_add("StackX", {
+            padding = 10,
+            
+            { "TOP", gfx_hud_object_add("StackY", {
+                padding=-1,
+                add("ColourControl", "Grad6", { needsAlpha = true } ),
+                add("ColourControl", "Grad5", { needsAlpha = true } ),
+                add("ColourControl", "Grad4", { needsAlpha = true } ),
+                add("ColourControl", "Grad3", { needsAlpha = true } ),
+                add("ColourControl", "Grad2", { needsAlpha = true } ),
+                add("ColourControl", "Grad1", { needsAlpha = true } ),
+            })},
+
+            { "TOP", gfx_hud_object_add("StackY", {
+                padding=-1,
+                add("ColourControl", "Sun Grad6", { needsAlpha = true } ),
+                add("ColourControl", "Sun Grad5", { needsAlpha = true } ),
+                add("ColourControl", "Sun Grad4", { needsAlpha = true } ),
+                add("ColourControl", "Sun Grad3", { needsAlpha = true } ),
+                add("ColourControl", "Sun Grad2", { needsAlpha = true } ),
+                add("ColourControl", "Sun Grad1", { needsAlpha = true } ),
+            })},
+
+            gfx_hud_object_add("StackY", {
+                padding = 4;
+                gfx_hud_object_add("StackY", {
+                    padding = -1;
+                    add("ValueControl",  "Sun Size", {number=true}),
+                    add("ColourControl", "Sun Colour", { needsAlpha = true } ),
+                }),
+                gfx_hud_object_add("StackY", {
+                    padding = -1;
+                    add("ValueControl",  "Cloud Coverage", {number=true}),
+                    add("ColourControl", "Cloud Colour"),
+                }),
+                gfx_hud_object_add("StackY", {
+                    padding = -1;
+                    add("ValueControl",  "Horizon Glare", {number=true}),
+                    add("ValueControl", "Sun Glare", {number=true}),
+                }),
+            }),
+        })
+        self.bottomControls = gfx_hud_object_add("StackX", {
+            padding = 10,
+            { "TOP", add("ValueControl", "Saturation") },
+            { "TOP", gfx_hud_object_add("StackY", {
+                padding=-1,
+                add("ColourControl", "Fog Colour"),
+                add("ValueControl", "Fog Density", {number=true}),
+            })},
+            gfx_hud_object_add("StackY", {
+                padding = 4;
+                gfx_hud_object_add("StackY", {
+                    padding = -1;
+                    add("ColourControl", "Particle Light"),
+                    add("ColourControl", "Diffuse Light"),
+                    add("ColourControl", "Specular Light"),
+                }),
+                add("EnumControl",  "Light Source", { options={"Sun","Moon"} }),
+            }),
+        })
         self.contents = gfx_hud_object_add("StackY", {
             parent=self, 
             padding = 0,
 
             self.title,
 
-            vector2(0,10),
+            vector2(0,4),
 
             self.colourPicker,
             
             vector2(0,10),
 
-            gfx_hud_object_add("StackX", {
-                padding = 10,
-                
-                { "TOP", gfx_hud_object_add("StackY", {
-                    padding=-1,
-                    add("ColourControl", "Grad6", { needsAlpha = true } ),
-                    add("ColourControl", "Grad5", { needsAlpha = true } ),
-                    add("ColourControl", "Grad4", { needsAlpha = true } ),
-                    add("ColourControl", "Grad3", { needsAlpha = true } ),
-                    add("ColourControl", "Grad2", { needsAlpha = true } ),
-                    add("ColourControl", "Grad1", { needsAlpha = true } ),
-                })},
-
-                { "TOP", gfx_hud_object_add("StackY", {
-                    padding=-1,
-                    add("ColourControl", "Sun Grad6", { needsAlpha = true } ),
-                    add("ColourControl", "Sun Grad5", { needsAlpha = true } ),
-                    add("ColourControl", "Sun Grad4", { needsAlpha = true } ),
-                    add("ColourControl", "Sun Grad3", { needsAlpha = true } ),
-                    add("ColourControl", "Sun Grad2", { needsAlpha = true } ),
-                    add("ColourControl", "Sun Grad1", { needsAlpha = true } ),
-                })},
-
-                gfx_hud_object_add("StackY", {
-                    padding = 4;
-                    gfx_hud_object_add("StackY", {
-                        padding = -1;
-                        add("ValueControl",  "Sun Size", {number=true}),
-                        add("ColourControl", "Sun Colour", { needsAlpha = true } ),
-                    }),
-                    gfx_hud_object_add("StackY", {
-                        padding = -1;
-                        add("ValueControl",  "Cloud Coverage", {number=true}),
-                        add("ColourControl", "Cloud Colour"),
-                    }),
-                    gfx_hud_object_add("StackY", {
-                        padding = -1;
-                        add("ValueControl",  "Horizon Glare", {number=true}),
-                        add("ValueControl", "Sun Glare", {number=true}),
-                    }),
-                }),
-            }),
+            self.topControls,
             
             vector2(0,10),
             
-            gfx_hud_object_add("StackX", {
-                padding = 10,
-                { "TOP", add("ValueControl", "Saturation") },
-                { "TOP", gfx_hud_object_add("StackY", {
-                    padding=-1,
-                    add("ColourControl", "Fog Colour"),
-                    add("ValueControl", "Fog Density", {number=true}),
-                })},
-                gfx_hud_object_add("StackY", {
-                    padding = 4;
-                    gfx_hud_object_add("StackY", {
-                        padding = -1;
-                        add("ColourControl", "Particle Light"),
-                        add("ColourControl", "Diffuse Light"),
-                        add("ColourControl", "Specular Light"),
-                    }),
-                    add("EnumControl",  "Light Source", { options={"Sun","Moon"} }),
-                }),
-            })
+            self.bottomControls,
+
+            vector2(0,10),
+
+            { "RIGHT", gfx_hud_object_add("StackX", {
+                parent=self, 
+
+                self.timeDescLabel,
+                vector2(-1,0),
+                self.timeLabel,
+                vector2(2,0),
+                self.timeLeftButton,
+                self.timeRightButton,
+
+                vector2(10,0),
+
+                self.clockSetButton,
+            }) },
         })
 
         self.size = self.contents.size + vector2(20,20)
         self:updateChildrenSize()
 
-        self.timeLeftButton = gfx_hud_object_add("Button", {
-            parent = self;
-            caption = "◄";
-            pressedCallback = function (self)
-                echo("derp")
-            end;
-            size = vec(16,20);
-            position= -self.size/2 + vec(16,64);
-        })
-        self.timeRightButton = gfx_hud_object_add("Button", {
-            parent = self;
-            caption = "►";
-            pressedCallback = function (self)
-                echo("derp")
-            end;
-            size = vec(16,20);
-            position= -self.size/2 + vec(32,64);
-        })
-        self.editButton = gfx_hud_object_add("Button", {
-            parent = self;
-            caption = "Edit";
-            pressedCallback = function (self)
-                echo("derp")
-            end;
-            size = vec(32,20);
-            position= -self.size/2 + vec(24,44);
-        })
-        self.pauseButton = gfx_hud_object_add("Button", {
-            parent = self;
-            pressedCallback = function (self2)
-                env.clockTicking = not env.clockTicking
-                self:updatePaused()
-            end;
-            size = vec(100,20);
-            position = -self.size/2 + vec(58,20);
-        })
-        self:updatePaused()
+        self:updateAppearance()
     end;
-    updatePaused = function (self)
-        if env.clockTicking then
-            self.pauseButton.text.text = "Pause (∥)"
-            self.timeLeftButton:setGreyed(true)
-            self.timeRightButton:setGreyed(true)
-            self.editButton:setGreyed(true)
-        else
-            self.pauseButton.text.text = "Play (▶)"
-            self.timeLeftButton:setGreyed(false)
-            self.timeRightButton:setGreyed(false)
-            self.editButton:setGreyed(false)
+
+    -- direction 1 or -1
+    timeChange = function (self, direction)
+        self.editIndex = self.editIndex + direction
+        if self.editIndex < 1 then self.editIndex = #sky_cycle end
+        if self.editIndex > #sky_cycle then self.editIndex = 1 end
+        self:updateAppearance()
+    end;
+
+    updateAppearance = function (self)
+        local env_instant = self:currentInstant()
+        self.colourPicker:setGreyed(true)
+        self.timeLabel:setValue(format_time(env_instant.time * 60 * 60))
+
+        for i=1,6 do
+            self.byCaption["Grad"..i]:setColour(vector3(unpack(env_instant.gradient[i],1,3)), unpack(env_instant.gradient[i],4,4))
         end
+        for i=1,6 do
+            self.byCaption["Sun Grad"..i]:setColour(vector3(unpack(env_instant.sunGradient[i],1,3)), unpack(env_instant.sunGradient[i],4,4))
+        end
+        self.byCaption["Fog Colour"]:setColour(vector3(unpack(env_instant.fog,2,4)))
+        --self.byCaption["Fog Density"]:setValue(vector3(unpack(env_instant.fog,2,4)))
+        self.byCaption["Particle Light"]:setColour(vector3(unpack(env_instant.particleAmbient)))
+        self.byCaption["Diffuse Light"]:setColour(vector3(unpack(env_instant.diff)))
+        self.byCaption["Specular Light"]:setColour(vector3(unpack(env_instant.spec)))
+        self.byCaption["Cloud Colour"]:setColour(vector3(unpack(env_instant.cloudColour)))
+        self.byCaption["Sun Colour"]:setColour(vector3(unpack(env_instant.sunColour,1,3)), unpack(env_instant.sunColour,4,4))
     end;
 
     destroy = function(self)
@@ -323,20 +371,3 @@ hud_class "../EnvCycleEditor" (extends (BorderPane) {
     end;
         
 })
-
-function doit (n)
-    n = n or 6
-    local sky = sky_cycle[n]
-    for i=1,6 do
-        env_cycle_editor.byCaption["Grad"..i]:setColour(vector3(unpack(sky.gradient[i],1,3)), unpack(sky.gradient[i],4,4))
-    end
-    for i=1,6 do
-        env_cycle_editor.byCaption["Sun Grad"..i]:setColour(vector3(unpack(sky.sunGradient[i],1,3)), unpack(sky.sunGradient[i],4,4))
-    end
-    env_cycle_editor.byCaption["Fog Colour"]:setColour(vector3(unpack(sky.fog,1,3)), unpack(sky.fog,4,4))
-    env_cycle_editor.byCaption["Particle Light"]:setColour(vector3(unpack(sky.particleAmbient)))
-    env_cycle_editor.byCaption["Diffuse Light"]:setColour(vector3(unpack(sky.diff)))
-    env_cycle_editor.byCaption["Specular Light"]:setColour(vector3(unpack(sky.spec)))
-    env_cycle_editor.byCaption["Cloud Colour"]:setColour(vector3(unpack(sky.cloudColour)))
-    env_cycle_editor.byCaption["Sun Colour"]:setColour(vector3(unpack(sky.sunColour,1,3)), unpack(sky.sunColour,4,4))
-end

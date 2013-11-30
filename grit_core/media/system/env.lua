@@ -150,7 +150,7 @@ local function recompute_sky()
                lerp(a[na+2], b[nb+2], slider),
                lerp(a[na+3], b[nb+3], slider)
     end
-    local fog_r, fog_g, fog_b = lerp3(current_sky.fog, next_sky.fog,slider,2,2)
+    local fog_r, fog_g, fog_b = lerp3(current_sky.fog, next_sky.fog, slider, 2, 2)
 
     -- sky
     gfx_sun_direction(sun_direction)

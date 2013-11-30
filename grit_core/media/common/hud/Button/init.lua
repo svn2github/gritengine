@@ -13,8 +13,8 @@ hud_class "../Button" {
         self.needsInputCallbacks = true
 
         self.text = gfx_hud_text_add(self.captionFont)
-        self.text.text = self.caption
         self.text.parent = self
+        self:setCaption(self.caption)
 
         self.dragging = false;
         self.inside = false
@@ -25,6 +25,11 @@ hud_class "../Button" {
     
     destroy = function (self)
         safe_destroy(self.text)
+    end;
+    
+    setCaption = function (self, v)
+        self.caption = v
+        self.text.text = self.caption
     end;
 
     setGreyed = function (self, v)

@@ -235,6 +235,7 @@ local Control = {
         self.label = gfx_hud_object_add("Label", {parent=self, borderColour=vector3(0,0,0), value=self.caption});
         self.inside = false
         self.dragging = false
+        self.greyed = not not self.greyed
     end;
     
     destroy = function(self)
@@ -245,7 +246,17 @@ local Control = {
         self.inside = inside
     end;
 
+    setGreyed = function (self, v)
+        self.greyed = v
+        self:updateAppearance()
+    end;
+
+    updateAppearance = function (self)
+        self.label:setGreyed(self.greyed)
+    end;
+
     buttonCallback = function (self, ev)
+        if self.greyed then return end
         if ev == "+left" and self.inside then
             self.dragging = true
         elseif ev == "-left" then
@@ -276,11 +287,20 @@ hud_class "ColourControl" (extends(Control) {
         self.square = safe_destroy(self.square)
         Control.destroy(self)
     end;
+    updateAppearance = function (self)
+        Control.updateAppearance(self)
+        if self.greyed then
+            self.square.colour = vec(0.5, 0.5, 0.5)
+            self.alphaSquare.alpha = 0
+        else
+            self.square.colour = tone_map(self.colour)
+            self.alphaSquare.alpha = 1 - (self.a or 1)
+        end
+    end;
     setColour = function(self, v, a)
         self.colour = v
         self.a = a
-        self.square.colour = tone_map(v)
-        self.alphaSquare.alpha = 1 - (a or 1)
+        self:updateAppearance()
     end;
     updateChildrenSize = function(self)
         Control.updateChildrenSize(self)
@@ -304,6 +324,10 @@ hud_class "ValueControl" (extends(Control) {
     destroy = function(self)
         self.valueDisplay = safe_destroy(self.valueDisplay)
         Control.destroy(self)
+    end;
+    updateAppearance = function (self)
+        Control.updateAppearance(self)
+        self.valueDisplay:setGreyed(self.greyed)
     end;
     updateChildrenSize = function(self)
         Control.updateChildrenSize(self)
@@ -331,6 +355,10 @@ hud_class "EnumControl" (extends (Control) {
         self.valueDisplay = safe_destroy(self.valueDisplay)
         Control.destroy(self)
     end;
+    updateAppearance = function (self)
+        Control.updateAppearance(self)
+        self.valueDisplay:setGreyed(self.greyed)
+    end;
     updateChildrenSize = function(self)
         Control.updateChildrenSize(self)
         self.valueDisplay:setRect(self.size.x/2-self.width,-self.size.y/2, self.size.x/2,self.size.y/2)
@@ -340,10 +368,13 @@ hud_class "EnumControl" (extends (Control) {
         self.valueDisplay.text.text = self.options[v] or "???"
         self.value = v
     end;
-    clicked = function (self)
+    advanceValue = function (self)
         local v = self.value + 1
         if v > #self.options then v = 1 end
         self:setValue(v)
+    end;
+    clicked = function (self)
+        echo("clicked")
     end;
 })
 

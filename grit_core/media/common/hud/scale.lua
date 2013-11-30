@@ -61,6 +61,16 @@ hud_class "Scale" {
         self.editBox:setGreyed(v)
         self:updateAppearance()
     end;
+
+    setBackgroundColour = function (self, c)
+        self.bgColour = c
+        self:updateAppearance()
+    end;
+    
+    setMidgroundColour = function (self, c)
+        self.mgColour = c
+        self:updateAppearance()
+    end;
     
     drag = function (self)
         local val = (self.localPos + self.size.x/2 - 1) / self.sliderBackground.size.x
