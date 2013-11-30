@@ -31,14 +31,7 @@
 #include "lua_util.h"
 
 // code nicked from ldblib.c
-struct stack_frame {
-    std::string file;
-    int line;
-    std::string func_name;
-    int gap;
-};
-
-static std::vector<struct stack_frame> traceback(lua_State *L1, int level)
+std::vector<struct stack_frame> traceback(lua_State *L1, int level)
 {
     std::vector<struct stack_frame> r;
     lua_Debug ar;
@@ -193,14 +186,15 @@ const char* check_string (lua_State *l, int stack_index)
     }
     return lua_tostring(l,stack_index);
 }
-int my_lua_error_handler (lua_State *l)
-{
-    return my_lua_error_handler(l,l,1);
-}
 
 int my_do_nothing_lua_error_handler (lua_State *) { return 0; }
 
-int my_lua_error_handler (lua_State *l, lua_State *coro, int levelhack)
+int my_lua_error_handler_cerr (lua_State *l)
+{
+    return my_lua_error_handler_cerr(l,l,1);
+}
+
+int my_lua_error_handler_cerr (lua_State *l, lua_State *coro, int levelhack)
 {
     //check_args(l,1);
     int level = 0;

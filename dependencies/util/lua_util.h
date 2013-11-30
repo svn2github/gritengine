@@ -179,8 +179,8 @@ inline float table_fetch_real (lua_State *L, const char *f, float def)
     return r;
 }
 
-int my_lua_error_handler(lua_State *l, lua_State *coro, int levelhack);
-int my_lua_error_handler(lua_State *l);
+int my_lua_error_handler_cerr(lua_State *l, lua_State *coro, int levelhack);
+int my_lua_error_handler_cerr(lua_State *l);
 int my_do_nothing_lua_error_handler(lua_State *l);
 
 void lua_alloc_stats_get (size_t &counter, size_t &mallocs,
@@ -199,6 +199,15 @@ void push_cfunction (lua_State *L, int (*func)(lua_State*));
 void func_map_leak_all (void);
 
 void register_lua_globals (lua_State *L, const luaL_reg *globals);
+
+struct stack_frame {
+    std::string file;
+    int line;
+    std::string func_name;
+    int gap;
+};
+
+std::vector<struct stack_frame> traceback(lua_State *L1, int level);
 
 #endif
 
