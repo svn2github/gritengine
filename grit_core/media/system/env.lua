@@ -505,7 +505,6 @@ function update_hud()
     local sky = env.edittingTime
     append_edit("particleAmbient", sky.particleAmbient)
     append_edit("saturation", nil, "", "%0.3f", sky.saturation)
-    append_edit("env", nil, "", "%0.3f", sky.env)
     append_edit("diff", sky.diff)
     append_edit("spec", sky.spec)
     append_edit("fog", {sky.fog[2], sky.fog[3], sky.fog[4]}, "strength", "%0.2f", sky.fog[1])

@@ -7,6 +7,8 @@ TODO:
 * Colour palette
 * Actually edit sky_cycle.lua
 * Save functionality
+* change time does not change currently editted control
+* start with a particular control
 --]]
 
 hud_class "../ColourPicker" {
@@ -142,6 +144,8 @@ hud_class "../EnvCycleEditor" (extends (BorderPane) {
             return
         end
         local control = self.byCaption[caption]
+        self.marker.position = control.derivedPosition - self.derivedPosition - vec(58,0)
+
         if control.className == "/common/hud/ColourControl" then
             self.colourPicker:setGreyed(false)
             self.currentlyClicked = nil
@@ -177,6 +181,7 @@ hud_class "../EnvCycleEditor" (extends (BorderPane) {
         BorderPane.init(self)
         
         self.needsInputCallbacks = true
+        self.needsFrameCallbacks = true
 
         self.editIndex = 1
         
@@ -320,6 +325,8 @@ hud_class "../EnvCycleEditor" (extends (BorderPane) {
             }) },
         })
 
+        self.marker = gfx_hud_object_add("Rect", { parent=self, texture="EnvCycleEditor/marker.png", zOrder=6})
+
         self.size = self.contents.size + vector2(20,20)
         self:updateChildrenSize()
 
@@ -346,16 +353,22 @@ hud_class "../EnvCycleEditor" (extends (BorderPane) {
             self.byCaption["Sun Grad"..i]:setColour(vector3(unpack(env_instant.sunGradient[i],1,3)), unpack(env_instant.sunGradient[i],4,4))
         end
         self.byCaption["Fog Colour"]:setColour(vector3(unpack(env_instant.fog,2,4)))
-        --self.byCaption["Fog Density"]:setValue(vector3(unpack(env_instant.fog,2,4)))
+        self.byCaption["Fog Density"]:setValue(("%0.3f"):format(unpack(env_instant.fog,1,1)))
         self.byCaption["Particle Light"]:setColour(vector3(unpack(env_instant.particleAmbient)))
         self.byCaption["Diffuse Light"]:setColour(vector3(unpack(env_instant.diff)))
         self.byCaption["Specular Light"]:setColour(vector3(unpack(env_instant.spec)))
+        self.byCaption["Cloud Coverage"]:setValue(("%0.3f"):format(env_instant.cloudCoverage))
         self.byCaption["Cloud Colour"]:setColour(vector3(unpack(env_instant.cloudColour)))
+        self.byCaption["Sun Size"]:setValue(("%0.3f"):format(env_instant.sunSize))
         self.byCaption["Sun Colour"]:setColour(vector3(unpack(env_instant.sunColour,1,3)), unpack(env_instant.sunColour,4,4))
+        self.byCaption["Saturation"]:setValue(("%0.3f"):format(env_instant.saturation))
+        self.byCaption["Sun Glare"]:setValue(("%2.0f"):format(env_instant.sunGlareDistance))
+        self.byCaption["Horizon Glare"]:setValue(("%2.0f"):format(env_instant.horizonGlareElevation))
     end;
 
     destroy = function(self)
         self.contents = safe_destroy(self.contents)
+        self.marker = safe_destroy(self.marker)
         BorderPane.destroy(self)
     end;
     
@@ -368,6 +381,10 @@ hud_class "../EnvCycleEditor" (extends (BorderPane) {
         if ev == "+left" and self.inside then
             self:controlClicked(nil)
         end
+    end;
+
+    frameCallback = function (self, elapsed)
+        self.marker.alpha = math.sin(math.rad(seconds()*360)) + 1
     end;
         
 })

@@ -317,7 +317,7 @@ hud_class "ValueControl" (extends(Control) {
     value = "1";
     init = function (self)
         Control.init(self)    
-        self.valueDisplay = gfx_hud_object_add("Label", {parent=self, borderColour=vector3(1,1,1), number=self.number, maxLength=self.maxLength})
+        self.valueDisplay = gfx_hud_object_add("EditBox", {parent=self, borderColour=vector3(1,1,1), number=self.number, maxLength=self.maxLength})
         self:updateChildrenSize()
         self:setValue(self.value)
     end;
