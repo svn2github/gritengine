@@ -20,9 +20,9 @@
  */
 
 #define _POSIX_C_SOURCE 199309
-#include <time.h>
-#include <assert.h>
-#include <stdio.h>
+#include <ctime>
+#include <cassert>
+#include <cstdio>
 
 void mysleep(long micros)
 {
