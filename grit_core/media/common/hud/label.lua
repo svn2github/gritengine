@@ -105,6 +105,9 @@ hud_class "Label" (extends (BorderPane) {
 
 })
 
+-- value is alwyas text
+-- can set .number to disallow typing in non-numbers, however can still backspace everything
+-- if using .number, use tonumber(blah.value) and handle nil when blah.value == ""
 hud_class "EditBox" (extends (BorderPane) {
 
     textColour = vector3(0,0,0);
@@ -157,6 +160,9 @@ hud_class "EditBox" (extends (BorderPane) {
     mouseMoveCallback = function (self, local_pos, screen_pos, inside)
         self.inside = inside
     end;
+
+    onEditting = function (self, editting)
+    end;
     
     setEditting = function (self, editting)
         if self.editting == editting then return end
@@ -172,12 +178,14 @@ hud_class "EditBox" (extends (BorderPane) {
                 self.lastValue = self.value
             end
         end
+        self:onEditting(editting)
     end;
 
     buttonCallback = function (self, ev)
         if self.greyed then return end
         if ev == "+left" then
             self:setEditting(self.inside)
+            if self.inside then self:onClick() end
         elseif self.editting then
             if ev == "+Return" then
                 self:setEditting(false)
@@ -213,6 +221,9 @@ hud_class "EditBox" (extends (BorderPane) {
     
     onChange = function (self)
         echo("No onChange: "..tostring(self.value))
+    end;
+    
+    onClick = function (self)
     end;
     
     setValue = function (self, value)
@@ -261,7 +272,7 @@ local Control = {
             self.dragging = true
         elseif ev == "-left" then
             if self.dragging and self.inside then
-                self:clicked()
+                self:onClick()
             end
             self.dragging = false
         end
@@ -298,6 +309,10 @@ hud_class "ColourControl" (extends(Control) {
         end
     end;
     setColour = function(self, v, a)
+        if type(v) == "vector4" and a == nil then
+            a = v.w
+            v = v.xyz
+        end
         self.colour = v
         self.a = a
         self:updateAppearance()
@@ -308,18 +323,32 @@ hud_class "ColourControl" (extends(Control) {
         self.square:updateChildrenSize()
         self.alphaSquare:setRect(self.size.x/2-self.width/2+1, -self.size.y/2+1, self.size.x/2-1, self.size.y/2-1)
     end;
-    clicked = function (self)
-        echo("clicked")
+    onClick = function (self)
+        echo("onClick")
     end;
 })
 
 hud_class "ValueControl" (extends(Control) {
-    value = "1";
+    initialValue = "1";
     init = function (self)
         Control.init(self)    
-        self.valueDisplay = gfx_hud_object_add("EditBox", {parent=self, borderColour=vector3(1,1,1), number=self.number, maxLength=self.maxLength})
+        self.valueDisplay = gfx_hud_object_add("EditBox", {
+            parent=self;
+            borderColour=vector3(1,1,1);
+            number=true;
+            text=tostring(self.number);
+            maxLength=self.maxLength;
+            onChange = function (self2)
+                -- check if value is actually a number
+                local new_v = tonumber(self2.value) or 0
+                self:setValue(tostring(new_v))
+                self:onChange()
+            end;
+            onEditting = function(self2, editting) self:onEditting(editting) end;
+            onClick = function(self2) self:onClick() end;
+        })
         self:updateChildrenSize()
-        self:setValue(self.value)
+        self:setValue(self.initialValue)
     end;
     destroy = function(self)
         self.valueDisplay = safe_destroy(self.valueDisplay)
@@ -335,10 +364,14 @@ hud_class "ValueControl" (extends(Control) {
         self.valueDisplay:updateChildrenSize()
     end;
     setValue = function(self, v)
+        self.value = v
         self.valueDisplay:setValue(v)
     end;
-    clicked = function (self)
-        echo("clicked")
+    onClick = function (self)
+        echo("onClick")
+    end;
+    onChange = function (self)
+        echo("ValueControl.onChange")
     end;
 })
 
@@ -368,13 +401,16 @@ hud_class "EnumControl" (extends (Control) {
         self.valueDisplay.text.text = self.options[v] or "???"
         self.value = v
     end;
+    getTextValue = function(self, v)
+        return self.options[self.value]
+    end;
     advanceValue = function (self)
         local v = self.value + 1
         if v > #self.options then v = 1 end
         self:setValue(v)
     end;
-    clicked = function (self)
-        echo("clicked")
+    onClick = function (self)
+        echo("onClick")
     end;
 })
 

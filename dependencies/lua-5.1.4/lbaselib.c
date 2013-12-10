@@ -534,13 +534,13 @@ static int luaB_vec (lua_State *L) {
   float input[4] = { 0 };
   switch (lua_gettop(L)) {
     case 4:
-    input[3] = lua_tonumber(L, 4);
+    input[3] = luaL_checknumber(L, 4);
     case 3:
-    input[2] = lua_tonumber(L, 3);
+    input[2] = luaL_checknumber(L, 3);
     case 2:
-    input[1] = lua_tonumber(L, 2);
+    input[1] = luaL_checknumber(L, 2);
     case 1:
-    input[0] = lua_tonumber(L, 1);
+    input[0] = luaL_checknumber(L, 1);
     break;
     default:
     luaL_error(L, "vec(...) takes 1 to 4 number arguments only");
