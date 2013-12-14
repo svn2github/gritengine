@@ -61,7 +61,7 @@ hud_class "Stats" {
             local label = self.labels[name]
             if label ~= nil then
                 local text, colour = self.stats[name]()
-                label:setText(text)
+                label:setValue(text)
                 label.colour = colour or self.defaultColour
             end
         end

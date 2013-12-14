@@ -63,13 +63,13 @@ hud_class "Label" (extends (BorderPane) {
         self.text.colour = self.textColour
         self.text.parent = self
         self:setValue(self.value)
-        self:updateChildrenSize()
         if self.greyed == nil then self.greyed = false end
     end;
     
     setValue = function (self, value)
         self.value = value
-        self.text.text = self.value
+        self.text.text = value
+        self:updateChildrenSize()
     end;
 
     destroy = function (self)
@@ -86,14 +86,9 @@ hud_class "Label" (extends (BorderPane) {
         end
     end;
     
-    setText = function (self, text)
-        self.text.text = text
-        self:updateChildrenSize()
-    end;
-
     updateChildrenSize = function (self)
         BorderPane.updateChildrenSize(self)
-        local centre = self.size/2 - math.floor(self.size/2)
+        local centre = vec(0,0)
         if self.alignment == "CENTRE" then
             self.text.position = centre
         elseif self.alignment == "LEFT" then
@@ -216,7 +211,7 @@ hud_class "EditBox" (extends (BorderPane) {
 
     updateChildrenSize = function (self)
         BorderPane.updateChildrenSize(self)
-        self.text.position = self.size/2 - math.floor(self.size/2)
+        self.text.position = vec(0,0)
     end;
     
     onChange = function (self)

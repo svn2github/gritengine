@@ -20,8 +20,8 @@ ch = gfx_hud_object_add("Rect", {texture="CrossHair.png", parent=hud_center})
 compass = gfx_hud_object_add("Compass", {parent=hud_top_right, position=vector2(-64, -64)})
 speedo = gfx_hud_object_add("Speedo", {parent=hud_top_right})
 speedo.position=vector2(-64, -128 - speedo.size.y/2)
-clock = gfx_hud_object_add("Clock", { parent=hud_top_right})
-clock.position=vector2(-140, -12)
+clock = gfx_hud_object_add("Clock", { parent=hud_top_right, size=vec(190,50) })
+clock.position=-clock.size/2 - vector2(130,4)
 
 safe_destroy(stats)
 stats = gfx_hud_object_add("Stats", {

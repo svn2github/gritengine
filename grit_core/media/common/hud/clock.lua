@@ -6,8 +6,8 @@ hud_class "Clock" {
         self.alpha = 0
         self.needsFrameCallbacks = true
         self.needsInputCallbacks = true
-        self.label = gfx_hud_object_add("Label", { size=vector2(8*6+6, 13+5), parent=self })
-        self.size = self.label.size
+        local font = "/common/fonts/Impact50"
+        self.label = gfx_hud_object_add("Label", { size=self.size, parent=self, font=font })
         self.inside = false;
     end;
 
@@ -17,10 +17,7 @@ hud_class "Clock" {
 
     frameCallback = function (self, elapsed)
         local secs = env.secondsSinceMidnight
-        self.label.text.text = string.format("%02d:%02d:%02d",
-                                        math.mod(math.floor(secs/60/60),24),
-                                        math.mod(math.floor(secs/60),60),
-                                        math.mod(secs,60))
+        self.label:setValue(format_time(env.secondsSinceMidnight))
     end;
 
     mouseMoveCallback = function (self, rel, abs, inside)
