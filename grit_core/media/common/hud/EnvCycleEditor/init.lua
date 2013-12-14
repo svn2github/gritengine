@@ -258,9 +258,7 @@ hud_class "../EnvCycleEditor" (extends (BorderPane) {
         end
         
         self.title = gfx_hud_text_add("/common/fonts/Impact24")
-        --self.title.text = "Ｅｎｖｉｒｏｎｍｅｎｔ  Ｃｙｃｌｅ  Ｅｄｉｔｏｒ"
-        -- fix spacing when font is fixed
-        self.title.text = "ENVIRONMENT    CYCLE      EDITOR"
+        self.title.text = "Environment Cycle Editor"
 
         self.colourPicker = gfx_hud_object_add("ColourPicker", { onChange = function () self:valueChanged() end } )
         
@@ -293,7 +291,7 @@ hud_class "../EnvCycleEditor" (extends (BorderPane) {
             size = vec(100,20);
         })
         self.topControls = gfx_hud_object_add("StackX", {
-            padding = 10,
+            padding = 8,
             
             { "TOP", gfx_hud_object_add("StackY", {
                 padding=-1,
@@ -397,7 +395,7 @@ hud_class "../EnvCycleEditor" (extends (BorderPane) {
 
         self.marker = gfx_hud_object_add("Rect", { parent=self, texture="EnvCycleEditor/marker.png", zOrder=6})
 
-        self.size = self.contents.size + vector2(20,20)
+        self.size = self.contents.size + vector2(16,16)
         self:updateChildrenSize()
 
         self:controlClicked("Grad6")
