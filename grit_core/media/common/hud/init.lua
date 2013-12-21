@@ -115,6 +115,9 @@ env_cycle_editor.enabled = env_cycle_editor_enabled
 env_cycle_editor_button = gfx_hud_object_add("Button", {
     pressedCallback = function (self)
         env_cycle_editor.enabled = not env_cycle_editor.enabled
+        if env_cycle_editor.enabled then
+            env_cycle_editor:setClosestToTime(env.secondsSinceMidnight/60/60)
+        end
     end;
     caption = "Env Cycle Editor";
     position = vector2(64,16);

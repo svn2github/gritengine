@@ -372,6 +372,46 @@ function pretty_matrix (...)
                              "╰                                     ╯", ...)
 end
 
+function format_time (secs)
+    secs = secs or 0
+    return string.format("%02d:%02d:%02d", math.mod(math.floor(secs/60/60),24),
+                                           math.mod(math.floor(secs/60),60),
+                                           math.mod(secs,60))
+end
+
+function parse_time (str)
+    local function throw() error("Invalid time: \""..str.."\"", 1) end
+    if #str ~= 8 then throw() end
+    for i=1,8 do
+        local char = str:sub(i,i)
+        if i==3 or i==6 then
+            if char ~= ":" then throw() end
+        else
+            if char ~= "0" and
+               char ~= "1" and
+               char ~= "2" and
+               char ~= "3" and
+               char ~= "4" and
+               char ~= "5" and
+               char ~= "6" and
+               char ~= "7" and
+               char ~= "8" and
+               char ~= "9" then
+                throw()
+            end
+        end
+    end
+    local iter = str:gmatch("[^:]+")
+    local hours = tonumber(iter())
+    local mins = tonumber(iter())
+    local secs = tonumber(iter())
+    if hours >= 24 then throw() end
+    if mins >= 60 then throw() end
+    if secs >= 60 then throw() end
+    return (hours * 60 + mins) * 60 + secs
+end
+
+
 -- thanks rici!
 function memoize(func, t)
         return setmetatable(t or {}, {__index = function(t, k)

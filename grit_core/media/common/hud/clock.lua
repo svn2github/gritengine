@@ -7,7 +7,10 @@ hud_class "Clock" {
         self.needsFrameCallbacks = true
         self.needsInputCallbacks = true
         local font = "/common/fonts/Impact50"
-        self.label = gfx_hud_object_add("Label", { size=self.size, parent=self, font=font })
+        self.label = gfx_hud_text_add(font)
+        self.label.parent = self
+        --self.label = gfx_hud_object_add("Label", { size=self.size, parent=self, font=font })
+        --self.size = slef.label.size
         self.inside = false;
     end;
 
@@ -17,7 +20,8 @@ hud_class "Clock" {
 
     frameCallback = function (self, elapsed)
         local secs = env.secondsSinceMidnight
-        self.label:setValue(format_time(env.secondsSinceMidnight))
+        --self.label:setValue(format_time(env.secondsSinceMidnight))
+        self.label.text = format_time(env.secondsSinceMidnight)
     end;
 
     mouseMoveCallback = function (self, rel, abs, inside)

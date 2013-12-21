@@ -20,52 +20,40 @@ gfx_global_exposure(1)
 gfx_option("BLOOM_ITERATIONS",1)
 gfx_colour_grade("/system/standard.lut.png")
 
-function format_time (secs)
-    secs = secs or 0
-    return string.format("%02d:%02d:%02d", math.mod(math.floor(secs/60/60),24),
-                                           math.mod(math.floor(secs/60),60),
-                                           math.mod(secs,60))
-end
+function env_recompute()
 
-function parse_time (str)
-    local function throw() error("Invalid time: \""..str.."\"", 1) end
-    if #str ~= 8 then throw() end
-    for i=1,8 do
-        local char = str:sub(i,i)
-        if i==3 or i==6 then
-            if char ~= ":" then throw() end
-        else
-            if char ~= "0" and
-               char ~= "1" and
-               char ~= "2" and
-               char ~= "3" and
-               char ~= "4" and
-               char ~= "5" and
-               char ~= "6" and
-               char ~= "7" and
-               char ~= "8" and
-               char ~= "9" then
-                throw()
-            end
-        end
+    local secs = env.secondsSinceMidnight
+    
+    if secs < env_cube_dawn_begin_time then
+        gfx_env_cube(env_cube_dark)
+    elseif secs < env_cube_noon_begin_time then
+        gfx_env_cube(env_cube_dawn)
+    elseif secs < env_cube_dusk_begin_time then
+        gfx_env_cube(env_cube_noon)
+    elseif secs < env_cube_dark_begin_time then
+        gfx_env_cube(env_cube_dusk)
+    else
+        gfx_env_cube(env_cube_dark)
     end
-    local iter = str:gmatch("[^:]+")
-    local hours = tonumber(iter())
-    local mins = tonumber(iter())
-    local secs = tonumber(iter())
-    if hours >= 24 then throw() end
-    if mins >= 60 then throw() end
-    if secs >= 60 then throw() end
-    return (hours * 60 + mins) * 60 + secs
-end
+    
+    -- account for the fact that the sun is on the other side of the planet in summer
+    -- in degrees
+    local sun_adjusted_time = math.mod(secs / 60 / 60 / 24 * 360 + env.season, 360)
+    local space_orientation = quat(env.latitude,V_EAST)*
+                              quat(sun_adjusted_time,V_SOUTH)*
+                              quat(env.earthTilt,V_WEST)
+    local sun_direction =   (space_orientation * quat(env.season,V_NORTH)) * V_UP
+    local moon_direction =  (space_orientation * quat(env.moonPhase,V_NORTH) * quat(env.season,V_NORTH)) * V_UP
 
--- avoid GC overhead
-local col_names = { "col0", "col1", "col2", "col3", "col4", "col5" }
-local scol_names = { "scol0", "scol1", "scol2", "scol3", "scol4", "scol5" }
-
-local function find_env(secs)
-    secs = secs or 0
-    local current_env, next_env, slider
+    -- procedural from time
+    if sky_ent ~= nil then
+        sky_ent.orientation = space_orientation
+    end
+    if moon_ent ~= nil then 
+        moon_ent.orientation = space_orientation * quat(env.moonPhase,V_NORTH)
+    end
+    
+    local next_env, current_env, slider
     do 
         local found = false
         for _,some_env in ipairs(env_cycle) do
@@ -85,49 +73,6 @@ local function find_env(secs)
             slider = (secs/60/60 - current_env.time) / (next_env.time - current_env.time)
         end
     end
-    return current_env, next_env, slider
-end
-
-local function handle_cubemap(time)
-
-    if time < env_cube_dawn_begin_time then
-        gfx_env_cube(env_cube_dark)
-    elseif time < env_cube_noon_begin_time then
-        gfx_env_cube(env_cube_dawn)
-    elseif time < env_cube_dusk_begin_time then
-        gfx_env_cube(env_cube_noon)
-    elseif time < env_cube_dark_begin_time then
-        gfx_env_cube(env_cube_dusk)
-    else
-        gfx_env_cube(env_cube_dark)
-    end
-
-end
-
-function env_recompute()
-
-    local secs = env.secondsSinceMidnight
-    
-    handle_cubemap(secs)
-    
-    -- account for the fact that the sun is on the other side of the planet in summer
-    -- in degrees
-    local sun_adjusted_time = math.mod(secs / 60 / 60 / 24 * 360 + env.season, 360)
-    local space_orientation = quat(env.latitude,V_EAST)*
-                              quat(sun_adjusted_time,V_SOUTH)*
-                              quat(env.earthTilt,V_WEST)
-    local sun_direction =   (space_orientation * quat(env.season,V_NORTH)) * V_UP
-    local moon_direction =  (space_orientation * quat(env.moonPhase,V_NORTH) * quat(env.season,V_NORTH)) * V_UP
-
-    -- procedural from time
-    if sky_ent ~= nil then
-        sky_ent.orientation = space_orientation
-    end
-    if moon_ent ~= nil then 
-        moon_ent.orientation = space_orientation * quat(env.moonPhase,V_NORTH)
-    end
-    
-    local current_env, next_env, slider = find_env(secs)
 
     -- sunlight_direction is the parameter to the lighting equation that is used to light the scene
     local sunlight_direction
@@ -292,11 +237,11 @@ else
 end
 
 disk_resource_load_indefinitely("/system/SkyCube.mesh")
-sky_ent = gfx_sky_body_make("/system/SkyCube.mesh", 255)
+sky_ent = gfx_sky_body_make("/system/SkyCube.mesh", 180)
 disk_resource_load_indefinitely("/system/SkyMoon.mesh")
-moon_ent = gfx_sky_body_make("/system/SkyMoon.mesh", 254)
+moon_ent = gfx_sky_body_make("/system/SkyMoon.mesh", 120)
 disk_resource_load_indefinitely("/system/SkyClouds.mesh")
-clouds_ent = gfx_sky_body_make("/system/SkyClouds.mesh", 253)
+clouds_ent = gfx_sky_body_make("/system/SkyClouds.mesh", 60)
 
 function env:shutdown()
     safe_destroy(sky_ent)

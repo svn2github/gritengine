@@ -4,8 +4,8 @@
 TODO:
 * Fix edit boxes for ValueControl
 * Colour copy/paste
-* Actually edit sky_cycle.lua
 * Save functionality
+* Get rid of set to clock
 --]]
 
 hud_class "../ColourPicker" {
@@ -262,10 +262,6 @@ hud_class "../EnvCycleEditor" (extends (BorderPane) {
 
         self.colourPicker = gfx_hud_object_add("ColourPicker", { onChange = function () self:valueChanged() end } )
         
-        self.timeDescLabel = gfx_hud_object_add("Label", {
-            value = "Editting time:";
-            size = vec(96,20);
-        })
         self.timeLabel = gfx_hud_object_add("Label", {
             size = vec(60,20);
         })
@@ -282,13 +278,6 @@ hud_class "../EnvCycleEditor" (extends (BorderPane) {
                 self:timeChange(1)
             end;
             size = vec(16,20);
-        })
-        self.clockSetButton = gfx_hud_object_add("Button", {
-            caption = "Copy to clock";
-            pressedCallback = function (self2)
-                env.secondsSinceMidnight = self:currentInstant().time * 60 * 60
-            end;
-            size = vec(100,20);
         })
         self.topControls = gfx_hud_object_add("StackX", {
             padding = 8,
@@ -317,43 +306,40 @@ hud_class "../EnvCycleEditor" (extends (BorderPane) {
                 padding = 4;
                 gfx_hud_object_add("StackY", {
                     padding = -1;
-                    add("ValueControl",  "Sun Size", {number=true}),
-                    add("ValueControl",  "Sun Falloff", {number=true}),
-                    add("ColourControl", "Sun Colour", { needsAlpha = true } ),
-                }),
-                gfx_hud_object_add("StackY", {
-                    padding = -1;
-                    add("ValueControl",  "Cloud Coverage", {number=true}),
-                    add("ColourControl", "Cloud Colour"),
-                }),
-                gfx_hud_object_add("StackY", {
-                    padding = -1;
-                    add("ValueControl",  "Horizon Glare", {number=true}),
-                    add("ValueControl", "Sun Glare", {number=true}),
+                    add("ColourControl", "Particle Light"),
+                    add("ColourControl", "Diffuse Light"),
+                    add("ColourControl", "Specular Light"),
+                    add("ValueControl", "Saturation"),
+                    add("EnumControl",  "Light Source", { options={"Sun","Moon"} }),
                 }),
             }),
         })
         self.bottomControls = gfx_hud_object_add("StackX", {
             padding = 10,
-            { "TOP", add("ValueControl", "Saturation") },
-            { "TOP", gfx_hud_object_add("StackY", {
+            gfx_hud_object_add("StackY", {
                 padding=4,
                 gfx_hud_object_add("StackY", {
                     padding = -1;
                     add("ColourControl", "Fog Colour"),
                     add("ValueControl", "Fog Density", {number=true}),
+                    add("ValueControl",  "Cloud Coverage", {number=true}),
                 }),
+            }),
+            gfx_hud_object_add("StackY", {
                 gfx_hud_object_add("StackY", {
-                    add("EnumControl",  "Light Source", { options={"Sun","Moon"} }),
+                    padding = -1;
+                    add("ValueControl",  "Horizon Glare", {number=true}),
+                    add("ValueControl", "Sun Glare", {number=true}),
+                    add("ColourControl", "Cloud Colour"),
                 }),
-            })},
+            }),
             gfx_hud_object_add("StackY", {
                 padding = 4;
                 gfx_hud_object_add("StackY", {
                     padding = -1;
-                    add("ColourControl", "Particle Light"),
-                    add("ColourControl", "Diffuse Light"),
-                    add("ColourControl", "Specular Light"),
+                    add("ValueControl",  "Sun Size", {number=true}),
+                    add("ValueControl",  "Sun Falloff", {number=true}),
+                    add("ColourControl", "Sun Colour", { needsAlpha = true } ),
                 }),
             }),
         })
@@ -361,9 +347,17 @@ hud_class "../EnvCycleEditor" (extends (BorderPane) {
             parent=self, 
             padding = 0,
 
-            self.title,
+            gfx_hud_object_add("StackX", {
+                padding = 0,
+                self.title,
+                vector2(80,0),
+                self.timeLabel,
+                vector2(2,0),
+                self.timeLeftButton,
+                self.timeRightButton,
+            }),
 
-            vector2(0,4),
+            vector2(0,10),
 
             self.colourPicker,
             
@@ -375,22 +369,6 @@ hud_class "../EnvCycleEditor" (extends (BorderPane) {
             
             self.bottomControls,
 
-            vector2(0,10),
-
-            { "RIGHT", gfx_hud_object_add("StackX", {
-                parent=self, 
-
-                self.timeDescLabel,
-                vector2(-1,0),
-                self.timeLabel,
-                vector2(2,0),
-                self.timeLeftButton,
-                self.timeRightButton,
-
-                vector2(10,0),
-
-                self.clockSetButton,
-            }) },
         })
 
         self.marker = gfx_hud_object_add("Rect", { parent=self, texture="EnvCycleEditor/marker.png", zOrder=6})
@@ -409,6 +387,25 @@ hud_class "../EnvCycleEditor" (extends (BorderPane) {
         if self.editIndex < 1 then self.editIndex = #env_cycle end
         if self.editIndex > #env_cycle then self.editIndex = 1 end
         self:updateAppearance()
+        env.secondsSinceMidnight = self:currentInstant().time * 60 * 60
+    end;
+
+    setClosestToTime = function (self, hours)
+        if hours < 0 or hours >= 24 then error("Invalid time in hours: "..hours) end
+        -- TODO: write me
+        local the_env = nil
+        local hours_dist = 12
+        for i,env_cycle_instant in ipairs(env_cycle) do
+            local dist = math.abs(env_cycle_instant.time - hours)
+            if dist > 12 then dist = 24 - dist end
+            if dist < hours_dist then
+                hours_dist = dist
+                the_env = i
+            end
+        end
+        self.editIndex = the_env
+        self:updateAppearance()
+        env.secondsSinceMidnight = env_cycle[the_env].time * 60 * 60
     end;
 
     updateAppearance = function (self)
@@ -434,7 +431,7 @@ hud_class "../EnvCycleEditor" (extends (BorderPane) {
         self.byCaption["Saturation"]:setValue(("%0.3f"):format(env_instant.saturation))
         self.byCaption["Sun Glare"]:setValue(("%2.0f"):format(env_instant.sunGlare))
         self.byCaption["Horizon Glare"]:setValue(("%2.0f"):format(env_instant.horizonGlare))
---light source
+        self.byCaption["Light Source"]:setValue(env_instant.lightSource == "SUN" and 1 or 2)
 
         self:updateEnvValue(self.currentlyClicked)
     end;
