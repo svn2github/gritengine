@@ -27,27 +27,13 @@
 #include <ostream>
 #include <string>
 
-extern "C" {
-    #include "lua.h"
-    #include "lauxlib.h"
-    #include "lualib.h"
-}
-
-#include <ft2build.h>
-// wrap in #ifdef to keep makedepend happy
-#ifdef FT_FREETYPE_H
-#include FT_FREETYPE_H
-#endif
-
 #include "Image.h"
-
-extern FT_Library ft2;
 
 void text_init (void);
 
-Image<1,0> *make_text_codepoint (lua_State *L, const std::string &font, uimglen_t font_w, uimglen_t font_h, unsigned long cp);
+Image<1,0> *make_text_codepoint (const std::string &font, uimglen_t font_w, uimglen_t font_h, unsigned long cp);
 
-Image<1,0> *make_text (lua_State *L, const std::string &font, uimglen_t font_w, uimglen_t font_h, const std::string &text,
+Image<1,0> *make_text (const std::string &font, uimglen_t font_w, uimglen_t font_h, const std::string &text,
                        float xx, float xy, float yx, float yy);
 
 

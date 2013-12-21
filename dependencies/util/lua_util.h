@@ -34,6 +34,7 @@ extern "C" {
 }
 
 #include "math_util.h"
+#include "intrinsics.h"
 
 #ifdef min
 #undef min
@@ -41,12 +42,6 @@ extern "C" {
 
 #ifdef max
 #undef max
-#endif
-
-#ifdef __GNUC__
-#define NORETURN __attribute__ ((noreturn))
-#else
-#define NORETURN
 #endif
 
 #ifdef NO_LUA_STACK_CHECKS
@@ -108,10 +103,10 @@ static inline void push_quat (lua_State *L, const Quaternion &v)
 static inline void push_string (lua_State *L, const std::string &v)
 { lua_pushstring(L, v.c_str()); }
 
-void my_lua_error(lua_State *l, const std::string &msg) NORETURN;
-void my_lua_error(lua_State *l, const std::string &msg, unsigned long level) NORETURN;
-void my_lua_error(lua_State *l, const char *) NORETURN;
-void my_lua_error(lua_State *l, const char *, unsigned long level) NORETURN;
+NORETURN1 void my_lua_error(lua_State *l, const std::string &msg) NORETURN2;
+NORETURN1 void my_lua_error(lua_State *l, const std::string &msg, unsigned long level) NORETURN2;
+NORETURN1 void my_lua_error(lua_State *l, const char *) NORETURN2;
+NORETURN1 void my_lua_error(lua_State *l, const char *, unsigned long level) NORETURN2;
 
 void check_args(lua_State *l, int expected);
 void check_args_min(lua_State *l, int expected);
