@@ -31,11 +31,12 @@
 
 #define EXCEPTEX ExceptionStream(__FILE__,__LINE__)
 #define EXCEPT ExceptionStream()
+#define ENDL ExceptionStream::EndL()
 
-#define ASSERT(x) do { if (!x) { EXCEPTEX << "Assertion failed: " << #x << std::endl; } } while (0)
+#define ASSERT(x) do { if (!(x)) { EXCEPTEX << "Assertion failed: " << #x << std::endl; } } while (0)
 
 #define HANDLE_BEGIN try {
-#define HANDLE_END } catch (Exception &e) { my_lua_error(L, "Exception"+e.msg); }
+#define HANDLE_END } catch (Exception &e) { my_lua_error(L, "Exception: "+e.msg); }
 
 /** Simple exception object encapsulates a string. */
 struct Exception {

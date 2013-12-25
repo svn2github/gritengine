@@ -35,7 +35,7 @@
 void io_util_open (const std::string &filename, std::ofstream &out);
 void io_util_open (const std::string &filename, std::ifstream &in);
 
-template<class T> void io_util_write (const std::string &filename, std::ofstream &out, const T &v)
+template<class T> void io_util_write (const std::string &filename, std::ostream &out, const T &v)
 {
     out.write((char*)&v, sizeof(v));
     if (!out.good()) {
@@ -43,7 +43,7 @@ template<class T> void io_util_write (const std::string &filename, std::ofstream
     }   
 }
 
-template<class T> void io_util_read (const std::string &filename, std::ifstream &in, T &v)
+template<class T> void io_util_read (const std::string &filename, std::istream &in, T &v)
 {
     in.read((char*)&v, sizeof(v));
     if (!in.good()) {
