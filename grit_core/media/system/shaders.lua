@@ -781,7 +781,7 @@ function do_reset_receiver_shaders ()
         end
         local end_time = micros()
 
-        echo("Rebuilt "..used_shaders.." shaders in "..(end_time-start_time)/1E6.." seconds.")
+        echo("Rebuilt "..used_shaders.." shaders in "..tostring((end_time-start_time)/1E6).." seconds.")
 end
 
 -- }}}

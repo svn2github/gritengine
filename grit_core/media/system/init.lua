@@ -1,5 +1,8 @@
 -- (c) David Cunningham 2011, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
+--lua5.2 it's so amazingly compatible
+math.mod = math.fmod
+
 print ("Initialising script...")
 io.stdout:setvbuf("no") -- no output buffering
 collectgarbage("setpause",110) -- begin a gc cycle after blah% increase in ram use

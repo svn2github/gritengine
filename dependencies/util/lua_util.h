@@ -62,6 +62,13 @@ luaL_newmetatable(L, tag); \
 luaL_register(L, NULL, name##_meta_table); \
 lua_pop(L,1); } while(0)
 
+//this darn compatibility in newer lua...
+#define luaL_reg luaL_Reg
+inline int luaL_typerror (lua_State *L, int narg, const char *tname) {
+  const char *msg = lua_pushfstring(L, "%s expected, got %s",
+                                    tname, luaL_typename(L, narg));
+  return luaL_argerror(L, narg, msg);
+}
 
 // convert anything to a std::string
 template<class T>
