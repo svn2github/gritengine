@@ -200,14 +200,14 @@ function ConsolePrompt:autocomplete()
     end
 
     local splits = {}
-
+--[[ --FIXME: barks at \. as wrong escape sequence
     for m in self.before:gmatch("[^\.:]+")  do
         splits[#splits+1] = m
     end
     if self.before:find("[\.:]$") then
         splits[#splits+1] = ""
     end
-
+]]
     local parent = _G
 
     for i,v in ipairs(splits) do
