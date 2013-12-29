@@ -5,9 +5,9 @@ ROOT=../..
 include ../../common.mk
 
 CC ?= gcc
-CFLAGS= $(GRIT_C_CONFORMANCE) $(GRIT_CXX_CODEGEN) $(LUA_CONF_FLAGS)
-LDFLAGS=
-LIBS= -lm
+CFLAGS= $(GRIT_C_CONFORMANCE) $(GRIT_CXX_CODEGEN) $(LUA_CONF_FLAGS) -DLUA_USE_READLINE
+LDFLAGS= 
+LIBS= -lm -lreadline
 
 LUA_A= liblua.a
 
@@ -29,13 +29,13 @@ $(LUA_A): $(BASE_O)
 	ranlib $@
 
 $(LUA_T): $(LUA_O) $(LUA_A)
-	$(CC) -o $@ $(CFLAGS) $(LUA_CONF_FLAGS) $(LDFLAGS) $(LUA_O) $(LUA_A) $(LIBS)
+	$(CC) -o $@ $(CFLAGS) $(LDFLAGS) $(LUA_O) $(LUA_A) $(LIBS)
 	
 $(LUAC_T): $(LUAC_O) $(LUA_A)
-	$(CC) -o $@ $(CFLAGS) $(LUA_CONF_FLAGS) $(LDFLAGS) $(LUAC_O) $(LUA_A) $(LIBS)
+	$(CC) -o $@ $(CFLAGS) $(LDFLAGS) $(LUAC_O) $(LUA_A) $(LIBS)
 
 test: test.c $(LUA_A)
-	$(CC) $(CFLAGS) $(LUA_CONF_FLAGS) $< $(LUA_A) -lm -o $@
+	$(CC) $(CFLAGS) $< $(LUA_A) -lm -o $@
 
 clean:
 	rm -fv $(BASE_O) test $(LUA_T) $(LUAC_T) $(LUA_A)

@@ -64,6 +64,8 @@ lua_pop(L,1); } while(0)
 
 //this darn compatibility in newer lua...
 #define luaL_reg luaL_Reg
+#define lua_open luaL_newstate
+#define luaL_getn lua_rawlen
 inline int luaL_typerror (lua_State *L, int narg, const char *tname) {
   const char *msg = lua_pushfstring(L, "%s expected, got %s",
                                     tname, luaL_typename(L, narg));

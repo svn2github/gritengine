@@ -433,6 +433,36 @@ struct lua_Debug {
 
 /* }====================================================================== */
 
+/*
+** Expose readline interface, dunno why they hid it in the lua5.2 -_-
+*/
+#define LUA_MAXINPUT		512
+
+// lua_readline defines how to show a prompt and then read a line from
+// the standard input.
+// lua_saveline defines how to "save" a read line in a "history".
+// lua_freeline defines how to free a line read by lua_readline.
+
+#if defined(LUA_USE_READLINE)
+
+#include <stdio.h>
+#include <readline/readline.h>
+#include <readline/history.h>
+#define lua_readline(L,b,p)	((void)L, ((b)=readline(p)) != NULL)
+#define lua_saveline(L,idx) \
+        if (lua_rawlen(L,idx) > 0)  /* non-empty line? */ \
+          add_history(lua_tostring(L, idx));  /* add it to history */
+#define lua_freeline(L,b)	((void)L, free(b))
+
+#elif !defined(lua_readline)
+
+#define lua_readline(L,b,p) \
+        ((void)L, fputs(p, stdout), fflush(stdout),  /* show prompt */ \
+        fgets(b, LUA_MAXINPUT, stdin) != NULL)  /* get line */
+#define lua_saveline(L,idx)	{ (void)L; (void)idx; }
+#define lua_freeline(L,b)	{ (void)L; (void)b; }
+
+#endif
 
 /******************************************************************************
 * Copyright (C) 1994-2013 Lua.org, PUC-Rio.
