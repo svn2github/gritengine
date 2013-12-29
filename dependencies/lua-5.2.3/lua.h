@@ -21,10 +21,10 @@
 #define LUA_VERSION_NUM		502
 #define LUA_VERSION_RELEASE	"3"
 
-#define LUA_VERSION	"Lua " LUA_VERSION_MAJOR "." LUA_VERSION_MINOR
+#define LUA_VERSION	"GritLua " LUA_VERSION_MAJOR "." LUA_VERSION_MINOR
 #define LUA_RELEASE	LUA_VERSION "." LUA_VERSION_RELEASE
-#define LUA_COPYRIGHT	LUA_RELEASE "  Copyright (C) 1994-2013 Lua.org, PUC-Rio"
-#define LUA_AUTHORS	"R. Ierusalimschy, L. H. de Figueiredo, W. Celes"
+#define LUA_COPYRIGHT	LUA_RELEASE "  Copyright (C) Grit Game Engine project 2013"
+#define LUA_AUTHORS	"R. Ierusalimschy, L. H. de Figueiredo, W. Celes. Grit Modifications by David Cunningham and Alexey Shmakov."
 
 
 /* mark for precompiled code ('<esc>Lua') */
