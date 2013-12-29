@@ -24,7 +24,6 @@
 
 
 static int math_abs (lua_State *L) {
-  lua_pushnumber(L, l_mathop(fabs)(luaL_checknumber(L, 1)));
   lua_Number v;
   float x, y, z, w;
   switch (lua_type(L,1)) {
@@ -45,7 +44,7 @@ static int math_abs (lua_State *L) {
     lua_pushvector4(L,fabsf(x),fabsf(y),fabsf(z),fabsf(w));
     return 1;
   }
-  luaL_error(L, "ceil takes a number, vector2, vector3, or vector4.");
+  luaL_error(L, "abs takes a number, vector2, vector3, or vector4.");
   return 1;
 }
 
