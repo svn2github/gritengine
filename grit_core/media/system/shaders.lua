@@ -81,7 +81,7 @@ end
 
 local function make_particle_program_cg (alpha_blend, emissive)
         local fname, vname = shader_particle_names(alpha_blend, emissive)
-        echo ("Compiling shader: ", vname, fname)
+        print ("Compiling shader: ", vname, fname)
         local defines = "-O3 "
                      .. "-DALPHA_BLEND="..(alpha_blend and "1" or "0").." "
                      .. "-DEMISSIVE="..(emissive and "1" or "0").." "
@@ -153,7 +153,7 @@ local function make_program_emissive_cg (emissive_map, overlay, blended_bones, w
         -- material does emissive additive overlay
         fname, vname = shader_emissive_names(emissive_map, overlay, blended_bones, world)
 
-        echo ("Compiling shader: ", vname, fname)
+        print ("Compiling shader: ", vname, fname)
         local defines = "-O3 -DUSE_EMISSIVE_MAP="..(emissive_map and "1" or "0")
                       .." -DUSE_OVERLAY_OFFSET="..(overlay and "1" or "0")
                       .." -DBLENDED_BONES="..blended_bones
@@ -247,7 +247,7 @@ local function make_program_wireframe_cg (overlay, blended_bones, world)
         -- material does a wireframe in emissive white
         fname, vname = shader_wireframe_names(overlay, blended_bones, world)
 
-        echo ("Compiling shader: ", vname, fname)
+		print ("Compiling shader: ", vname, fname)
         local defines = "-O3"
                       .." -DUSE_OVERLAY_OFFSET="..(overlay and "1" or "0")
                       .." -DBLENDED_BONES="..blended_bones
@@ -329,7 +329,8 @@ end
 
 function make_program_caster_cg (diffuse_map, overlay, blended_bones, vcols, world)
         local fname, vname = shader_caster_names(diffuse_map, overlay, blended_bones, vcols, world)
-        echo ("Compiling shader: ", fname, vname)
+        
+        print ("Compiling shader: ", fname, vname)
         local defines = "-O3 -DUSE_DIFFUSE_MAP="..(diffuse_map and "1" or "0")
                       .." -DUSE_OVERLAY_OFFSET="..(overlay and "1" or "0")
                       .." -DUSE_STIPPLE_TEXTURE=1"
@@ -478,7 +479,7 @@ local function make_program_cg_ (category, diffuse_map, pma, emissive_map, norma
                 deferred_lights = true
                 fname, vname = "deferred_lights_f", "deferred_lights_v"
         end
-        echo ("Compiling shader: ", vname, fname, category)
+        print ("Compiling shader: ", vname, fname, category)
         local smodel = 0
         if debug_cfg.shadingModel == "SHARP" then smodel = 0 end
         if debug_cfg.shadingModel == "HALF_LAMBERT" then smodel = 1 end
@@ -799,7 +800,7 @@ end
 local function make_program_compositor_v_cg ()
         local vname = "compositor_v"
 
-        echo ("Compiling shader: ", vname)
+        print ("Compiling shader: ", vname)
         local defines = "-O3"
         defines = defines .. configuration_defines()
 
@@ -816,7 +817,7 @@ end
 local function make_program_tonemap_cg ()
         local fname = "tonemap"
 
-        echo ("Compiling shader: ", fname)
+	    print ("Compiling shader: ", fname)
         local defines = "-O3"
         defines = defines .. configuration_defines()
 
@@ -834,7 +835,7 @@ local function make_program_bloom_cg ()
         local fname, fp, defines
 
         fname = "bloom_filter_then_horz_blur"
-        echo ("Compiling shader: ", fname)
+       	print ("Compiling shader: ", fname)
         defines = "-O3"
         defines = defines .. configuration_defines()
         defines = defines .. " -DBLOOM_HORZ=1"
@@ -847,7 +848,7 @@ local function make_program_bloom_cg ()
         fp:reload()
 
         fname = "bloom_vert_blur"
-        echo ("Compiling shader: ", fname)
+        print ("Compiling shader: ", fname)
         defines = "-O3"
         defines = defines .. configuration_defines()
         defines = defines .. " -DBLOOM_HORZ=0"
@@ -859,7 +860,7 @@ local function make_program_bloom_cg ()
         fp:reload()
 
         fname = "bloom_horz_blur"
-        echo ("Compiling shader: ", fname)
+        print ("Compiling shader: ", fname)
         defines = "-O3"
         defines = defines .. configuration_defines()
         defines = defines .. " -DBLOOM_HORZ=1"
@@ -872,7 +873,7 @@ local function make_program_bloom_cg ()
         fp:reload()
 
         fname = "bloom_vert_blur_combine_and_tonemap"
-        echo ("Compiling shader: ", fname)
+        print ("Compiling shader: ", fname)
         defines = "-O3"
         defines = defines .. configuration_defines()
         defines = defines .. " -DBLOOM_HORZ=0"

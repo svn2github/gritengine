@@ -13,13 +13,25 @@ include "speedo.lua"
 include "clock.lua"
 include "stats.lua"
 
+include "MusicPlayer/init.lua"
+
 -- Crosshair
+safe_destroy(ch)
 ch = gfx_hud_object_add("Rect", {texture="CrossHair.png", parent=hud_center})
 
+-- Music player
+safe_destroy(musicplayer)
+musicplayer = gfx_hud_object_add("MusicPlayer", {parent=hud_bottom_left})
+
 -- Compass / Pos / Speedo
+safe_destroy(compass)
 compass = gfx_hud_object_add("Compass", {parent=hud_top_right, position=vector2(-64, -64)})
+
+safe_destroy(speedo)
 speedo = gfx_hud_object_add("Speedo", {parent=hud_top_right})
 speedo.position=vector2(-64, -128 - speedo.size.y/2)
+
+safe_destroy(clock)
 clock = gfx_hud_object_add("Clock", { parent=hud_top_right, size=vec(190,50) })
 clock.position=-clock.size/2 - vector2(130,4)
 
