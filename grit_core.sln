@@ -2,8 +2,9 @@
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual C++ Express 2010
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "grit_core", "grit_core\grit_core.vcxproj", "{FD57655E-0527-4173-BADD-D8DA0E0EF531}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lua", "dependencies\lua.vcxproj", "{1D855945-F091-48E0-B995-06FB891AD900}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3C0ADE66-31CB-42D5-8727-B1B792E19B42} = {3C0ADE66-31CB-42D5-8727-B1B792E19B42}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "extract", "gtasa\extract.vcxproj", "{6753DB1A-C006-4C70-9FA0-97390152AC43}"
 EndProject
@@ -19,10 +20,13 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "grit_col_conv", "grit_core\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "luaimg", "luaimg\luaimg.vcxproj", "{9D0D6A82-0D4F-40E8-B2EB-A0BD5C418C44}"
 	ProjectSection(ProjectDependencies) = postProject
+		{3C0ADE66-31CB-42D5-8727-B1B792E19B42} = {3C0ADE66-31CB-42D5-8727-B1B792E19B42}
 		{32295FF9-FA94-4E03-957B-48AE90E50541} = {32295FF9-FA94-4E03-957B-48AE90E50541}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "squish", "dependencies\squish.vcxproj", "{32295FF9-FA94-4E03-957B-48AE90E50541}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lua523", "dependencies\lua523.vcxproj", "{3C0ADE66-31CB-42D5-8727-B1B792E19B42}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,12 +41,6 @@ Global
 		{FD57655E-0527-4173-BADD-D8DA0E0EF531}.Normal|Win32.Build.0 = Normal|Win32
 		{FD57655E-0527-4173-BADD-D8DA0E0EF531}.Release|Win32.ActiveCfg = Normal|Win32
 		{FD57655E-0527-4173-BADD-D8DA0E0EF531}.Release|Win32.Build.0 = Normal|Win32
-		{1D855945-F091-48E0-B995-06FB891AD900}.Debug|Win32.ActiveCfg = Debug|Win32
-		{1D855945-F091-48E0-B995-06FB891AD900}.Debug|Win32.Build.0 = Debug|Win32
-		{1D855945-F091-48E0-B995-06FB891AD900}.Normal|Win32.ActiveCfg = Normal|Win32
-		{1D855945-F091-48E0-B995-06FB891AD900}.Normal|Win32.Build.0 = Normal|Win32
-		{1D855945-F091-48E0-B995-06FB891AD900}.Release|Win32.ActiveCfg = Normal|Win32
-		{1D855945-F091-48E0-B995-06FB891AD900}.Release|Win32.Build.0 = Normal|Win32
 		{6753DB1A-C006-4C70-9FA0-97390152AC43}.Debug|Win32.ActiveCfg = Debug|Win32
 		{6753DB1A-C006-4C70-9FA0-97390152AC43}.Debug|Win32.Build.0 = Debug|Win32
 		{6753DB1A-C006-4C70-9FA0-97390152AC43}.Normal|Win32.ActiveCfg = Normal|Win32
@@ -89,6 +87,12 @@ Global
 		{32295FF9-FA94-4E03-957B-48AE90E50541}.Normal|Win32.Build.0 = Normal|Win32
 		{32295FF9-FA94-4E03-957B-48AE90E50541}.Release|Win32.ActiveCfg = Normal|Win32
 		{32295FF9-FA94-4E03-957B-48AE90E50541}.Release|Win32.Build.0 = Normal|Win32
+		{3C0ADE66-31CB-42D5-8727-B1B792E19B42}.Debug|Win32.ActiveCfg = Debug|Win32
+		{3C0ADE66-31CB-42D5-8727-B1B792E19B42}.Debug|Win32.Build.0 = Debug|Win32
+		{3C0ADE66-31CB-42D5-8727-B1B792E19B42}.Normal|Win32.ActiveCfg = Normal|Win32
+		{3C0ADE66-31CB-42D5-8727-B1B792E19B42}.Normal|Win32.Build.0 = Normal|Win32
+		{3C0ADE66-31CB-42D5-8727-B1B792E19B42}.Release|Win32.ActiveCfg = Normal|Win32
+		{3C0ADE66-31CB-42D5-8727-B1B792E19B42}.Release|Win32.Build.0 = Normal|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

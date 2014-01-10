@@ -245,7 +245,7 @@
 ** You can define it to get all options, or change specific options
 ** to fit your specific needs.
 */
-#if defined(LUA_COMPAT_ALL)	/* { */
+#if 1 || defined(LUA_COMPAT_ALL)	/* { */
 
 /*
 @@ LUA_COMPAT_UNPACK controls the presence of global 'unpack'.
@@ -475,7 +475,9 @@
 ** Some tricks with doubles
 */
 
-#if defined(LUA_NUMBER_DOUBLE) && !defined(LUA_ANSI)	/* { */
+// dcunnin: disable this, does not work with vector types
+
+#if 0 && defined(LUA_NUMBER_DOUBLE) && !defined(LUA_ANSI)	/* { */
 /*
 ** The next definitions activate some tricks to speed up the
 ** conversion from doubles to integer types, mainly to LUA_UNSIGNED.

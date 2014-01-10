@@ -12,15 +12,18 @@ hud_class "Scale" {
 
     fgColour = vector3(1,1,1);
 
-    maxValue = 1;
-    clamp = true;
-    
     value = 1;
+    maxValue = 1;
+    format = "%0.3f";
     
     init = function (self)
         self.needsInputCallbacks = true
 
-        self.editBox = gfx_hud_object_add("EditBox", {parent=self, number=true, maxLength=5, borderColour=vector3(1,1,1), onChange=function()self:editChanged()end})
+        self.editBox = gfx_hud_object_add("EditBox", {
+            parent=self, number=true, maxLength=5, borderColour=vector3(1,1,1),
+            onChange = function(self2) self:editChanged() end,
+            onEditting = function(self2, v) self:editEditting(v) end
+        })
 
         self.colour = vector3(0, 0, 0)
         self.greyed = false
@@ -46,7 +49,7 @@ hud_class "Scale" {
         self.dragging = false
         self.localPos = vector2(0,0)
 
-        self:updateAppearance();
+        self:setValue(self.value);
     end;
 
     destroy = function (self)
@@ -72,12 +75,29 @@ hud_class "Scale" {
         self:updateAppearance()
     end;
     
+    setBackgroundAlpha = function (self, v)
+        self.bgAlpha = v
+        self:updateAppearance()
+    end;
+    
+    setMidgroundAlpha = function (self, v)
+        self.mgAlpha = v
+        self:updateAppearance()
+    end;
+    
+    setGamma = function (self, v)
+        self.gamma = v
+        self:updateAppearance()
+    end;
+    
     drag = function (self)
         local val = (self.localPos + self.size.x/2 - 1) / self.sliderBackground.size.x
         val = clamp(val, 0, 1)
         if self.gamma then val = math.pow(val, 2.2) end
         self.value = val * self.maxValue
-        self:updateValue()
+        self.editBox:setValue(self.format:format(self.value))
+        self:updateAppearance()
+        self:onChange()
     end;
         
     mouseMoveCallback = function (self, local_pos, screen_pos, inside)
@@ -99,23 +119,33 @@ hud_class "Scale" {
             self.dragging = false
         elseif ev == "+up" and self.inside then
             self.value = math.clamp(self.value + 0.001, 0, self.maxValue)
-            self:updateValue()
+            self.editBox:setValue(self.format:format(self.value))
+            self:updateAppearance()
+            self:onChange()
         elseif ev == "+down" and self.inside then
             self.value = math.clamp(self.value - 0.001, 0, self.maxValue)
-            self:updateValue()
+            self.editBox:setValue(self.format:format(self.value))
+            self:updateAppearance()
+            self:onChange()
         end
     end;
     
     editChanged = function (self)
         self.value = tonumber(self.editBox.value)
-        if self.clamp then
-            self.value = clamp(self.value, 0, self.maxValue)
+        if self.value > self.maxValue then
+            self.value = self.maxValue
         end
-        self:updateValue()
+        self:updateAppearance()
+        self:onChange()
+    end;
+
+    editEditting = function (self, editting)
+        if editting then return end
+        self:editChanged()
+        self.editBox:setValue(self.format:format(self.value))
     end;
 
     updateAppearance = function (self)
-        self.editBox:setValue(string.format("%0.3f", self.value))
         local val = math.clamp(self.value / self.maxValue, 0, 1)
         if self.gamma then
             val = math.pow(val, 1/2.2)
@@ -144,13 +174,13 @@ hud_class "Scale" {
     end;
 
     setValue = function (self, v)
-        self.value = v;
-        self:updateValue()
+        if v > self.maxValue then v = self.maxValue end
+        self.value = v
+        self.editBox:setValue(self.format:format(self.value))
+        self:updateAppearance()
     end;
 
     updateValue = function (self)
-        self:updateAppearance()
-        self:onChange()
     end;
 
     updateChildrenSize = function (self)

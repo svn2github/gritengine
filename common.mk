@@ -126,7 +126,7 @@ BULLET_LDLIBS   ?= $(BULLET_ARCHIVES)
 # LUA
 ################################################################################
 
-LUA_CONF_FLAGS ?= -DLUA_COMPAT_ALL -DLUA_USE_APICHECK -DLUA_USE_MKSTEMP
+LUA_CONF_FLAGS ?= -DLUA_USE_APICHECK -DLUA_USE_MKSTEMP
 
 LUA_ARCHIVES   ?= $(ROOT)/dependencies/lua-5.2.3/liblua.a
 

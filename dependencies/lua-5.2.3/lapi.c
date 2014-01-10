@@ -605,7 +605,7 @@ LUA_API void lua_pushquat (lua_State *L, float w, float x, float y, float z) {
   lua_unlock(L);
 }
 
-
+   
 LUA_API void lua_pushinteger (lua_State *L, lua_Integer n) {
   lua_lock(L);
   setnvalue(L->top, cast_num(n));

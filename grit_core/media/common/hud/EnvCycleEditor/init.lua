@@ -2,10 +2,7 @@
 
 --[[
 TODO:
-* Fix edit boxes for ValueControl
 * Colour copy/paste
-* Save functionality
-* Get rid of set to clock
 --]]
 
 hud_class "../ColourPicker" {
@@ -20,10 +17,9 @@ hud_class "../ColourPicker" {
 
         self.hueScale = gfx_hud_object_add("Scale", { onChange = on_change, size=scalesz, bgTexture="EnvCycleEditor/bg_hue.png",   bgColour=vec(1,1,1) })
         self.satScale = gfx_hud_object_add("Scale", { onChange = on_change, size=scalesz, bgColour=vector3(1,0,0), mgTexture="EnvCycleEditor/bg_sat.png", mgAlpha=1 })
-        self.valScale = gfx_hud_object_add("Scale", { onChange = on_change, size=scalesz, bgTexture="EnvCycleEditor/bg_val.png",   bgColour=vec(1,1,1), gamma=true, maxValue=10 })
+        self.valScale = gfx_hud_object_add("Scale", { onChange = on_change, size=scalesz, bgTexture="EnvCycleEditor/bg_val.png",   bgColour=vec(1,1,1), mgTexture="EnvCycleEditor/bg_val_simple.png", mgAlpha=0, mgColour=vec(1,1,1), gamma=true, maxValue=10 })
         self.aScale   = gfx_hud_object_add("Scale", { onChange = on_change, size=scalesz, mgTexture="EnvCycleEditor/bg_alpha.png", mgColour=vec(1,1,1), mgAlpha=1, bgColour=vec(1,1,1) })
 
-        -- why did putting a comma on the end of the line cause this file not to be included and error suppressed?
         self.hueLabel = gfx_hud_object_add("Label", { size=labsz, value="Hue" })
         self.satLabel = gfx_hud_object_add("Label", { size=labsz, value="Sat" })
         self.valLabel = gfx_hud_object_add("Label", { size=labsz, value="Val" })
@@ -42,7 +38,9 @@ hud_class "../ColourPicker" {
 
         self.greyed = not not self.greyed
         self.aGreyed = not not self.aGreyed
-        self.hsvGreyed = not not self.hsvGreyed
+        self.hGreyed = not not self.hGreyed
+        self.sGreyed = not not self.sGreyed
+        self.vGreyed = not not self.vGreyed
 
     end;
     
@@ -52,12 +50,12 @@ hud_class "../ColourPicker" {
     end;
 
     updateAppearance = function (self)
-        self.hueScale:setGreyed(self.greyed or self.hsvGreyed)
-        self.hueLabel:setGreyed(self.greyed or self.hsvGreyed)
-        self.satScale:setGreyed(self.greyed or self.hsvGreyed)
-        self.satLabel:setGreyed(self.greyed or self.hsvGreyed)
-        self.valScale:setGreyed(self.greyed or self.hsvGreyed)
-        self.valLabel:setGreyed(self.greyed or self.hsvGreyed)
+        self.hueScale:setGreyed(self.greyed or self.hGreyed)
+        self.hueLabel:setGreyed(self.greyed or self.hGreyed)
+        self.satScale:setGreyed(self.greyed or self.sGreyed)
+        self.satLabel:setGreyed(self.greyed or self.sGreyed)
+        self.valScale:setGreyed(self.greyed or self.vGreyed)
+        self.valLabel:setGreyed(self.greyed or self.vGreyed)
         self.aScale:setGreyed(self.greyed or self.aGreyed)
         self.aLabel:setGreyed(self.greyed or self.aGreyed)
     end;
@@ -67,10 +65,16 @@ hud_class "../ColourPicker" {
     end;
 
     updateBgColour = function (self)
-        local hsv = self:getColourHSV() or vec(1,1,1)
-        self.satScale:setBackgroundColour(HSVtoRGB(vec(hsv.x, 1, 1)))
-        self.valScale:setBackgroundColour(HSVtoRGB(vec3(hsv.xy, 1)))
-        self.aScale:setBackgroundColour(HSVtoRGB(vec3(hsv.xy, math.min(1,hsv.z))))
+        local hsv = self:getColourHSV()
+        if hsv == nil then
+            self.satScale:setBackgroundColour(vec(1,1,1))
+            self.valScale:setBackgroundColour(vec(1,1,1))
+            self.aScale:setBackgroundColour(vec(1,1,1))
+        else
+            self.satScale:setBackgroundColour(HSVtoRGB(vec(hsv.x, 1, 1)))
+            self.valScale:setBackgroundColour(HSVtoRGB(vec3(hsv.xy, 1)))
+            self.aScale:setBackgroundColour(HSVtoRGB(vec3(hsv.xy, math.min(1,hsv.z))))
+        end
     end;
     
     childChanged = function (self)
@@ -80,28 +84,53 @@ hud_class "../ColourPicker" {
     end;
     
     getColourHSV = function (self)
-        if self.hsvGreyed then return nil end
+        if self.hGreyed or self.sGreyed or self.vGreyed then return nil end
         return vec(self.hueScale.value, self.satScale.value, self.valScale.value)
     end;
     getColourRGB = function (self)
-        if self.hsvGreyed then return nil end
+        if self.hGreyed or self.sGreyed or self.vGreyed then return nil end
         return HSVtoRGB(self:getColourHSV())
     end;
     setColourRGB = function (self, c)
+        self.valScale.maxValue = 10
+        self.valScale:setMidgroundAlpha(0)
+        self.valScale:setGamma(true)
         if c == nil then
-            self.hsvGreyed = true
+            self.hGreyed = true
+            self.sGreyed = true
+            self.vGreyed = true
             self.hueScale:setValue(0)
             self.satScale:setValue(0)
             self.valScale:setValue(1)
         else
             local hsv = RGBtoHSV(c)
-            self.hsvGreyed = false
+            self.hGreyed = false
+            self.sGreyed = false
+            self.vGreyed = false
             self.hueScale:setValue(hsv.x)
             self.satScale:setValue(hsv.y)
             self.valScale:setValue(hsv.z)
             self:updateBgColour()
         end
         self:updateAppearance()
+    end;
+    setValue = function (self, v, max_value)
+        self.valScale.maxValue = max_value
+        self.valScale:setMidgroundAlpha(1)
+        self.valScale:setGamma(false)
+        self.hGreyed = true
+        self.sGreyed = true
+        self.vGreyed = false
+        self.aGreyed = true
+        self.hueScale:setValue(0)
+        self.satScale:setValue(0)
+        self.valScale:setValue(v)
+        self:updateBgColour()
+        self:updateAppearance()
+    end;
+    getValue = function (self)
+        if self.vGreyed then return nil end
+        return self.valScale.value
     end;
 
     getAlpha = function (self)
@@ -163,8 +192,22 @@ hud_class "../EnvCycleEditor" (extends (BorderPane) {
 
     alpha=0.7,
 
+    -- WAYS TO INTERACT:
+    -- * change time, requires update of colours in controls and colour picker
+    -- * type in value
+    -- * load
+    -- * drag colourpicker slider / type in value in the colour picker
+
+    -- Updates colour picker with correct colour and greyness
     updateEnvValue = function (self, caption)
         local control = self.byCaption[caption]
+        if control == nil then
+            self.colourPicker:setColourRGB(nil)
+            self.colourPicker:setAlpha(nil)
+            return
+        end
+        -- disable currentlyClicked in order to stop infinite recursion
+        local cc = self.currentlyClicked
         self.currentlyClicked = nil
         if control.className == "/common/hud/ColourControl" then
             if control.needsAlpha then
@@ -174,36 +217,50 @@ hud_class "../EnvCycleEditor" (extends (BorderPane) {
                 self.colourPicker:setColourRGB(control.colour)
                 self.colourPicker:setAlpha(nil)
             end
+        elseif control.className == "/common/hud/ValueControl" then
+            self.colourPicker:setValue(control.value, control.maxValue)
         else
-            self.colourPicker:setColourRGB(nil)
-            self.colourPicker:setAlpha(nil)
+            echo("Did not expect: "..caption)
         end
-        self.currentlyClicked = caption
+        self.currentlyClicked = cc
     end;
     
+    -- Called when clicking on the label or the actual value.
+    -- Changes the selected control, unselects everything, or
+    -- toggles enums
     controlClicked = function (self, caption)
         if caption == nil then
+            -- grey out the fucker
+            self.marker.enabled = false
+            self.currentlyClicked = nil
+            self:updateEnvValue(caption)
             return
         end
         local control = self.byCaption[caption]
-        self.marker.position = control.derivedPosition - self.derivedPosition - vec(60,0)
 
         if control.className == "/common/hud/ColourControl" then
             self:updateEnvValue(caption)
+            self.currentlyClicked = caption
+            self.marker.position = control.derivedPosition - self.derivedPosition - vec(63,0)
+            self.marker.enabled = true
         elseif control.className == "/common/hud/EnumControl" then
             control:advanceValue()
             local name = caption_to_env[caption]
             self:currentInstant()[name] = control:getTextValue():upper()
             env_recompute()
+            --self:controlClicked(nil)
         elseif control.className == "/common/hud/ValueControl" then
             self:updateEnvValue(caption)
+            self.currentlyClicked = caption
+            self.marker.position = control.derivedPosition - self.derivedPosition - vec(63,0)
+            self.marker.enabled = true
         else
-            -- clicked on something else
-            -- treat the same as empty space
+            error("Unknown type of control.")
         end
     end;
 
-    valueChanged = function (self)
+    -- the user has changed the colour in the colour picker
+    colourPickerChanged = function (self)
         if self.currentlyClicked == nil then return end
         local caption = self.currentlyClicked
         local control = self.byCaption[caption]
@@ -218,7 +275,25 @@ hud_class "../EnvCycleEditor" (extends (BorderPane) {
                 self:currentInstant()[name] = vec3(control.colour)
             end
         elseif control.className == "/common/hud/ValueControl" then
+            control:setValue(self.colourPicker:getValue())
             self:currentInstant()[name] = tonumber(control.value)
+        else
+            error("Unrecognised control classname: "..control.className)
+        end
+        env_recompute()
+    end;
+
+    -- the user has changed the value in a value control
+    valueChanged = function (self)
+        if self.currentlyClicked == nil then return end
+        local caption = self.currentlyClicked
+        local control = self.byCaption[caption]
+
+        -- set actual sky colour
+        local name = caption_to_env[caption]
+        if control.className == "/common/hud/ValueControl" then
+            self:currentInstant()[name] = tonumber(control.value)
+            self:updateEnvValue(caption)
         else
             error("Unrecognised control classname: "..control.className)
         end
@@ -230,7 +305,7 @@ hud_class "../EnvCycleEditor" (extends (BorderPane) {
     end;
 
     controlEditting = function (self, control)
-        echo("Now editting: "..tostring(control))
+        self:controlClicked(control.caption)
     end;
 
     init = function (self)
@@ -260,7 +335,7 @@ hud_class "../EnvCycleEditor" (extends (BorderPane) {
         self.title = gfx_hud_text_add("/common/fonts/Impact24")
         self.title.text = "Environment Cycle Editor"
 
-        self.colourPicker = gfx_hud_object_add("ColourPicker", { onChange = function () self:valueChanged() end } )
+        self.colourPicker = gfx_hud_object_add("ColourPicker", { onChange = function () self:colourPickerChanged() end } )
         
         self.timeLabel = gfx_hud_object_add("Label", {
             size = vec(60,20);
@@ -278,6 +353,25 @@ hud_class "../EnvCycleEditor" (extends (BorderPane) {
                 self:timeChange(1)
             end;
             size = vec(16,20);
+        })
+        self.loadButton = gfx_hud_object_add("Button", {
+            caption = "Load";
+            pressedCallback = function (self2)
+                self:load()
+            end;
+            size = vec(48,20);
+        })
+        self.saveButton = gfx_hud_object_add("Button", {
+            caption = "Save";
+            pressedCallback = function (self2)
+                self:save()
+            end;
+            size = vec(48,20);
+        })
+        self.fileName = gfx_hud_object_add("EditBox", {
+            value = "/my_env_cycle.lua";
+            size = vec(310,20);
+            alignment = "LEFT";
         })
         self.topControls = gfx_hud_object_add("StackX", {
             padding = 8,
@@ -309,7 +403,7 @@ hud_class "../EnvCycleEditor" (extends (BorderPane) {
                     add("ColourControl", "Particle Light"),
                     add("ColourControl", "Diffuse Light"),
                     add("ColourControl", "Specular Light"),
-                    add("ValueControl", "Saturation"),
+                    add("ValueControl", "Saturation", {number=true, maxValue=1}),
                     add("EnumControl",  "Light Source", { options={"Sun","Moon"} }),
                 }),
             }),
@@ -321,15 +415,15 @@ hud_class "../EnvCycleEditor" (extends (BorderPane) {
                 gfx_hud_object_add("StackY", {
                     padding = -1;
                     add("ColourControl", "Fog Colour"),
-                    add("ValueControl", "Fog Density", {number=true}),
-                    add("ValueControl",  "Cloud Coverage", {number=true}),
+                    add("ValueControl", "Fog Density", {number=true, maxValue=1}),
+                    add("ValueControl",  "Cloud Coverage", {number=true, maxValue=1}),
                 }),
             }),
             gfx_hud_object_add("StackY", {
                 gfx_hud_object_add("StackY", {
                     padding = -1;
-                    add("ValueControl",  "Horizon Glare", {number=true}),
-                    add("ValueControl", "Sun Glare", {number=true}),
+                    add("ValueControl",  "Horizon Glare", {number=true, maxValue=90, format="%3.1f"}),
+                    add("ValueControl", "Sun Glare", {number=true, maxValue=100, format="%3.1f"}),
                     add("ColourControl", "Cloud Colour"),
                 }),
             }),
@@ -337,8 +431,8 @@ hud_class "../EnvCycleEditor" (extends (BorderPane) {
                 padding = 4;
                 gfx_hud_object_add("StackY", {
                     padding = -1;
-                    add("ValueControl",  "Sun Size", {number=true}),
-                    add("ValueControl",  "Sun Falloff", {number=true}),
+                    add("ValueControl",  "Sun Size", {number=true, maxValue=10, format="%2.2f"}),
+                    add("ValueControl",  "Sun Falloff", {number=true, maxValue=10, format="%2.2f"}),
                     add("ColourControl", "Sun Colour", { needsAlpha = true } ),
                 }),
             }),
@@ -369,6 +463,17 @@ hud_class "../EnvCycleEditor" (extends (BorderPane) {
             
             self.bottomControls,
 
+            vector2(0,10),
+            
+            gfx_hud_object_add("StackX", {
+                padding = 0,
+                self.fileName,
+                vector2(8,0),
+                self.loadButton,
+                vector2(8,0),
+                self.saveButton
+            }),
+
         })
 
         self.marker = gfx_hud_object_add("Rect", { parent=self, texture="EnvCycleEditor/marker.png", zOrder=6})
@@ -378,7 +483,7 @@ hud_class "../EnvCycleEditor" (extends (BorderPane) {
 
         self:controlClicked("Grad6")
 
-        self:updateAppearance()
+        self:updateFromEnvCycle()
     end;
 
     -- direction 1 or -1
@@ -386,7 +491,7 @@ hud_class "../EnvCycleEditor" (extends (BorderPane) {
         self.editIndex = self.editIndex + direction
         if self.editIndex < 1 then self.editIndex = #env_cycle end
         if self.editIndex > #env_cycle then self.editIndex = 1 end
-        self:updateAppearance()
+        self:updateFromEnvCycle()
         env.secondsSinceMidnight = self:currentInstant().time * 60 * 60
     end;
 
@@ -404,11 +509,11 @@ hud_class "../EnvCycleEditor" (extends (BorderPane) {
             end
         end
         self.editIndex = the_env
-        self:updateAppearance()
+        self:updateFromEnvCycle()
         env.secondsSinceMidnight = env_cycle[the_env].time * 60 * 60
     end;
 
-    updateAppearance = function (self)
+    updateFromEnvCycle = function (self)
         local env_instant = self:currentInstant()
         self.timeLabel:setValue(format_time(env_instant.time * 60 * 60))
 
@@ -419,21 +524,21 @@ hud_class "../EnvCycleEditor" (extends (BorderPane) {
             self.byCaption["Sun Grad"..i]:setColour(env_instant["sunGrad"..i])
         end
         self.byCaption["Fog Colour"]:setColour(env_instant.fogColour)
-        self.byCaption["Fog Density"]:setValue(("%0.3f"):format(env_instant.fogDensity))
+        self.byCaption["Fog Density"]:setValue(env_instant.fogDensity)
         self.byCaption["Particle Light"]:setColour(env_instant.particleLight)
         self.byCaption["Diffuse Light"]:setColour(env_instant.diffuseLight)
         self.byCaption["Specular Light"]:setColour(env_instant.specularLight)
-        self.byCaption["Cloud Coverage"]:setValue(("%0.3f"):format(env_instant.cloudCoverage))
+        self.byCaption["Cloud Coverage"]:setValue(env_instant.cloudCoverage)
         self.byCaption["Cloud Colour"]:setColour(env_instant.cloudColour)
-        self.byCaption["Sun Size"]:setValue(("%0.3f"):format(env_instant.sunSize))
-        self.byCaption["Sun Falloff"]:setValue(("%0.3f"):format(env_instant.sunFalloff))
+        self.byCaption["Sun Size"]:setValue(env_instant.sunSize)
+        self.byCaption["Sun Falloff"]:setValue(env_instant.sunFalloff)
         self.byCaption["Sun Colour"]:setColour(env_instant.sunColour)
-        self.byCaption["Saturation"]:setValue(("%0.3f"):format(env_instant.saturation))
-        self.byCaption["Sun Glare"]:setValue(("%2.0f"):format(env_instant.sunGlare))
-        self.byCaption["Horizon Glare"]:setValue(("%2.0f"):format(env_instant.horizonGlare))
+        self.byCaption["Saturation"]:setValue(env_instant.saturation)
+        self.byCaption["Sun Glare"]:setValue(env_instant.sunGlare)
+        self.byCaption["Horizon Glare"]:setValue(env_instant.horizonGlare)
         self.byCaption["Light Source"]:setValue(env_instant.lightSource == "SUN" and 1 or 2)
 
-        self:updateEnvValue(self.currentlyClicked)
+        self:controlClicked(self.currentlyClicked)
     end;
 
     destroy = function(self)
@@ -454,7 +559,33 @@ hud_class "../EnvCycleEditor" (extends (BorderPane) {
     end;
 
     frameCallback = function (self, elapsed)
-        self.marker.alpha = math.sin(math.rad(seconds()*360)) + 1
+        self.marker.alpha = math.sin(math.rad(seconds()*360*2)) + 1
+    end;
+
+    load = function (self)
+        xpcall(function()
+            local filename = self.fileName.value
+            include(filename)
+            echo("Read env cycle from \""..filename.."\"")
+            self:updateFromEnvCycle()
+            env_recompute()
+        end, error_handler)
+    end;
+
+    save = function (self)
+        xpcall(function()
+            local filename = self.fileName.value
+            if filename:sub(1,1) ~= "/" then
+                error("Filename must be absolute path.")
+            end
+            filename = filename:sub(2)
+            local f = io.open(filename, "w")
+            if f==nil then error("Could not open file", 1) end
+            f:write("env_cycle = ")
+            f:write(dump(env_cycle, false))
+            f:close()
+            echo("Wrote env cycle to \"/"..filename.."\"")
+        end, error_handler)
     end;
         
 })
