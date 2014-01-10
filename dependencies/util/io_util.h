@@ -32,24 +32,40 @@
 
 #include "exception.h"
 
-void io_util_open (const std::string &filename, std::ofstream &out);
-void io_util_open (const std::string &filename, std::ifstream &in);
+class InFile {
+    std::ifstream in;
+    public:
+    const std::string filename;
+    InFile (const std::string &filename);
+    ~InFile (void) { in.close(); }
+    template<class T> void read (T &v)
+    {
+        in.read((char*)&v, sizeof(v));
+        if (!in.good()) {
+            EXCEPT<<filename<<": "<<std::string(strerror(errno))<<std::endl;
+        }   
+    }
+    template<class T> T read (void)
+    {
+        T v;
+        read(v);
+        return v;
+    }
+};
 
-template<class T> void io_util_write (const std::string &filename, std::ostream &out, const T &v)
-{
-    out.write((char*)&v, sizeof(v));
-    if (!out.good()) {
-        EXCEPT<<filename<<": "<<std::string(strerror(errno))<<std::endl;
-    }   
-}
-
-template<class T> void io_util_read (const std::string &filename, std::istream &in, T &v)
-{
-    in.read((char*)&v, sizeof(v));
-    if (!in.good()) {
-        EXCEPT<<filename<<": "<<std::string(strerror(errno))<<std::endl;
-    }   
-
-}
+class OutFile {
+    std::ofstream out;
+    public:
+    const std::string filename;
+    OutFile (const std::string &filename);
+    ~OutFile (void) { out.close(); }
+    template<class T> void write (const T &v)
+    {
+        out.write((char*)&v, sizeof(v));
+        if (!out.good()) {
+            EXCEPT<<filename<<": "<<std::string(strerror(errno))<<std::endl;
+        }   
+    }
+};
 
 #endif

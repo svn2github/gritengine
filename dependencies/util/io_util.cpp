@@ -26,15 +26,8 @@
 #include "io_util.h"
 #include "exception.h"
 
-void io_util_open (const std::string &filename, std::ofstream &out)
-{
-    out.open(filename);
-    if (!out.good()) {
-        EXCEPT<<filename<<": "<<std::string(strerror(errno))<<std::endl;
-    }
-}
-
-void io_util_open (const std::string &filename, std::ifstream &in)
+InFile::InFile (const std::string &filename)
+  : filename(filename)
 {
     in.open(filename);
     if (!in.good()) {
@@ -42,3 +35,11 @@ void io_util_open (const std::string &filename, std::ifstream &in)
     }
 }
 
+OutFile::OutFile (const std::string &filename)
+  : filename(filename)
+{
+    out.open(filename);
+    if (!out.good()) {
+        EXCEPT<<filename<<": "<<std::string(strerror(errno))<<std::endl;
+    }
+}
