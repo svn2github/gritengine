@@ -599,7 +599,8 @@ local function commit(c, p, flush, partial)
                 gfx_option("FOG",v)
                 reset_shaders = true
             elseif k == "physicsWireFrame" then
-                physics_option("DEBUG_WIREFRAME", v)
+                --FIXME: currently broken and confusing users, disable for now
+                --physics_option("DEBUG_WIREFRAME", v)
             elseif k == "physicsDebugWorld" then
                 physics.debugWorld = v
             elseif k == "mouseSensitivity" then

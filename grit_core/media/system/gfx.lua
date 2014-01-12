@@ -36,7 +36,8 @@ main.frameCallbacks:insert("GFX.frameCallback", function ()
 
         if get_main_win().isActive then
                 physics_update_graphics(physics.enabled and physics.leftOver or 0)
-                if physics.debugWorld then physics_draw() end
+                -- FIXME: currently broken and confusing users, disabled for now
+                --if physics.debugWorld then physics_draw() end
         end
 
         local curr_time = seconds()
