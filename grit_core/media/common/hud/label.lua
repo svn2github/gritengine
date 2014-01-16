@@ -226,6 +226,39 @@ hud_class "EditBox" (extends (BorderPane) {
 })
 
 control_being_dragged = nil
+hud_class "DragIcon" {
+    texture="Beaker.png";
+    zOrder = 7;
+    mouseMoveCallback = function (self, local_pos, screen_pos)
+        self.position = screen_pos
+    end;
+    buttonCallback = function (self, ev)
+        if control_being_dragged == nil then return end
+        if ev == "-left" then
+            local c = gfx_hud_ray(self.position)
+            if c ~= nil and c.receiveDrag ~= nil then
+                c:receiveDrag(control_being_dragged)
+            end
+            self:stopDrag()
+        end
+    end;
+    startDrag = function (self, c)
+        control_being_dragged = c
+        self.enabled = true
+        self.needsInputCallbacks = true
+        if c.className == "/common/hud/ColourControl" then
+            self.colour = c.square.colour
+        else
+            self.colour = vec(1,1,1)
+        end
+    end;
+    stopDrag = function (self)
+        control_being_dragged = nil
+        self.enabled = false
+        self.needsFrameCallbacks = false
+    end
+}
+control_beaker = gfx_hud_object_add("DragIcon", { })
 
 local Control = {
 
@@ -258,17 +291,15 @@ local Control = {
     buttonCallback = function (self, ev)
         if self.greyed then return end
         if ev == "+left" and self.inside then
-            control_being_dragged = self
+            control_beaker:startDrag(self)
         elseif ev == "-left" then
             if control_being_dragged == self then
                 if self.inside then
                     self:onClick()
-                    control_being_dragged = nil
                 end
             else
                 if control_being_dragged ~= nil and self.inside then
-                    self:receiveDrag(control_being_dragged)
-                    control_being_dragged = nil
+                    -- have to be careful when dropping it onto nothing -- who does stop_drag? and if everyone does stop_drag, will stop it too soon and miss the effect
                 end
             end
         end
@@ -283,6 +314,9 @@ local Control = {
     end;
 
     onClick = function (self)
+    end;
+
+    onChange = function (self)
     end;
 }
 
@@ -325,12 +359,17 @@ hud_class "ColourControl" (extends(Control) {
         self.square:updateChildrenSize()
         self.alphaSquare:setRect(self.size.x/2-self.width/2+1, -self.size.y/2+1, self.size.x/2-1, self.size.y/2-1)
     end;
-    onClick = function (self)
-        echo("onClick")
-    end;
     receiveDrag = function (self, other)
+        echo("Colour control "..self.caption.." receiving drag from "..other.caption)
         if other.className ~= self.className then return end
-        self:setColour(other.colour, other.a)
+        local incoming_alpha = other.a
+        if self.a == nil then
+            incoming_alpha = nil
+        else
+            incoming_alpha = incoming_alpha or 1 -- default to 1
+        end
+        self:setColour(other.colour, incoming_alpha)
+        self:onChange()
     end;
 })
 
@@ -392,12 +431,6 @@ hud_class "ValueControl" (extends(Control) {
     formatValue = function (self,v)
         return self.format:format(v)
     end;
-    onClick = function (self)
-        echo("ValueControl.onClick")
-    end;
-    onChange = function (self)
-        echo("ValueControl.onChange")
-    end;
     onEditting = function (self, editting)
         echo("ValueControl.onEditting")
     end;
@@ -444,9 +477,6 @@ hud_class "EnumControl" (extends (Control) {
     end;
     onClick = function (self)
         advanceValue()
-    end;
-    onChange = function (self)
-        echo("EnumControl.onChange")
     end;
     
 })

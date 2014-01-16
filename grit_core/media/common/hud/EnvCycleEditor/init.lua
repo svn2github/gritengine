@@ -284,16 +284,23 @@ hud_class "../EnvCycleEditor" (extends (BorderPane) {
     end;
 
     -- the user has changed the value in a value control
-    valueChanged = function (self)
-        if self.currentlyClicked == nil then return end
-        local caption = self.currentlyClicked
+    valueChanged = function (self, caption)
         local control = self.byCaption[caption]
 
         -- set actual sky colour
         local name = caption_to_env[caption]
-        if control.className == "/common/hud/ValueControl" then
+        if control.className == "/common/hud/ColourControl" then
+            if control.a ~= nil then
+                self:currentInstant()[name] = vec4(control.colour, control.a)
+            else
+                self:currentInstant()[name] = control.colour
+            end
+            self:updateEnvValue(caption)
+            env_recompute()
+        elseif control.className == "/common/hud/ValueControl" then
             self:currentInstant()[name] = tonumber(control.value)
             self:updateEnvValue(caption)
+            env_recompute()
         else
             error("Unrecognised control classname: "..control.className)
         end
@@ -324,7 +331,7 @@ hud_class "../EnvCycleEditor" (extends (BorderPane) {
                 caption = caption;
                 maxLength = 5;
                 onClick = function() self:controlClicked(caption) end;
-                onChange = function() self:valueChanged() end;
+                onChange = function(self2) self:valueChanged(self2.caption) end;
                 onEditting = function(self2, editting) if editting then self:controlEditting(self2) end end;
             }
             local o = gfx_hud_object_add(kind, extends (base) (tab or { }))
