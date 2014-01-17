@@ -156,6 +156,12 @@ float3 set_saturation (float3 colour, float sat)
 
 float3 tone_map (sampler3D lut, float global_saturation, float3 c)
 {
+/*
+    float v = (c.x + c.y + c.z) / 3;
+    float3 c2 = c/v;
+    v = v/(1+v);
+    c = c2*v;
+*/
     c = c/(1+c);
 
     c = gamma_encode(c);

@@ -178,7 +178,6 @@ hud_class "EditBox" (extends (BorderPane) {
                 self:setEditting(false)
             elseif ev == "+BackSpace" or ev == "=BackSpace" then
                 self:setValue(self.value:sub(1,-2))
-                echo(self.value)
                 self:onChange(self)
             elseif ev:sub(1,1) == ":" then
                 if self.maxLength == nil or #self.value < self.maxLength then
@@ -251,14 +250,16 @@ hud_class "DragIcon" {
         else
             self.colour = vec(1,1,1)
         end
+        set_mouse_hide(true)
     end;
     stopDrag = function (self)
         control_being_dragged = nil
         self.enabled = false
         self.needsFrameCallbacks = false
+        set_mouse_hide(false)
     end
 }
-control_beaker = gfx_hud_object_add("DragIcon", { })
+control_beaker = gfx_hud_object_add("DragIcon", { enabled = false })
 
 local Control = {
 
@@ -360,7 +361,6 @@ hud_class "ColourControl" (extends(Control) {
         self.alphaSquare:setRect(self.size.x/2-self.width/2+1, -self.size.y/2+1, self.size.x/2-1, self.size.y/2-1)
     end;
     receiveDrag = function (self, other)
-        echo("Colour control "..self.caption.." receiving drag from "..other.caption)
         if other.className ~= self.className then return end
         local incoming_alpha = other.a
         if self.a == nil then

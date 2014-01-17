@@ -193,7 +193,7 @@ sky_shader "SkyBackground" { -- {{{
                 dist_to_sun += 0.8; // magic number, allows big sun + small fade to look different to small sun + big fade
                 sun_qty = clamp(1/dist_to_sun/dist_to_sun, 0.0, 1.0);
             }
-            out_COLOR.rgb += su_sunColour * sun_qty;
+            out_COLOR.rgb = lerp(out_COLOR.rgb, su_sunColour, su_sunAlpha * sun_qty);
         }
     ]];
 }
