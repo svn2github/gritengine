@@ -24,7 +24,7 @@ hud_class "../Compass" {
 
 
         --bearing displayed in degrees
-        self.text = gfx_hud_text_add("TinyFont")
+        self.text = gfx_hud_text_add("/common/fonts/TinyFont")
         self.text.text = "XXX"
         self.text.parent = self
         self.text.position = vector2(48,-50)

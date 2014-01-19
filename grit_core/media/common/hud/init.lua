@@ -1,12 +1,16 @@
 -- (c) David Cunningham 2013, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
 include "base.lua"
+
 include "stack.lua"
 
 include "Button/init.lua"
 include "label.lua"
+include "editbox.lua"
 include "scale.lua"
 include "EnvCycleEditor/init.lua"
+include "ColourPicker/init.lua"
+include "controls/init.lua"
 
 include "Compass/init.lua"
 include "speedo.lua"
@@ -117,13 +121,16 @@ stats = gfx_hud_object_add("Stats", {
 
 -- EnvCycleEditor
 local env_cycle_editor_enabled = false
-if env_cycle_editor ~= nil and alive(env_cycle_editor) then
+if env_cycle_editor ~= nil and not env_cycle_editor.destroyed then
 	env_cycle_editor_enabled = env_cycle_editor.enabled
-	env_cycle_editor:destroy()
+	safe_destroy(env_cycle_editor)
 end
 env_cycle_editor = gfx_hud_object_add("EnvCycleEditor", { } )
 env_cycle_editor.position = env_cycle_editor.size / 2 + vector2(4,36)
 env_cycle_editor.enabled = env_cycle_editor_enabled
+if env_cycle_editor_button ~= nil and not env_cycle_editor_button.destroyed then
+    env_cycle_editor_button:destroy()
+end
 env_cycle_editor_button = gfx_hud_object_add("Button", {
     pressedCallback = function (self)
         env_cycle_editor.enabled = not env_cycle_editor.enabled

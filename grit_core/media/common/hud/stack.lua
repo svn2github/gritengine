@@ -21,7 +21,7 @@ hud_class "StackY" {
                 v = v[2]
             end
             if type(v) == "vector2" then
-                v = { size=v }
+                v = { bounds=v }
             end
             self.contents[k] = v
             self.alignment[k] = alignment
@@ -32,14 +32,14 @@ hud_class "StackY" {
         end
         local w, h = 0, 0
         for k,v in ipairs(self.contents) do
-            h = h + v.size.y + self.padding
-            w = math.max(w, v.size.x)
+            h = h + v.bounds.y + self.padding
+            w = math.max(w, v.bounds.x)
         end
         if h > 0 then h = h - self.padding end
         local y = h / 2
         for k,v in ipairs(self.contents) do
-            v.position = vector2(self.alignment[k]*(w - v.size.x)/2, y - v.size.y/2)                
-            y = y - (v.size.y + self.padding)
+            v.position = vector2(self.alignment[k]*(w - v.bounds.x)/2, y - v.bounds.y/2)                
+            y = y - (v.bounds.y + self.padding)
         end
         self.size = vector2(w,h)
     end;
@@ -87,7 +87,7 @@ hud_class "StackX" {
                 end
             end
             if type(v) == "vector2" then
-                v = { size=v }
+                v = { bounds=v }
             end
             self.contents[k] = v
             self.alignment[k] = alignment
@@ -98,14 +98,14 @@ hud_class "StackX" {
         end
         local h, w = 0, 0
         for k,v in ipairs(self.contents) do
-            w = w + v.size.x + self.padding
-            h = math.max(h, v.size.y)
+            w = w + v.bounds.x + self.padding
+            h = math.max(h, v.bounds.y)
         end
         if w > 0 then w = w - self.padding end
         local x = -w / 2
         for k,v in ipairs(self.contents) do
-            v.position = vector2(x + v.size.x/2, self.alignment[k]*(h - v.size.y)/2)                
-            x = x + (v.size.x + self.padding)
+            v.position = vector2(x + v.bounds.x/2, self.alignment[k]*(h - v.bounds.y)/2)                
+            x = x + (v.bounds.x + self.padding)
         end
         self.size = vector2(w,h)
     end;
