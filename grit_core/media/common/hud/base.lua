@@ -56,11 +56,13 @@ hud_class "Positioner" {
     size = vector2(0,0);    
     factor = vector2(1,1);
     offset = vector2(0,0);
+    alpha = 0;
     
     init = function (self)  
         self.needsParentResizedCallbacks = true;    
     end;    
-    parentResizedCallback = function (self, psize)  
+    parentResizedCallback = function (self, psize)
+    	self.size = psize
         self.position = math.floor(psize*self.factor + self.offset) -- floor to avoid a 0.5 pixel offset if width or height is an odd number    
     end;    
 }   
