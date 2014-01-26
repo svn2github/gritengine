@@ -15,7 +15,7 @@
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(BOOST_ROOT)bin.v2\libs\thread\build\msvc-10.0\release\link-static\threading-multi;$(BOOST_ROOT)bin.v2\libs\date_time\build\msvc-10.0\release\link-static\threading-multi;$(BOOST_ROOT)bin.v2\libs\system\build\msvc-10.0\release\link-static\threading-multi;$(BOOST_ROOT)bin.v2\libs\chrono\build\msvc-10.0\release\link-static\threading-multi;$(SolutionDir)\dependencies\grit_ogre_dependencies\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>dxguid.lib;dinput8.lib;zziplib.lib;OPENGL32.lib;GLU32.lib;d3d9.lib;d3dx9.lib;dxerr.lib;cg.lib;openal32.lib;FreeImage.lib;freetype2311.lib;zlib.lib;icudt.lib;icuin.lib;icuuc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>zziplib.lib;FreeImage.lib;freetype2311.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
     </Link>
