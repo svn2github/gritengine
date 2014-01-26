@@ -55,7 +55,6 @@ local user_cfg_default = {
     metricUnits = false;
     audioMasterVolume = 1;
     vehicleCameraTrack = true;
-    topDownCam = false;
 }
 
 local user_cfg_doc = {
@@ -100,7 +99,6 @@ local user_cfg_doc = {
     metricUnits = "Use the km/h units instead of mph units for HUD";
     audioMasterVolume = "Master audio volume";
     vehicleCameraTrack = "Camera automatically follows vehicles";
-    topDownCam = "Whether or not to use top down camera style"
 }
 
 local user_cfg_spec = {
@@ -145,7 +143,6 @@ local user_cfg_spec = {
     metricUnits = { "one of", false, true };
     audioMasterVolume =  { "range", 0, 1 }; 
     vehicleCameraTrack = { "one of", false, true };
-    topDownCam = { "one of", false, true };
 }           
             
 
@@ -282,6 +279,7 @@ local default_user_drive_bindings = {
     boost = "Shift";
     zoomIn = {"up","S+v"};
     zoomOut = {"down","v"};
+    camera = "c";
     realign = "Return";
     specialToggle = "BackSpace";
 }
@@ -377,6 +375,7 @@ local drive_binding_functions = {
     boost = {function() player_ctrl.controlObj:setBoost(true) end, function() player_ctrl.controlObj:setBoost(false) end};
     zoomIn = {function() player_ctrl.controlObj:controlZoomIn() end, nil, true};
     zoomOut = {function() player_ctrl.controlObj:controlZoomOut() end, nil, true};
+    camera = {function() if player_ctrl.controlObj.controlUpdate == regular_chase_cam_update then player_ctrl.controlObj.controlUpdate = top_down_cam_update else player_ctrl.controlObj.controlUpdate = regular_chase_cam_update end end, nil, true};
     realign = {function() player_ctrl.controlObj:realign() end, nil, true};
     specialUp = {function() player_ctrl.controlObj:setSpecialUp(true) end, function() player_ctrl.controlObj:setSpecialUp(false) end};
     specialDown = {function() player_ctrl.controlObj:setSpecialDown(true) end, function() player_ctrl.controlObj:setSpecialDown(false) end};
@@ -653,7 +652,6 @@ local function commit(c, p, flush, partial)
             elseif k == "audioMasterVolume" then
                 audio_option("MASTER_VOLUME",v)
             elseif k == "vehicleCameraTrack" then
-            elseif k == "topDownCam" then
             else
                 error("Unexpected: "..k)
             end
