@@ -18,72 +18,37 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Normal|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
-    <WholeProgramOptimization>false</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
-    <WholeProgramOptimization>false</WholeProgramOptimization>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Normal|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\gritengine.props" />
+    <Import Project="..\gritengine_normal.props" />
+    <Import Project="ogre.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\gritengine.props" />
+    <Import Project="..\gritengine_debug.props" />
+    <Import Project="ogre.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)$(Configuration)\$(ProjectName)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)int\</IntDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Normal|Win32'">$(SolutionDir)$(Configuration)\$(ProjectName)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Normal|Win32'">$(OutDir)int\</IntDir>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(BOOST_ROOT);$(DXSDK_DIR)Include\;$(IncludePath)</IncludePath>
-    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(LibraryPath)</LibraryPath>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Normal|Win32'">$(BOOST_ROOT);$(DXSDK_DIR)Include\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <BuildLog />
-    <ClCompile>
-      <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(SolutionDir)\dependencies\grit_ogre\OgreMain\include;$(SolutionDir)\dependencies\grit_ogre\OgreMain\src\nedmalloc;$(SolutionDir)\dependencies\grit_ogre\RenderSystems\GL\src\win32;$(SolutionDir)\dependencies\grit_ogre\RenderSystems\GL\src\nvparse;$(SolutionDir)\dependencies\grit_ogre\RenderSystems\GL\src\nvparse\winheaders;$(SolutionDir)\dependencies\grit_ogre\RenderSystems\GL\src\atifs\include;$(SolutionDir)\dependencies\grit_ogre\RenderSystems\GL\src\GLSL\include;$(SolutionDir)\dependencies\grit_ogre\RenderSystems\GL\include\;$(SolutionDir)\dependencies\grit_ogre\RenderSystems\Direct3D9\include;$(SolutionDir)\dependencies\grit_ogre\PlugIns\ParticleFX\include;$(SolutionDir)\dependencies\grit_ogre\PlugIns\OctreeSceneManager\include;$(SolutionDir)\dependencies\grit_ogre_dependencies\include;$(SolutionDir)\dependencies;$(SolutionDir)\dependencies\grit_ogre\PlugIns\CgProgramManager\include;$(SolutionDir)\dependencies\grit_ogre\Components\Overlay\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <StringPooling>true</StringPooling>
-      <MinimalRebuild>true</MinimalRebuild>
-      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
-      <ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>
-      <WarningLevel>Level3</WarningLevel>
-      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-    </ClCompile>
+    <ClCompile />
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Normal|Win32'">
     <BuildLog />
-    <ClCompile>
-      <AdditionalOptions>/MP %(AdditionalOptions)</AdditionalOptions>
-      <Optimization>MaxSpeed</Optimization>
-      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <OmitFramePointers>true</OmitFramePointers>
-      <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
-      <AdditionalIncludeDirectories>$(SolutionDir)\dependencies\grit_ogre\OgreMain\include;$(SolutionDir)\dependencies\grit_ogre\OgreMain\src\nedmalloc;$(SolutionDir)\dependencies\grit_ogre\RenderSystems\GL\src\win32;$(SolutionDir)\dependencies\grit_ogre\RenderSystems\GL\src\nvparse;$(SolutionDir)\dependencies\grit_ogre\RenderSystems\GL\src\nvparse\winheaders;$(SolutionDir)\dependencies\grit_ogre\RenderSystems\GL\src\atifs\include;$(SolutionDir)\dependencies\grit_ogre\RenderSystems\GL\src\GLSL\include;$(SolutionDir)\dependencies\grit_ogre\RenderSystems\GL\include\;$(SolutionDir)\dependencies\grit_ogre\RenderSystems\Direct3D9\include;$(SolutionDir)\dependencies\grit_ogre\PlugIns\ParticleFX\include;$(SolutionDir)\dependencies\grit_ogre\PlugIns\OctreeSceneManager\include;$(SolutionDir)\dependencies\grit_ogre_dependencies\include;$(SolutionDir)\dependencies;$(SolutionDir)\dependencies\grit_ogre\PlugIns\CgProgramManager\include;$(SolutionDir)\dependencies\grit_ogre\Components\Overlay\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <StringPooling>true</StringPooling>
-      <MinimalRebuild>false</MinimalRebuild>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <BufferSecurityCheck>false</BufferSecurityCheck>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
-      <ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>
-      <WarningLevel>Level3</WarningLevel>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-    </ClCompile>
+    <ClCompile />
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="grit_ogre\Components\Overlay\src\OgreBorderPanelOverlayElement.cpp" />

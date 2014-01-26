@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <OutDir>$(SolutionDir)$(Configuration)\$(ProjectName)\</OutDir>
+    <IntDir>$(OutDir)int\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <BuildLogFile>$(IntDir)\$(MSBuildProjectName).log</BuildLogFile>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(BOOST_ROOT);$(DXSDK_DIR)Include\;$(SolutionDir)\dependencies\util;$(SolutionDir)\dependencies\grit_ogre_dependencies\include;$(SolutionDir)\dependencies\squish-1.11;$(SolutionDir)\dependencies\icu\include;$(SolutionDir)dependencies\openal\include</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <CompileAsManaged>false</CompileAsManaged>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;NOMINMAX;FREEIMAGE_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+      <ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>
+      <DisableSpecificWarnings>4355;4244;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>$(DXSDK_DIR)Lib\x86;$(SolutionDir)\dependencies\icu\lib;$(SolutionDir)\dependencies\openal\lib\Win32</AdditionalLibraryDirectories>
+      <SubSystem>Console</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup />
+</Project>
