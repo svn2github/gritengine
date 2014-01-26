@@ -62,7 +62,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>$(ProjectDir)OgreXMLConverter.res;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)\dependencies\grit_ogre_dependencies\lib\Release;$(OutDir)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\dependencies\grit_ogre_dependencies\lib\Release;$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>copy "$(TargetPath)" "$(SolutionDir)exporters\blender_scripts\addons\grit_blender"
