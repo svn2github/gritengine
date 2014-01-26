@@ -338,6 +338,9 @@ function top_down_cam_update(persistent)
     	player_ctrl.camDir = quat(V_FORWARDS, vehicle_point*vector3(1,1,0))*Q_DOWN
     end
     player_ctrl.camPos = instance.camAttachPos + V_UP*instance.boomLengthSelected
+    
+    player_ctrl.speedoPos = instance.camAttachPos
+    player_ctrl.speedoSpeed = #instance.body.linearVelocity
 end
 
 ColClass = extends (BaseClass) {
