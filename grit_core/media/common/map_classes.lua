@@ -274,26 +274,6 @@ function regular_chase_cam_zoom_out(persistent)
     instance.boomLengthSelected = clamp(instance.boomLengthSelected*1.2, persistent.boomLengthMin, persistent.boomLengthMax)
 end
 
---[[
--- FOV Scale Trick
-if persistent.fovScale then
-    local fovPlot = Plot {
-        [0] = debug_cfg.FOV;
-        [30] = debug_cfg.FOV+25;
-        [30.0001] = debug_cfg.FOV+25;
-    }
-    gfx_option("FOV", fovPlot[self.speedoSpeed])
-end
-]]
---[[
--- top down cam
-    --  local vehicle_point = instance.body.worldOrientation * V_FORWARDS
-    --  if vehicle_point.x~=0 or vehicle_point.y~=0 then
-    --      player_ctrl.camDir = quat(V_FORWARDS, vehicle_point*vector3(1,1,0))*Q_DOWN
-    --  end
-    --  player_ctrl.camPos = instance.camAttachPos + V_UP*player_ctrl.boomLength
-]]
-
 function regular_chase_cam_update(persistent)
 
     local instance = persistent.instance
@@ -337,6 +317,27 @@ function regular_chase_cam_update(persistent)
     player_ctrl.speedoPos = instance.camAttachPos
     player_ctrl.speedoSpeed = #vehicle_vel
 
+end
+
+--[[
+-- FOV Scale Trick
+if persistent.fovScale then
+    local fovPlot = Plot {
+        [0] = debug_cfg.FOV;
+        [30] = debug_cfg.FOV+25;
+        [30.0001] = debug_cfg.FOV+25;
+    }
+    gfx_option("FOV", fovPlot[self.speedoSpeed])
+end
+]]
+
+function top_down_cam_update(persistent)
+	local instance = persistent.instance
+    local vehicle_point = instance.body.worldOrientation * V_FORWARDS
+    if vehicle_point.x~=0 or vehicle_point.y~=0 then
+    	player_ctrl.camDir = quat(V_FORWARDS, vehicle_point*vector3(1,1,0))*Q_DOWN
+    end
+    player_ctrl.camPos = instance.camAttachPos + V_UP*instance.boomLengthSelected
 end
 
 ColClass = extends (BaseClass) {
