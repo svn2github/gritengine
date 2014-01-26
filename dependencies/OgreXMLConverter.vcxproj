@@ -51,7 +51,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>$(ProjectDir)OgreXMLConverter.res;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)\dependencies\grit_ogre_dependencies\lib\Debug;$(SolutionDir)\dependencies\grit_ogre\lib;$(OutDir)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\dependencies\grit_ogre_dependencies\lib\Debug;$(SolutionDir)\dependencies\grit_ogre\lib;$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Normal|Win32'">
