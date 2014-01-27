@@ -151,7 +151,12 @@ end
 
 if player_ctrl == nil then
     player_ctrl = {
-
+    	mouseRelX = 0, --this holds relative mouse position change from the last update
+    	mouseRelY = 0,
+    	
+    	mouseTotalRelX = 0, --this holds summ of all mouse position changes
+    	mouseTotalRelY = 0, --also this guys are reset when player gets in/out of the vehicle or any controllable object
+    
         camYaw = 0,
         camPitch = 0,
         playerCamPitch = 0,
@@ -178,10 +183,16 @@ else
 end
 
 ui.pointerGrabCallbacks:insert("player_ctrl",function (rel_x,rel_y)
-
     local sens = user_cfg.mouseSensitivity
-    local inv = user_cfg.mouseInvert and -1 or 1
+    
+	player_ctrl.mouseRelX = rel_x*sens
+    player_ctrl.mouseRelY = rel_y*sens
 
+	player_ctrl.mouseTotalRelX = player_ctrl.mouseTotalRelX + rel_x*sens
+    player_ctrl.mouseTotalRelY = player_ctrl.mouseTotalRelY + rel_y*sens
+
+    local inv = user_cfg.mouseInvert and -1 or 1
+    
     player_ctrl.camYaw = (player_ctrl.camYaw + rel_x*sens) % 360
     player_ctrl.camPitch = clamp(player_ctrl.camPitch + inv*rel_y*sens, -90, 90)
     player_ctrl.playerCamPitch = player_ctrl.camPitch
@@ -230,6 +241,8 @@ end
 function player_ctrl:beginControlObj(obj)
     if not obj.activated then error("Can't control a deactivated object") end
     if obj.controlable and obj:controlBegin() then
+    	player_ctrl.mouseTotalRelX = 0
+    	player_ctrl.mouseTotalRelY = 0
         player_ctrl.controlObj = obj
     end
 end
@@ -240,6 +253,8 @@ function player_ctrl:abandonControlObj()
             obj:controlAbandon()
     end
     self.controlObj = nil
+    self.mouseTotalRelX = 0
+    self.mouseTotalRelY = 0
 end
 
 -- tell me how far in a given direction i can place the camera without it clipping anything

@@ -333,14 +333,29 @@ end
 
 function top_down_cam_update(persistent)
 	local instance = persistent.instance
-    local vehicle_point = instance.body.worldOrientation * V_FORWARDS
-    if vehicle_point.x~=0 or vehicle_point.y~=0 then
-    	player_ctrl.camDir = quat(V_FORWARDS, vehicle_point*vector3(1,1,0))*Q_DOWN
+	local body = instance.body
+    local vehicle_point = body.worldOrientation * V_FORWARDS
+    
+  	local vehicle_dir = quat(V_FORWARDS, vehicle_point*vector3(1,1,0))
+    
+    if vehicle_point.x == 0 or vehicle_point.y == 0 then
+    	return
     end
-    player_ctrl.camPos = instance.camAttachPos + V_UP*instance.boomLengthSelected
+    
+    local offset_x = math.abs(player_ctrl.mouseTotalRelX) > 15 and 15 or player_ctrl.mouseTotalRelX
+    local offset_y = math.abs(player_ctrl.mouseTotalRelY) > 15 and 15 or player_ctrl.mouseTotalRelY
+    
+    player_ctrl.camPos = instance.camAttachPos + V_UP*instance.boomLengthSelected + vehicle_dir*vector3(offset_x, offset_y, 0)
+    player_ctrl.camFocus = player_ctrl.camPos
     
     player_ctrl.speedoPos = instance.camAttachPos
-    player_ctrl.speedoSpeed = #instance.body.linearVelocity
+    player_ctrl.speedoSpeed = #body.linearVelocity
+    
+    local delta = norm(instance.camAttachPos - player_ctrl.camPos)
+    local yaw, pitch = yaw_pitch(delta)
+    
+    player_ctrl.camDir =  quat(yaw, vector3(0,0, -1)) * quat(pitch, vector3(1,0,0))
+    --player_ctrl.camDir = quat(V_FORWARDS, norm(body.worldPosition - player_ctrl.camPos)) --FIXME: compensate roll
 end
 
 ColClass = extends (BaseClass) {
