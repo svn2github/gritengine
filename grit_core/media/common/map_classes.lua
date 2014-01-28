@@ -342,8 +342,11 @@ function top_down_cam_update(persistent)
     	return
     end
     
-    local offset_x = clamp(player_ctrl.mouseTotalRelX, -15, 15)
-    local offset_y = clamp(player_ctrl.mouseTotalRelY, -15, 15)
+    player_ctrl.mouseTotalRelX = clamp(player_ctrl.mouseTotalRelX, -15, 15)
+	player_ctrl.mouseTotalRelY = clamp(player_ctrl.mouseTotalRelY, -15, 15)
+    
+    local offset_x = player_ctrl.mouseTotalRelX
+    local offset_y = player_ctrl.mouseTotalRelY
     
     player_ctrl.camPos = instance.camAttachPos + V_UP*instance.boomLengthSelected + vehicle_dir*vector3(offset_x, offset_y, 0)
     player_ctrl.camFocus = player_ctrl.camPos
