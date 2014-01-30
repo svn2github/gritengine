@@ -59,3 +59,6 @@ std::wstring utf8_to_utf16 (const std::string &str);
 /** Substituted when a unicode translation format encoding error is
  * encountered, or if a given font does not support a given codepoint. */
 #define UNICODE_ERROR_CODEPOINT 0xfffd
+
+/** Used in ANSI terminal codes. */
+#define UNICODE_ESCAPE_CODEPOINT 27
