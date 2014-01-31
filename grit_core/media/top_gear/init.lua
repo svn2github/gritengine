@@ -103,5 +103,6 @@ object "northern_roads_ground" (32.6793, 504.651, 8.18609) {}
 object "center_triangle001" (75.3791, -83.1283, 4.42846) {}
 object "ground02" (-518.451, -546.223, 2.98872) {}
 object "ground03" (-777.404, 104.079, 8.18609) {}
+object "outer_ground" (-310.723, -412.551, 18.0672) {}
 
 object "runways" (74.3648, 34.7179, 8.18609) {}
