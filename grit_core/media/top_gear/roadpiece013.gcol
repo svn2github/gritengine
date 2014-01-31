@@ -1,0 +1,40 @@
+TCOL1.0
+
+attributes {
+    static;
+}
+
+compound {
+}
+trimesh {
+    vertexes {
+        31.6577 65.559 4.76837e-007;
+        28.7468 66.6981 4.76837e-007;
+        24.7705 68.2543 4.76837e-007;
+        20.7942 69.8104 4.76837e-007;
+        17.8833 70.9496 4.76837e-007;
+        32.7231 65.142 4.76837e-007;
+        16.8179 71.3666 4.76837e-007;
+        -17.7336 -70.9793 4.76837e-007;
+        -20.6738 -69.9213 4.76837e-007;
+        -24.6902 -68.4761 4.76837e-007;
+        -28.7067 -67.0308 4.76837e-007;
+        -31.6469 -65.9728 4.76837e-007;
+        -32.7231 -65.5856 4.76837e-007;
+        -16.6573 -71.3666 4.76837e-007;
+    }
+    faces {
+        5 0 7 "/common/pmat/StoneTest";
+        7 13 5 "/common/pmat/StoneTest";
+        0 1 8 "/common/pmat/StoneTest";
+        8 7 0 "/common/pmat/StoneTest";
+        1 2 9 "/common/pmat/StoneTest";
+        9 8 1 "/common/pmat/StoneTest";
+        2 3 10 "/common/pmat/StoneTest";
+        10 9 2 "/common/pmat/StoneTest";
+        3 4 11 "/common/pmat/StoneTest";
+        11 10 3 "/common/pmat/StoneTest";
+        4 6 12 "/common/pmat/StoneTest";
+        12 11 4 "/common/pmat/StoneTest";
+    }
+}

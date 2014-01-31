@@ -1,0 +1,78 @@
+TCOL1.0
+
+attributes {
+    static;
+}
+
+compound {
+}
+trimesh {
+    vertexes {
+        8.55841 -0.644073 4.76837e-007;
+        5.64343 0.483612 4.76837e-007;
+        1.6615 2.02408 4.76837e-007;
+        -2.3205 3.56454 4.76837e-007;
+        -5.23541 4.69223 4.76837e-007;
+        24.2142 42.5661 4.76837e-007;
+        21.2481 43.5526 4.76837e-007;
+        17.1963 44.9002 4.76837e-007;
+        13.1444 46.2479 4.76837e-007;
+        10.1783 47.2344 4.76837e-007;
+        -4.51184 -32.384 4.76837e-007;
+        -7.35669 -31.0861 4.76837e-007;
+        -11.2429 -29.313 7.15256e-007;
+        -15.129 -27.5399 2.38419e-007;
+        -17.9739 -26.2419 2.38419e-007;
+        9.62537 -1.05682 4.76837e-007;
+        -6.30243 5.10498 4.76837e-007;
+        25.2999 42.205 4.76837e-007;
+        9.09265 47.5955 4.76837e-007;
+        -3.47058 -32.8591 4.76837e-007;
+        -19.0151 -25.7668 4.76837e-007;
+        -10.5947 -47.1556 4.76837e-007;
+        -13.4791 -45.9539 4.76837e-007;
+        -17.4194 -44.3122 4.76837e-007;
+        -21.3596 -42.6706 4.76837e-007;
+        -24.2441 -41.4688 4.76837e-007;
+        -9.53882 -47.5955 4.76837e-007;
+        -25.2999 -41.0289 4.76837e-007;
+    }
+    faces {
+        19 10 21 "/common/pmat/StoneTest";
+        21 26 19 "/common/pmat/StoneTest";
+        10 11 22 "/common/pmat/StoneTest";
+        22 21 10 "/common/pmat/StoneTest";
+        11 12 23 "/common/pmat/StoneTest";
+        23 22 11 "/common/pmat/StoneTest";
+        12 13 24 "/common/pmat/StoneTest";
+        24 23 12 "/common/pmat/StoneTest";
+        13 14 25 "/common/pmat/StoneTest";
+        25 24 13 "/common/pmat/StoneTest";
+        14 20 27 "/common/pmat/StoneTest";
+        27 25 14 "/common/pmat/StoneTest";
+        5 0 15 "/common/pmat/StoneTest";
+        15 17 5 "/common/pmat/StoneTest";
+        6 1 0 "/common/pmat/StoneTest";
+        0 5 6 "/common/pmat/StoneTest";
+        7 2 1 "/common/pmat/StoneTest";
+        1 6 7 "/common/pmat/StoneTest";
+        8 3 2 "/common/pmat/StoneTest";
+        2 7 8 "/common/pmat/StoneTest";
+        9 4 3 "/common/pmat/StoneTest";
+        3 8 9 "/common/pmat/StoneTest";
+        18 16 4 "/common/pmat/StoneTest";
+        4 9 18 "/common/pmat/StoneTest";
+        15 0 10 "/common/pmat/StoneTest";
+        10 19 15 "/common/pmat/StoneTest";
+        0 1 11 "/common/pmat/StoneTest";
+        11 10 0 "/common/pmat/StoneTest";
+        1 2 12 "/common/pmat/StoneTest";
+        12 11 1 "/common/pmat/StoneTest";
+        2 3 13 "/common/pmat/StoneTest";
+        13 12 2 "/common/pmat/StoneTest";
+        3 4 14 "/common/pmat/StoneTest";
+        14 13 3 "/common/pmat/StoneTest";
+        4 16 20 "/common/pmat/StoneTest";
+        20 14 4 "/common/pmat/StoneTest";
+    }
+}
