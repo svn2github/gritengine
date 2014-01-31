@@ -34,3 +34,12 @@ class "roadpiece031" (ColClass) {castShadows=false,renderingDistance=1200}
 class "roadpiece032" (ColClass) {castShadows=false,renderingDistance=1200}
 class "roadpiece033" (ColClass) {castShadows=false,renderingDistance=1200}
 class "roadpiece034" (ColClass) {castShadows=false,renderingDistance=1200}
+
+class "northern_roads" (ColClass) {castShadows=false,renderingDistance=1200}
+class "northern_roads_ground" (ColClass) {castShadows=false,renderingDistance=1200}
+
+class "center_triangle001" (ColClass) {castShadows=false,renderingDistance=1200}
+class "ground02" (ColClass) {castShadows=false,renderingDistance=1200}
+class "ground03" (ColClass) {castShadows=false,renderingDistance=1200}
+class "outer_ground" (ColClass) {castShadows=false,renderingDistance=12000}
+class "runways" (ColClass) {castShadows=false,renderingDistance=12000}

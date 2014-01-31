@@ -96,3 +96,12 @@ object "roadpiece031" (-882.487, -95.1349, 8.18609) {}
 object "roadpiece032" (-795.532, 17.8274, 8.18609) {}
 object "roadpiece033" (-684.728, 116.571, 8.18609) {}
 object "roadpiece034" (-604.891, 187.901, 8.18609) {}
+
+object "northern_roads" (53.1126, 513.005, 8.18609) {}
+object "northern_roads_ground" (32.6793, 504.651, 8.18609) {}
+
+object "center_triangle001" (75.3791, -83.1283, 4.42846) {}
+object "ground02" (-518.451, -546.223, 2.98872) {}
+object "ground03" (-777.404, 104.079, 8.18609) {}
+
+object "runways" (74.3648, 34.7179, 8.18609) {}
