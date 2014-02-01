@@ -5,8 +5,9 @@ map_ghost_spawn(vector3(2, 320, 50))
 include "materials.lua"
 include "classes.lua"
 
-object "runway_whole" (73.1813, 34.2961, 8.18609) {}
-object "raceway_whole" (-44.345, -5.74176, 8.18609) {}
+object "Track" (0.439129, -5.55794, 7.85) {}
+object "runway_whole" (73.1813, 34.2961, 8.0) {}
+object "raceway_whole" (-44.345, -5.74176, 8.0) {}
 
 --object "Track" (0,0,0) {name="Track"}
 
