@@ -1,6 +1,6 @@
 -- (c) David Cunningham 2009, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
-map_ghost_spawn(vector3(360.644, 285.019, 7.95773))
+map_ghost_spawn(vector3(2, 320, 50))
 
 include "materials.lua"
 include "classes.lua"
