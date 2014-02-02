@@ -11,6 +11,7 @@ object "raceway_whole" (-110.551, -46.4987, 8.0) {}
 object "east_slab_grass" (682.6, 680.34, 8.0) {}
 object "east_concrete_slab" (718.298, 643.776, 8.0) {}
 object "center_triangle_area" (205.324, 111.042, 8.0) {}
+object "hangars01" (-318.634, 453.92, 15.1793) {}
 
 --object "Track" (0,0,0) {name="Track"}
 
