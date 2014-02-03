@@ -10,7 +10,8 @@ local playlist = {
 for i,v in ipairs(playlist) do
 		playlist[i] = "/common/hud/MusicPlayer/"..v
 		disk_resource_add("/common/hud/MusicPlayer/"..v)
-		disk_resource_load_indefinitely("/common/hud/MusicPlayer/"..v)
+		--loads on demand in next/prev button code
+		--disk_resource_load_indefinitely("/common/hud/MusicPlayer/"..v)
 end
 
 hud_class "../MusicPlayer" {
@@ -27,6 +28,7 @@ hud_class "../MusicPlayer" {
 		self.trackname.position = vector2(0, self.size.y/2-64)
 		self.trackname.colour = vector3(0,0,0)
 		self.trackname.text = playlist[self.trackID]
+		disk_resource_load(playlist[self.trackID])
 		self.audiosource = audio_source_make_ambient(playlist[self.trackID]);
 		self.state = "none" --can be "opening", "closing" or "none"
 		self.closePosition = vector2(-self.size.x/2+32, 32)
@@ -77,8 +79,10 @@ hud_class "../MusicPlayer" {
 				self.audiosource:stop()
 				self.audiosource:destroy()
 			end
+			disk_resource_unload(playlist[self.trackID])
 			self.trackID = (self.trackID - 1 < 1) and #playlist or self.trackID - 1
 			self.trackname.text = playlist[self.trackID]
+			disk_resource_load(playlist[self.trackID]) --FIXME: shouldn't load indefinitely
 			self.audiosource = audio_source_make_ambient(playlist[self.trackID]);
 			if self.isplaying then
 				self.audiosource:play()
@@ -95,8 +99,10 @@ hud_class "../MusicPlayer" {
 				self.audiosource:stop()
 				self.audiosource:destroy()
 			end
+			disk_resource_unload(playlist[self.trackID])
 			self.trackID = (self.trackID + 1 > #playlist) and 1 or self.trackID + 1
 			self.trackname.text = playlist[self.trackID]
+			disk_resource_load(playlist[self.trackID]) --FIXME: shouldn't load indefinitely
 			self.audiosource = audio_source_make_ambient(playlist[self.trackID]);
 			if self.isplaying then
 				self.audiosource:play()
