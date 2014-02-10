@@ -171,17 +171,6 @@ function UI.new()
                 shouldBeGrabbed = false,
         }
 
-        -- event callbacks allow you to register a callback on a particular key or mouse event
-        -- general callbacks give you everything (e.g. for text input)
-        self.pressCallbacks:insert("UI.system", function (v)
-                local c = v:sub(1,1)
-                if c == "+" then
-                        self.buttonsDown[v:sub(2)] = true
-                elseif c == "-" then
-                        self.buttonsDown[v:sub(2)] = nil
-                end
-        end)
-
         main.frameCallbacks:insert("UI.frameCallback",UI.frameCallback)
 
         return make_instance(self,UI)
@@ -249,45 +238,61 @@ function UI:updateGrabbed()
 end
 
 
+function UI:manageButtonsDown (v)
+    local c = v:sub(1,1)
+    if c == "+" then
+        self.buttonsDown[v:sub(2)] = true
+    elseif c == "-" then
+        self.buttonsDown[v:sub(2)] = nil
+    end
+end
+
 function UI.frameCallback ()
 
-        local presses = get_keyb_presses()
-        local moved,buttons,x,y,rel_x,rel_y = get_mouse_events()
+    local presses = get_keyb_presses()
+    local moved,buttons,x,y,rel_x,rel_y = get_mouse_events()
 
-        if moved then
-                ui.lastX, ui.lastY = x, y
-                ui.lastRelX, ui.lastRelY = rel_x, rel_y
-                if ui:getGrab() then
-                    ui.pointerGrabCallbacks:execute(rel_x, rel_y)
-                else
-                    ui.pointerCallbacks:execute(rel_x, rel_y)
-                    gfx_hud_signal_mouse_move(x, y)
-                end
+    if moved then
+        ui.lastX, ui.lastY = x, y
+        ui.lastRelX, ui.lastRelY = rel_x, rel_y
+        if ui:getGrab() then
+            ui.pointerGrabCallbacks:execute(rel_x, rel_y)
+        else
+            ui.pointerCallbacks:execute(rel_x, rel_y)
+            gfx_hud_signal_mouse_move(x, y)
         end
+    end
 
-        for _,key in ipairs(presses) do
-                if get_keyb_verbose() then echo("Lua key event: "..key) end
-                if ui.coreBinds:process(key) ~= false then
-                        if ui.pressCallbacks:execute(key) ~= false then
-                                ui.binds:process(key)
-                        end
+    for _,key in ipairs(presses) do
+        if get_keyb_verbose() then echo("Lua key event: "..key) end
+        ui:manageButtonsDown(key)
+        if ui.coreBinds:process(key) ~= false then
+            if not ui:getGrab() then
+                gfx_hud_signal_button(key, x, y)
+            else
+                if ui.pressCallbacks:execute(key) ~= false then
+                    ui.binds:process(key)
                 end
-                if not ui:getGrab() then
-                    gfx_hud_signal_button(key, x, y)
-                end
+            end
         end
+    end
 
-        for _,button in ipairs(buttons) do
-                if get_keyb_verbose() then echo("Lua mouse event: "..button) end
-                if ui.coreBinds:process(button) ~= false then
-                        if ui.pressCallbacks:execute(button) ~= false then
-                                ui.binds:process(button)
-                        end
+    for _,button in ipairs(buttons) do
+        if get_keyb_verbose() then echo("Lua mouse event: "..button) end
+        if not ui:getGrab() then
+            if ui.coreBinds:process(button) ~= false then
+                ui:manageButtonsDown(button)
+                gfx_hud_signal_button(button, x, y)
+            end
+        else
+            if ui.coreBinds:process(button) ~= false then
+                ui:manageButtonsDown(button)
+                if ui.pressCallbacks:execute(button) ~= false then
+                    ui.binds:process(button)
                 end
-                if not ui:getGrab() then
-                    gfx_hud_signal_button(button, x, y)
-                end
+            end
         end
+    end
 end
 
 

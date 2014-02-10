@@ -10,7 +10,6 @@ HiFreqNoiseGauss.64.bmp
 HiFreqNoiseRing.32.bmp
 HiFreqNoiseRing.64.bmp
 MicroFlakes.dds
-misc.fixed.dds
 PerlinNoise.bmp
 PerlinNoiseN.bmp
 SkyCube.mesh

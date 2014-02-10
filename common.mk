@@ -83,7 +83,6 @@ OGRE_CXXFLAGS ?= $(FREEIMAGE_CXXFLAGS) \
                  -I $(ROOT)/dependencies \
                  -isystem $(ROOT)/dependencies/grit_ogre/OgreMain/include \
                  -isystem $(ROOT)/dependencies/grit_ogre/OgreMain/src/nedmalloc \
-                 -isystem $(ROOT)/dependencies/grit_ogre/Components/Overlay/include \
                  -isystem $(ROOT)/dependencies/grit_ogre/RenderSystems/Direct3D9/include \
                  -isystem $(ROOT)/dependencies/grit_ogre/RenderSystems/GL/src/GLX \
                  -isystem $(ROOT)/dependencies/grit_ogre/RenderSystems/GL/src/win32 \

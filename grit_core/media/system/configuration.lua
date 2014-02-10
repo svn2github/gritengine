@@ -299,7 +299,19 @@ local default_user_foot_bindings = {
 
 
 local core_binding_functions = {
-    console = function() console.visible = not console.visible end;
+    console = function()
+        if console.enabled then
+            ui:grab()
+            ui:flush()
+            ticker.enabled = true
+            console.enabled = false
+        else
+            ui:ungrab()
+            ui:flush()
+            ticker.enabled = false
+            console.enabled = true
+        end
+    end;
     record = function() capturer:toggle() end;
     screenShot = function() capturer:singleScreenShot() end;
     physicsPause = function ()
@@ -570,8 +582,8 @@ local function commit(c, p, flush, partial)
         
             elseif k == "graphicsRAM" then
                 gfx_option("RAM",v)
-                set_texture_budget(v*1024*1024)
-                set_mesh_budget(0)
+                --set_texture_budget(v*1024*1024)
+                --set_mesh_budget(0)
             elseif k == "lockMemory" then
                 if v then mlockall() else munlockall() end
 

@@ -203,7 +203,7 @@ static int lua_utf8_sub (lua_State *L)
 
         if (start < 0) start += len+1;
         if (limit < 0) limit += len+1;
-/*
+
         if (start > len) start = len+1;
         if (start < 1) start = 1;
 
@@ -211,10 +211,13 @@ static int lua_utf8_sub (lua_State *L)
         if (limit < 0) limit = 0;
 
         if (limit < start) limit = start-1;
-*/
 
         start--;
-        APP_ASSERT(start>=0); assert(len==0 || start<len); assert(limit>=0); assert(limit<=len); assert(start<=limit);
+        APP_ASSERT(start>=0);
+        APP_ASSERT(start<=len);
+        APP_ASSERT(limit>=0);
+        APP_ASSERT(limit<=len);
+        APP_ASSERT(start<=limit);
         UnicodeString target;
         ustr.extractBetween(start, limit, target);
         pushustring(L, target);

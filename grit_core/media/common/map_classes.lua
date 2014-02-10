@@ -70,7 +70,7 @@ BaseClass = {
                         end
                 end
                 instance.gfx = gfx_body_make(gfxMesh, fqmm)
-                instance.gfx.castShadows = persistent.castShadows == true
+                instance.gfx.castShadows = not persistent.castShadows == false
                 if instance.gfx.numBones > 0 and instance.gfx:getAllAnimations() == nil then instance.gfx:setAllBonesManuallyControlled(true) end
                 instance.gfx.localPosition = persistent.spawnPos
                 instance.gfx.localOrientation = persistent.rot or quat(1,0,0,0)

@@ -7,10 +7,6 @@ local gl_profile_vert = "gpu_vp"
 
 local gbuffer_count = 3
 
-local function d3d9()
-        return get_rendersystem() == "Direct3D9 Rendering Subsystem" 
-end
-
 local function prog(name, lang, type)
         local p = get_gpuprog(name) or make_gpuprog(name, lang, type)
         if p.language ~= lang then
@@ -113,7 +109,7 @@ local function make_particle_program_cg (alpha_blend, emissive)
 --[[
         fp:setConstantFloat("alpha_rej", 0)
         fp:setAutoConstantInt("far_clip_distance","FAR_CLIP_DISTANCE")
-        if d3d9() then
+        if gfx_d3d9() then
                 fp:setAutoConstantInt("viewport_size","VIEWPORT_SIZE")
         end
         fp:setAutoConstantInt("render_target_flipping","RENDER_TARGET_FLIPPING")
@@ -742,7 +738,7 @@ local function make_program_cg_ (category, diffuse_map, pma, emissive_map, norma
                 end
         end
         if deferred_lights then
-                if d3d9() then
+                if gfx_d3d9() then
                         fp:setAutoConstantInt("viewport_size","VIEWPORT_SIZE")
                 end
         end

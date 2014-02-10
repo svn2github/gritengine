@@ -33,6 +33,7 @@ extern "C" {
 #include <lualib.h>
 }
 
+#include "exception.h"
 #include "math_util.h"
 #include "intrinsics.h"
 
@@ -66,10 +67,9 @@ lua_pop(L,1); } while(0)
 #define luaL_reg luaL_Reg
 #define lua_open luaL_newstate
 #define luaL_getn lua_rawlen
-inline int luaL_typerror (lua_State *L, int narg, const char *tname) {
-  const char *msg = lua_pushfstring(L, "%s expected, got %s",
-                                    tname, luaL_typename(L, narg));
-  return luaL_argerror(L, narg, msg);
+inline void luaL_typerror (lua_State *L, int narg, const char *tname) {
+  const char *tostr = lua_tostring(L, narg);
+  EXCEPT << tname << " expected, got " << luaL_typename(L, narg) << " called " << tostr << ENDL;
 }
 
 // convert anything to a std::string

@@ -873,30 +873,6 @@
     <ClCompile Include="grit_ogre\Components\Overlay\src\OgreFontManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="grit_ogre\Components\Overlay\src\OgreOverlay.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="grit_ogre\Components\Overlay\src\OgreOverlayContainer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="grit_ogre\Components\Overlay\src\OgreOverlayElement.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="grit_ogre\Components\Overlay\src\OgreOverlayElementCommands.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="grit_ogre\Components\Overlay\src\OgreOverlayElementFactory.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="grit_ogre\Components\Overlay\src\OgreOverlayManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="grit_ogre\Components\Overlay\src\OgreOverlayProfileSessionListener.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="grit_ogre\Components\Overlay\src\OgreOverlaySystem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="grit_ogre\Components\Overlay\src\OgrePanelOverlayElement.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

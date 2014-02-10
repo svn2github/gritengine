@@ -8,8 +8,8 @@ io.stdout:setvbuf("no") -- no output buffering
 collectgarbage("setpause",110) -- begin a gc cycle after blah% increase in ram use
 collectgarbage("setstepmul",150) -- collect at blah% the rate of new object creation
 
-set_texture_verbose(false)
-set_mesh_verbose(false)
+--set_texture_verbose(false)
+--set_mesh_verbose(false)
 --set_keyb_verbose(true)
 
 initialise_all_resource_groups()
@@ -20,13 +20,17 @@ include("abbrev.lua")
 
 include("util.lua")
 
-include("hud_materials.lua")
-include("hud.lua")
+-- called by c code
+function console_tostring(item)
+        if type(item) == 'string' then
+                return item
+        end
+        return dump(item)
+end
 
 if audio_master_volume == nil then audio_master_volume = function() end end
 
 print("Starting game engine...")
-
 
 main = {
         shouldQuit = false,
@@ -88,7 +92,7 @@ function main:run (...)
                         end)
                         failName.name = nil
 
-                        if get_main_win().isActive == false then
+                        if not gfx_window_active() then
                                 --sleep_seconds(0.2)
                                 sleep(200000)
                         end
@@ -111,7 +115,7 @@ end
 
 
 
-sm = get_sm()
+--sm = get_sm()
 
 
 include("unicode_test_strings.lua")
@@ -128,9 +132,6 @@ include("physical_materials.lua")
 include("procedural_objects.lua")
 include("procedural_batches.lua")
 
-include("console_prompt.lua")
-include("console.lua")
-
 include("pid_ctrl.lua")
 
 include("player_ctrl.lua")
@@ -143,11 +144,7 @@ include("env.lua")
 
 include("audio.lua")
 
-include("placement_editor.lua")
-
 include("net.lua")
-
-include("simplemenu.lua") --hacky menu :D
 
 include("/common/init.lua")
 

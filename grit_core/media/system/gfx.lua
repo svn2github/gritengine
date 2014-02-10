@@ -34,7 +34,7 @@ main.frameCallbacks:insert("GFX.frameCallback", function ()
         give_queue_allowance(1 + 1*get_in_queue_size())
         --give_queue_allowance(10)
 
-        if get_main_win().isActive then
+        if gfx_window_active() then
                 physics_update_graphics(physics.enabled and physics.leftOver or 0)
                 -- FIXME: currently broken and confusing users, disabled for now
                 --if physics.debugWorld then physics_draw() end
@@ -50,7 +50,7 @@ main.frameCallbacks:insert("GFX.frameCallback", function ()
         streamer_centre(player_ctrl.camPos)
         object_do_frame_callbacks(elapsed) -- grit objects with frame callbacks
 
-        if get_main_win().isActive then
+        if gfx_window_active() then
                 gfx.frameTime:add(elapsed)
         end
 

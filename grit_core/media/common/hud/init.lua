@@ -11,6 +11,7 @@ include "scale.lua"
 include "EnvCycleEditor/init.lua"
 include "ColourPicker/init.lua"
 include "controls/init.lua"
+include "console/init.lua"
 
 include "Compass/init.lua"
 include "speedo.lua"
@@ -18,6 +19,27 @@ include "clock.lua"
 include "stats.lua"
 
 include "MusicPlayer/init.lua"
+
+-- Ticker
+local buffer
+local other_buffer
+if ticker ~= nil then
+    buffer = ticker.buffer
+    other_buffer = ticker.timeBuffer
+    safe_destroy(ticker)
+end
+ticker = gfx_hud_object_add("console/Ticker", {buffer=buffer, timeBuffer=other_buffer, shadow=vec(1,-1), zOrder=7})
+ticker.enabled = false
+
+if console ~= nil then
+    buffer = console.buffer
+    other_buffer = console.cmdBuffer
+    safe_destroy(console)
+else
+    buffer = nil
+end
+console = gfx_hud_object_add("console/Console", {buffer=buffer, cmdBuffer=other_buffer, shadow=vec(1,-1), zOrder=7})
+
 
 -- Crosshair
 safe_destroy(ch)
@@ -69,10 +91,9 @@ stats = gfx_hud_object_add("Stats", {
 
         mem = function()
             return string.format(
-                    "Mesh | Tex | Max || QI | QO: %dMB | %dMB | %dMB || I:%d | HO:%d | GO:%d",
-                    get_mesh_usage()/1024/1024,
-                    get_texture_usage()/1024/1024,
-                    (get_mesh_budget()+get_texture_budget())/1024/1024,
+                    "RAM | QI | QO: %d/%dMB || I:%d | HO:%d | GO:%d",
+                    gfx_gpu_ram_used()/1024/1024,
+                    gfx_gpu_ram_available()/1024/1024,
                     get_in_queue_size(),
                     get_out_queue_size_host(),
                     get_out_queue_size_gpu());
@@ -142,3 +163,5 @@ env_cycle_editor_button = gfx_hud_object_add("Button", {
     position = vector2(64,16);
     size = vector2(128, 32);
 })
+
+collectgarbage("collect") -- when reloading this file, this avoids having any crap left on the screen

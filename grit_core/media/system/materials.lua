@@ -1,13 +1,9 @@
 include "/system/shaders.lua"
 
-local function d3d9()
-        return get_rendersystem() == "Direct3D9 Rendering Subsystem" 
-end
-
 local noise_tex = "system/HiFreqNoiseGauss.64.png"
 
 local emissive_bias1, emissive_bias2
-if d3d9() then
+if gfx_d3d9() then
 	emissive_bias1 = 1
 	emissive_bias2 = 1
 else

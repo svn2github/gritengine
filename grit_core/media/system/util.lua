@@ -497,7 +497,6 @@ end
 
 function safe_destroy(obj)
         if obj==nil then return end
-        if type(obj)=="userdata" and not alive(obj) then return end
 		if type(obj)~="userdata" and type(obj)~="table" then return end
 		local d = obj.destroy
 		if d == nil then return end

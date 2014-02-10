@@ -9,7 +9,6 @@
 
     find grit_core/media  \( -name '*.lua' \) |
     grep -v 'gtasa/\(carcols\|map\|classes\|materials\|\)[.]lua' |
-    grep -v 'system/misc[.]fixed[.]lua' |
     grep -v 'gtasa\/[a-z0-9]\+\/init[.]lua' |
     grep -v 'gtasa\/phys_mats[.]lua' |
     grep -v 'gtasa\/vehicles[.]lua' |
