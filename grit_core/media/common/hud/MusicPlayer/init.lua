@@ -28,7 +28,11 @@ hud_class "../MusicPlayer" {
 		self.trackname.position = vector2(0, self.size.y/2-64)
 		self.trackname.colour = vector3(0,0,0)
 		self.trackname.text = playlist[self.trackID]
-		disk_resource_load(playlist[self.trackID])
+        -- TODO: maybe load should be a no-op?  or add ensure_loaded?
+        disk_resource_acquire(playlist[self.trackID])
+        if not disk_resource_loaded(playlist[self.trackID]) then
+            disk_resource_load(playlist[self.trackID])
+        end
 		self.audiosource = audio_source_make_ambient(playlist[self.trackID]);
 		self.state = "none" --can be "opening", "closing" or "none"
 		self.closePosition = vector2(-self.size.x/2+32, 32)
@@ -79,10 +83,13 @@ hud_class "../MusicPlayer" {
 				self.audiosource:stop()
 				self.audiosource:destroy()
 			end
-			disk_resource_unload(playlist[self.trackID])
+			disk_resource_release(playlist[self.trackID])
 			self.trackID = (self.trackID - 1 < 1) and #playlist or self.trackID - 1
 			self.trackname.text = playlist[self.trackID]
-			disk_resource_load(playlist[self.trackID]) --FIXME: shouldn't load indefinitely
+            disk_resource_acquire(playlist[self.trackID])
+            if not disk_resource_loaded(playlist[self.trackID]) then
+                disk_resource_load(playlist[self.trackID])
+            end
 			self.audiosource = audio_source_make_ambient(playlist[self.trackID]);
 			if self.isplaying then
 				self.audiosource:play()
