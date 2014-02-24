@@ -1,10 +1,10 @@
 -- (c) Alexey "Razzeeyy" Shmakov 2013, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
 local playlist = {
-	"Massimo_Ruberti_-_02_-_Sabotage.wav",
-	"Massimo_Ruberti_-_03_-_Last_bird_in_the_valley.wav",
-	"Massimo_Ruberti_-_04_-_Aldo__Lea.wav",
-	"Massimo_Ruberti_-_06_-_The_wind.wav"
+	"Massimo_Ruberti_-_02_-_Sabotage.ogg",
+	"Massimo_Ruberti_-_03_-_Last_bird_in_the_valley.ogg",
+	"Massimo_Ruberti_-_04_-_Aldo__Lea.ogg",
+	"Massimo_Ruberti_-_06_-_The_wind.ogg"
 }
 
 for i,v in ipairs(playlist) do

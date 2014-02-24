@@ -171,8 +171,8 @@ ICU_LDLIBS   ?= $(ICU_ARCHIVES)
 OPENAL_CXXFLAGS ?=
 
 OPENAL_LDFLAGS  ?=
-
-OPENAL_LDLIBS   ?= -lopenal
+#should -lvorbisfile be put somewhere else due to philosophy?
+OPENAL_LDLIBS   ?= -lopenal -lvorbisfile
 
 
 ################################################################################
