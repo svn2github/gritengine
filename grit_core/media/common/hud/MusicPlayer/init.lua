@@ -106,10 +106,13 @@ hud_class "../MusicPlayer" {
 				self.audiosource:stop()
 				self.audiosource:destroy()
 			end
-			disk_resource_unload(playlist[self.trackID])
+			disk_resource_release(playlist[self.trackID])
 			self.trackID = (self.trackID + 1 > #playlist) and 1 or self.trackID + 1
 			self.trackname.text = playlist[self.trackID]
-			disk_resource_load(playlist[self.trackID]) --FIXME: shouldn't load indefinitely
+			disk_resource_acquire(playlist[self.trackID])
+            if not disk_resource_loaded(playlist[self.trackID]) then
+                disk_resource_load(playlist[self.trackID])
+            end
 			self.audiosource = audio_source_make_ambient(playlist[self.trackID]);
 			if self.isplaying then
 				self.audiosource:play()
