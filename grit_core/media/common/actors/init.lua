@@ -43,6 +43,10 @@ end
 
 class "Character" (ColClass) {
 
+    controlable = true;
+    boomLengthMin = 3;
+    boomLengthMax = 15;
+
     renderingDistance = 100.0;
 
     castShadows = true;
@@ -64,10 +68,12 @@ class "Character" (ColClass) {
     mass = 80; 
     
 
-    activate = function(persistent, instance)
-        ColClass.activate(persistent, instance)
+    activate = function(self, instance)
+        ColClass.activate(self, instance)
 
-        persistent.needsStepCallbacks = true
+        instance.boomLengthSelected = (self.boomLengthMax + self.boomLengthMin)/2
+
+        self.needsStepCallbacks = true
 
         instance.isActor = true;
         instance.pushState = 0
@@ -85,7 +91,7 @@ class "Character" (ColClass) {
         instance.offGround = false
         instance.fallVelocity = 0
 		instance.speed = 0
-        persistent:updateMovementState()
+        self:updateMovementState()
         local body = instance.body
 
         body.ghost = true
@@ -93,19 +99,19 @@ class "Character" (ColClass) {
         local old_update_callback = body.updateCallback
         body.updateCallback = function (p,q)
             old_update_callback(p,q)
-            instance.camAttachPos = p + vector3(0,0,persistent.camHeight)
+            instance.camAttachPos = p + vector3(0,0,self.camHeight)
         end
 
     end;
 
-    deactivate = function (persistent)
-        persistent.needsStepCallbacks = false;
-        ColClass.deactivate(persistent)
+    deactivate = function (self)
+        self.needsStepCallbacks = false;
+        ColClass.deactivate(self)
     end;
 
-    stepCallback = function (persistent, elapsed)
+    stepCallback = function (self, elapsed)
 
-        local instance = persistent.instance
+        local instance = self.instance
         local body = instance.body
 
         --echo('-------------')
@@ -115,22 +121,22 @@ class "Character" (ColClass) {
         -- 
         local curr_foot = body.worldPosition
 		local old_foot = curr_foot
-        local height = persistent.height
-        local half_height = persistent.height/2
+        local height = self.height
+        local half_height = self.height/2
         local curr_centre = curr_foot + vector3(0,0,half_height)
 
-        local radius = persistent.radius
+        local radius = self.radius
 
         
         if instance.jumpHappened then
             if instance.offGround then
-                if instance.jumpsDone < persistent.jumpsAllowed then --check if we have ability to jump in air (aka double-jump)
-                    instance.fallVelocity = persistent.jumpVelocity
+                if instance.jumpsDone < self.jumpsAllowed then --check if we have ability to jump in air (aka double-jump)
+                    instance.fallVelocity = self.jumpVelocity
                     instance.jumpsDone = instance.jumpsDone + 1
 
                 end
             else
-                instance.fallVelocity = persistent.jumpVelocity -- first aka "normal" jump
+                instance.fallVelocity = self.jumpVelocity -- first aka "normal" jump
                 instance.jumpsDone = 1
             end
             instance.jumpHappened = false
@@ -140,8 +146,8 @@ class "Character" (ColClass) {
 
         local old_fall_velocity = instance.fallVelocity
         instance.fallVelocity = instance.fallVelocity + elapsed * gravity
-        if instance.fallVelocity > persistent.terminalVelocity then
-            instance.fallVelocity = persistent.terminalVelocity
+        if instance.fallVelocity > self.terminalVelocity then
+            instance.fallVelocity = self.terminalVelocity
         end
 
         --echo('fallVelocity: '..instance.fallVelocity)
@@ -156,7 +162,7 @@ class "Character" (ColClass) {
             fall_fraction = 1
         else
             instance.offGround = false
-            floor_impulse = persistent.mass * old_fall_velocity
+            floor_impulse = self.mass * old_fall_velocity
             instance.fallVelocity = 0
         end
         --echo('fall_dist: '..(fall_fraction * fall_vect).."  off_ground: "..tostring(instance.offGround))
@@ -167,13 +173,13 @@ class "Character" (ColClass) {
         if not instance.offGround then
             local floor_gradient = 1/floor_normal.z
             -- special case for vertical walls -- helps going up steps
-            if floor_gradient < 5 and floor_gradient > persistent.maxGradient then
+            if floor_gradient < 5 and floor_gradient > self.maxGradient then
                 no_step_up = true
             end
 
             -- apply force to ground
             --gravity
-            local ground_force = vector3(0,0,persistent.mass * gravity)
+            local ground_force = vector3(0,0,self.mass * gravity)
             ground_force = math.min(#ground_force, floor.mass * 5) * norm(ground_force)
             floor:force(ground_force, curr_foot)
             if floor_impulse ~= 0 then
@@ -189,14 +195,14 @@ class "Character" (ColClass) {
         -- WALK/STRAFE in a given direction
         instance.localMove = instance.localMoveIntended
         if instance.moving then
-            local speed = (instance.runState and persistent.runSpeed or persistent.walkSpeed) * elapsed
+            local speed = (instance.runState and self.runSpeed or self.walkSpeed) * elapsed
             local walk_dir = quat(player_ctrl.camYaw, V_DOWN)
             local walk_vect = speed * (walk_dir * norm(instance.localMove))
             if #walk_vect > 0.003 then
                 body.worldOrientation = quat(V_FORWARDS, norm(walk_vect))
             end
 
-            local step_height = persistent.stepHeight
+            local step_height = self.stepHeight
 
             local walk_cyl_height = height - step_height
             local walk_cyl_centre = curr_centre + vector3(0,0,step_height/2)
@@ -207,8 +213,8 @@ class "Character" (ColClass) {
             local retries, new_walk_vect, collision_body, collision_normal, collision_pos = cast_cylinder_with_deflection(body, radius, walk_cyl_height, walk_cyl_centre, walk_vect)
 
             if collision_body then
-                local push_force = instance.runState and persistent.runPushForce or persistent.pushForce
-                local magnitude = math.min(persistent.pushForce, collision_body.mass * 15) * -collision_normal
+                local push_force = instance.runState and self.runPushForce or self.pushForce
+                local magnitude = math.min(self.pushForce, collision_body.mass * 15) * -collision_normal
                 collision_body:force(magnitude, collision_pos)
             end
             --echo('first walk test:   retries: '..tostring(retries).." tried_vect:"..walk_vect.."  vect:"..new_walk_vect)
@@ -248,42 +254,60 @@ class "Character" (ColClass) {
 		return self.instance.speed
 	end;
 
-    updateMovementState = function (persistent)
-        local ins = persistent.instance
+    updateMovementState = function (self)
+        local ins = self.instance
         ins.moving = math.abs(ins.strafeRightState - ins.strafeLeftState)>0.5 or math.abs(ins.pushState - ins.pullState)>0.5
         ins.localMoveIntended = (vector3(ins.strafeRightState - ins.strafeLeftState, ins.pushState - ins.pullState, 0))
     end;
 
-    setForwards=function(persistent, v)
-        persistent.instance.pushState = v and 1 or 0
-        persistent:updateMovementState()
+    setForwards=function(self, v)
+        self.instance.pushState = v and 1 or 0
+        self:updateMovementState()
     end;
-    setBackwards=function(persistent, v)
-        persistent.instance.pullState = v and 1 or 0
-        persistent:updateMovementState()
+    setBackwards=function(self, v)
+        self.instance.pullState = v and 1 or 0
+        self:updateMovementState()
     end;
-    setStrafeLeft=function(persistent, v)
-        persistent.instance.strafeLeftState = v and 1 or 0
-        persistent:updateMovementState()
+    setStrafeLeft=function(self, v)
+        self.instance.strafeLeftState = v and 1 or 0
+        self:updateMovementState()
     end;
-    setStrafeRight=function(persistent, v)
-        persistent.instance.strafeRightState = v and 1 or 0
-        persistent:updateMovementState()
+    setStrafeRight=function(self, v)
+        self.instance.strafeRightState = v and 1 or 0
+        self:updateMovementState()
     end;
-    setRun=function(persistent, v)
-        persistent.instance.runState = v
+    setRun=function(self, v)
+        self.instance.runState = v
     end;
-    setCrouch=function(persistent, v)
-        persistent.instance.crouchState = v
+    setCrouch=function(self, v)
+        self.instance.crouchState = v
         if v then
-            persistent.instance.crouchHappened = true
+            self.instance.crouchHappened = true
         end
     end;
-    setJump=function(persistent, v)
-        persistent.instance.jumpState = v
+    setJump=function(self, v)
+        self.instance.jumpState = v
         if v then
-            persistent.instance.jumpHappened = true
+            self.instance.jumpHappened = true
         end
+    end;
+
+    controlZoomIn = regular_chase_cam_zoom_in;
+    controlZoomOut = regular_chase_cam_zoom_out;
+    controlUpdate = regular_chase_cam_update;
+
+    controlProcessKey = function(self, key)
+        player_ctrl.footBinds:process(key)
+    end;
+
+    controlFlush = function (self)
+        player_ctrl.footBinds:flush()
+    end;
+
+    controlBegin = function (self)
+        return true
+    end;
+    controlAbandon = function(self)
     end;
 
 }
