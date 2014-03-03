@@ -91,9 +91,11 @@ stats = gfx_hud_object_add("Stats", {
 
         mem = function()
             return string.format(
-                    "RAM | QI | QO: %d/%dMB || I:%d | HO:%d | GO:%d",
-                    gfx_gpu_ram_used()/1024/1024,
-                    gfx_gpu_ram_available()/1024/1024,
+                    "HRAM | GRAM || QI | HO | GO: %d/%dMB | %d/%dMB || I:%d | HO:%d | GO:%d",
+                    host_ram_used(),
+                    host_ram_available(),
+                    gfx_gpu_ram_used(),
+                    gfx_gpu_ram_available(),
                     get_in_queue_size(),
                     get_out_queue_size_host(),
                     get_out_queue_size_gpu());

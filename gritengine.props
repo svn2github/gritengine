@@ -28,7 +28,7 @@
     <Link>
       <AdditionalLibraryDirectories>$(DXSDK_DIR)Lib\x86;$(SolutionDir)\dependencies\icu\lib;$(SolutionDir)\dependencies\openal\lib\Win32;$(SolutionDir)\dependencies\grit_ogre_dependencies\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>dxguid.lib;dinput8.lib;OPENGL32.lib;GLU32.lib;d3d9.lib;d3dx9.lib;dxerr.lib;openal32.lib;icudt.lib;icuin.lib;icuuc.lib;cg.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dxguid.lib;dinput8.lib;OPENGL32.lib;GLU32.lib;d3d9.lib;d3dx9.lib;dxerr.lib;openal32.lib;icudt.lib;icuin.lib;icuuc.lib;cg.lib;libogg_static.lib;libvorbisfile_static.lib;libvorbis_static.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup />
