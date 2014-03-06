@@ -51,11 +51,6 @@
     <ClCompile />
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="grit_ogre\Components\Overlay\src\OgreBorderPanelOverlayElement.cpp" />
-    <ClCompile Include="grit_ogre\Components\Overlay\src\OgreFont.cpp" />
-    <ClCompile Include="grit_ogre\Components\Overlay\src\OgreFontManager.cpp" />
-    <ClCompile Include="grit_ogre\Components\Overlay\src\OgrePanelOverlayElement.cpp" />
-    <ClCompile Include="grit_ogre\Components\Overlay\src\OgreTextAreaOverlayElement.cpp" />
     <ClCompile Include="grit_ogre\OgreMain\src\OgreDualQuaternion.cpp" />
     <ClCompile Include="grit_ogre\OgreMain\src\OgreETC1Codec.cpp" />
     <ClCompile Include="grit_ogre\OgreMain\src\OgreHardwareCounterBuffer.cpp" />

@@ -864,21 +864,6 @@
     <ClCompile Include="grit_ogre\OgreMain\src\OgreDualQuaternion.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="grit_ogre\Components\Overlay\src\OgreBorderPanelOverlayElement.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="grit_ogre\Components\Overlay\src\OgreFont.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="grit_ogre\Components\Overlay\src\OgreFontManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="grit_ogre\Components\Overlay\src\OgrePanelOverlayElement.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="grit_ogre\Components\Overlay\src\OgreTextAreaOverlayElement.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="grit_ogre\OgreMain\src\OgreQueuedProgressiveMeshGenerator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
