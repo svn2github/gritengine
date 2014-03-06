@@ -282,7 +282,7 @@ function UI.frameCallback ()
         if not ui:getGrab() then
             if ui.coreBinds:process(button) ~= false then
                 ui:manageButtonsDown(button)
-                gfx_hud_signal_button(button, x, y)
+                gfx_hud_signal_button(button)
             end
         else
             if ui.coreBinds:process(button) ~= false then
