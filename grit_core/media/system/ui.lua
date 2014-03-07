@@ -259,7 +259,7 @@ function UI.frameCallback ()
             ui.pointerGrabCallbacks:execute(rel_x, rel_y)
         else
             ui.pointerCallbacks:execute(rel_x, rel_y)
-            gfx_hud_signal_mouse_move(x, y)
+            input_filter_trickle_mouse_move(vec(rel_x, rel_y), vec(x, y))
         end
     end
 
@@ -268,7 +268,7 @@ function UI.frameCallback ()
         ui:manageButtonsDown(key)
         if ui.coreBinds:process(key) ~= false then
             if not ui:getGrab() then
-                gfx_hud_signal_button(key)
+                input_filter_trickle_button(key)
             else
                 if ui.pressCallbacks:execute(key) ~= false then
                     ui.binds:process(key)
@@ -282,7 +282,7 @@ function UI.frameCallback ()
         if not ui:getGrab() then
             if ui.coreBinds:process(button) ~= false then
                 ui:manageButtonsDown(button)
-                gfx_hud_signal_button(button)
+                input_filter_trickle_button(button)
             end
         else
             if ui.coreBinds:process(button) ~= false then
