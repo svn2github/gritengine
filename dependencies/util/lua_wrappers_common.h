@@ -178,7 +178,7 @@ const luaL_reg name##_meta_table[] = { \
 static inline void push (lua_State *L, void *v, const char *tag)
 {
         void **ud = static_cast<void**>(lua_newuserdata(L, sizeof(*ud)));
-        *ud = static_cast<void*>(v);
+        *ud = v;
         luaL_getmetatable(L, tag);
         lua_setmetatable(L, -2);
 }
