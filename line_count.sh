@@ -3,8 +3,8 @@
 (
     find high_freq_noise/ launcher/ starbox/ grit_core/src gtasa/src dependencies/util luaimg/  \( -name '*.cpp' -o -name '*.h' -o -name '*.c' \) |
     grep -v 'tex_dups.\(h\|cpp\)' |
-    grep -v 'TColLexer.cpp' |
-    grep -v 'TColLexer-core-engine.cpp'
+    grep -v 'tcol_lexer.cpp' |
+    grep -v 'tcol_lexer-core-engine.cpp'
 
 
     find grit_core/media  \( -name '*.lua' \) |
@@ -15,7 +15,7 @@
     grep -v 'gtasa\/all_vehicles[.]lua' |
     grep -v 'gtasa\/non_cars[.]lua'
 
-    find exporters  \( -name '*.ms' \)
+    find exporters \( -name '*.ms' \)
 
-    find exporters  \( -name '*.py' \)
+    find exporters \( -name '*.py' \)
 ) | xargs wc -l
