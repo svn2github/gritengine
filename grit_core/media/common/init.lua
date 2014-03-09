@@ -24,7 +24,6 @@ include "props/init.lua"
 include "veg/init.lua"
 include "ramps/init.lua"
 
-
 -- Object placement bindings...
 
 local tab = {
@@ -57,23 +56,23 @@ local tab = {
 }
 
 for k,v in pairs(tab) do
-    ui:bind(k, function() echo(v) ; introduce_obj(v) end, nil, function() echo(v) ; introduce_obj(v,true) end)
+    common_binds:bind(k, function() echo(v) ; introduce_obj(v) end, nil, function() echo(v) ; introduce_obj(v,true) end)
 end
 
-ui:bind("k", function() place("ramps/Small") end)
-ui:bind("C+k", function() place("ramps/Large") end)
-ui:bind("A+k", function() place("ramps/HalfPipeSmall") end)
-ui:bind("C+A+k", function() place("ramps/HalfPipeLarge") end)
+common_binds:bind("k", function() place("ramps/Small") end)
+common_binds:bind("C+k", function() place("ramps/Large") end)
+common_binds:bind("A+k", function() place("ramps/HalfPipeSmall") end)
+common_binds:bind("C+A+k", function() place("ramps/HalfPipeLarge") end)
 
-ui:bind(".", function() place("veg/TropPlant1", nil, true) end)
-ui:bind("C+.", function() place("veg/GrassTuft1", nil, true) end)
-ui:bind("A+.", function() place("veg/TinyPalmT", nil, true) end)
-ui:bind("C+A+.", function() place("veg/GrassMesh", nil, true) end)
+common_binds:bind(".", function() place("veg/TropPlant1", nil, true) end)
+common_binds:bind("C+.", function() place("veg/GrassTuft1", nil, true) end)
+common_binds:bind("A+.", function() place("veg/TinyPalmT", nil, true) end)
+common_binds:bind("C+A+.", function() place("veg/GrassMesh", nil, true) end)
 
-ui:bind(",", function() place("veg/Tree_aelm") end)
-ui:bind("C+,", function() place("veg/prxtree") end)
+common_binds:bind(",", function() place("veg/Tree_aelm") end)
+common_binds:bind("C+,", function() place("veg/prxtree") end)
 
 
-ui:bind("j", function() place("props/junk/TrashCanShite") end)
-ui:bind("C+j", function() place("props/street/Lamp") end)
+common_binds:bind("j", function() place("props/junk/TrashCanShite") end)
+common_binds:bind("C+j", function() place("props/street/Lamp") end)
 

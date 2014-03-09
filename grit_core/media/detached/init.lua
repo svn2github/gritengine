@@ -51,7 +51,9 @@ end
 
 map_ghost_spawn(vector3(0, -185, 5))
 
-ui:bind("F2", function() soul_mode(not soul_mode_status) end)
+if detached_binds ~= nil then detached_binds:destroy() end
+detached_binds = InputFilter(300, "detached")
+detached_binds:bind("F2", function() soul_mode(not soul_mode_status) end)
 
 time_of_day()
 visual_settings(not disable_vince_settings)

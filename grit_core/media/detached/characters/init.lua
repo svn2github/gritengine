@@ -51,7 +51,7 @@ DetachedCharacterClass = extends (ColClass) {
 
     castShadows = true;
 
-    controlable = true;
+    controllable = "ACTOR";
     boomLengthMin = 3;
     boomLengthMax = 15;
 
@@ -548,14 +548,6 @@ DetachedCharacterClass = extends (ColClass) {
     controlZoomIn = regular_chase_cam_zoom_in;
     controlZoomOut = regular_chase_cam_zoom_out;
     controlUpdate = regular_chase_cam_update;
-
-    controlProcessKey = function(persistent, key)
-        player_ctrl.footBinds:process(key)
-    end;
-
-    controlFlush = function (persistent)
-        player_ctrl.footBinds:flush()
-    end;
 
     controlBegin = function (persistent)
         return true

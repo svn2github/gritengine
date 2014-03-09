@@ -1,6 +1,6 @@
 Plane = extends (ColClass) {
 
-    controlable = true;
+    controllable = "VEHICLE";
     boomLengthMin = 3;
     boomLengthMax = 15;
 
@@ -664,15 +664,6 @@ Plane.controlZoomIn = regular_chase_cam_zoom_in
 Plane.controlZoomOut = regular_chase_cam_zoom_out
 Plane.controlUpdate = regular_chase_cam_update
 
-function Plane.controlProcessKey (persistent, key)
-    player_ctrl.driveBinds:process(key)
-end
-
-function Plane.controlFlush (persistent)
-    player_ctrl.driveBinds:flush()
-end
-
-
 function Plane.controlBegin (persistent)
     if not persistent.activated then return end
     if persistent.instance.canDrive then
@@ -684,9 +675,6 @@ function Plane.controlAbandon (persistent)
     local instance = persistent.instance
     local body = instance.body
     instance.parked = dot(body.linearVelocity, body.worldOrientation * V_FORWARDS) < 0.5
-    instance.brake = false
-    instance.push = 0
-    instance.handbrake = false
 
     -- prevent thrust calculation if we abandoned vehicle
     for i,tp in ipairs(instance.currentThrust) do

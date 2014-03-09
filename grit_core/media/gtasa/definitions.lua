@@ -19,7 +19,7 @@ include "vehicles.lua"
 
 include "all_streetlamps.lua"
 
-ui:bind("b",function()fire("/gtasa/"..all_vehicles[math.random(#all_vehicles)])end)
+common_binds:bind("b",function()fire("/gtasa/"..all_vehicles[math.random(#all_vehicles)])end)
 
 function go_la()
         player_ctrl:warp(vector3(2312.48, -1621.77, 35.7562), quat(0.870673,0.00683816,0.00386254,0.4918))

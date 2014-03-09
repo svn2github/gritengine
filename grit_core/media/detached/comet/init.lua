@@ -32,7 +32,7 @@ FlyingCar = extends (ColClass) {
     cameraTrack = true;
     fovScale = true;
 
-    controlable = true;
+    controllable = "VEHICLE";
     boomLengthMin = 3;
     boomLengthMax = 15;
 
@@ -307,14 +307,6 @@ FlyingCar = extends (ColClass) {
     controlZoomIn = regular_chase_cam_zoom_in;
     controlZoomOut = regular_chase_cam_zoom_out;
     controlUpdate = regular_chase_cam_update;
-
-    controlProcessKey = function(persistent, key)
-        player_ctrl.driveBinds:process(key)
-    end;
-
-    controlFlush = function (persistent)
-        player_ctrl.driveBinds:flush()
-    end;
 
     controlBegin = function (persistent)
         if not persistent.activated then return end

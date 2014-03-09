@@ -2,6 +2,24 @@
 
 print("Loading player_ctrl.lua")
 
+if playing_binds ~= nil then playing_binds:destroy() end
+playing_binds = InputFilter(150, "playing_binds")
+
+if playing_actor_binds ~= nil then playing_actor_binds:destroy() end
+playing_actor_binds = InputFilter(170, "playing_actor_binds")
+
+if playing_vehicle_binds ~= nil then playing_vehicle_binds:destroy() end
+playing_vehicle_binds = InputFilter(171, "playing_vehicle_binds")
+
+if playing_ghost_binds ~= nil then playing_ghost_binds:destroy() end
+playing_ghost_binds = InputFilter(172, "playing_ghost_binds")
+
+playing_binds.mouseCapture = true
+
+playing_actor_binds.enabled = false
+playing_vehicle_binds.enabled = false
+
+
 if ghost ==  nil then
 ghost = {
     noClip = false,
@@ -24,7 +42,6 @@ ghost = {
 
     prodding = false;
 
-    binds = BindTable.new(),
 }
 else
     physics.stepCallbacks:removeByName("Prod")
@@ -45,10 +62,6 @@ end)
 local function ghost_cast (pos, ray, scale)
     local fraction, _, n = physics_sweep_sphere(scale*.15, pos, ray, true, 1)
     return fraction, n
-end
-
-function ghost:controlFlush (elapsed)
-    self.binds:flush()
 end
 
 function ghost:updateGhost (elapsed)
@@ -122,7 +135,7 @@ function ghost:grab()
                 obj:force(delta * 1000 * obj.mass, obj.worldPosition)
         end
         
-        if ui:down("left") then
+        if input_filter_pressed("left") then
             obj.angularVelocity = V_ZERO
             obj.worldOrientation = slerp(obj.worldOrientation, player_ctrl.camDir, 0.01)
         end
@@ -145,17 +158,12 @@ function ghost:grab()
 end
 ]]
 
-
-
-
-
 if player_ctrl == nil then
     player_ctrl = {
-    	mouseRelX = 0, --this holds relative mouse position change from the last update
-    	mouseRelY = 0,
+    	mouseRel = vec(0,0), --this holds relative mouse position change from the last update
     	
-    	mouseTotalRelX = 0, --this holds summ of all mouse position changes
-    	mouseTotalRelY = 0, --also this guys are reset when player gets in/out of the vehicle or any controllable object
+    	mouseTotalRel = vec(0,0), --this holds summ of all mouse position changes
+    	--also this guys are reset when player gets in/out of the vehicle or any controllable object
     
         camYaw = 0,
         camPitch = 0,
@@ -173,54 +181,27 @@ if player_ctrl == nil then
         currentBoomLength = 8,
 
 
-        driveBinds = BindTable.new(),
-        footBinds = BindTable.new(),
     }
 
-else
-    ui.pressCallbacks:removeByName("player_ctrl")
-    ui.pointerGrabCallbacks:removeByName("player_ctrl")
 end
 
-ui.pointerGrabCallbacks:insert("player_ctrl",function (rel_x,rel_y)
+playing_binds.mouseMoveCallback = function (rel)
     local sens = user_cfg.mouseSensitivity
-    
-	player_ctrl.mouseRelX = rel_x*sens
-    player_ctrl.mouseRelY = rel_y*sens
 
-	player_ctrl.mouseTotalRelX = player_ctrl.mouseTotalRelX + rel_x*sens
-    player_ctrl.mouseTotalRelY = player_ctrl.mouseTotalRelY + rel_y*sens
+    player_ctrl.mouseRel = rel * sens
+    
+	player_ctrl.mouseTotalRel = player_ctrl.mouseTotalRel + rel*sens
 
     local inv = user_cfg.mouseInvert and -1 or 1
     
-    player_ctrl.camYaw = (player_ctrl.camYaw + rel_x*sens) % 360
-    player_ctrl.camPitch = clamp(player_ctrl.camPitch + inv*rel_y*sens, -90, 90)
+    player_ctrl.camYaw = (player_ctrl.camYaw + rel.x*sens) % 360
+    player_ctrl.camPitch = clamp(player_ctrl.camPitch + inv*rel.y*sens, -90, 90)
     player_ctrl.playerCamPitch = player_ctrl.camPitch
 
     player_ctrl.camDir = quat(player_ctrl.camYaw,V_DOWN) * quat(player_ctrl.camPitch,V_EAST)
 
     player_ctrl.lastMouseMoveTime = seconds()
-end)
-
-ui.pressCallbacks:insert("player_ctrl",function (key)
-    local obj = player_ctrl.controlObj
-    if obj == nil then
-        return ghost.binds:process(key)
-    else
-        return obj:controlProcessKey(key)
-    end
-        --return player_ctrl.driveBinds:process(key)
-        --return player_ctrl.footBinds:process(key)
-end)
-
-function player_ctrl:flush()
-    if self.controlObj == nil then
-        ghost:controlFlush()
-    else
-        self.controlObj:controlFlush()
-    end
 end
-
 
 
 function player_ctrl:update (elapsed)
@@ -238,12 +219,31 @@ function player_ctrl:update (elapsed)
     end
 end
 
+-- Controllable objects all have the field controllable set to one of the
+-- strings "ACTOR" or "VEHICLE", indicating the input filter (bindings) to use.
+-- controBegin() can return false, indicating that this instance is no-longer controllable (perhaps damaged).
+-- controlAbandon() is also called
+
+
 function player_ctrl:beginControlObj(obj)
     if not obj.activated then error("Can't control a deactivated object") end
-    if obj.controlable and obj:controlBegin() then
-    	player_ctrl.mouseTotalRelX = 0
-    	player_ctrl.mouseTotalRelY = 0
-        player_ctrl.controlObj = obj
+    local bindings = obj.controllable
+    if bindings == nil then return end
+    if obj:controlBegin() then
+        if bindings == "ACTOR" then
+            playing_ghost_binds.enabled = false
+            playing_vehicle_binds.enabled = false
+            player_ctrl.controlObj = obj
+            playing_actor_binds.enabled = true
+        elseif bindings == "VEHICLE" then
+            playing_ghost_binds.enabled = false
+            playing_actor_binds.enabled = false
+            player_ctrl.controlObj = obj
+            playing_vehicle_binds.enabled = true
+        else
+            error("Unrecognised kind of bindings: "..tostring(bindings))
+        end
+    	player_ctrl.mouseTotalRel = vec(0,0)
     end
 end
 
@@ -252,9 +252,11 @@ function player_ctrl:abandonControlObj()
     if obj and obj.activated then
             obj:controlAbandon()
     end
+    playing_actor_binds.enabled = false
+    playing_vehicle_binds.enabled = false
     self.controlObj = nil
-    self.mouseTotalRelX = 0
-    self.mouseTotalRelY = 0
+    playing_ghost_binds.enabled = true
+    self.mouseTotalRel = vec(0,0)
 end
 
 -- tell me how far in a given direction i can place the camera without it clipping anything
@@ -283,12 +285,12 @@ end
 
 function fire (type)
         local speed = ghost.fast and ghost.shootFast or ghost.shootSlow
-        local spin = ui:alt() and ghost.shootSpin
+        local spin = input_filter_pressed("Alt") and ghost.shootSpin
         fire_extended(speed,type,spin)
 end
 
 function introduce_obj (type)
-        if ui:ctrl() then
+        if input_filter_pressed("Ctrl") then
                 fire(type)
         else
                 place(type)

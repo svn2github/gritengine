@@ -31,7 +31,7 @@ hud_class "Clock" {
     end;
     buttonCallback = function (self, key)
         if not self.inside then return end
-        local interval = ui:shift() and 60*60 or 5*60
+        local interval = input_filter_pressed("Shift") and 60*60 or 5*60
         if key == "+left" then
             env.secondsSinceMidnight = (env.secondsSinceMidnight - interval) % (24*60*60)
         elseif key == "+right" then

@@ -301,13 +301,13 @@ local default_user_foot_bindings = {
 local core_binding_functions = {
     console = function()
         if console.enabled then
-            ui:grab()
-            ui:flush()
+            -- come out of debug mode
+            debug_binds.modal = false
             ticker.enabled = true
             console.enabled = false
         else
-            ui:ungrab()
-            ui:flush()
+            -- into debug mode
+            debug_binds.modal = true
             ticker.enabled = false
             console.enabled = true
         end
@@ -345,10 +345,6 @@ local core_binding_functions = {
     toggleFullScreen = function ()
         user_cfg.fullscreen = not user_cfg.fullscreen
         -- avoid these keys getting 'stuck down' as we lose focus momentarily
-        keyb_flush("Alt")
-        keyb_flush("Return")
-        ui:flush("Alt")
-        ui:flush("Return")
     end;
     toggleVSync = function ()
     user_cfg.vsync = not user_cfg.vsync
@@ -461,10 +457,20 @@ local function process_bindings(bindings, functions, tab)
     end
 end
 
-process_bindings(user_core_bindings, core_binding_functions, ui.coreBinds)
-process_bindings(user_ghost_bindings, ghost_binding_functions, ghost.binds)
-process_bindings(user_drive_bindings, drive_binding_functions, player_ctrl.driveBinds)
-process_bindings(user_foot_bindings, foot_binding_functions, player_ctrl.footBinds)
+if menu_binds ~= nil then menu_binds:destroy() end
+menu_binds = InputFilter(0, "menu_binds")
+
+if debug_binds ~= nil then debug_binds:destroy() end
+debug_binds = InputFilter(50, "debug_binds")
+debug_binds.modal = true
+
+if common_binds ~= nil then common_binds:destroy() end
+common_binds = InputFilter(100, "common_binds")
+
+process_bindings(user_core_bindings, core_binding_functions, menu_binds)
+process_bindings(user_ghost_bindings, ghost_binding_functions, playing_ghost_binds)
+process_bindings(user_drive_bindings, drive_binding_functions, playing_vehicle_binds)
+process_bindings(user_foot_bindings, foot_binding_functions, playing_actor_binds)
 
 
 

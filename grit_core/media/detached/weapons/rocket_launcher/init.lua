@@ -72,7 +72,7 @@ function fire_rocket (pos)
 
 end
 
-ui:bind("A+-", function () fire_rocket() end )
+detached_binds:bind("A+-", function () fire_rocket() end )
 
 class "RocketLauncher" (BaseClass) {
     gfxMesh = "rocket_launcher.mesh";

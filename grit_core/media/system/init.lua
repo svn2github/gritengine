@@ -59,16 +59,26 @@ function main:run (...)
         -- rendering loop
         while not clicked_close() and not main.shouldQuit do
 
-                
-                if last_focus and not have_focus() then
-                        keyb_flush() -- get rid of any sticky keys
-                        last_focus = false
-                        ui:updateGrabbed()
+                if last_focus ~= have_focus() then
+                    last_focus = have_focus()
+                    input_filter_flush()
                 end
 
-                if not last_focus and have_focus() then
-                        last_focus = true
-                        ui:updateGrabbed()
+                local presses = get_keyb_presses()
+                local moved,buttons,x,y,rel_x,rel_y = get_mouse_events()
+
+                if moved then
+                    input_filter_trickle_mouse_move(vec(rel_x, rel_y), vec(x, y))
+                end
+
+                for _,key in ipairs(presses) do
+                    if get_keyb_verbose() then echo("Lua key event: "..key) end
+                    input_filter_trickle_button(key)
+                end
+
+                for _,button in ipairs(buttons) do
+                    if get_keyb_verbose() then echo("Lua mouse event: "..button) end
+                    input_filter_trickle_button(button)
                 end
 
 
@@ -114,14 +124,8 @@ function main:run (...)
 end
 
 
-
---sm = get_sm()
-
-
 include("unicode_test_strings.lua")
 
-
-include("ui.lua")
 
 include("gfx.lua")
 

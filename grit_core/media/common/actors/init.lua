@@ -43,7 +43,7 @@ end
 
 class "Character" (ColClass) {
 
-    controlable = true;
+    controllable = "ACTOR";
     boomLengthMin = 3;
     boomLengthMax = 15;
 
@@ -295,14 +295,6 @@ class "Character" (ColClass) {
     controlZoomIn = regular_chase_cam_zoom_in;
     controlZoomOut = regular_chase_cam_zoom_out;
     controlUpdate = regular_chase_cam_update;
-
-    controlProcessKey = function(self, key)
-        player_ctrl.footBinds:process(key)
-    end;
-
-    controlFlush = function (self)
-        player_ctrl.footBinds:flush()
-    end;
 
     controlBegin = function (self)
         return true

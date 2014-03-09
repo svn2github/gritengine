@@ -2,7 +2,7 @@
 
 Vehicle = extends (ColClass) {
 
-        controlable = true;
+        controllable = "VEHICLE";
         boomLengthMin = 3;
         boomLengthMax = 15;
 
@@ -632,14 +632,6 @@ Vehicle.controlZoomIn = regular_chase_cam_zoom_in
 Vehicle.controlZoomOut = regular_chase_cam_zoom_out
 Vehicle.controlUpdate = regular_chase_cam_update
 
-function Vehicle.controlProcessKey (persistent, key)
-    player_ctrl.driveBinds:process(key)
-end
-
-function Vehicle.controlFlush (persistent)
-    player_ctrl.driveBinds:flush()
-end
-
 
 function Vehicle.controlBegin (persistent)
     if not persistent.activated then return end
@@ -655,10 +647,6 @@ function Vehicle.controlAbandon (persistent)
     local body = instance.body
     local speed = dot(body.linearVelocity, (body.worldOrientation * V_FORWARDS))
     persistent.instance.parked = speed < 5 and speed > -5
-    instance.brake = false
-    instance.engine.gear = 0
-    instance.push = 0
-    instance.handbrake = false
     --local v_pitch = pitch((vehicle.instance.body.worldOrientation * V_FORWARDS).z)
     --self.playerCamPitch = self.playerCamPitch + v_pitch
 end

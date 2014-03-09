@@ -1,3 +1,5 @@
+
+
 hud_class "Console" (extends (BorderPane) {
 
     promptPrefix = "lua> ";
@@ -47,6 +49,8 @@ hud_class "Console" (extends (BorderPane) {
 
         self.lastCompletionsList = nil
         self.lastCompletionIndex = 0
+
+        self:positionCursor()
     end;
 
     print = function (self, str)
@@ -169,16 +173,18 @@ hud_class "Console" (extends (BorderPane) {
                 self.promptBefore = self.promptBefore .. self.promptAfter:sub(1,1)
                 self.promptAfter = self.promptAfter:sub(2)
             end
-        elseif ui:ctrl() and ev2 == "a" then
+        elseif input_filter_pressed("Ctrl") and ev2 == "d" then
+            self.promptAfter = self.promptAfter:sub(2)
+        elseif input_filter_pressed("Ctrl") and ev2 == "a" then
             self.promptBefore, self.promptAfter = "", self.promptBefore..self.promptAfter
-        elseif ui:ctrl() and ev2 == "e" then
+        elseif input_filter_pressed("Ctrl") and ev2 == "e" then
             self.promptBefore, self.promptAfter = self.promptBefore..self.promptAfter, ""
-        elseif ui:ctrl() and ev2 == "w" then
+        elseif input_filter_pressed("Ctrl") and ev2 == "w" then
             self.promptBefore = self.promptBefore:gsub(" [^ ]* ?$"," ")
-        elseif ui:ctrl() and ev2 == "k" then
+        elseif input_filter_pressed("Ctrl") and ev2 == "k" then
             set_clipboard(self.promptAfter)
             self.promptAfter = ""
-        elseif ui:ctrl() and (ev2 == "y" or ev2 == "v") then
+        elseif input_filter_pressed("Ctrl") and (ev2 == "y" or ev2 == "v") then
             local str = get_clipboard()
             self.promptBefore = self.promptBefore .. str
         elseif ev:sub(1,1) == ":" then
@@ -219,17 +225,21 @@ hud_class "Console" (extends (BorderPane) {
                 self.text.scroll = math.ceil(self.text.bufferHeight - self.text.size.y)
                 self.pinToBottom = true
             end
-        elseif ui:ctrl() and ev2 == "Space" then
+        elseif input_filter_pressed("Ctrl") and ev2 == "Space" then
             self:autocomplete()
             reset_completions = false
         end
         self.prompt.text = self.promptPrefix..self.promptBefore..self.promptAfter
-        local tw = gfx_font_text_width(self.font, self.promptPrefix .. self.promptBefore)
-        self.cursor.position = vec(-self.size.x/2 + self.border + tw, self.prompt.position.y)
+        self:positionCursor()
         if reset_completions then
             self.lastCompletionList = nil
             self.lastCompletionIndex = 0
         end
+    end;
+
+    positionCursor = function (self)
+        local tw = gfx_font_text_width(self.font, self.promptPrefix .. self.promptBefore)
+        self.cursor.position = vec(-self.size.x/2 + self.border + tw, self.prompt.position.y)
     end;
 
     execute = function (self, str)
