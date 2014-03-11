@@ -616,9 +616,10 @@ local function commit(c, p, flush, partial)
                 gfx_option("FOG",v)
                 reset_shaders = true
             elseif k == "physicsWireFrame" then
-                --FIXME: currently broken and confusing users, disable for now
-                --physics_option("DEBUG_WIREFRAME", v)
+				echo("Physics wire frame: "..(v and "on" or "off"))
+                physics_option("DEBUG_WIREFRAME", v)
             elseif k == "physicsDebugWorld" then
+				echo("Physics debug world: "..(v and "on" or "off"))
                 physics.debugWorld = v
             elseif k == "mouseSensitivity" then
                 -- next mouse movement picks this up
