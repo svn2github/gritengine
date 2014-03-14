@@ -23,13 +23,13 @@ hud_class "DragIcon" {
         self.enabled = true
         self.needsInputCallbacks = true
         self.colour = c:getDragColour()
-        set_mouse_hide(true)
+        input_filter_set_cursor_hidden(true)
     end;
     stopDrag = function (self)
         control_being_dragged = nil
         self.enabled = false
         self.needsFrameCallbacks = false
-        set_mouse_hide(false)
+        input_filter_set_cursor_hidden(false)
     end
 }
 control_beaker = gfx_hud_object_add("DragIcon", { enabled = false })
