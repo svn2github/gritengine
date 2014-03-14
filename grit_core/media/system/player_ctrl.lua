@@ -163,7 +163,7 @@ if player_ctrl == nil then
     	mouseRel = vec(0,0), --this holds relative mouse position change from the last update
     	
     	mouseTotalRel = vec(0,0), --this holds summ of all mouse position changes
-    	--also this guys are reset when player gets in/out of the vehicle or any controllable object
+    	--also this guys (above) are reset when player gets in/out of any controllable object
     
         camYaw = 0,
         camPitch = 0,

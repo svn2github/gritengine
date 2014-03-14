@@ -332,6 +332,7 @@ end
 ]]
 
 function top_down_cam_update(persistent)
+    --this is a pure top down camera, always facing down
 	local instance = persistent.instance
 	local body = instance.body
     local vehicle_point = body.worldOrientation * V_FORWARDS
@@ -342,23 +343,21 @@ function top_down_cam_update(persistent)
     	return
     end
     
-    player_ctrl.mouseTotalRel = vec(
-        clamp(player_ctrl.mouseTotalRel.x, -15, 15),
-	    clamp(player_ctrl.mouseTotalRel.y, -15, 15))
     
-    local offset = player_ctrl.mouseTotalRel
-    
-    player_ctrl.camPos = instance.camAttachPos + V_UP*instance.boomLengthSelected + vehicle_dir*vec3(offset, 0)
-    player_ctrl.camFocus = player_ctrl.camPos
+    player_ctrl.camPos = instance.camAttachPos + V_UP*instance.boomLengthSelected
+    player_ctrl.camFocus = instance.camAttachPos
     
     player_ctrl.speedoPos = instance.camAttachPos
     player_ctrl.speedoSpeed = #body.linearVelocity
     
-    local delta = norm(instance.camAttachPos - player_ctrl.camPos)
-    local yaw, pitch = yaw_pitch(delta)
-    
-    player_ctrl.camDir =  quat(yaw, vector3(0,0, -1)) * quat(pitch, vector3(1,0,0))
-    --player_ctrl.camDir = quat(V_FORWARDS, norm(body.worldPosition - player_ctrl.camPos)) --FIXME: compensate roll
+    player_ctrl.camDir = vehicle_dir*Q_DOWN
+end
+
+function top_angled_cam_update(persistent)
+    --this is a locked pitch angle camera pretty much similar to regular_chase_cam
+    player_ctrl.camPitch = -45
+    player_ctrl.lastMouseMoveTime = 0 --this makes camera always adjusting it's yaw rotation, disregarding mouse movements
+	regular_chase_cam_update(persistent)
 end
 
 ColClass = extends (BaseClass) {
