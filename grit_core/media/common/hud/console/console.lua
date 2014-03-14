@@ -231,7 +231,8 @@ hud_class "Console" (extends (BorderPane) {
         end
         self.prompt.text = self.promptPrefix..self.promptBefore..self.promptAfter
         self:positionCursor()
-        if reset_completions then
+        
+        if reset_completions and ev:sub(1,1) == ':' then
             self.lastCompletionList = nil
             self.lastCompletionIndex = 0
         end
@@ -297,24 +298,22 @@ hud_class "Console" (extends (BorderPane) {
             if i > #self.lastCompletionList then --loop around
                 i = 1
             end
-            self.before = self.before:gsub(self.lastCompletionList[self.lastCompletionIndex].."$", self.lastCompletionList[i])
+            self.promptBefore = self.promptBefore:gsub(self.lastCompletionList[self.lastCompletionIndex].."$", self.lastCompletionList[i])
             self.lastCompletionIndex = i
             return
         end
 
         local splits = {}
---[[ --FIXME: barks at \. as wrong escape sequence
-        for m in self.before:gmatch("[^\.:]+")  do
+        for m in self.promptBefore:gmatch("[^\\.:]+")  do
             splits[#splits+1] = m
         end
-        if self.before:find("[\.:]$") then
+        if self.promptBefore:find("[\\.:]$") then
             splits[#splits+1] = ""
         end
-]]
+        
         local parent = _G
 
         for i,v in ipairs(splits) do
-
             if i == #splits then
                 local completionList = {}
                 for k in pairs(parent) do
@@ -334,12 +333,12 @@ hud_class "Console" (extends (BorderPane) {
                 for ii, completion in ipairs(completionList) do
                     if v == "" then
                         --first suggestion if the last character was . or :
-                        self.before = self.before .. completion
+                        self.promptBefore = self.promptBefore .. completion
                         self.lastCompletionIndex = ii
                         return
                     end
                     if completion ~= v then
-                        self.before = self.before:gsub(v.."$", completion)
+                        self.promptBefore = self.promptBefore:gsub(v.."$", completion)
                         self.lastCompletionIndex = ii
                         return
                     end
@@ -352,6 +351,5 @@ hud_class "Console" (extends (BorderPane) {
             end
             parent = c
         end
-
     end;
 })
