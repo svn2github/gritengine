@@ -50,7 +50,6 @@ hud_class "Console" (extends (BorderPane) {
         self.lastCompletionsList = nil
         self.lastCompletionIndex = 0
 
-        self:positionCursor()
     end;
 
     print = function (self, str)
@@ -122,6 +121,7 @@ hud_class "Console" (extends (BorderPane) {
         self.prompt.position = vec(0, -self.size.y/2 + self.border + font_height/2)
 
         self:redraw()
+        self:positionCursor()
     end;    
 
     mouseMoveCallback = function (self, local_pos, screen_pos, inside)
