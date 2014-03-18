@@ -41,11 +41,15 @@ hud_class "../MusicPlayer" {
 		self.orientation = 23
 		self.texture = "MusicPlayer/body.png"
 		
-		self.showHideButton = gfx_hud_object_add("Button", {caption = ":"})
-		self.showHideButton.parent = self
-		self.showHideButton.size = vector2(16, 16)
+		self.showHideButton = gfx_hud_object_add("FlatButton", {
+            caption=":";
+            font="/common/fonts/misc.fixed";
+            texture="/common/hud/CornerTextures/Filled04.png";
+            borderTexture="/common/hud/CornerTextures/Border04.png";
+            size=vec(16, 16);
+            parent=self,
+        })
 		self.showHideButton.position = vector2(self.size.x/2-32, self.size.y/2-18)
-		self.showHideButton.inheritOrientation = true
 		self.showHideButton.pressedCallback = function(this)
 			if self.position == self.closePosition then
 				self.state = "opening"
@@ -54,13 +58,13 @@ hud_class "../MusicPlayer" {
 			self.state = "closing"
 		end
 		
-		self.playPauseButton = gfx_hud_object_add("Button")
-		--self.playPauseButton:setCaption("||") --when something playing
-		self.playPauseButton:setCaption("▶")
-		self.playPauseButton.parent = self
-		self.playPauseButton.size = vector2(48, 32)
+		self.playPauseButton = gfx_hud_object_add("FlatButton", {
+            caption="▶",
+            font="/common/fonts/misc.fixed",
+            size=vec(48, 32),
+            parent=self,
+        })
 		self.playPauseButton.position = vector2(0, -90)
-		self.playPauseButton.inheritOrientation = true
 		self.playPauseButton.pressedCallback = function(this)
 			if self.audiosource.playing then
 				self.isplaying = false
@@ -73,11 +77,13 @@ hud_class "../MusicPlayer" {
 			end
 		end
 		
-		self.prevSongButton = gfx_hud_object_add("Button", {caption = "<"})
-		self.prevSongButton.parent = self
-		self.prevSongButton.size = vector2(32, 24)
+		self.prevSongButton = gfx_hud_object_add("FlatButton", {
+            caption="<",
+            font="/common/fonts/misc.fixed",
+            size=vec(32, 24),
+            parent=self,
+        })
 		self.prevSongButton.position = vector2(-52, -90)
-		self.prevSongButton.inheritOrientation = true
 		self.prevSongButton.pressedCallback = function(this)
 			if self.audiosource.playing then
 				self.audiosource:stop()
@@ -96,11 +102,13 @@ hud_class "../MusicPlayer" {
 			end
 		end
 		
-		self.nextSongButton = gfx_hud_object_add("Button", {caption = ">"})
-		self.nextSongButton.parent = self
-		self.nextSongButton.size = vector2(32, 24)
+		self.nextSongButton = gfx_hud_object_add("FlatButton", {
+            caption=">",
+            font="/common/fonts/misc.fixed",
+            size=vec(32, 24),
+            parent=self,
+        })
 		self.nextSongButton.position = vector2(52, -90)
-		self.nextSongButton.inheritOrientation = true
 		self.nextSongButton.pressedCallback = function(this)
 			if self.audiosource.playing then
 				self.audiosource:stop()

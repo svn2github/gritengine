@@ -29,13 +29,15 @@ local caption_to_env = {
     ["Sun Falloff"] = "sunFalloff",
 }
 
-hud_class "../EnvCycleEditor" (extends (BorderPane) {
+hud_class "../EnvCycleEditor" {
 
-    borderColour=vector3(0,0,0),
+    cornered=true;
 
-    colour=vector3(0,0,0),
+    texture="/common/hud/CornerTextures/Filled16.png";
 
-    alpha=0.7,
+    size=vec(100,100); -- updated by code later, this just stops it being set to the texture size, which is wrong
+
+    colour=vector3(.2,.2,.2);
 
     -- WAYS TO INTERACT:
     -- * change time, requires update of colours in controls and colour picker
@@ -170,7 +172,6 @@ hud_class "../EnvCycleEditor" (extends (BorderPane) {
     end;
 
     init = function (self)
-        BorderPane.init(self)
         
         self.needsInputCallbacks = true
         self.needsFrameCallbacks = true
@@ -202,28 +203,30 @@ hud_class "../EnvCycleEditor" (extends (BorderPane) {
         self.timeLabel = gfx_hud_object_add("Label", {
             size = vec(60,20);
         })
-        self.timeLeftButton = gfx_hud_object_add("Button", {
+        self.timeLeftButton = gfx_hud_object_add("FlatButton", {
             caption = "◄";
+            font = "/common/fonts/misc.fixed";
             pressedCallback = function (self2)
                 self:timeChange(-1)
             end;
             size = vec(16,20);
         })
-        self.timeRightButton = gfx_hud_object_add("Button", {
+        self.timeRightButton = gfx_hud_object_add("FlatButton", {
             caption = "►";
+            font = "/common/fonts/misc.fixed";
             pressedCallback = function (self2)
                 self:timeChange(1)
             end;
             size = vec(16,20);
         })
-        self.loadButton = gfx_hud_object_add("Button", {
+        self.loadButton = gfx_hud_object_add("FlatButton", {
             caption = "Load";
             pressedCallback = function (self2)
                 self:load()
             end;
             size = vec(48,20);
         })
-        self.saveButton = gfx_hud_object_add("Button", {
+        self.saveButton = gfx_hud_object_add("FlatButton", {
             caption = "Save";
             pressedCallback = function (self2)
                 self:save()
@@ -357,7 +360,6 @@ hud_class "../EnvCycleEditor" (extends (BorderPane) {
         self.marker = gfx_hud_object_add("Rect", { parent=self, texture="EnvCycleEditor/marker.png", zOrder=6})
 
         self.size = self.contents.size + vector2(16,16)
-        self:updateChildrenSize()
 
         self:controlClicked("Grad6")
 
@@ -422,7 +424,6 @@ hud_class "../EnvCycleEditor" (extends (BorderPane) {
     destroy = function(self)
         self.contents = safe_destroy(self.contents)
         self.marker = safe_destroy(self.marker)
-        BorderPane.destroy(self)
     end;
     
     mouseMoveCallback = function (self, local_pos, screen_pos, inside)
@@ -466,4 +467,4 @@ hud_class "../EnvCycleEditor" (extends (BorderPane) {
         end, error_handler)
     end;
         
-})
+}

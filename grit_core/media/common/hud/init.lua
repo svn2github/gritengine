@@ -4,7 +4,7 @@ include "base.lua"
 
 include "stack.lua"
 
-include "Button/init.lua"
+include "FlatButton/init.lua"
 include "label.lua"
 include "editbox.lua"
 include "scale.lua"
@@ -154,7 +154,7 @@ env_cycle_editor.enabled = env_cycle_editor_enabled
 if env_cycle_editor_button ~= nil and not env_cycle_editor_button.destroyed then
     env_cycle_editor_button:destroy()
 end
-env_cycle_editor_button = gfx_hud_object_add("Button", {
+env_cycle_editor_button = gfx_hud_object_add("FlatButton", {
     pressedCallback = function (self)
         env_cycle_editor.enabled = not env_cycle_editor.enabled
         if env_cycle_editor.enabled then
@@ -163,7 +163,6 @@ env_cycle_editor_button = gfx_hud_object_add("Button", {
     end;
     caption = "Env Cycle Editor";
     position = vector2(64,16);
-    size = vector2(128, 32);
 })
 
 collectgarbage("collect") -- when reloading this file, this avoids having any crap left on the screen
