@@ -530,12 +530,12 @@ l_noret luaG_typeerror (lua_State *L, const TValue *o, const char *op) {
 
 
 l_noret luaG_concaterror (lua_State *L, StkId p1, StkId p2) {
-  luaG_runerror(L, "attempt to concatenate %s and %s", luaT_typenames_[ttype(p1)], luaT_typenames_[ttype(p2)]);
+  luaG_runerror(L, "attempt to concatenate %s and %s", objtypename(p1), objtypename(p2));
 }
 
 
 l_noret luaG_aritherror (lua_State *L, const TValue *p1, const TValue *p2) {
-  luaG_runerror(L, "attempt to perform arithmetic on %s and %s", luaT_typenames_[ttype(p1)], luaT_typenames_[ttype(p2)]);
+  luaG_runerror(L, "attempt to perform arithmetic on %s and %s", objtypename(p1), objtypename(p2));
 }
 
 
