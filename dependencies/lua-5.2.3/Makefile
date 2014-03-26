@@ -38,7 +38,7 @@ test: test.c $(LUA_A)
 	$(CC) $(CFLAGS) $< $(LUA_A) -lm -o $@
 
 clean:
-	rm -fv $(BASE_O) test $(LUA_T) $(LUAC_T) $(LUA_A)
+	rm -fv $(BASE_O) $(LUA_O) $(LUAC_O) $(LUA_T) $(LUAC_T) $(LUA_A) test
 
 # DO NOT DELETE
 
