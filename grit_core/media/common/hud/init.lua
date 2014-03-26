@@ -12,6 +12,7 @@ include "EnvCycleEditor/init.lua"
 include "ColourPicker/init.lua"
 include "controls/init.lua"
 include "console/init.lua"
+include "menu/init.lua"
 
 include "Compass/init.lua"
 include "speedo.lua"
@@ -31,6 +32,7 @@ end
 ticker = gfx_hud_object_add("console/Ticker", {buffer=buffer, timeBuffer=other_buffer, shadow=vec(1,-1), zOrder=7})
 ticker.enabled = false
 
+-- Console
 if console ~= nil then
     buffer = console.buffer
     other_buffer = console.cmdBuffer
@@ -40,6 +42,13 @@ else
 end
 console = gfx_hud_object_add("console/Console", {buffer=buffer, cmdBuffer=other_buffer, shadow=vec(1,-1), zOrder=7})
 
+-- Menu
+if menu ~= nil then
+    buffer = menu.enabled
+    safe_destroy(menu)
+end
+menu = gfx_hud_object_add("menu/Main", {zOrder=6})
+menu.enabled = (buffer or false)
 
 -- Crosshair
 safe_destroy(ch)

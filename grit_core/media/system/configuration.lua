@@ -227,6 +227,7 @@ local debug_cfg_spec = {
 
 
 local default_user_core_bindings = {
+    menu = "Escape";
     console = "Tab";
     record = "C+F12";
     screenShot = "F12";
@@ -299,6 +300,15 @@ local default_user_foot_bindings = {
 
 
 local core_binding_functions = {
+    menu = function()
+        if menu.enabled then
+            menu_binds.modal = false
+            menu.enabled = false
+        else
+            menu_binds.modal = true
+            menu.enabled = true
+        end
+    end;
     console = function()
         if console.enabled then
             -- come out of debug mode
