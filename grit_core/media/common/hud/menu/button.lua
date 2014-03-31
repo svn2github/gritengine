@@ -33,6 +33,7 @@ hud_class "Button" {
     setCaption = function (self, v)
         self.caption = v
         self.text.text = self.caption
+        self.size = self.text.size
     end;
 
     setGreyed = function (self, v)

@@ -1,5 +1,8 @@
 hud_class "Main" {
     colour = vec(1, 0.5, 0)*0.5;
+    
+    padding = 16;
+    
     init = function (self)
         self.needsParentResizedCallbacks = true
         
@@ -28,7 +31,7 @@ hud_class "Main" {
             return getBoolStateString(user_cfg.metricUnits, "Speedo: Metric", "Speedo: Imperial")
         end
         
-        self.mainContent = newContent({ padding = 10,
+        self.mainContent = newContent({ padding = self.padding,
             newButton("Resume", {pressedCallback = function() 
                 menu_binds.modal = false
                 menu.enabled = false
@@ -37,7 +40,7 @@ hud_class "Main" {
             newButton("Quit", {pressedCallback = quit}),     
         })
         
-        self.optionsContent = newContent({ padding = 10,
+        self.optionsContent = newContent({ padding = self.padding,
             newButton(mouseInvStateString(), {
                 pressedCallback = function(self)
                     user_cfg.mouseInvert = not user_cfg.mouseInvert
