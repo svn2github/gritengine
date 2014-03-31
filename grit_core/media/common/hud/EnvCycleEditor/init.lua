@@ -1,18 +1,18 @@
 -- (c) David Cunningham 2013, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
 local caption_to_env = {
-    ["Grad1"] = "grad1",
-    ["Grad2"] = "grad2",
-    ["Grad3"] = "grad3",
-    ["Grad4"] = "grad4",
-    ["Grad5"] = "grad5",
-    ["Grad6"] = "grad6",
-    ["Sun Grad1"] = "sunGrad1",
-    ["Sun Grad2"] = "sunGrad2",
-    ["Sun Grad3"] = "sunGrad3",
-    ["Sun Grad4"] = "sunGrad4",
-    ["Sun Grad5"] = "sunGrad5",
-    ["Sun Grad6"] = "sunGrad6",
+    ["Gradient1"] = "grad1",
+    ["Gradient2"] = "grad2",
+    ["Gradient3"] = "grad3",
+    ["Gradient4"] = "grad4",
+    ["Gradient5"] = "grad5",
+    ["Gradient6"] = "grad6",
+    ["Sun Gradient1"] = "sunGrad1",
+    ["Sun Gradient2"] = "sunGrad2",
+    ["Sun Gradient3"] = "sunGrad3",
+    ["Sun Gradient4"] = "sunGrad4",
+    ["Sun Gradient5"] = "sunGrad5",
+    ["Sun Gradient6"] = "sunGrad6",
     ["Cloud Colour"] = "cloudColour",
     ["Cloud Coverage"] = "cloudCoverage",
     ["Diffuse Light"] = "diffuseLight",
@@ -181,8 +181,8 @@ hud_class "../EnvCycleEditor" {
         self.byCaption = { }
         local function add (kind, caption, tab)
             local base = {
-                size = vector2(136,20);
-                width = 40;
+                size = vector2(149,16);
+                width = 32;
                 caption = caption;
                 maxLength = 5;
                 onClick = function() self:controlClicked(caption) end;
@@ -194,14 +194,13 @@ hud_class "../EnvCycleEditor" {
             return o
         end
         
-        self.title = gfx_hud_text_add("/common/fonts/Impact24")
+        self.title = gfx_hud_text_add("/common/fonts/ArialBold18")
         self.title.text = "Environment Cycle Editor"
-        self.title.orientation = -90
 
         self.colourPicker = gfx_hud_object_add("ColourPicker", { onChange = function () self:colourPickerChanged() end } )
         
         self.timeLabel = gfx_hud_object_add("Label", {
-            size = vec(60,20);
+            size = vec(70,20);
         })
         self.timeLeftButton = gfx_hud_object_add("FlatButton", {
             caption = "◄";
@@ -209,7 +208,7 @@ hud_class "../EnvCycleEditor" {
             pressedCallback = function (self2)
                 self:timeChange(-1)
             end;
-            size = vec(16,20);
+            size = vec(32,20);
         })
         self.timeRightButton = gfx_hud_object_add("FlatButton", {
             caption = "►";
@@ -217,7 +216,7 @@ hud_class "../EnvCycleEditor" {
             pressedCallback = function (self2)
                 self:timeChange(1)
             end;
-            size = vec(16,20);
+            size = vec(32,20);
         })
         self.loadButton = gfx_hud_object_add("FlatButton", {
             caption = "Load";
@@ -235,123 +234,139 @@ hud_class "../EnvCycleEditor" {
         })
         self.fileName = gfx_hud_object_add("EditBox", {
             value = "/my_env_cycle.lua";
-            size = vec(316,20);
+            size = vec(346,20);
             alignment = "LEFT";
         })
+
+        local spacer = 2
+        local x_spacer = 2
+
         self.contents = gfx_hud_object_add("StackY", {
-            padding = 0,
+            padding = 4,
+
+            vector2(0,2),
 
             gfx_hud_object_add("StackX", {
-                padding = -1,
-                gfx_hud_object_add("/common/hud/Label", { size=vec(50,20), value="Palette" }),
-                add("ColourControl", "Palette1", { needsAlpha = true, showCaption = false } ),
-                add("ColourControl", "Palette2", { needsAlpha = true, showCaption = false } ),
-                add("ColourControl", "Palette3", { needsAlpha = true, showCaption = false } ),
-                add("ColourControl", "Palette4", { needsAlpha = true, showCaption = false } ),
-                add("ColourControl", "Palette5", { needsAlpha = true, showCaption = false } ),
-                add("ColourControl", "Palette6", { needsAlpha = true, showCaption = false } ),
-                add("ColourControl", "Palette7", { needsAlpha = true, showCaption = false } ),
-                add("ColourControl", "Palette8", { needsAlpha = true, showCaption = false } ),
-                vector2(16,0),
-                self.timeLabel,
-                vector2(2,0),
-                self.timeLeftButton,
-                self.timeRightButton,
+                self.title,
+                vector2(200,0),
+                gfx_hud_object_add("FlatButton", {
+                    caption = "X";
+                    font = "/common/fonts/misc.fixed";
+                    pressedCallback = function (self2)
+                        env_cycle_editor.enabled = not env_cycle_editor.enabled
+                    end;
+                    size = vec(20,20);
+                })
             }),
 
-            vector2(0,12),
-
-            gfx_hud_object_add("StackX", {
-                gfx_hud_object_add("StackY", {
+            vector2(0,2),
+            
+            gfx_hud_object_add("Border", {
+                padding = 8;
+                colour = 0.25 * vec(1,1,1);
+                texture = "CornerTextures/Border04.png";
+                gfx_hud_object_add("StackX", {
                     padding = 0,
+                    self.fileName,
+                    vector2(4,0),
+                    self.loadButton,
+                    vector2(4,0),
+                    self.saveButton
+                }),
+            }),
+
+            gfx_hud_object_add("Border", {
+                padding = 8;
+                colour = 0.25 * vec(1,1,1);
+                texture = "CornerTextures/Border04.png";
+                gfx_hud_object_add("StackY", {
+                    gfx_hud_object_add("StackX", {
+                        padding = spacer,
+                        gfx_hud_object_add("/common/hud/Label", { size=vec(50,20), value="Palette" }),
+                        add("ColourControl", "Palette1", { needsAlpha = true, showCaption = false } ),
+                        add("ColourControl", "Palette2", { needsAlpha = true, showCaption = false } ),
+                        add("ColourControl", "Palette3", { needsAlpha = true, showCaption = false } ),
+                        add("ColourControl", "Palette4", { needsAlpha = true, showCaption = false } ),
+                        add("ColourControl", "Palette5", { needsAlpha = true, showCaption = false } ),
+                        add("ColourControl", "Palette6", { needsAlpha = true, showCaption = false } ),
+                        add("ColourControl", "Palette7", { needsAlpha = true, showCaption = false } ),
+                        vector2(16,0),
+                        self.timeLabel,
+                        vector2(2,0),
+                        self.timeLeftButton,
+                        self.timeRightButton,
+                    }),
+
+                    vector2(0,12),
 
                     self.colourPicker,
-                    
-                    vector2(0,12),
+            
+                }),
+            }),
 
-                    gfx_hud_object_add("StackX", {
-                        padding = 6,
-                        
-                        { "TOP", gfx_hud_object_add("StackY", {
-                            padding=-1,
-                            add("ColourControl", "Grad6", { needsAlpha = true } ),
-                            add("ColourControl", "Grad5", { needsAlpha = true } ),
-                            add("ColourControl", "Grad4", { needsAlpha = true } ),
-                            add("ColourControl", "Grad3", { needsAlpha = true } ),
-                            add("ColourControl", "Grad2", { needsAlpha = true } ),
-                            add("ColourControl", "Grad1", { needsAlpha = true } ),
-                        })},
-
-                        { "TOP", gfx_hud_object_add("StackY", {
-                            padding=-1,
-                            add("ColourControl", "Sun Grad6", { needsAlpha = true } ),
-                            add("ColourControl", "Sun Grad5", { needsAlpha = true } ),
-                            add("ColourControl", "Sun Grad4", { needsAlpha = true } ),
-                            add("ColourControl", "Sun Grad3", { needsAlpha = true } ),
-                            add("ColourControl", "Sun Grad2", { needsAlpha = true } ),
-                            add("ColourControl", "Sun Grad1", { needsAlpha = true } ),
-                        })},
-
-                        gfx_hud_object_add("StackY", {
-                            padding = 4;
-                            gfx_hud_object_add("StackY", {
-                                padding = -1;
-                                add("ColourControl", "Particle Light"),
-                                add("ColourControl", "Diffuse Light"),
-                                add("ColourControl", "Specular Light"),
-                                add("ValueControl", "Saturation", {number=true, maxValue=1}),
-                                add("EnumControl",  "Light Source", { options={"Sun","Moon"} }),
-                            }),
-                        }),
-                    }),
+            gfx_hud_object_add("Border", {
+                padding = 8;
+                colour = 0.25 * vec(1,1,1);
+                texture = "CornerTextures/Border04.png";
+                gfx_hud_object_add("StackX", {
+                    padding = x_spacer,
                     
-                    vector2(0,6),
-                    
-                    gfx_hud_object_add("StackX", {
-                        padding = 6,
-                        gfx_hud_object_add("StackY", {
-                            padding=4,
-                            gfx_hud_object_add("StackY", {
-                                padding = -1;
-                                add("ColourControl", "Fog Colour"),
-                                add("ValueControl", "Fog Density", {number=true, maxValue=1}),
-                                add("ValueControl",  "Cloud Coverage", {number=true, maxValue=1}),
-                            }),
-                        }),
-                        gfx_hud_object_add("StackY", {
-                            gfx_hud_object_add("StackY", {
-                                padding = -1;
-                                add("ValueControl",  "Horizon Glare", {number=true, maxValue=90, format="%3.1f"}),
-                                add("ValueControl", "Sun Glare", {number=true, maxValue=100, format="%3.1f"}),
-                                add("ColourControl", "Cloud Colour"),
-                            }),
-                        }),
-                        gfx_hud_object_add("StackY", {
-                            padding = 4;
-                            gfx_hud_object_add("StackY", {
-                                padding = -1;
-                                add("ValueControl",  "Sun Size", {number=true, maxValue=10, format="%2.2f"}),
-                                add("ValueControl",  "Sun Falloff", {number=true, maxValue=10, format="%2.2f"}),
-                                add("ColourControl", "Sun Colour", { needsAlpha = true } ),
-                            }),
-                        }),
-                    }),
+                    { "TOP", gfx_hud_object_add("StackY", {
+                        padding = spacer,
+                        add("ColourControl", "Gradient6", { needsAlpha = true } ),
+                        add("ColourControl", "Gradient5", { needsAlpha = true } ),
+                        add("ColourControl", "Gradient4", { needsAlpha = true } ),
+                        add("ColourControl", "Gradient3", { needsAlpha = true } ),
+                        add("ColourControl", "Gradient2", { needsAlpha = true } ),
+                        add("ColourControl", "Gradient1", { needsAlpha = true } ),
+                    })},
 
-                    vector2(0,12),
-                    
-                    gfx_hud_object_add("StackX", {
-                        padding = 0,
-                        self.fileName,
-                        vector2(4,0),
-                        self.loadButton,
-                        vector2(4,0),
-                        self.saveButton
+                    { "TOP", gfx_hud_object_add("StackY", {
+                        padding = spacer,
+                        add("ColourControl", "Sun Gradient6", { needsAlpha = true } ),
+                        add("ColourControl", "Sun Gradient5", { needsAlpha = true } ),
+                        add("ColourControl", "Sun Gradient4", { needsAlpha = true } ),
+                        add("ColourControl", "Sun Gradient3", { needsAlpha = true } ),
+                        add("ColourControl", "Sun Gradient2", { needsAlpha = true } ),
+                        add("ColourControl", "Sun Gradient1", { needsAlpha = true } ),
+                    })},
+
+                    gfx_hud_object_add("StackY", {
+                        padding = spacer;
+                        add("ColourControl", "Particle Light"),
+                        add("ColourControl", "Diffuse Light"),
+                        add("ColourControl", "Specular Light"),
+                        add("ValueControl", "Saturation", {number=true, maxValue=1}),
+                        add("EnumControl",  "Light Source", { options={"Sun","Moon"} }),
                     }),
                 }),
-
-                vec(8,0),
-
-                { "BOTTOM", self.title, }
+            }),
+            
+            gfx_hud_object_add("Border", {
+                padding = 8;
+                colour = 0.25 * vec(1,1,1);
+                texture = "CornerTextures/Border04.png";
+                gfx_hud_object_add("StackX", {
+                    padding = x_spacer,
+                    gfx_hud_object_add("StackY", {
+                        padding = spacer;
+                        add("ColourControl", "Fog Colour"),
+                        add("ValueControl",  "Fog Density", {number=true, maxValue=1}),
+                        add("ValueControl",  "Cloud Coverage", {number=true, maxValue=1}),
+                    }),
+                    gfx_hud_object_add("StackY", {
+                        padding = spacer;
+                        add("ValueControl",  "Horizon Glare", {number=true, maxValue=90, format="%3.1f"}),
+                        add("ValueControl",  "Sun Glare", {number=true, maxValue=100, format="%3.1f"}),
+                        add("ColourControl", "Cloud Colour"),
+                    }),
+                    gfx_hud_object_add("StackY", {
+                        padding = spacer;
+                        add("ValueControl",  "Sun Size", {number=true, maxValue=10, format="%2.2f"}),
+                        add("ValueControl",  "Sun Falloff", {number=true, maxValue=10, format="%2.2f"}),
+                        add("ColourControl", "Sun Colour", { needsAlpha = true } ),
+                    }),
+                }),
             }),
 
         })
@@ -361,7 +376,7 @@ hud_class "../EnvCycleEditor" {
 
         self.size = self.contents.size + vector2(16,16)
 
-        self:controlClicked("Grad6")
+        self:controlClicked("Gradient6")
 
         self:updateFromEnvCycle()
     end;
@@ -398,10 +413,10 @@ hud_class "../EnvCycleEditor" {
         self.timeLabel:setValue(format_time(env_instant.time * 60 * 60))
 
         for i=1,6 do
-            self.byCaption["Grad"..i]:setColour(env_instant["grad"..i])
+            self.byCaption["Gradient"..i]:setColour(env_instant["grad"..i])
         end
         for i=1,6 do
-            self.byCaption["Sun Grad"..i]:setColour(env_instant["sunGrad"..i])
+            self.byCaption["Sun Gradient"..i]:setColour(env_instant["sunGrad"..i])
         end
         self.byCaption["Fog Colour"]:setColour(env_instant.fogColour)
         self.byCaption["Fog Density"]:setValue(env_instant.fogDensity)

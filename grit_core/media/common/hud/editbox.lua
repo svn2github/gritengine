@@ -6,7 +6,7 @@ hud_class "EditBox" (extends (BorderPane) {
 
     textColour = vector3(0,0,0);
     selectedBorderColour = vector3(1,0,0);
-    font = "/common/fonts/misc.fixed";
+    font = "/common/fonts/Verdana12";
     value = "Text";
     number = false;
     alignment = "CENTER";

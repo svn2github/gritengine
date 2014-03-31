@@ -1,14 +1,15 @@
 -- (c) David Cunningham 2014, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
-hud_class "Label" (extends (BorderPane) {
+hud_class "Label" {
 
-    textColour = vector3(0,0,0);
-    font = "/common/fonts/misc.fixed";
+    textColour = vec(1, 1, 1);
+    greyColour = vec(0.5, 0.5, 0.5);
+    font = "/common/fonts/Verdana12";
     value = "No label";
     alignment = "CENTRE";
 
     init = function (self)
-        BorderPane.init(self)
+        self.alpha = 0
         self.text = gfx_hud_text_add(self.font)
         self.text.colour = self.textColour
         self.text.parent = self
@@ -24,20 +25,14 @@ hud_class "Label" (extends (BorderPane) {
 
     destroy = function (self)
         self.text = safe_destroy(self.text)
-        BorderPane.destroy(self)
     end;
 
     setGreyed = function (self, v)
         self.greyed = v
-        if v then
-            self.text.colour = vector3(0.5, 0.5, 0.5)
-        else
-            self.text.colour = self.textColour
-        end
+        self.text.colour = v and self.greyColour or self.textColour
     end;
     
     updateChildrenSize = function (self)
-        BorderPane.updateChildrenSize(self)
         if self.alignment == "CENTRE" then
             self.text.position = vec(0,0)
         elseif self.alignment == "LEFT" then
@@ -47,4 +42,4 @@ hud_class "Label" (extends (BorderPane) {
         end
     end;
 
-})
+}

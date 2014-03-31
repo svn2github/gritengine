@@ -112,8 +112,8 @@ hud_class "ColourControl" (extends(Control) {
     initialAlpha = 1;
     init = function (self)
         Control.init(self)
-        self.square = gfx_hud_object_add("/common/hud/BorderPane", {parent=self, borderColour=vector3(0,0,0)})
-        self.alphaSquare = gfx_hud_object_add("/common/hud/Rect", {parent=self, texture = "bg_alphabox.png"})
+        self.square = gfx_hud_object_add("/common/hud/Rect", {parent=self, texture = "Capsule.png"})
+        self.alphaSquare = gfx_hud_object_add("/common/hud/Rect", {parent=self, texture = "CapsuleAlpha.png"})
         self:setColour(self.initialColour, self.initialAlpha)
         self:updateAppearance()
         self:updateChildrenSize();
@@ -145,9 +145,8 @@ hud_class "ColourControl" (extends(Control) {
     end;
     updateChildrenSize = function(self)
         Control.updateChildrenSize(self)
-        self.square:setRect(self.size.x/2-self.width,-self.size.y/2, self.size.x/2,self.size.y/2)
-        self.square:updateChildrenSize()
-        self.alphaSquare:setRect(self.size.x/2-self.width/2+1, -self.size.y/2+1, self.size.x/2-1, self.size.y/2-1)
+        self.square:setRect(     self.size.x/2-self.width, -self.size.y/2, self.size.x/2,self.size.y/2)
+        self.alphaSquare:setRect(self.size.x/2-self.width, -self.size.y/2, self.size.x/2, self.size.y/2)
     end;
     receiveDrag = function (self, other)
         if other.className ~= self.className then return end
@@ -169,6 +168,7 @@ hud_class "ValueControl" (extends(Control) {
     init = function (self)
         Control.init(self)    
         self.valueDisplay = gfx_hud_object_add("/common/hud/EditBox", {
+            font="/common/fonts/TinyFont";
             parent=self;
             borderColour=vector3(1,1,1);
             number=true;

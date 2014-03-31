@@ -128,3 +128,30 @@ hud_class "StackX" {
         self.contents = nil
     end;
 }
+
+hud_class "Border" {
+    padding = 4;
+    texture = "CornerTextures/Border02.png";
+    size = vec(1,1);
+    cornered = true;
+    init = function (self)
+        self.contents = self[1]
+        self[1] = nil
+        self.contents.parent = self
+        self.size = self.contents.bounds + vec(2,2) * self.padding
+    end;
+    callAll = function (self, funcname, ...)
+        local func = self.contents[funcname]
+        if func ~= nil then
+            func(self.contents, ...)
+        else
+            if self.contents.callAll ~= nil then
+                self.contents:callAll(funcname, ...)
+            end
+        end
+    end;
+    destroy = function (self)
+        self.contents = safe_destroy(self.contents)
+    end;
+}
+
