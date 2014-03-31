@@ -85,13 +85,10 @@ end
 
 
 function rgb (r,g,b) return vector3(r,g,b)/255 end
-function v3pow (v, i) return vector3(math.pow(v.x, i), math.pow(v.y, i), math.pow(v.z, i)) end
-function srgb(r,g,b) return v3pow(rgb(r,g,b), 2.2) end
+function srgb(r,g,b) return rgb(r,g,b) ^ 2.2 end
 
-function gamma_encode_v3(x) return v3pow(x, 1/2.2) end
-function gamma_decode_v3(x) return v3pow(x, 2.2) end
-function gamma_encode(x) return math.pow(x, 1/2.2) end
-function gamma_decode(x) return math.pow(x, 2.2) end
+function gamma_encode(x) return x ^ 1/2.2 end
+function gamma_decode(x) return x ^ 2.2 end
 
 function colour_norm (r,g,b)
         local luminance = math.max(math.max(r,g),b)
