@@ -102,7 +102,7 @@ end
 
 function tone_map (v)
 	v = v * gfx_global_exposure()
-	return gfx_colour_grade_look_up(gamma_encode_v3(v / (vector3(1,1,1) + v)))
+	return gfx_colour_grade_look_up(gamma_encode(v / (1 + v)))
 end
 
 function tone_map_val (v)
