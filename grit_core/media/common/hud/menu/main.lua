@@ -19,6 +19,15 @@ hud_class "Main" {
             return content
         end
         
+        self.mainContent = newContent({ padding = self.padding,
+            newButton("Resume", {pressedCallback = function() 
+                menu_binds.modal = false
+                menu.enabled = false
+            end}),
+            newButton("Settings", {pressedCallback = function() self:setContent(self.optionsContent) end}),
+            newButton("Quit", {pressedCallback = quit}),     
+        })
+        
         local function getBoolStateString(var, truemsg, falsemsg)
             return (var and truemsg or falsemsg)
         end
@@ -31,16 +40,22 @@ hud_class "Main" {
             return getBoolStateString(user_cfg.metricUnits, "Speedo: Metric", "Speedo: Imperial")
         end
         
-        self.mainContent = newContent({ padding = self.padding,
-            newButton("Resume", {pressedCallback = function() 
-                menu_binds.modal = false
-                menu.enabled = false
-            end}),
-            newButton("Settings", {pressedCallback = function() self:setContent(self.optionsContent) end}),
-            newButton("Quit", {pressedCallback = quit}),     
-        })
+        local mouseSensWidget = function()
+            local info = newButton("Sensitivity", {greyed = true,
+                                                           captionColourGreyed = vec(0,0,0)})
+            local slider = gfx_hud_object_add("/common/hud/Scale", {
+                                                size = vec(256, 48),
+                                                onChange = function(self)
+                                                    user_cfg.mouseSensitivity = clamp(self.value, 0.001, 1)
+                                                end;
+                                             })
+            info.parent = slider
+            slider:setValue(user_cfg.mouseSensitivity)
+            return gfx_hud_object_add("../StackX", {padding = 6, info, slider})
+        end;
         
         self.optionsContent = newContent({ padding = self.padding,
+            mouseSensWidget(),
             newButton(mouseInvStateString(), {
                 pressedCallback = function(self)
                     user_cfg.mouseInvert = not user_cfg.mouseInvert
@@ -53,7 +68,11 @@ hud_class "Main" {
                     self:setCaption(speedoStateString())
                 end
             }),
-            newButton("Go Back", {pressedCallback = function() self:setContent(self.mainContent) end}),
+            newButton("Go Back", {
+                pressedCallback = function()
+                    self:setContent(self.mainContent)
+                end
+            }),
         })
         
         self:setContent(self.mainContent)
