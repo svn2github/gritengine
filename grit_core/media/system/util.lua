@@ -87,7 +87,7 @@ end
 function rgb (r,g,b) return vector3(r,g,b)/255 end
 function srgb(r,g,b) return rgb(r,g,b) ^ 2.2 end
 
-function gamma_encode(x) return x ^ 1/2.2 end
+function gamma_encode(x) return x ^ (1/2.2) end
 function gamma_decode(x) return x ^ 2.2 end
 
 function colour_norm (r,g,b)
