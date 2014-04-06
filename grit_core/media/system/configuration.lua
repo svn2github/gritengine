@@ -326,11 +326,11 @@ local core_binding_functions = {
     screenShot = function() capturer:singleScreenShot() end;
     physicsPause = function ()
         physics.enabled = not physics.enabled
-        echo("Physics enabled: "..tostring(physics.enabled))
+        print("Physics enabled: "..tostring(physics.enabled))
     end;
     physicsOneToOne = function ()
         physics.oneToOne = not physics.oneToOne
-        echo("Physics one-to-one: "..tostring(physics.oneToOne))
+        print("Physics one-to-one: "..tostring(physics.oneToOne))
     end;
     gameLogicStep = { function () physics_step(physics_option("STEP_SIZE")) end, nil, true };
     gameLogicFrameStep = { function () physics_frame_step(physics_option("STEP_SIZE"), 1/60) end, nil, true };
@@ -359,9 +359,9 @@ local core_binding_functions = {
     toggleVSync = function ()
     user_cfg.vsync = not user_cfg.vsync
         if user_cfg.vsync then
-            echo("vsync on")
+            print("vsync on")
         else
-            echo("vsync off")
+            print("vsync off")
         end
     end;
 }
@@ -430,7 +430,7 @@ local foot_binding_functions = {
 local function process_user_table(name, given, default)
     for k,v in pairs(given) do
         if default[k] == nil then
-            echo(name.." contained unrecognised field \""..k.."\", ignoring.")
+            print(name.." contained unrecognised field \""..k.."\", ignoring.")
             given[k] = nil
         end
     end
@@ -633,10 +633,10 @@ local function commit(c, p, flush, partial)
                 gfx_option("FOG",v)
                 reset_shaders = true
             elseif k == "physicsWireFrame" then
-				echo("Physics wire frame: "..(v and "on" or "off"))
+				print("Physics wire frame: "..(v and "on" or "off"))
                 physics_option("DEBUG_WIREFRAME", v)
             elseif k == "physicsDebugWorld" then
-				echo("Physics debug world: "..(v and "on" or "off"))
+				print("Physics debug world: "..(v and "on" or "off"))
                 physics.debugWorld = v
             elseif k == "mouseSensitivity" then
                 -- next mouse movement picks this up

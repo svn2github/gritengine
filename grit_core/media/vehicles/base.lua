@@ -615,10 +615,10 @@ function Vehicle.getStatistics (persistent)
                 for name, wheel in pairs(instance.wheels) do
                         local gfx = wheel.gfx
                         if gfx ~= nil then
-                            echo("  Wheel: "..name)
-                            echo("    Mesh: "..gfx.meshName)
-                            echo("    Triangles: "..gfx.triangles)
-                            echo("    Batches: "..gfx.batches)
+                            print("  Wheel: "..name)
+                            print("    Mesh: "..gfx.meshName)
+                            print("    Triangles: "..gfx.triangles)
+                            print("    Batches: "..gfx.batches)
                             tot_triangles = tot_triangles + gfx.triangles
                             tot_batches = tot_batches + gfx.batches
                         end
@@ -717,7 +717,7 @@ function Bike.stepCallback (persistent, elapsed)
                         desired_vector =  V_UP
                 end
 
-                --echo(desired_vector)
+                --print(desired_vector)
 
                  --using the actual friction proved too jittery
 --[[

@@ -37,7 +37,12 @@ hud_class "Stats" {
         for k,name in ipairs(self.keys) do
             local stat = self.stats[name]
             if stat ~= nil then
-                local label = gfx_hud_object_add("/common/hud/Label", { size=vector2(self.width, 15), alignment = "RIGHT" })
+                local label = gfx_hud_object_add("/common/hud/Label", {
+                    size=vector2(self.width, 15),
+                    alignment="RIGHT",
+                    textColour=vec(0,0,0),
+                    font="/common/fonts/misc.fixed",
+                })
                 self.labels[name] = label
                 tab[k] = label
             end

@@ -9,10 +9,10 @@ hud_class "Label" {
     alignment = "CENTRE";
 
     init = function (self)
-        self.alpha = 0
         self.text = gfx_hud_text_add(self.font)
         self.text.colour = self.textColour
         self.text.parent = self
+        self.text.shadow = self.shadow
         self:setValue(self.value)
         if self.greyed == nil then self.greyed = false end
     end;

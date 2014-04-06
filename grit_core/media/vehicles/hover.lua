@@ -112,12 +112,12 @@ function Hover.process_force(persistent, name)
             local instance = persistent.instance
             local body = instance.body
             if instance[name] then
-                --echo("name: "..name)
+                --print("name: "..name)
                 if persistent.jetsControl[name] then
-                    --echo("persistent[name]: "..dump(persistent.jetsControl[name]))
+                    --print("persistent[name]: "..dump(persistent.jetsControl[name]))
                     for i, force in pairs(persistent.jetsControl[name]) do
                         if force and persistent.jetsInfo[i] then
-                            --echo("force: "..force)
+                            --print("force: "..force)
                             body:force(body.worldOrientation * force, body:localToWorld(persistent.jetsInfo[i].pos))
                         end
                     end

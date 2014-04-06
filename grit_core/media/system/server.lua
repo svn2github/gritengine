@@ -62,11 +62,11 @@ net.server.sendSnapshot = function(self, client)
 end
 
 net.server.processPacket = function(self, address, message)
-	echo("server: packet from " .. tostring(address))
+	print("server: packet from " .. tostring(address))
 	
 	local sequenceNum = message:read_int()
 	
-	echo("seq: " .. sequenceNum)
+	print("seq: " .. sequenceNum)
 	
 	if sequenceNum == -1 then
 		return self:processOutOfBand(address, message)
@@ -111,7 +111,7 @@ net.server.processClientMessage = function(self, client, message)
 			if self.commandHandlers[command] ~= nil then
 				self.commandHandlers[command](self, client, message)
 			else
-				echo("unknown command type " .. tostring(command))
+				print("unknown command type " .. tostring(command))
 				return
 			end
 		
@@ -128,8 +128,8 @@ net.server.processClientMessage = function(self, client, message)
 		tb = tb:gsub("\n[^\n]*\n[^\n]*$","")
 		tb = tb:gsub("^[^\n]*\n","") -- msg
 		tb = tb:gsub("^[^\n]*\n","") -- "stack trace:"
-		echo(BOLD..RED..msg)
-		if tb ~= "stack traceback:" then echo(RED..tb) end
+		print(BOLD..RED..msg)
+		if tb ~= "stack traceback:" then print(RED..tb) end
 		
 		self:dropClient(client, "Error while processing client message.")
 	end)

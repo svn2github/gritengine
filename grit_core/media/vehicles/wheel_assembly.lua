@@ -331,7 +331,7 @@ function WheelAssembly:process (interval)
         local r = surface_force_mag_clamped * n
 
         --if player_ctrl.vehicle ~= nil and player_ctrl.vehicle.instance == self.obj then
-        --        echo("RF: ",extension)
+        --        print("RF: ",extension)
         --end
         body:force(r, cp)
 
@@ -389,7 +389,7 @@ function WheelAssembly:process (interval)
                         self.wheelAngularVelocity = forward_speed / self.wheelRadius
                 end
 
-                --echo(string.format("%10s % 5.0f % 5.0f % 5.0f % 5.0f", self.name, math.max(0,spilt_force), attempted_longitudinal_force, longitudinal_force, surface_force_mag))
+                --print(string.format("%10s % 5.0f % 5.0f % 5.0f % 5.0f", self.name, math.max(0,spilt_force), attempted_longitudinal_force, longitudinal_force, surface_force_mag))
 
         end     
 
@@ -400,7 +400,7 @@ function WheelAssembly:process (interval)
                 local dcp = cp - self.worldContactPos
                 local disp_lat = dot(dcp, rw)
                 if disp_lat<0.1 and disp_lat>-0.1 then
-                        --echo("stuck at", disp_lat)
+                        --print("stuck at", disp_lat)
                         lateral_force = lateral_force + load * (- 50 * disp_lat)
                 else
                         stuck = false
@@ -408,7 +408,7 @@ function WheelAssembly:process (interval)
                 if self.locked then
                         local disp_long = dot(dcp, fw)
                         if disp_long<0.1 and disp_long>-0.1 then
-                                --echo("stuck at", disp_lat)
+                                --print("stuck at", disp_lat)
                                 longitudinal_force = longitudinal_force + load * (- 200 * disp_long)
                         else
                                 stuck = false

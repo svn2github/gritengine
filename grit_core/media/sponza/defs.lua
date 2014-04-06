@@ -1,4 +1,4 @@
-echo("Loading Crytek sponza classes & materials")
+print("Loading Crytek sponza classes & materials")
 
 for i=0,382 do
     class (string.format("sponza_%02d",i)) (ColClass) { castShadows=true, renderingDistance = 400 }

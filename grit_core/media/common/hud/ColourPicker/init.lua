@@ -15,10 +15,10 @@ hud_class "../ColourPicker" {
         self.valScale = gfx_hud_object_add("Scale", { onChange = on_change, size=scalesz, bgTexture="ColourPicker/bg_val.png",   bgColour=vec(1,1,1), mgTexture="ColourPicker/bg_val_simple.png", mgAlpha=0, mgColour=vec(1,1,1), gamma=true, maxValue=10 })
         self.aScale   = gfx_hud_object_add("Scale", { onChange = on_change, size=scalesz, mgTexture="ColourPicker/bg_alpha.png", mgColour=vec(1,1,1), mgAlpha=1, bgColour=vec(1,1,1) })
 
-        self.hueLabel = gfx_hud_object_add("Label", { size=labsz, value="Hue" })
-        self.satLabel = gfx_hud_object_add("Label", { size=labsz, value="Sat" })
-        self.valLabel = gfx_hud_object_add("Label", { size=labsz, value="Val" })
-        self.aLabel = gfx_hud_object_add("Label", { size=labsz, value="Alpha" })
+        self.hueLabel = gfx_hud_object_add("Label", { size=labsz, value="Hue", alpha=0 })
+        self.satLabel = gfx_hud_object_add("Label", { size=labsz, value="Sat", alpha=0 })
+        self.valLabel = gfx_hud_object_add("Label", { size=labsz, value="Val", alpha=0 })
+        self.aLabel = gfx_hud_object_add("Label", { size=labsz, value="Alpha", alpha=0 })
 
         self.contents = gfx_hud_object_add("StackY", {
             parent = self, 
@@ -145,7 +145,7 @@ hud_class "../ColourPicker" {
     end;
     
     onChange = function (self)
-        echo("Colour: "..self:getColourRGB().."  Alpha: "..self:getAlpha())
+        print("Colour: "..self:getColourRGB().."  Alpha: "..self:getAlpha())
     end;
     
 }

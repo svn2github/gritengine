@@ -57,7 +57,7 @@ main.frameCallbacks:insert("GFX.frameCallback", function ()
                 if user_cfg.lowPowerMode then
                         --sleep_seconds(0.2 - elapsed)
                         sleep(math.floor(1000000*(0.2 - elapsed)))
-                        --echo("Total frame time: "..elapsed)
+                        --print("Total frame time: "..elapsed)
                 end
                 gfx.count, gfx.unacctAllocs = get_alloc_stats()
                 reset_alloc_stats()
@@ -66,7 +66,7 @@ main.frameCallbacks:insert("GFX.frameCallback", function ()
                 reset_alloc_stats()
         end
         --local post_frame_time = seconds()
-        --echo("Frame render time: "..(post_frame_time - curr_time))
+        --print("Frame render time: "..(post_frame_time - curr_time))
 
         gfx.shadow1[1], gfx.shadow1[2], gfx.shadow1[3],
         gfx.shadow2[1], gfx.shadow2[2], gfx.shadow2[3],

@@ -15,7 +15,7 @@ include "definitions.lua"
 
 local t
 t = time(function() include "map.lua" end)
-echo("map.lua: "..t.." seconds")
+print("map.lua: "..t.." seconds")
 
 include "cars.lua"
 

@@ -112,7 +112,7 @@ hud_class "EditBox" (extends (BorderPane) {
     end;
     
     onChange = function (self)
-        echo("No onChange: "..tostring(self.value))
+        print("No onChange: "..tostring(self.value))
     end;
     
     setValue = function (self, value)

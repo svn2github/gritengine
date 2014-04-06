@@ -59,6 +59,11 @@ MAGENTA = "\027[35m"
 CYAN = "\027[36m"
 WHITE = "\027[37m"
 
+function echo (...)
+    print(...)
+    print(BOLD..CYAN.."echo() is deprecated.  Please use print() instead.  Use print_stdout() for the old Lua print.")
+end
+
 function none_one_or_all(tab, f)
         if tab == nil then return end
         if type(tab)=="table" then
@@ -67,6 +72,8 @@ function none_one_or_all(tab, f)
                 f(tab)
         end
 end
+
+--print = print
 
 
 function time(f,...)
@@ -269,6 +276,7 @@ function isarray(tab)
         return count == sz
 end
 
+-- NOTE: This function is called by C code.
 function dump(obj,colour,n,d,ind)
         n = n or 100
         d = d or 0

@@ -46,7 +46,7 @@ local Control = {
         self.needsInputCallbacks = true
         self.alpha = 0
         if self.showCaption then
-            self.label = gfx_hud_object_add("/common/hud/Label", {parent=self, borderColour=vector3(0,0,0), value=self.caption});
+            self.label = gfx_hud_object_add("/common/hud/Label", {parent=self, borderColour=vector3(0,0,0), value=self.caption, alpha = 0});
         else
             self.size = vec(self.width, self.size.y)
         end
@@ -221,7 +221,7 @@ hud_class "ValueControl" (extends(Control) {
         return self.format:format(v)
     end;
     onEditting = function (self, editting)
-        echo("ValueControl.onEditting")
+        print("ValueControl.onEditting")
     end;
     receiveDrag = function (self, other)
         if other.className ~= self.className then return end

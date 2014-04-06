@@ -170,10 +170,10 @@ FlyingCar = extends (ColClass) {
         do -- stabilise rotation (avoid roll and pitch)
             local want_orientation = euler(pitch,roll,-current_bearing)
             --want_orientation = quat(1,0,0,0)
-            --echo(want_orientation)
+            --print(want_orientation)
 
             local orientation_dev = norm(body.worldOrientation * inv(want_orientation))
-            --echo(body.worldOrientation, want_orientation, inv(want_orientation), body.worldOrientation * inv(want_orientation))
+            --print(body.worldOrientation, want_orientation, inv(want_orientation), body.worldOrientation * inv(want_orientation))
 
             local tensor_dev = vector3(0,0,0)
             if vector3(orientation_dev.x, orientation_dev.y, orientation_dev.z) ~= V_ZERO then

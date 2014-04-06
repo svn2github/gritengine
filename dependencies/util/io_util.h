@@ -32,6 +32,8 @@
 
 #include "exception.h"
 
+std::string collapse_path (const std::string &path);
+
 class InFile {
     std::ifstream in;
     public:

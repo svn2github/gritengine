@@ -117,7 +117,7 @@ function ghost:grab()
     local function grab_callback(elapsed)
         local obj = self.grabbedObj
         if obj == nil then
-            echo "dropping object"
+            print "dropping object"
             physics.stepCallbacks:removeByName("grabbedObj")
             return true
         end

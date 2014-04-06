@@ -246,18 +246,25 @@ hud_class "Console" (extends (BorderPane) {
     execute = function (self, str)
         str = str or self:cmd()
 
-        echo(self.promptPrefix .. str)
+        print(self.promptPrefix .. str)
         self:poll()
 
-        -- this parses and compiles the string
+        -- Parses and compile the string.
+        -- Note that using '@' as the chunk name means an empty filename, i.e. '@' indicates a file,
+        -- and the lack of anything afterwards makes it the empty filename.
+        -- This causes current_dir() to think it's a lua file in the root directory, which is what
+        -- we want for strings typed on the console!
         local f, err
-        f = loadstring("return "..str)
+        f = loadstring("return "..str, '@')
         if f == nil then
-            f, err = loadstring(str)
+            f, err = loadstring(str, '@')
         end
 
         if f == nil then
-            echo(BOLD..YELLOW.."Syntax error: "..err..RESET)
+            if err:sub(1,4) == ":1: " then
+                err = err:sub(5)
+            end
+            print(BOLD..YELLOW.."Syntax error: "..err)
             return
         end
         -- to execute, use coroutine to remove irrelevent lines from stacktrace
@@ -269,22 +276,36 @@ hud_class "Console" (extends (BorderPane) {
                 if status then
                     -- call was successful
                     if select("#",...) > 0 then
-                        echo(...)
+                        print(...)
                     end
                 end
             end)(xpcall(f,--[[error_handler]]function(msg)
                 local level = 0
                 if type(msg)=="table" then
-                    level,msg = unpack(msg)
+                    level, msg = unpack(msg)
                 end
-                level = level + 1 -- error handler
-                level = level + 1 -- the first line is included in the message so don't print it again
-                local tb = debug.traceback(msg,level+1) -- error handler
-                tb = tb:gsub("\n[^\n]*\n[^\n]*$","")
-                tb = tb:gsub("^[^\n]*\n","") -- msg
-                tb = tb:gsub("^[^\n]*\n","") -- "stack trace:"
-                echo(BOLD..RED..msg)
-                if tb ~= "stack traceback:" then echo(RED..tb) end
+                if msg:sub(1,4) == ":1: " then
+                    msg = msg:sub(5)
+                end
+                print(BOLD..RED..msg)
+
+                level = level + 1 -- error handler, i.e. this code here
+                local tb = debug.traceback(nil, level)
+                local frames = string.split(tb, '\n')
+                -- strip coroutine.create closure param
+                frames[#frames] = nil
+                -- strip xpcall
+                frames[#frames] = nil
+                -- strip string entered on console line
+                frames[#frames] = nil
+                -- skip first line, it says "stack trace:"
+                table.remove(frames, 1)
+                -- skip next line, it typically provides no more information than the error message, and the line number
+                -- points to this console function
+                table.remove(frames, 1)
+                for _, frame in ipairs(frames) do
+                    print(RED..frame)
+                end
             end))
             path_stack_pop()
         end)

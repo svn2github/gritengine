@@ -199,7 +199,7 @@ function save_env_cycle(filename)
     f:write("env_cycle = ")
     f:write(dump(env_cycle,false))
     f:close()
-    echo("Wrote env cycle to \""..filename.."\"")
+    print("Wrote env cycle to \""..filename.."\"")
 end
 ]]
 

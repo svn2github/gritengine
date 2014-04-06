@@ -36,7 +36,7 @@ function Capturer:singleScreenShot(movie)
                 fd:close()
         end
         gfx_screenshot(name)
-        echo("Wrote: "..name)
+        print("Wrote: "..name)
 end
 
 function Capturer:frameCallback()
@@ -62,7 +62,7 @@ end
 
 function Capturer:record()
         if self.recording then error("Already recording.") end
-        echo ("Started recording")
+        print ("Started recording")
         main.frameCallbacks:insert("Capturer.frameCallback",function (...) self:frameCallback(...) end)
         self.recording = true
         self.frameCounter = 0
@@ -72,7 +72,7 @@ function Capturer:stop()
         if not self.recording then error("Not recording.") end
         main.frameCallbacks:removeByName("Capturer.frameCallback")
         self.recording = false
-        echo ("Recorded: "..self.frameCounter.." frames in "..(seconds()-self.frameTime).." seconds ("..self.frameCounter/self.frameTime.." fps)")
+        print ("Recorded: "..self.frameCounter.." frames in "..(seconds()-self.frameTime).." seconds ("..self.frameCounter/self.frameTime.." fps)")
 end
 
 function Capturer:destroy()

@@ -3,7 +3,7 @@
 --lua5.2 it's so amazingly compatible
 math.mod = math.fmod
 
-print ("Initialising script...")
+print "Initialising script..."
 io.stdout:setvbuf("no") -- no output buffering
 collectgarbage("setpause",110) -- begin a gc cycle after blah% increase in ram use
 collectgarbage("setstepmul",150) -- collect at blah% the rate of new object creation
@@ -19,14 +19,6 @@ include("strict.lua")
 include("abbrev.lua")
 
 include("util.lua")
-
--- called by c code
-function console_tostring(item)
-        if type(item) == 'string' then
-                return item
-        end
-        return dump(item)
-end
 
 if audio_master_volume == nil then audio_master_volume = function() end end
 
@@ -72,12 +64,12 @@ function main:run (...)
                 end
 
                 for _,key in ipairs(presses) do
-                    if get_keyb_verbose() then echo("Lua key event: "..key) end
+                    if get_keyb_verbose() then print("Lua key event: "..key) end
                     input_filter_trickle_button(key)
                 end
 
                 for _,button in ipairs(buttons) do
-                    if get_keyb_verbose() then echo("Lua mouse event: "..button) end
+                    if get_keyb_verbose() then print("Lua mouse event: "..button) end
                     input_filter_trickle_button(button)
                 end
 
@@ -88,7 +80,7 @@ function main:run (...)
                                 failName.name = name
                                 --t:reset()
                                 if cb == nil then
-                                        --echo(RED.."Callback was nil: "..name)
+                                        --print(RED.."Callback was nil: "..name)
                                         return true
                                 end
                                 path_stack_push_dir(path)
@@ -111,7 +103,7 @@ function main:run (...)
 
                 if failName.name then
                         path_stack_pop()
-                        echo("Removed frameCallback: "..failName.name)
+                        print("Removed frameCallback: "..failName.name)
                         main.frameCallbacks:removeByName(failName.name)
                 end
 

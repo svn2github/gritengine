@@ -19,6 +19,9 @@
  * THE SOFTWARE.
  */
 
+#include <cstdlib>
+
+#include <vector>
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -42,4 +45,43 @@ OutFile::OutFile (const std::string &filename)
     if (!out.good()) {
         EXCEPT<<filename<<": "<<std::string(strerror(errno))<<std::endl;
     }
+}
+
+std::string collapse_path (const std::string &path)
+{
+    // first split into dirs
+    std::vector<std::string> dirs;
+    std::string next;
+    for (unsigned i=0 ; i<path.length() ; ++i) {
+        if (path[i] == '/') {
+            dirs.push_back(next);
+            next.clear();
+        } else {
+            next += path[i];
+        }
+    }
+    dirs.push_back(next);
+
+    std::vector<std::string> dirs2;
+    // process ..
+    for (unsigned i=0 ; i<dirs.size() ; ++i) {
+        const std::string &d = dirs[i];
+        if (d == ".") {
+            continue;
+        } else if (d == "..") {
+            if (dirs2.size() == 0)
+                EXCEPT << "Invalid path: " << path << ENDL;
+            dirs2.pop_back();
+        } else if (d == "") {
+            continue;
+        } else {
+            dirs2.push_back(d);
+        }
+    }
+
+    std::stringstream ss;
+    for (unsigned i=0 ; i<dirs2.size() ; ++i) {
+        ss << "/" + dirs2[i];
+    }
+    return ss.str();
 }

@@ -17,7 +17,7 @@ end
 
 local function cast_cylinder_with_deflection (body, radius, height, pos, movement)
 
-    --echo("cast with "..pos)
+    --print("cast with "..pos)
 
     local ret_body, ret_normal, ret_pos
 
@@ -162,7 +162,7 @@ DetachedCharacterClass = extends (ColClass) {
 
         local height = lerp(self.height, self.crouchHeight, control_state.z)
 
-        --echo('-------------')
+        --print('-------------')
 
         -- check foot and height at source
         -- check pa    t to destination above step hieght
@@ -343,7 +343,7 @@ DetachedCharacterClass = extends (ColClass) {
                     if dot(floor_normal, walk_vect) > 0 or math.deg(math.acos(floor_normal.z)) <= self.maxGradient then
                         curr_foot = cast_foot + vector3(0,0, actual_step_height)
                     else
-                        --echo(dot(floor_normal, walk_vect), math.deg(math.acos(floor_normal.z)))
+                        --print(dot(floor_normal, walk_vect), math.deg(math.acos(floor_normal.z)))
                     end
                 end
 

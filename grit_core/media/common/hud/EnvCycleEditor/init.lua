@@ -64,7 +64,7 @@ hud_class "../EnvCycleEditor" {
         elseif control.className == "/common/hud/controls/ValueControl" then
             self.colourPicker:setValue(control.value, control.maxValue)
         else
-            echo("Did not expect: "..control.caption)
+            print("Did not expect: "..control.caption)
         end
     end;
     
@@ -201,6 +201,7 @@ hud_class "../EnvCycleEditor" {
         
         self.timeLabel = gfx_hud_object_add("Label", {
             size = vec(70,20);
+            alpha = 0;
         })
         self.timeLeftButton = gfx_hud_object_add("FlatButton", {
             caption = "◄";
@@ -282,7 +283,7 @@ hud_class "../EnvCycleEditor" {
                 gfx_hud_object_add("StackY", {
                     gfx_hud_object_add("StackX", {
                         padding = spacer,
-                        gfx_hud_object_add("/common/hud/Label", { size=vec(50,20), value="Palette" }),
+                        gfx_hud_object_add("/common/hud/Label", { size=vec(50,20), value="Palette", alpha=0 }),
                         add("ColourControl", "Palette1", { needsAlpha = true, showCaption = false } ),
                         add("ColourControl", "Palette2", { needsAlpha = true, showCaption = false } ),
                         add("ColourControl", "Palette3", { needsAlpha = true, showCaption = false } ),
@@ -460,7 +461,7 @@ hud_class "../EnvCycleEditor" {
         xpcall(function()
             local filename = self.fileName.value
             include(filename)
-            echo("Read env cycle from \""..filename.."\"")
+            print("Read env cycle from \""..filename.."\"")
             self:updateFromEnvCycle()
             env_recompute()
         end, error_handler)
@@ -478,7 +479,7 @@ hud_class "../EnvCycleEditor" {
             f:write("env_cycle = ")
             f:write(dump(env_cycle, false))
             f:close()
-            echo("Wrote env cycle to \"/"..filename.."\"")
+            print("Wrote env cycle to \"/"..filename.."\"")
         end, error_handler)
     end;
         

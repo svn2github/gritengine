@@ -20,26 +20,31 @@
  */
 
 #include <cstring>
+#include <iostream>
 
+#include "console.h"
 #include "lua_stack.h"
 
 std::string lua_current_dir (lua_State *L)
 {
     lua_Debug dbg;
-    int level = 1;
-    while (true) {
+    for (int level=0 ; ; level++) {
         int r = lua_getstack(L, level, &dbg);
-        if (r == 1) {
+        if (r != 1) {
             // off the bottom of the stack
             return "/";
         }
-        if (strcmp(dbg.what, "C")) {
-            // Maybe we are called from C, in which case just keeep looking.
+        r = lua_getinfo(L, "S", &dbg);
+        //CVERB << dbg.what << std::endl;
+        //CVERB << dbg.source << std::endl;
+        if (!strcmp(dbg.what, "C")) {
+            // Maybe we are called from C, in which case just keep looking.
+            // Note: this will always be the case for the first stack level.
             continue;
         }
         if (dbg.source[0] != '@') {
             // Didn't come from a file.
-            return "/";
+            continue;
         }
         std::string filename = &dbg.source[1];
         size_t last = filename.rfind('/');
@@ -47,7 +52,7 @@ std::string lua_current_dir (lua_State *L)
             //  Must be a lua file in the root directory.
             return "/";
         }
-        std::string dir(filename, 0, last);
+        std::string dir(filename, 0, last+1);
         return dir;
     }
 }

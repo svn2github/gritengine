@@ -54,7 +54,7 @@ BaseClass = {
                         instance.activationSkipped = true
                         return true
                 end
-                --echo("Activating: "..persistent.name.." ("..persistent.className..")")
+                --print("Activating: "..persistent.name.." ("..persistent.className..")")
                 local gfxMesh = persistent.gfxMesh or persistent.className..".mesh"
                 local fqmm
                 if persistent.materialMap then
@@ -219,7 +219,7 @@ BaseClass = {
         end;
         deactivate=function(persistent)
                 local instance = persistent.instance
-                --echo("Deactivating: "..persistent.name.." ("..persistent.className..")")
+                --print("Deactivating: "..persistent.name.." ("..persistent.className..")")
                 persistent.pos = persistent.spawnPos
                 instance.gfx = safe_destroy(instance.gfx)
                 if instance.lights then
@@ -244,10 +244,10 @@ BaseClass = {
     
                 local tot_triangles, tot_batches = gfx.triangles, gfx.batches
 
-                echo("Mesh: "..gfx.meshName)
+                print("Mesh: "..gfx.meshName)
 
-                echo(" Triangles: "..gfx.triangles)
-                echo(" Batches: "..gfx.batches)
+                print(" Triangles: "..gfx.triangles)
+                print(" Batches: "..gfx.batches)
 
                 return tot_triangles, tot_batches
         end;
@@ -364,9 +364,9 @@ ColClass = extends (BaseClass) {
         receiveImpulse = function (persistent, impulse, wpos)
                 if persistent.health and persistent.impulseDamageThreshold then
                         --if impulse > 0 then
-                        --        --echo(persistent.name, impulse, pos, poso)
+                        --        --print(persistent.name, impulse, pos, poso)
                         --        if (not other.owner.destroyed) and other.owner.className == "/vehicles/Evo" then
-                        --                --echo("BOUNCE!", impulse, norm, poso)
+                        --                --print("BOUNCE!", impulse, norm, poso)
                         --                --other:impulse(-impulse * norm, pos)
                         --                persistent:receiveDamage(20000)
                         --        end
@@ -390,7 +390,7 @@ ColClass = extends (BaseClass) {
                         return true
                 end
                 local colMesh = persistent.colMesh or persistent.className..".gcol"
-                --echo("adding: "..tostring(persistent).." with "..colMesh)
+                --print("adding: "..tostring(persistent).." with "..colMesh)
                 local body = physics_body_make(
                         colMesh,
                         persistent.spawnPos,
@@ -522,10 +522,10 @@ ColClass = extends (BaseClass) {
 
                 if instance.pbats then
                     for proc_bat_name, pbat in pairs(instance.pbats) do
-                            echo("  Procedural batch: "..proc_bat_name)
-                            echo("    Instances: "..pbat.instances)
-                            echo("    Triangles: "..pbat.triangles)
-                            echo("    Batches: "..pbat.batches)
+                            print("  Procedural batch: "..proc_bat_name)
+                            print("    Instances: "..pbat.instances)
+                            print("    Triangles: "..pbat.triangles)
+                            print("    Batches: "..pbat.batches)
                             tot_triangles = tot_triangles + pbat.triangles
                             tot_batches = tot_batches + pbat.batches
                     end
@@ -551,7 +551,7 @@ ColClass = extends (BaseClass) {
                 if not persistent.activated then error("Not activated: "..persistent.name) end
                 local pbats = persistent.instance.pbats
                 if pbats == nil then return end
-                echo("Procedural batches of \""..tostring(persistent).."\" toggled ")
+                print("Procedural batches of \""..tostring(persistent).."\" toggled ")
                 for k,pbat in pairs(pbats) do
                         pbat.enabled = v
                 end
@@ -580,7 +580,7 @@ ColClass = extends (BaseClass) {
                 local new_health = persistent.instance.health - damage
                 if persistent.instance.health <= 0 then return end
                 if verbose_receive_damage then
-                        echo(persistent.name.." says OW! "..damage.." ["..new_health.." / "..persistent.health.." = "..math.floor(100*new_health/persistent.health).."%]")
+                        print(persistent.name.." says OW! "..damage.." ["..new_health.." / "..persistent.health.." = "..math.floor(100*new_health/persistent.health).."%]")
                 end
                 persistent.instance.health = new_health
                 if persistent.instance.health <= 0 then
@@ -588,7 +588,7 @@ ColClass = extends (BaseClass) {
                 end
         end;
         receiveBlast = function (persistent, impulse, wpos, damage_impulse)
-                --echo(persistent.name.." caught in explosion", impulse, wpos)
+                --print(persistent.name.." caught in explosion", impulse, wpos)
                 damage_impulse = damage_impulse or impulse
                 persistent.instance.body:impulse(impulse, wpos)
                 persistent:receiveImpulse(damage_impulse, wpos)
@@ -614,7 +614,7 @@ ColClass = extends (BaseClass) {
                 if persistent.explodeInfo then persistent:explode() end
         end;
         ignite=function(persistent, pname, pos, mat, fertile_life)
-                --echo("igniting: "..tostring(persistent))
+                --print("igniting: "..tostring(persistent))
                 if persistent.instance.body.mass==0 then
                         flame_ignite(pname, pos, mat, fertile_life)
                 end
@@ -625,10 +625,10 @@ PileClass = {
         renderingDistance=400;
         init = function (persistent)
                 -- iterate over the guys i will spawn to see what their "advance prepares" should be
-                --echo("Initialising: "..persistent.name.." ("..persistent.className..")")
+                --print("Initialising: "..persistent.name.." ("..persistent.className..")")
         end;
         activate=function (persistent, instance)
-                --echo("Activating: "..persistent.name.." ("..persistent.className..")")
+                --print("Activating: "..persistent.name.." ("..persistent.className..")")
                 instance.children = {}
                 for k,v in ipairs(persistent.class.dump) do
                         local oclass, opos, otab = unpack(v)
@@ -642,7 +642,7 @@ PileClass = {
                 end
         end;
         deactivate=function(persistent)
-                --echo("Deactivating: "..persistent.name.." ("..persistent.className..")")
+                --print("Deactivating: "..persistent.name.." ("..persistent.className..")")
                 -- nothing to do i think
                 local instance = persistent.instance
                 for k,v in ipairs(instance.children) do
@@ -657,11 +657,11 @@ ProcPileClass = {
         renderingDistance=400;
         init = function (persistent)
                 -- iterate over the guys i will spawn to see what their "advance prepares" should be
-                --echo("Initialising: "..persistent.name.." ("..persistent.className..")")
+                --print("Initialising: "..persistent.name.." ("..persistent.className..")")
         end;
         spawnObjects = function() end;
         activate=function (persistent, instance)
-                --echo("Activating: "..persistent.name.." ("..persistent.className..")")
+                --print("Activating: "..persistent.name.." ("..persistent.className..")")
                 instance.children = {}
                 local counter = 1
                 persistent:spawnObjects(function(oclass,opos,otab)
@@ -676,7 +676,7 @@ ProcPileClass = {
                 end)
         end;
         deactivate=function(persistent)
-                --echo("Deactivating: "..persistent.name.." ("..persistent.className..")")
+                --print("Deactivating: "..persistent.name.." ("..persistent.className..")")
                 -- nothing to do i think
                 local instance = persistent.instance
                 for k,v in ipairs(instance.children) do

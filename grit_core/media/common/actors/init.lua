@@ -17,7 +17,7 @@ end
 
 local function cast_cylinder_with_deflection (body, radius, height, pos, movement)
 
-    --echo("cast with "..pos)
+    --print("cast with "..pos)
 
     local ret_body, ret_normal, ret_pos
 
@@ -114,7 +114,7 @@ class "Character" (ColClass) {
         local instance = self.instance
         local body = instance.body
 
-        --echo('-------------')
+        --print('-------------')
 
         -- check foot and height at source
         -- check pat to destination above step hieght
@@ -150,7 +150,7 @@ class "Character" (ColClass) {
             instance.fallVelocity = self.terminalVelocity
         end
 
-        --echo('fallVelocity: '..instance.fallVelocity)
+        --print('fallVelocity: '..instance.fallVelocity)
 
         -- FALL / JUMP
         -- shoot sphere from centre of capsule
@@ -165,7 +165,7 @@ class "Character" (ColClass) {
             floor_impulse = self.mass * old_fall_velocity
             instance.fallVelocity = 0
         end
-        --echo('fall_dist: '..(fall_fraction * fall_vect).."  off_ground: "..tostring(instance.offGround))
+        --print('fall_dist: '..(fall_fraction * fall_vect).."  off_ground: "..tostring(instance.offGround))
         curr_foot = curr_foot + fall_fraction * fall_vect
 
         local no_step_up = instance.offGround
@@ -217,7 +217,7 @@ class "Character" (ColClass) {
                 local magnitude = math.min(self.pushForce, collision_body.mass * 15) * -collision_normal
                 collision_body:force(magnitude, collision_pos)
             end
-            --echo('first walk test:   retries: '..tostring(retries).." tried_vect:"..walk_vect.."  vect:"..new_walk_vect)
+            --print('first walk test:   retries: '..tostring(retries).." tried_vect:"..walk_vect.."  vect:"..new_walk_vect)
 
             curr_foot = curr_foot + new_walk_vect
             curr_centre = curr_foot + vector3(0,0,height/2)
@@ -233,12 +233,12 @@ class "Character" (ColClass) {
                 -- if we hvae an upwards velocity, work out if we would have made the step or not
                 -- if not, set velocity to 0 so that we don't give an unnatural boost
                 local parabolic_height = instance.fallVelocity^2  / 2 / gravity
-                --echo("fail", instance.fallVelocity, parabolic_height, actual_step_height)
+                --print("fail", instance.fallVelocity, parabolic_height, actual_step_height)
                 if parabolic_height > 0 and parabolic_height <  actual_step_height then
                     instance.fallVelocity = 0
                 end
 
-                --echo('actual step height:'..actual_step_height)
+                --print('actual step height:'..actual_step_height)
                 curr_foot = curr_foot + vector3(0,0, actual_step_height)
             end
 

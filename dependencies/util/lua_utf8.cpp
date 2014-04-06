@@ -261,7 +261,8 @@ static int lua_utf8_find (lua_State *L)
         long haystack_len = haystack.countChar32();
         long needle_len = needle.countChar32();
 
-        if (init>haystack_len) init = haystack_len;
+        if (init>haystack_len) return 0;
+
         if (init<0) init += haystack_len+1;
         if (init<1) init = 1;
         init--;

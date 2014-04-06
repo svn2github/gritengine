@@ -199,6 +199,6 @@ hud_class "Scale" {
     end;
     
     onChange = function (self)
-        echo("Changed to: "..self.value)
+        print("Changed to: "..self.value)
     end;
 }

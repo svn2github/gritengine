@@ -55,7 +55,7 @@ net.client.checkForTimeout = function(self)
 	if self.state == STATE_IDLE then return end
 	
 	if (self.clientTime - self.lastMessageTime) > 30 then
-		echo("Server connection timed out.")
+		print("Server connection timed out.")
 		self.state = STATE_IDLE
 		self.currentServer = nil
 	end
@@ -148,7 +148,7 @@ net.client.sendCommandPacket = function(self)
 end
 
 net.client.processPacket = function(self, address, message)
-	echo("client: packet from " .. tostring(address))
+	print("client: packet from " .. tostring(address))
 
 	local sequenceNum = message:read_int()
 	
@@ -203,7 +203,7 @@ function connect(host)
 	if host == nil then return end
 	
 	if net.runningServer then
-		echo("Client and server can not be running at the same time currently")
+		print("Client and server can not be running at the same time currently")
 		
 		return
 	end

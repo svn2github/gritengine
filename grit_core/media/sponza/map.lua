@@ -1,4 +1,4 @@
-echo ("Loading Crytek sponza map")
+print ("Loading Crytek sponza map")
 
 object "sponza_00" (11.2812, -8.30009, -10.7804) { name="sponza_000" }
 object "sponza_368" (1.53095, -2.76148, -12.2547) { name="sponza_001" }

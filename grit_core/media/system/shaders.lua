@@ -623,7 +623,7 @@ local function make_program_cg_ (category, diffuse_map, pma, emissive_map, norma
         defines = defines .. " -DFORWARD_PART="..(forward and "1" or "0")
         defines = defines .. " -DDEFERRED_AMBIENT_SUN_PART="..((deferred_amb_sun or forward_amb_sun) and "1" or "0")
         defines = defines .. " -DDEFERRED_LIGHTS_PART="..(deferred_lights and "1" or "0")
-        --echo(defines)
+        --print(defines)
 
         local vp = prog(vname,"cg","VERTEX")
         vp.profiles = {"vs_3_0", gl_profile_vert}
@@ -778,7 +778,7 @@ function do_reset_receiver_shaders ()
         end
         local end_time = micros()
 
-        echo("Rebuilt "..used_shaders.." shaders in "..tostring((end_time-start_time)/1E6).." seconds.")
+        print("Rebuilt "..used_shaders.." shaders in "..tostring((end_time-start_time)/1E6).." seconds.")
 end
 
 -- }}}

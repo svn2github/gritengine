@@ -60,7 +60,7 @@ local function material_caster (name, original, world, tab)
 
         --local shf, shv = shader_caster_names_ensure_created(tab.diffuseMap, tab.overlayOffset, tab.blendedBones, 0, world)
         local shf, shv = shader_caster_names(needs_texture, tab.overlayOffset, tab.blendedBones, 0, world)
-        --echo("Setting material \""..name.."\" with shader: ", shf, shv)
+        --print("Setting material \""..name.."\" with shader: ", shf, shv)
 
         local mat = get_material(name)
         if mat==nil then
@@ -201,7 +201,7 @@ local function material_emissive (name, original, world, tab)
         if tab.vertexDiffuse then vcols = vcols + 3 end
         if tab.vertexAlpha then vcols = vcols + 1 end
         local shf, shv = shader_emissive_names_ensure_created(tab.emissiveMap, tab.overlayOffset, tab.blendedBones, world)
-        --echo("Setting material \""..name.."\" with shader: ", shf, shv, vcols)
+        --print("Setting material \""..name.."\" with shader: ", shf, shv, vcols)
 
         local mat = get_material(name)
         if mat==nil then
@@ -326,7 +326,7 @@ local function material_internal (name, original, shadow_mat, fade, world, tab)
         if tab.vertexAlpha then vcols = vcols + 1 end
         local paint_mode = paint_mode_from_tab(tab)
         local shf, shv = shader_names_ensure_created(tab.hasDiffuseMap, tab.premultipliedAlpha, false, tab.hasNormalMap, tab.translucencyMap, spec_mode, paint_mode, #tab.blend, tab.overlayOffset, tab.stipple, tab.blendedBones, vcols, tab.grassLighting, world, tab.shadowReceive, tab.microFlakes, forward_only)
-        --echo("Setting material \""..name.."\" with shader: ", shf, shv, vcols)
+        --print("Setting material \""..name.."\" with shader: ", shf, shv, vcols)
 
         local mat = get_material(name)
         if mat==nil then

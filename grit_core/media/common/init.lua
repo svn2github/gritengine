@@ -1,6 +1,6 @@
 -- (c) David Cunningham 2009, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
-echo ("Loading common assets")
+print ("Loading common assets")
 
 include "map_classes.lua"
 include "sound_emitter_class.lua"
@@ -56,7 +56,7 @@ local tab = {
 }
 
 for k,v in pairs(tab) do
-    common_binds:bind(k, function() echo(v) ; introduce_obj(v) end, nil, function() echo(v) ; introduce_obj(v,true) end)
+    common_binds:bind(k, function() print(v) ; introduce_obj(v) end, nil, function() print(v) ; introduce_obj(v,true) end)
 end
 
 common_binds:bind("k", function() place("ramps/Small") end)

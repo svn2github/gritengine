@@ -3,7 +3,7 @@ local t
 function mats()
         t = time(function() include "materials.lua" end)
         --read_matbin("gtasa/san_andreas.matbin",matbin_reader)
-        echo("materials.lua: "..t.." seconds")
+        print("materials.lua: "..t.." seconds")
 end
 
 mats()
@@ -11,7 +11,7 @@ mats()
 include "phys_mats.lua"
 
 t = time(function() include "classes.lua" end)
-echo("classes.lua: "..t.." seconds")
+print("classes.lua: "..t.." seconds")
 
 include "carcols.lua"
 
@@ -100,7 +100,7 @@ function streetlamp_grid()
 end
 
 function kill_class(c)
-    echo("Killing all of class \""..c.."\"")
+    print("Killing all of class \""..c.."\"")
     foreach(object_all_of_class(c), function(o) o:destroy() end)
 end
 

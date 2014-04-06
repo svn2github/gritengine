@@ -5,7 +5,7 @@ ActiveObjectShell = extends (ColClass) {
 
     init = function (persistent)
         ColClass.init(persistent)
-        echo("Creating "..persistent.name.." of class "..persistent.className.." with additionalState="..persistent.additionalState)
+        print("Creating "..persistent.name.." of class "..persistent.className.." with additionalState="..persistent.additionalState)
     end;
 
     activate = function (persistent, instance)
@@ -15,7 +15,7 @@ ActiveObjectShell = extends (ColClass) {
                 return true
         end
 
-        echo("Activating "..persistent.name)
+        print("Activating "..persistent.name)
 
         -- initialise any state for streamed in object here (this state does not persist when streamed out)
         instance.timeSinceActivation = 0
@@ -60,7 +60,7 @@ ActiveObjectShell = extends (ColClass) {
 
     deactivate = function (persistent)
         local instance = persistent.instance
-        echo("Deactivating "..persistent.name)
+        print("Deactivating "..persistent.name)
 
         -- request that stepCallback be called every physics tick
         persistent.needsStepCallbacks = false
@@ -75,49 +75,49 @@ ActiveObjectShell = extends (ColClass) {
 
     -- these are needed if you set instance.canDrive = true
     setPush = function (persistent, v)
-        echo(persistent.name..":  push set to "..tostring(v))
+        print(persistent.name..":  push set to "..tostring(v))
     end;
     setPull = function (persistent, v)
-        echo(persistent.name..":  pull set to "..tostring(v))
+        print(persistent.name..":  pull set to "..tostring(v))
     end;
     setShouldSteerLeft = function (persistent, v)
-        echo(persistent.name..":  steer left set to "..tostring(v))
+        print(persistent.name..":  steer left set to "..tostring(v))
     end;
     setShouldSteerRight = function (persistent, v)
-        echo(persistent.name..":  steer right set to "..tostring(v))
+        print(persistent.name..":  steer right set to "..tostring(v))
     end;
     setHandbrake = function (persistent, v)
-        echo(persistent.name..":  handbrake right set to "..tostring(v))
+        print(persistent.name..":  handbrake right set to "..tostring(v))
     end;
     realign = function (persistent)
-        echo(persistent.name..":  realign pressed")
+        print(persistent.name..":  realign pressed")
     end;
     setSpecialUp = function (persistent, v)
-        echo(persistent.name..":  special up set to "..tostring(v))
+        print(persistent.name..":  special up set to "..tostring(v))
     end;
     setSpecialDown = function (persistent, v)
-        echo(persistent.name..":  special down set to "..tostring(v))
+        print(persistent.name..":  special down set to "..tostring(v))
     end;
     setSpecialLeft = function (persistent, v)
-        echo(persistent.name..":  special left set to "..tostring(v))
+        print(persistent.name..":  special left set to "..tostring(v))
     end;
     setSpecialRight = function (persistent, v)
-        echo(persistent.name..":  special right set to "..tostring(v))
+        print(persistent.name..":  special right set to "..tostring(v))
     end;
     setAltUp = function (persistent, v)
-        echo(persistent.name..":  alt up set to "..tostring(v))
+        print(persistent.name..":  alt up set to "..tostring(v))
     end;
     setAltDown = function (persistent, v)
-        echo(persistent.name..":  alt down set to "..tostring(v))
+        print(persistent.name..":  alt down set to "..tostring(v))
     end;
     setAltLeft = function (persistent, v)
-        echo(persistent.name..":  alt left set to "..tostring(v))
+        print(persistent.name..":  alt left set to "..tostring(v))
     end;
     setAltRight = function (persistent, v)
-        echo(persistent.name..":  alt right set to "..tostring(v))
+        print(persistent.name..":  alt right set to "..tostring(v))
     end;
     special = function (persistent)
-        echo(persistent.name..":  special pressed")
+        print(persistent.name..":  special pressed")
     end;
 
 }

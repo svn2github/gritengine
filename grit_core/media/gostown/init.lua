@@ -13,11 +13,11 @@ local t
 --initialise_all_resource_groups()
 
 t = time(function () include "materials.lua" end)
-echo("materials.lua: "..t.." seconds")
+print("materials.lua: "..t.." seconds")
 
 t = time(function () include "classes.lua" end)
-echo("classes.lua: "..t.." seconds")
+print("classes.lua: "..t.." seconds")
 
 t = time(function () include "map.lua" end)
-echo("map.lua: "..t.." seconds")
+print("map.lua: "..t.." seconds")
 

@@ -18,7 +18,7 @@ function NetChannel:send(message)
 	net_send_packet_sequenced(self.channel, self.address, message, self.sequenceOut)
 	
 	if net.showPackets then
-		echo(string.format("sending %db, seq=%d", message.length, self.sequenceOut))
+		print(string.format("sending %db, seq=%d", message.length, self.sequenceOut))
 	end
 end
 
