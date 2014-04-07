@@ -26,8 +26,9 @@
 #include <iostream>
 #include <fstream>
 
-#include "io_util.h"
+#include "console.h"
 #include "exception.h"
+#include "io_util.h"
 
 InFile::InFile (const std::string &filename)
   : filename(filename)
@@ -47,7 +48,7 @@ OutFile::OutFile (const std::string &filename)
     }
 }
 
-std::string collapse_path (const std::string &path)
+static std::string collapse_path (const std::string &path)
 {
     // first split into dirs
     std::vector<std::string> dirs;
@@ -84,4 +85,11 @@ std::string collapse_path (const std::string &path)
         ss << "/" + dirs2[i];
     }
     return ss.str();
+}
+
+std::string absolute_path (const std::string &dir, const std::string &rel)
+{
+    APP_ASSERT(dir[0] == '/');
+    if (rel[0] == '/') return rel;
+    return collapse_path(dir + rel);
 }

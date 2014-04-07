@@ -3,8 +3,8 @@ local mu_back = 2.0
 local rad = 0.348 -- wheels
 
 class "../Focus" (Vehicle) {
-        gfxMesh="Focus/Body.mesh",
-        colMesh="Focus/Body.gcol",
+        gfxMesh=r"Body.mesh",
+        colMesh=r"Body.gcol",
         placementZOffset=0.4,
         powerPlots = {
                 [-1] = { [0] = -7000; [15] = -7000; [30] = -5000; [40] = 0; },

@@ -25,10 +25,10 @@
 #include "console.h"
 #include "lua_stack.h"
 
-std::string lua_current_dir (lua_State *L)
+std::string lua_current_dir (lua_State *L, int level)
 {
     lua_Debug dbg;
-    for (int level=0 ; ; level++) {
+    for ( ; ; level++) {
         int r = lua_getstack(L, level, &dbg);
         if (r != 1) {
             // off the bottom of the stack

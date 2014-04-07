@@ -10,8 +10,8 @@ local drive_rear = 2
 drive_front, drive_rear = drive_front/(0.5*drive_front+0.5*drive_rear), drive_rear/(0.5*drive_front+0.5*drive_rear)
 
 class "../Evo" (Vehicle) {
-        gfxMesh="Evo/Body.mesh",
-        colMesh="Evo/Body.gcol",
+        gfxMesh=r"Body.mesh",
+        colMesh=r"Body.gcol",
         placementZOffset=0.4,
         powerPlots = {
                 [-1] = { [0] = -4000; [10] = -4000; [50] = 0; [50.0001] = 0; };
@@ -55,39 +55,39 @@ class "../Evo" (Vehicle) {
         lightHeadLeft = {
                 pos=vector3(-0.7, 2.2, 0.25), coronaPos=vector3(-0.7, 2.2, 0.25),
                 materials = {
-                        { mesh="Evo/LightHeadLeft", on="Evo/LightOn", off="Evo/LightOff" };
-                        { mesh="Evo/LightHeadLeftGlass", on="Evo/LightOnGlass", off="Evo/LightOffGlass" };
+                        { mesh=r"LightHeadLeft", on=r"LightOn", off=r"LightOff" };
+                        { mesh=r"LightHeadLeftGlass", on=r"LightOnGlass", off=r"LightOffGlass" };
                 }
         };
         lightHeadRight = {
                 pos=vector3( 0.7, 2.2, 0.25), coronaPos=vector3( 0.7, 2.2, 0.25),
                 materials = {
-                        { mesh="Evo/LightHeadRight", on="Evo/LightOn", off="Evo/LightOff" };
-                        { mesh="Evo/LightHeadRightGlass", on="Evo/LightOnGlass", off="Evo/LightOffGlass" };
+                        { mesh=r"LightHeadRight", on=r"LightOn", off=r"LightOff" };
+                        { mesh=r"LightHeadRightGlass", on=r"LightOnGlass", off=r"LightOffGlass" };
                 }
         };
         lightBrakeLeft = {
                 pos=vector3(-0.6, -2.0, 0.25), coronaPos=vector3(-0.6, -2.0, 0.25), coronaColour=vector3(0.05, 0, 0), coronaSize = 1,
                 materials = {
-                        { mesh="Evo/LightBrakeLeft", on="Evo/LightBrakeOn", dim="Evo/LightBrakeDim", off="Evo/LightOff" };
+                        { mesh=r"LightBrakeLeft", on=r"LightBrakeOn", dim=r"LightBrakeDim", off=r"LightOff" };
                 }
         };
         lightBrakeRight = {
                 pos=vector3( 0.6, -2.0, 0.25), coronaPos=vector3( 0.6, -2.0, 0.25), coronaColour=vector3(0.05, 0, 0), coronaSize = 1,
                 materials = {
-                        { mesh="Evo/LightBrakeRight", on="Evo/LightBrakeOn", dim="Evo/LightBrakeDim", off="Evo/LightOff" };
+                        { mesh=r"LightBrakeRight", on=r"LightBrakeOn", dim=r"LightBrakeDim", off=r"LightOff" };
                 }
         };
         lightReverseLeft = {
                 pos=vector3(-0.7, -2.0, 0.25), coronaPos=vector3(-0.7, -2.0, 0.25), coronaColour=vector3(0.03, 0.03, 0.03), coronaSize = 0.7,
                 materials = {
-                        { mesh="Evo/LightReverse", on="Evo/LightOn", off="Evo/LightOff" };
+                        { mesh=r"LightReverse", on=r"LightOn", off=r"LightOff" };
                 }
         };
         lightReverseRight = {
                 pos=vector3( 0.7, -2.0, 0.25), coronaPos=vector3( 0.7, -2.0, 0.25), coronaColour=vector3(0.03, 0.03, 0.03), coronaSize = 0.7,
                 materials = {
-                        { mesh="Evo/LightReverse", on="Evo/LightOn", off="Evo/LightOff" };
+                        { mesh=r"LightReverse", on=r"LightOn", off=r"LightOff" };
                 }
         };
         engineSmokeVents = {

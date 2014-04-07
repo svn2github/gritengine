@@ -4,8 +4,8 @@ local mu_rear_drive = 3.1
 local rad = 0.348 -- wheels
 
 class "../Seat" (Vehicle) {
-        gfxMesh="Seat/Body.mesh",
-        colMesh="Seat/Body.gcol",
+        gfxMesh=r"Body.mesh",
+        colMesh=r"Body.gcol",
         placementZOffset=0.4,
         powerPlots = {
                 [-1] = { [0] = -5000; [10] = -5000; [30] = -5000; [40] = 0; },

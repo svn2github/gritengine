@@ -76,16 +76,14 @@ function main:run (...)
 
                 xpcall(function ()
                         failName.name = nil
-                        main.frameCallbacks:executeExtended(function (name,cb,path,...)
+                        main.frameCallbacks:executeExtended(function (name,cb,...)
                                 failName.name = name
                                 --t:reset()
                                 if cb == nil then
                                         --print(RED.."Callback was nil: "..name)
                                         return true
                                 end
-                                path_stack_push_dir(path)
                                 local result = cb(...)
-                                path_stack_pop()
                                 --local us = t.us
                                 --if us>5000 and name~="GFX.frameCallback" then
                                 --        print("callback \""..name.."\" took "..us/1000 .."ms ")
@@ -102,7 +100,6 @@ function main:run (...)
                 end,error_handler)
 
                 if failName.name then
-                        path_stack_pop()
                         print("Removed frameCallback: "..failName.name)
                         main.frameCallbacks:removeByName(failName.name)
                 end
@@ -130,9 +127,9 @@ include("procedural_batches.lua")
 
 include("pid_ctrl.lua")
 
-include("player_ctrl.lua")
-
 include("capturer.lua")
+
+include("player_ctrl.lua")
 
 include("configuration.lua")
 

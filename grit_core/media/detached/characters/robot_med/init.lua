@@ -12,10 +12,10 @@ material "robot_med" {
     blendedBones = 3;
 }
 
-class "../robot_med" (DetachedCharacterClass) {
+class "." (DetachedCharacterClass) {
 
-	gfxMesh = "robot_med/robot_med.mesh";
-	colMesh = "robot_med/robot_med.gcol";
+	gfxMesh = r"robot_med.mesh";
+	colMesh = r"robot_med.gcol";
 	
 	-- distance travelled in one repeating period of gait
 	walkStrideLength = 2.5;

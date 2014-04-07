@@ -8,13 +8,11 @@ local playlist = {
 }
 
 for i,v in ipairs(playlist) do
-		playlist[i] = "/common/hud/MusicPlayer/"..v
-		disk_resource_add("/common/hud/MusicPlayer/"..v)
-		--loads on demand in next/prev button code
-		--disk_resource_load_indefinitely("/common/hud/MusicPlayer/"..v)
+		playlist[i] = v
+		disk_resource_add(v)
 end
 
-hud_class "../MusicPlayer" {
+hud_class "." {
 	size = vector2(512, 256);
 	font = "/common/fonts/misc.fixed";
 	--alpha = 0;
@@ -39,9 +37,9 @@ hud_class "../MusicPlayer" {
 		self.openPosition = vector2( self.size.x/2, self.size.y/2)
 		self.position = self.closePosition
 		self.orientation = 23
-		self.texture = "MusicPlayer/body.png"
+		self.texture = "body.png"
 		
-		self.showHideButton = gfx_hud_object_add("FlatButton", {
+		self.showHideButton = gfx_hud_object_add("/common/hud/FlatButton", {
             caption=":";
             font="/common/fonts/misc.fixed";
             texture="/common/hud/CornerTextures/Filled04.png";
@@ -58,7 +56,7 @@ hud_class "../MusicPlayer" {
 			self.state = "closing"
 		end
 		
-		self.playPauseButton = gfx_hud_object_add("FlatButton", {
+		self.playPauseButton = gfx_hud_object_add("/common/hud/FlatButton", {
             caption="▶",
             font="/common/fonts/misc.fixed",
             size=vec(48, 32),
@@ -77,7 +75,7 @@ hud_class "../MusicPlayer" {
 			end
 		end
 		
-		self.prevSongButton = gfx_hud_object_add("FlatButton", {
+		self.prevSongButton = gfx_hud_object_add("/common/hud/FlatButton", {
             caption="<",
             font="/common/fonts/misc.fixed",
             size=vec(32, 24),
@@ -102,7 +100,7 @@ hud_class "../MusicPlayer" {
 			end
 		end
 		
-		self.nextSongButton = gfx_hud_object_add("FlatButton", {
+		self.nextSongButton = gfx_hud_object_add("/common/hud/FlatButton", {
             caption=">",
             font="/common/fonts/misc.fixed",
             size=vec(32, 24),

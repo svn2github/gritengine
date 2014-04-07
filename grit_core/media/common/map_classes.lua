@@ -42,9 +42,11 @@ BaseClass = {
         init = function (persistent)
                 local class_name = persistent.className
                 local gfxMesh = persistent.gfxMesh or class_name..".mesh"
+                ensure_absolute_path(persistent, gfxMesh)
                 persistent:addDiskResource(gfxMesh)
                 if persistent.extraResources == nil then return end
                 for _,v in ipairs(persistent.extraResources) do
+                        ensure_absolute_path(persistent, v)
                         persistent:addDiskResource(v)
                 end
         end;
@@ -56,20 +58,20 @@ BaseClass = {
                 end
                 --print("Activating: "..persistent.name.." ("..persistent.className..")")
                 local gfxMesh = persistent.gfxMesh or persistent.className..".mesh"
-                local fqmm
+                local mm
                 if persistent.materialMap then
-                        fqmm = fqmm or {}
+                        mm = mm or {}
                         for k,v in pairs(persistent.materialMap) do
-                                fqmm[fqn_ex(k, persistent.className)] = fqn_ex(v, persistent.className)
+                                mm[k] = v
                         end
                 end
                 if instance.materialMap then -- allows subclasses to add to the material map
-                        fqmm = fqmm or {}
+                        mm = mm or {}
                         for k,v in pairs(instance.materialMap) do
-                                fqmm[fqn_ex(k, persistent.className)] = fqn_ex(v, persistent.className)
+                                mm[k] = v
                         end
                 end
-                instance.gfx = gfx_body_make(gfxMesh, fqmm)
+                instance.gfx = gfx_body_make(gfxMesh, mm)
                 instance.gfx.castShadows = not persistent.castShadows == false
                 if instance.gfx.numBones > 0 and instance.gfx:getAllAnimations() == nil then instance.gfx:setAllBonesManuallyControlled(true) end
                 instance.gfx.localPosition = persistent.spawnPos
@@ -93,7 +95,7 @@ BaseClass = {
                                                 instance.lightFlickedOff[k] = off
                                                 l.enabled = not instance.lightFlickedOff[k] and not instance.lightTimeOff[k]
                                                 none_one_or_all(tab.emissiveMaterials, function(x)
-                                                        instance.gfx:setEmissiveEnabled(fqn_ex(x, persistent.className), l.enabled)
+                                                        instance.gfx:setEmissiveEnabled(x, l.enabled)
                                                 end)
                                                 return math.random() * 0.2
                                         end)
@@ -121,7 +123,7 @@ BaseClass = {
                                                 instance.lightTimeOff[k] = off
                                                 l.enabled = not instance.lightFlickedOff[k] and not instance.lightTimeOff[k]
                                                 none_one_or_all(tab.emissiveMaterials, function(x)
-                                                        instance.gfx:setEmissiveEnabled(fqn_ex(x, persistent.className), l.enabled)
+                                                        instance.gfx:setEmissiveEnabled(x, l.enabled)
                                                 end)
                                         end
                                         instance.lightCallbacks[k] = cb
@@ -360,6 +362,11 @@ function top_angled_cam_update(persistent)
 	regular_chase_cam_update(persistent)
 end
 
+function ensure_absolute_path(persistent, path)
+    if path:sub(1,1) == '/' then return end
+    error(("Class \"%s\" expected absolute path, did you forget 'r'?  Got \"%s\"."):format(persistent.className, path), 2)
+end
+
 ColClass = extends (BaseClass) {
         receiveImpulse = function (persistent, impulse, wpos)
                 if persistent.health and persistent.impulseDamageThreshold then
@@ -382,6 +389,7 @@ ColClass = extends (BaseClass) {
         init = function (persistent)
                 local class_name = persistent.className
                 local colMesh = persistent.colMesh or class_name..".gcol"
+                ensure_absolute_path(persistent, colMesh)
                 persistent:addDiskResource(colMesh)
                 BaseClass.init(persistent)
         end;
@@ -458,6 +466,9 @@ ColClass = extends (BaseClass) {
                 local pbats_counter = 1
                 for _,pmatname in ipairs(body.procObjMaterials) do
                         local pmat = physics:getMaterial(pmatname)
+                        if pmat == nil then
+                            error("Could not find physical material: \""..pmatname.."\"")
+                        end
                         if pmat.proceduralBatches ~= nil then
                                 for i, proc_bat_name in ipairs(pmat.proceduralBatches) do
                                         pbats = pbats or { } -- create a table only if we have to

@@ -60,11 +60,11 @@ material "RoofTiles" { diffuseMap="FeltTiles_d.png", specularFromDiffuse={-1,1},
 material "RoadMarkings" { overlayOffset=true, alphaReject=0.5, premultipliedAlpha=true, diffuseMap="RoadMarkings_d.dds", normalMap="RoadMarkings_n.dds", specularMap="RoadMarkings_s.dds" }
 class "TestFloor"   (ColClass) {receiveShadows=true,renderingDistance=1200,castShadows=true}
 class "Floor"       (ColClass) {receiveShadows=true,renderingDistance=1200,castShadows=true}
-class "FloorMarkings" (BaseClass) {gfxMesh="Floor.mesh", receiveShadows=true,renderingDistance=1200, materialMap={RoadSurface="RoofTiles"}}
+class "FloorMarkings" (BaseClass) {gfxMesh=r"Floor.mesh", receiveShadows=true,renderingDistance=1200, materialMap={RoadSurface=r"RoofTiles"}}
 class "ThunderDome" (ColClass) {receiveShadows=true,renderingDistance=400,castShadows=true}
 
 
-object "Floor"       (0,0,0)   {rot=quat(1,0,0,0), name="Floor", materialMap={RoadSurface="RoofTiles"}}
+object "Floor"       (0,0,0)   {rot=quat(1,0,0,0), name="Floor", materialMap={RoadSurface=r"RoofTiles"}}
 --object "FloorMarkings"       (0,0,0)   {rot=quat(1,0,0,0), name="Markings"}
 object "TestFloor"   (100,0,1)   {rot=quat(1,0,0,0), name="TestFloor"}
 

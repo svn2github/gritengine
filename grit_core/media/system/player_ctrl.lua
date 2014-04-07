@@ -2,6 +2,15 @@
 
 print("Loading player_ctrl.lua")
 
+if menu_binds ~= nil then menu_binds:destroy() end
+menu_binds = InputFilter(0, "menu_binds")
+
+if debug_binds ~= nil then debug_binds:destroy() end
+debug_binds = InputFilter(50, "debug_binds")
+
+if common_binds ~= nil then common_binds:destroy() end
+common_binds = InputFilter(100, "common_binds")
+
 if playing_binds ~= nil then playing_binds:destroy() end
 playing_binds = InputFilter(150, "playing_binds")
 
@@ -14,8 +23,8 @@ playing_vehicle_binds = InputFilter(171, "playing_vehicle_binds")
 if playing_ghost_binds ~= nil then playing_ghost_binds:destroy() end
 playing_ghost_binds = InputFilter(172, "playing_ghost_binds")
 
+debug_binds.modal = true
 playing_binds.mouseCapture = true
-
 playing_actor_binds.enabled = false
 playing_vehicle_binds.enabled = false
 

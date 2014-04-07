@@ -1,16 +1,16 @@
 -- (c) David Cunningham 2013, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
-hud_class "../FlatButton" {
+hud_class "." {
 
     cornered=true;
     size=vec(0,0);
 
-    texture = "CornerTextures/Filled08.png";
+    texture = "/common/hud/CornerTextures/Filled08.png";
     baseColour = vec(1,1,1) * 0.25;
     hoverColour = vec(1, 0.5, 0) * 0.5;
     clickColour = vec(1, 0.5, 0);
 
-    borderTexture = "CornerTextures/Border08.png";
+    borderTexture = "/common/hud/CornerTextures/Border08.png";
     borderColour = vec(1,1,1) * 0.6;
 
     font = "/common/fonts/Verdana12";

@@ -518,14 +518,12 @@ CallbackReg = { }
 function CallbackReg:execute (p1, p2, p3, p4)
         local broken_callbacks
         for _,record in ipairs(self.callBacks) do
-                local _, cb, path = unpack(record)
-                path_stack_push_dir(path)
+                local _, cb = unpack(record)
                 local status, continue = xpcall(function() return cb(p1, p2, p3, p4) end, error_handler)
                 if status then
                         broken_callbacks = broken_callbacks or { }
                         broken_callbacks[#broken_callbacks] = record
                 end
-                path_stack_pop()
                 if continue == false then return false end
         end
         if broken_callbacks then
@@ -537,8 +535,8 @@ function CallbackReg:execute (p1, p2, p3, p4)
 end
 function CallbackReg:executeExtended (f,...)
         for _,record in ipairs(self.callBacks) do
-                local name, cb, path = unpack(record)
-                local continue = f(name,cb,path,...)
+                local name, cb = unpack(record)
+                local continue = f(name,cb,...)
                 if continue == false then return false end
         end
 end
@@ -572,7 +570,7 @@ function CallbackReg:getIndexSafe(name,...)
 end
 function CallbackReg:insert(name,cb,pos)
         pos = pos or #self.callBacks+1
-        table.insert(self.callBacks,pos,{name,cb,path_stack_top()})
+        table.insert(self.callBacks,pos,{name,cb})
 end
 function CallbackReg.new()
         local self = {}
@@ -769,9 +767,9 @@ end
 local running_map = nil
 
 function map_ghost_spawn(pos, quat)
-    if running_map ~= path_stack_top() then
+    if running_map ~= current_dir() then
         player_ctrl:warp(pos, quat or Q_ID)
-        running_map = path_stack_top()
+        running_map = current_dir()
         return true
     end
 end

@@ -6,8 +6,8 @@ local wx, wf, wb, wz = 0.90, 1.40, -1.45, 0.36 -- wheel position data, see below
 local slack = 0.263
 
 class "../Gallardo" (Vehicle) {
-        gfxMesh = "Gallardo/Body.mesh",
-        colMesh = "Gallardo/Body.gcol",
+        gfxMesh = r"Body.mesh",
+        colMesh = r"Body.gcol",
         placementZOffset=0.4,
         powerPlots = {
                 [-1] = { [0] = -6000; [10] = -6000; [25] = -4000; [40] = 0; },
@@ -17,22 +17,22 @@ class "../Gallardo" (Vehicle) {
         meshWheelInfo = {
                 front_left = {
                   steer=1; castRadius=0.05; rad=rad; mu=front_mu; sport=1.1;
-                  left=true; attachPos=vector3(-wx,wf,wz); len=len; slack=slack; mesh="Gallardo/Wheel.mesh"; brakeMesh="Gallardo/BrakePad.mesh"
+                  left=true; attachPos=vector3(-wx,wf,wz); len=len; slack=slack; mesh=r"Wheel.mesh"; brakeMesh=r"BrakePad.mesh"
                 },
 
                 front_right = {
                   steer=1; castRadius=0.05; rad=rad; mu=front_mu; sport=1.1;
-                  left=false; attachPos=vector3(wx,wf,wz); len=len; slack=slack; mesh="Gallardo/Wheel.mesh"; brakeMesh="Gallardo/BrakePad.mesh"
+                  left=false; attachPos=vector3(wx,wf,wz); len=len; slack=slack; mesh=r"Wheel.mesh"; brakeMesh=r"BrakePad.mesh"
                 },
 
                 rear_left = {
                   rad=rad; drive=1; castRadius=0.05; handbrake=true; mu=mu; sport = 1.3;
-                  left=true; attachPos=vector3(-wx,wb,wz); len=len; slack=slack; mesh="Gallardo/Wheel.mesh"; brakeMesh="Gallardo/BrakePad.mesh"
+                  left=true; attachPos=vector3(-wx,wb,wz); len=len; slack=slack; mesh=r"Wheel.mesh"; brakeMesh=r"BrakePad.mesh"
                 },
 
                 rear_right = {
                   rad=rad; drive=1; castRadius=0.05; handbrake=true; mu=mu; sport = 1.3;
-                  left=false; attachPos=vector3(wx,wb,wz); len=len; slack=slack; mesh="Gallardo/Wheel.mesh"; brakeMesh="Gallardo/BrakePad.mesh"
+                  left=false; attachPos=vector3(wx,wb,wz); len=len; slack=slack; mesh=r"Wheel.mesh"; brakeMesh=r"BrakePad.mesh"
                 },
         },
         colourSpec = {

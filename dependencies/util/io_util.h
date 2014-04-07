@@ -32,7 +32,7 @@
 
 #include "exception.h"
 
-std::string collapse_path (const std::string &path);
+std::string absolute_path (const std::string &dir, const std::string &rel);
 
 class InFile {
     std::ifstream in;

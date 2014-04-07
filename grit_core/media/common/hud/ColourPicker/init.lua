@@ -1,6 +1,6 @@
 -- (c) David Cunningham 2014, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
-hud_class "../ColourPicker" {
+hud_class "." {
 
     init = function (self)
         self.alpha = 0
@@ -10,23 +10,23 @@ hud_class "../ColourPicker" {
         local scalesz = vec(388,20)
         local labsz = vec(41,20)
 
-        self.hueScale = gfx_hud_object_add("Scale", { onChange = on_change, size=scalesz, bgTexture="ColourPicker/bg_hue.png",   bgColour=vec(1,1,1) })
-        self.satScale = gfx_hud_object_add("Scale", { onChange = on_change, size=scalesz, bgColour=vector3(1,0,0), mgTexture="ColourPicker/bg_sat.png", mgAlpha=1 })
-        self.valScale = gfx_hud_object_add("Scale", { onChange = on_change, size=scalesz, bgTexture="ColourPicker/bg_val.png",   bgColour=vec(1,1,1), mgTexture="ColourPicker/bg_val_simple.png", mgAlpha=0, mgColour=vec(1,1,1), gamma=true, maxValue=10 })
-        self.aScale   = gfx_hud_object_add("Scale", { onChange = on_change, size=scalesz, mgTexture="ColourPicker/bg_alpha.png", mgColour=vec(1,1,1), mgAlpha=1, bgColour=vec(1,1,1) })
+        self.hueScale = gfx_hud_object_add("/common/hud/Scale", { onChange = on_change, size=scalesz, bgTexture=r"bg_hue.png",   bgColour=vec(1,1,1) })
+        self.satScale = gfx_hud_object_add("/common/hud/Scale", { onChange = on_change, size=scalesz, bgColour=vector3(1,0,0), mgTexture=r"bg_sat.png", mgAlpha=1 })
+        self.valScale = gfx_hud_object_add("/common/hud/Scale", { onChange = on_change, size=scalesz, bgTexture=r"bg_val.png",   bgColour=vec(1,1,1), mgTexture=r"bg_val_simple.png", mgAlpha=0, mgColour=vec(1,1,1), gamma=true, maxValue=10 })
+        self.aScale   = gfx_hud_object_add("/common/hud/Scale", { onChange = on_change, size=scalesz, mgTexture=r"bg_alpha.png", mgColour=vec(1,1,1), mgAlpha=1, bgColour=vec(1,1,1) })
 
-        self.hueLabel = gfx_hud_object_add("Label", { size=labsz, value="Hue", alpha=0 })
-        self.satLabel = gfx_hud_object_add("Label", { size=labsz, value="Sat", alpha=0 })
-        self.valLabel = gfx_hud_object_add("Label", { size=labsz, value="Val", alpha=0 })
-        self.aLabel = gfx_hud_object_add("Label", { size=labsz, value="Alpha", alpha=0 })
+        self.hueLabel = gfx_hud_object_add("/common/hud/Label", { size=labsz, value="Hue", alpha=0 })
+        self.satLabel = gfx_hud_object_add("/common/hud/Label", { size=labsz, value="Sat", alpha=0 })
+        self.valLabel = gfx_hud_object_add("/common/hud/Label", { size=labsz, value="Val", alpha=0 })
+        self.aLabel = gfx_hud_object_add("/common/hud/Label", { size=labsz, value="Alpha", alpha=0 })
 
-        self.contents = gfx_hud_object_add("StackY", {
+        self.contents = gfx_hud_object_add("/common/hud/StackY", {
             parent = self, 
             padding = -1,
-            gfx_hud_object_add("StackX", { padding = -1, self.hueLabel, self.hueScale, }),
-            gfx_hud_object_add("StackX", { padding = -1, self.satLabel, self.satScale, }),
-            gfx_hud_object_add("StackX", { padding = -1, self.valLabel, self.valScale, }),
-            gfx_hud_object_add("StackX", { padding = -1, self.aLabel, self.aScale, }),
+            gfx_hud_object_add("/common/hud/StackX", { padding = -1, self.hueLabel, self.hueScale, }),
+            gfx_hud_object_add("/common/hud/StackX", { padding = -1, self.satLabel, self.satScale, }),
+            gfx_hud_object_add("/common/hud/StackX", { padding = -1, self.valLabel, self.valScale, }),
+            gfx_hud_object_add("/common/hud/StackX", { padding = -1, self.aLabel, self.aScale, }),
         })
 
         self.size = self.contents.size

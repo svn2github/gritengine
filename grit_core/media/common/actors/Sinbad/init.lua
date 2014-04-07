@@ -7,7 +7,7 @@ class "../Sinbad2" (BaseClass) {
     castShadows = true;
     
     placementZOffset = 5;
-    gfxMesh = "Sinbad/Body.mesh";
+    gfxMesh = r"Body.mesh";
 
     activate = function (persistent,instance)
 
@@ -41,7 +41,7 @@ class "../Sinbad2" (BaseClass) {
     end;
 }   
 
-class "../Sinbad" {} {
+class "." {} {
 
     renderingDistance = 100;
 
@@ -50,7 +50,7 @@ class "../Sinbad" {} {
     placementZOffset = 5;
 
     init = function (persistent)
-    	persistent:addDiskResource("Sinbad/Body.mesh")
+    	persistent:addDiskResource("Body.mesh")
     end;
             
     activate = function (persistent,instance)
@@ -61,7 +61,7 @@ class "../Sinbad" {} {
         instance.pivot.localPosition = persistent.spawnPos
         instance.pivot.localOrientation = quat(1,1,0,0)
 
-        instance.gfx = instance.pivot:makeChild("Sinbad/Body.mesh")
+        instance.gfx = instance.pivot:makeChild("Body.mesh")
         for _,v in ipairs({instance.gfx:getAllAnimations()}) do
             instance[v.."Len"] = instance.gfx:getAnimationLength(v)
             instance[v.."Rate"] = 1

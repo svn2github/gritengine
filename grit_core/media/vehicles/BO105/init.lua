@@ -6,8 +6,8 @@ local cy=0.5
 local cz=0.15
 
 class "../BO105" (Plane) {
-	gfxMesh="BO105/chassis.mesh",
-	colMesh="BO105/chassis.gcol",
+	gfxMesh=r"chassis.mesh",
+	colMesh=r"chassis.gcol",
     placementZOffset=0.4,
 
 	--CM Arm relative to origin. In meters. (Will be multiplied by weight to derrive torque.)

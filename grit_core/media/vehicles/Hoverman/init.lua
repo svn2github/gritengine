@@ -9,8 +9,8 @@ local front_pid = {
 }
 
 class "../Hoverman" (Hover) {
-        gfxMesh = "Hoverman/Body.mesh";
-        colMesh = "Hoverman/Body.gcol";
+        gfxMesh = r"Body.mesh";
+        colMesh = r"Body.gcol";
         placementZOffset=1.4;
         
         jetsHover = {

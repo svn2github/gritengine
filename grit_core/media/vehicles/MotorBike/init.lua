@@ -4,8 +4,8 @@ local wf, wb, wz = 0.49, -0.839, -0.14
 
 class "../MotorBike" (Bike) {
         name="MotorBike",
-        gfxMesh="MotorBike/Body.mesh",
-        colMesh="MotorBike/Body.gcol",
+        gfxMesh=r"Body.mesh",
+        colMesh=r"Body.gcol",
         placementZOffset=0.4,
         --steerMax = 25,
         --steerRate = 0.4; unsteerRate = 0.7;

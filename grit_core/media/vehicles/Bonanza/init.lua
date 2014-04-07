@@ -6,8 +6,8 @@ local cy=-0.46
 local cz=0.10
 
 class "../Bonanza" (Plane) {
-	gfxMesh="Bonanza/Body.mesh",
-	colMesh="Bonanza/chassis.gcol",
+	gfxMesh=r"Body.mesh",
+	colMesh=r"chassis.gcol",
     placementZOffset=0.68,
 
 

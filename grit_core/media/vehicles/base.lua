@@ -279,18 +279,17 @@ function Vehicle.activate (persistent,instance)
                                         end
                                         l.enabled = enabled
                                         none_one_or_all(tab.materials, function(x)
-                                                local from = fqn_ex(x.mesh, persistent.className)
-                                                local mname
+                                                local from = x.mesh
+                                                local to
                                                 if enabled then
                                                         if dim then
-                                                                mname = x.dim
+                                                                to = x.dim
                                                         else
-                                                                mname = x.on
+                                                                to = x.on
                                                         end
                                                 else
-                                                        mname = x.off
+                                                        to = x.off
                                                 end
-                                                local to = fqn_ex(mname, persistent.className)
                                                 instance.gfx:setMaterial(from, to)
                                         end)    
                                 end

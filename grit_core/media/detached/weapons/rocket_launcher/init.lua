@@ -8,7 +8,7 @@ material "rocket_launcher" {
 }
 
 class "Rocket" (BaseClass) {
-    gfxMesh = "rocket.mesh";
+    gfxMesh = r"rocket.mesh";
 
     renderingDistance = 100.0;
 
@@ -68,13 +68,13 @@ function fire_rocket (pos)
 
     pos = pos or player_ctrl.camFocus+player_ctrl.camDir * V_FORWARDS
 
-    object "/detached/weapons/rocket_launcher/Rocket" (pos) { rot=player_ctrl.camDir }
+    object "Rocket" (pos) { rot=player_ctrl.camDir }
 
 end
 
 detached_binds:bind("A+-", function () fire_rocket() end )
 
 class "RocketLauncher" (BaseClass) {
-    gfxMesh = "rocket_launcher.mesh";
+    gfxMesh = r"rocket_launcher.mesh";
     
 }

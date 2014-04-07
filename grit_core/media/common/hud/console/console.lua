@@ -269,7 +269,6 @@ hud_class "Console" (extends (BorderPane) {
         end
         -- to execute, use coroutine to remove irrelevent lines from stacktrace
         local coro = coroutine.create(function ()
-            path_stack_push_dir("/");
             (function (status, ...)
                 -- use this closure to collect return values from xpcall.
                 -- if call not successful, do nothing as the error handler would have fixed our woes.
@@ -307,7 +306,6 @@ hud_class "Console" (extends (BorderPane) {
                     print(RED..frame)
                 end
             end))
-            path_stack_pop()
         end)
         coroutine.resume(coro)
     end;

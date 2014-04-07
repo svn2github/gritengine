@@ -13,7 +13,7 @@ class "WineBottle2" (ColClass) {
     castShadows = true;
     placementZOffset = 0.10508999973535538;
     placementRandomRotation = true;
-    colMesh = 'WineBottle.gcol';
+    colMesh = r'WineBottle.gcol';
 }
 
 class "WineBottle1" (ColClass) {
@@ -21,7 +21,7 @@ class "WineBottle1" (ColClass) {
     castShadows = true;
     placementZOffset = 0.10508999973535538;
     placementRandomRotation = true;
-    colMesh = 'WineBottle.gcol';
+    colMesh = r'WineBottle.gcol';
 }
 
 class "Money" (ColClass) {

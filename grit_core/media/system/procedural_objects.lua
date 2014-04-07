@@ -6,8 +6,7 @@ print("Loading procedural_objects.lua")
 ProceduralObjectClasses = ProceduralObjectClasses or {}
 
 function physics:setProceduralObjectClass(name, tab)
-        name = fqn(name)
-        tab.class = fqn(tab.class) or "/common/veg/TropPlant1"
+        tab.class = tab.class or "/common/veg/TropPlant1"
         tab.density = tab.density or 0.01
         tab.minSlope = tab.minSlope or 0
         tab.maxSlope = tab.maxSlope or 180
@@ -28,7 +27,6 @@ function physics:setProceduralObjectClass(name, tab)
 end
 
 function physics:getProceduralObjectClass(name)
-        name = fqn(name)
         return ProceduralObjectClasses[name]
 end
 

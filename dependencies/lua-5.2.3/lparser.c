@@ -1504,7 +1504,7 @@ static void retstat (LexState *ls) {
     nret = explist(ls, &e);  /* optional return values */
     if (hasmultret(e.k)) {
       luaK_setmultret(fs, &e);
-      if (e.k == VCALL && nret == 1) {  /* tail call? */
+      if (e.k == VCALL && nret == 1 && 0) {  /* tail call? */
         SET_OPCODE(getcode(fs,&e), OP_TAILCALL);
         lua_assert(GETARG_A(getcode(fs,&e)) == fs->nactvar);
       }

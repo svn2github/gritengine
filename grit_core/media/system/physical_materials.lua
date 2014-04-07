@@ -14,7 +14,6 @@ function physics:setDefaultMaterial(tab)
 end
 
 function physics:setMaterial(name, tab)
-        name = fqn(name)
         for k,v in pairs(physics.defaultMaterial) do
                 tab[k] = tab[k] or v
         end
@@ -31,27 +30,12 @@ function physics:setMaterial(name, tab)
                 end
         end
         for k,v in pairs(tab) do
-                if k == "proceduralObjects" then
-                        local t = { }
-                        for k2,v2 in ipairs(v) do
-                                t[k2] = fqn(v2)
-                        end
-                        mat[k] = t
-                elseif k == "proceduralBatches" then
-                        local t = { }
-                        for k2,v2 in ipairs(v) do
-                                t[k2] = fqn(v2)
-                        end
-                        mat[k] = t
-                else
-                        mat[k] = v
-                end
+            mat[k] = v
         end
         return mat
 end
 
 function physics:getMaterial(name)
-        name = fqn(name)
         return PhysicalMaterials[name]
 end
 

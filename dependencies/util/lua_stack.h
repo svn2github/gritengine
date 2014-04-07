@@ -30,6 +30,6 @@ extern "C" {
 #include <lualib.h>
 }
 
-std::string lua_current_dir (lua_State *L);
+std::string lua_current_dir (lua_State *L, int level=0);
 
 #endif

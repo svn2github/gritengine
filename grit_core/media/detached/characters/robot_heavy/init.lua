@@ -20,10 +20,10 @@ material "robot_heavy" {
 	blendedBones = 3;
 }
 
-class "../robot_heavy" (DetachedCharacterClass) {
+class "." (DetachedCharacterClass) {
 
-	gfxMesh = "robot_heavy/robot_heavy.mesh";
-	colMesh = "robot_heavy/robot_heavy.gcol";
+	gfxMesh = r"robot_heavy.mesh";
+	colMesh = r"robot_heavy.gcol";
 	
 	-- distance travelled in one repeating period of gait
 	walkStrideLength = 2.5;

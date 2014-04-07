@@ -2,7 +2,6 @@
 
 print("Loading user configuration")
 
-
 safe_include("/user_cfg.lua")
 
 user_cfg = user_cfg or { }
@@ -473,16 +472,6 @@ local function process_bindings(bindings, functions, tab)
         bind(name, key, functions, tab)
     end
 end
-
-if menu_binds ~= nil then menu_binds:destroy() end
-menu_binds = InputFilter(0, "menu_binds")
-
-if debug_binds ~= nil then debug_binds:destroy() end
-debug_binds = InputFilter(50, "debug_binds")
-debug_binds.modal = true
-
-if common_binds ~= nil then common_binds:destroy() end
-common_binds = InputFilter(100, "common_binds")
 
 process_bindings(user_core_bindings, core_binding_functions, menu_binds)
 process_bindings(user_ghost_bindings, ghost_binding_functions, playing_ghost_binds)

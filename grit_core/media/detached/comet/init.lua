@@ -320,9 +320,9 @@ FlyingCar = extends (ColClass) {
 
 }
 
-class "../comet" (FlyingCar) {
-    gfxMesh="comet/comet.mesh";
-    colMesh="comet/comet.gcol";
+class "." (FlyingCar) {
+    gfxMesh=r"comet.mesh";
+    colMesh=r"comet.gcol";
     placementZOffset = 0.35;
 
     colourSpec = {

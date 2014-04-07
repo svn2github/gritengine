@@ -26,8 +26,8 @@ local wheelX, wheelY, wheelY2, wheelZ = 0.626, 0.769, -1.576, -0.15 --wheel Y an
 --local engineX, engineY, engineZ = 0.0, 1.767, 0.093 -- Engine Smoke Pos
 
 class "../Julietta" (Vehicle) {
-        gfxMesh = "Julietta/Body.mesh",
-        colMesh = "Julietta/Body.gcol",
+        gfxMesh = r"Body.mesh",
+        colMesh = r"Body.gcol",
         placementZOffset=1.4,
         powerPlots = {
                 [-1] = { [0] = -6000; [10] = -6000; [25] = -4000; [40] = 0; },
@@ -37,22 +37,22 @@ class "../Julietta" (Vehicle) {
         meshWheelInfo = {
                 front_left = {
                   steer=1; castRadius=0.05; rad=rad; mu=mu_front; sport=1.1; massShare = 1.0;
-                  left=true; attachPos=vector3(-wheelX,wheelY,wheelZ); len=len; mesh="Julietta/Wheel.mesh"
+                  left=true; attachPos=vector3(-wheelX,wheelY,wheelZ); len=len; mesh=r"Wheel.mesh"
                 },
 
                 front_right = {
                   steer=1; castRadius=0.05; rad=rad; mu=mu_front; sport=1.1; massShare = 1.0;
-                  left=false; attachPos=vector3(wheelX,wheelY,wheelZ); len=len; mesh="Julietta/Wheel.mesh"
+                  left=false; attachPos=vector3(wheelX,wheelY,wheelZ); len=len; mesh=r"Wheel.mesh"
                 },
 
                 rear_left = {
                   rad=rad; drive=1; castRadius=0.05; handbrake=true; driveMu = mu_rear_drive; sideMu = mu_rear_side; sport = 1.1; massShare = 1.0;
-                  left=true; attachPos=vector3(-wheelX,wheelY2,wheelZ); len=len; mesh="Julietta/Wheel.mesh"
+                  left=true; attachPos=vector3(-wheelX,wheelY2,wheelZ); len=len; mesh=r"Wheel.mesh"
                 },
 
                 rear_right = {
                   rad=rad; drive=1; castRadius=0.05; handbrake=true; driveMu = mu_rear_drive; sideMu = mu_rear_side; sport = 1.1; massShare = 1.0;
-                  left=false; attachPos=vector3(wheelX,wheelY2,wheelZ); len=len; mesh="Julietta/Wheel.mesh"
+                  left=false; attachPos=vector3(wheelX,wheelY2,wheelZ); len=len; mesh=r"Wheel.mesh"
                 },
         },
 		-- Lights - Headlight

@@ -9,7 +9,6 @@ function physics:setProceduralBatchClass(name, tab)
         local function default (k, v) 
                 if tab[k] == nil then tab[k] = v end 
         end
-        name = fqn(name)
 
         default("mesh", "/common/veg/TropPlant1.mesh")
         default("triangles", 50000)
@@ -25,8 +24,6 @@ function physics:setProceduralBatchClass(name, tab)
         default("seed", false)
         default("castShadows", true)
 
-        tab.mesh = fqn(tab.mesh)
-
         -- XXX HACK! this should be done by the background loader using resource dependencies
         disk_resource_load_indefinitely(tab.mesh)
 
@@ -41,7 +38,6 @@ function physics:setProceduralBatchClass(name, tab)
 end
 
 function physics:getProceduralBatchClass(name)
-        name = fqn(name)
         return ProceduralBatchClasses[name]
 end
 
