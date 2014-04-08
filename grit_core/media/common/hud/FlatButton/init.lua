@@ -3,7 +3,8 @@
 hud_class "." {
 
     cornered=true;
-    size=vec(0,0);
+    padding=vec(8,6);
+    size = vec(0,0);
 
     texture = "/common/hud/CornerTextures/Filled08.png";
     baseColour = vec(1,1,1) * 0.25;
@@ -25,8 +26,8 @@ hud_class "." {
         self.text.parent = self
         self:setCaption(self.caption)
 
-        if self.size == vec(0,0) then
-            self.size = self.text.size + vec(16,12)
+        if self.size == vec(0,0) then 
+            self.size = self.text.size + self.padding * 2
         end
 
         self.dragging = false;

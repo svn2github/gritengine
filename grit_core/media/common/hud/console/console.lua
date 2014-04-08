@@ -1,13 +1,15 @@
 
 
-hud_class "Console" (extends (BorderPane) {
+hud_class "Console" {
 
     promptPrefix = "lua> ";
 
-    height = 0.45; -- proportion of the screen's height
-    alpha = 0.5;
+    alpha = 0.9;
     border = 4;
-    colour = vec(0,0,0.25);
+    colour = vec(0.1, 0.1, 0.1);
+    --texture = "/common/hud/CornerTextures/SquareFilledWhiteBorder.png";
+    --cornered = true;
+
     textColour = vec(.75, .75, .75);
     bufferSize = 10000;
     cmdBufferSize = 1000;
@@ -15,10 +17,10 @@ hud_class "Console" (extends (BorderPane) {
     messageTime = 8;
 
     init = function (self)
-        BorderPane.init(self)
         self.buffer = self.buffer or {}
 
         self.pinToBottom = true
+
 
         self.text = gfx_hud_text_add(self.font)
         self.text.shadow = self.shadow
@@ -45,7 +47,6 @@ hud_class "Console" (extends (BorderPane) {
 
         self.needsFrameCallbacks = true
         self.needsInputCallbacks = true
-        self.needsParentResizedCallbacks = true
 
         self.lastCompletionsList = nil
         self.lastCompletionIndex = 0
@@ -107,12 +108,9 @@ hud_class "Console" (extends (BorderPane) {
         end
     end;
 
-    parentResizedCallback = function (self, psize)
-        self.size = vec(psize.x, psize.y * self.height)
-        self:updateChildrenSize()
+    updateChildrenSize = function (self)
 
         local font_height = gfx_font_line_height(self.font)
-        self.position = vec(psize.x/2, psize.y - self.size.y/2)
 
         self.text.textWrap = self.size - self.border * vec(2,2) - vec(0,font_height)
         self.text.position = vec(0,font_height/2)
@@ -122,7 +120,8 @@ hud_class "Console" (extends (BorderPane) {
 
         self:redraw()
         self:positionCursor()
-    end;    
+    end;
+
 
     mouseMoveCallback = function (self, local_pos, screen_pos, inside)
         self.inside = inside
@@ -371,4 +370,4 @@ hud_class "Console" (extends (BorderPane) {
             parent = c
         end
     end;
-})
+}

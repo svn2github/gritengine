@@ -67,6 +67,29 @@ hud_class "Positioner" {
     end;    
 }   
 
+hud_class "Stretcher" {     
+    alpha = 0;
+    init = function (self)  
+        self.needsParentResizedCallbacks = true;    
+        self.child.parent = self
+        self:updateChildrenSize()
+    end;    
+    updateChildrenSize = function (self)
+    	self.child.size = self.size
+        if self.child.updateChildrenSize then
+            self.child:updateChildrenSize()
+        end
+    end;    
+    calcRect = function (self, psize)
+        return 0, 0, 300, 200
+    end;
+    parentResizedCallback = function (self, psize)
+        local l, b, r, t = self:calcRect(psize)
+        self:setRect(l, b, r, t)
+        self:updateChildrenSize()
+    end;
+}   
+
 hud_center = hud_center or gfx_hud_object_add("Positioner", { factor = vector2(0.5, 0.5) })
 hud_bottom_left = hud_bottom_left or gfx_hud_object_add("Positioner", { factor = vector2(0.0, 0.0) })
 hud_bottom_right = hud_bottom_right or gfx_hud_object_add("Positioner", { factor = vector2(1.0, 0.0) })

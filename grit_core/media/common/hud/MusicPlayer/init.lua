@@ -32,11 +32,6 @@ hud_class "." {
             disk_resource_load(playlist[self.trackID])
         end
 		self.audiosource = audio_source_make_ambient(playlist[self.trackID]);
-		self.state = "none" --can be "opening", "closing" or "none"
-		self.closePosition = vector2(-self.size.x/2+32, 32)
-		self.openPosition = vector2( self.size.x/2, self.size.y/2)
-		self.position = self.closePosition
-		self.orientation = 23
 		self.texture = "body.png"
 		
 		self.showHideButton = gfx_hud_object_add("/common/hud/FlatButton", {
@@ -49,11 +44,6 @@ hud_class "." {
         })
 		self.showHideButton.position = vector2(self.size.x/2-32, self.size.y/2-18)
 		self.showHideButton.pressedCallback = function(this)
-			if self.position == self.closePosition then
-				self.state = "opening"
-				return
-			end
-			self.state = "closing"
 		end
 		
 		self.playPauseButton = gfx_hud_object_add("/common/hud/FlatButton", {
@@ -140,27 +130,6 @@ hud_class "." {
 		if self.isplaying and (not self.audiosource.playing) then
 			--song ended, lets go to a next one
 			self.nextSongButton:pressedCallback()
-		end
-		--handles musicplayer animation
-		if self.state == "none" then
-			return
-		end
-		if self.state == "closing" then 
-			self.position = lerp(self.position, self.closePosition, elapsed * 4)
-			self.position = math.floor(self.position)
-			if #(self.position - self.closePosition) < 1 then
-				self.position = self.closePosition
-				self.state = "none"
-			end
-			return
-		end
-		if self.state == "opening" then
-			self.position = lerp(self.position, self.openPosition, elapsed * 4)
-			self.position = math.ceil(self.position)
-			if #(self.position - self.openPosition) < 1 then
-				self.position = self.openPosition
-				self.state = "none"
-			end
 		end
 	end;
 }

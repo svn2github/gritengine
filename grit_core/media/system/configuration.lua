@@ -309,17 +309,9 @@ local core_binding_functions = {
         end
     end;
     console = function()
-        if console.enabled then
-            -- come out of debug mode
-            debug_binds.modal = false
-            ticker.enabled = true
-            console.enabled = false
-        else
-            -- into debug mode
-            debug_binds.modal = true
-            ticker.enabled = false
-            console.enabled = true
-        end
+        debug_layer:onKeyPressed()
+        debug_binds.modal = debug_layer.enabled
+        ticker.enabled = not debug_layer.enabled
     end;
     record = function() capturer:toggle() end;
     screenShot = function() capturer:singleScreenShot() end;

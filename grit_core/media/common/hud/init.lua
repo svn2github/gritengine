@@ -40,7 +40,13 @@ if console ~= nil then
 else
     buffer = nil
 end
-console = gfx_hud_object_add("console/Console", {buffer=buffer, cmdBuffer=other_buffer, shadow=vec(1,-1), zOrder=7})
+console = gfx_hud_object_add("console/Console", {buffer=buffer, cmdBuffer=other_buffer, shadow=vec(1,-1)})
+console_frame = gfx_hud_object_add("Stretcher", {
+    child=console, zOrder=7, position=vec(500,300);
+    calcRect = function (self, psize)
+        return 40, math.floor(psize.y * 0.6), psize.x, psize.y
+    end
+})
 
 -- Menu
 if menu ~= nil then
@@ -55,8 +61,9 @@ safe_destroy(ch)
 ch = gfx_hud_object_add("Rect", {texture="CrossHair.png", parent=hud_center})
 
 -- Music player
-safe_destroy(musicplayer)
-musicplayer = gfx_hud_object_add("MusicPlayer", {parent=hud_bottom_left})
+safe_destroy(music_player)
+music_player = gfx_hud_object_add("MusicPlayer", {parent=hud_bottom_left})
+music_player.position = music_player.size / 2 + vec(50,10)
 
 -- Compass / Pos / Speedo
 safe_destroy(compass)
@@ -151,27 +158,12 @@ stats = gfx_hud_object_add("Stats", {
 })
 --stats.position=vector2(-1,1) * stats.size / 2
 
--- EnvCycleEditor
-local env_cycle_editor_enabled = false
 if env_cycle_editor ~= nil and not env_cycle_editor.destroyed then
-	env_cycle_editor_enabled = env_cycle_editor.enabled
 	safe_destroy(env_cycle_editor)
 end
 env_cycle_editor = gfx_hud_object_add("EnvCycleEditor", { } )
-env_cycle_editor.position = env_cycle_editor.size / 2 + vector2(4,36)
-env_cycle_editor.enabled = env_cycle_editor_enabled
-if env_cycle_editor_button ~= nil and not env_cycle_editor_button.destroyed then
-    env_cycle_editor_button:destroy()
-end
-env_cycle_editor_button = gfx_hud_object_add("FlatButton", {
-    pressedCallback = function (self)
-        env_cycle_editor.enabled = not env_cycle_editor.enabled
-        if env_cycle_editor.enabled then
-            env_cycle_editor:setClosestToTime(env.secondsSinceMidnight/60/60)
-        end
-    end;
-    caption = "Env Cycle Editor";
-    position = vector2(64,16);
-})
+env_cycle_editor.position = env_cycle_editor.size / 2 + vector2(50,10)
+
+include "debug.lua"
 
 collectgarbage("collect") -- when reloading this file, this avoids having any crap left on the screen
