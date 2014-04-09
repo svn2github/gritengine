@@ -34,7 +34,7 @@ material "LampBulb" {
 }
 
 local lamp_light =  {   
-    emissiveMaterials=r"LampBulb";
+    emissiveMaterials=`LampBulb`;
     pos=vector3(0,-1.7,4.85); aim=quat(-110,V_RIGHT);
     range=20; diff=3*streetlamp_light_colour; spec=3*streetlamp_light_colour;
     coronaColour=streetlamp_light_colour;
@@ -51,7 +51,7 @@ class "Lamp" (ColClass) {
 
 local flickering_lamp_light = extends (lamp_light) { flickering=true; }
 class "LampFlickering" (ColClass) {
-    gfxMesh=r"Lamp.mesh"; colMesh=r"Lamp.gcol";
+    gfxMesh=`Lamp.mesh`; colMesh=`Lamp.gcol`;
     castShadows=true; renderingDistance=200; placementZOffset=3;
     health=10000; impulseDamageThreshold=10000;
     lights={ flickering_lamp_light };

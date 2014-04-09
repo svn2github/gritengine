@@ -5,9 +5,9 @@ local rad = 0.20 -- wheels
 local cy=0.5
 local cz=0.15
 
-class "../BO105" (Plane) {
-	gfxMesh=r"chassis.mesh",
-	colMesh=r"chassis.gcol",
+class "." (Plane) {
+	gfxMesh=`chassis.mesh`,
+	colMesh=`chassis.gcol`,
     placementZOffset=0.4,
 
 	--CM Arm relative to origin. In meters. (Will be multiplied by weight to derrive torque.)

@@ -7,7 +7,7 @@ class "../Sinbad2" (BaseClass) {
     castShadows = true;
     
     placementZOffset = 5;
-    gfxMesh = r"Body.mesh";
+    gfxMesh = `Body.mesh`;
 
     activate = function (persistent,instance)
 

@@ -162,9 +162,9 @@ WipeoutCar = extends(ColClass)
     setAltRight = do_nothing;
 }
 
-class "../Hoverman" (WipeoutCar) {
-        gfxMesh = r"Hoverman/Body.mesh";
-        colMesh = r"Hoverman/Body.gcol";
+class "." (WipeoutCar) {
+        gfxMesh = `Hoverman/Body.mesh`;
+        colMesh = `Hoverman/Body.gcol`;
         placementZOffset=1.4;
         
 		colourSpec = {

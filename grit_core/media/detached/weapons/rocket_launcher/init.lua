@@ -8,7 +8,7 @@ material "rocket_launcher" {
 }
 
 class "Rocket" (BaseClass) {
-    gfxMesh = r"rocket.mesh";
+    gfxMesh = `rocket.mesh`;
 
     renderingDistance = 100.0;
 
@@ -75,6 +75,6 @@ end
 detached_binds:bind("A+-", function () fire_rocket() end )
 
 class "RocketLauncher" (BaseClass) {
-    gfxMesh = r"rocket_launcher.mesh";
+    gfxMesh = `rocket_launcher.mesh`;
     
 }

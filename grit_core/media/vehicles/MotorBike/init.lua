@@ -2,10 +2,10 @@ local rad = 0.3 -- wheels
 local len = 0.12
 local wf, wb, wz = 0.49, -0.839, -0.14 
 
-class "../MotorBike" (Bike) {
+class "." (Bike) {
         name="MotorBike",
-        gfxMesh=r"Body.mesh",
-        colMesh=r"Body.gcol",
+        gfxMesh=`Body.mesh`,
+        colMesh=`Body.gcol`,
         placementZOffset=0.4,
         --steerMax = 25,
         --steerRate = 0.4; unsteerRate = 0.7;

@@ -3,9 +3,9 @@ local mu_rear_side = 3.1
 local mu_rear_drive = 3.1
 local rad = 0.348 -- wheels
 
-class "../Seat" (Vehicle) {
-        gfxMesh=r"Body.mesh",
-        colMesh=r"Body.gcol",
+class "." (Vehicle) {
+        gfxMesh=`Body.mesh`,
+        colMesh=`Body.gcol`,
         placementZOffset=0.4,
         powerPlots = {
                 [-1] = { [0] = -5000; [10] = -5000; [30] = -5000; [40] = 0; },

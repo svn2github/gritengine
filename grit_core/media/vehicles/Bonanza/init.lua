@@ -5,9 +5,9 @@ local rad = 0.20 -- wheels
 local cy=-0.46
 local cz=0.10
 
-class "../Bonanza" (Plane) {
-	gfxMesh=r"Body.mesh",
-	colMesh=r"chassis.gcol",
+class "." (Plane) {
+	gfxMesh=`Body.mesh`,
+	colMesh=`chassis.gcol`,
     placementZOffset=0.68,
 
 

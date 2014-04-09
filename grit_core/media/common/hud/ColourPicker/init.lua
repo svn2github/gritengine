@@ -10,10 +10,10 @@ hud_class "." {
         local scalesz = vec(388,20)
         local labsz = vec(41,20)
 
-        self.hueScale = gfx_hud_object_add("/common/hud/Scale", { onChange = on_change, size=scalesz, bgTexture=r"bg_hue.png",   bgColour=vec(1,1,1) })
-        self.satScale = gfx_hud_object_add("/common/hud/Scale", { onChange = on_change, size=scalesz, bgColour=vector3(1,0,0), mgTexture=r"bg_sat.png", mgAlpha=1 })
-        self.valScale = gfx_hud_object_add("/common/hud/Scale", { onChange = on_change, size=scalesz, bgTexture=r"bg_val.png",   bgColour=vec(1,1,1), mgTexture=r"bg_val_simple.png", mgAlpha=0, mgColour=vec(1,1,1), gamma=true, maxValue=10 })
-        self.aScale   = gfx_hud_object_add("/common/hud/Scale", { onChange = on_change, size=scalesz, mgTexture=r"bg_alpha.png", mgColour=vec(1,1,1), mgAlpha=1, bgColour=vec(1,1,1) })
+        self.hueScale = gfx_hud_object_add("/common/hud/Scale", { onChange = on_change, size=scalesz, bgTexture=`bg_hue.png`,   bgColour=vec(1,1,1) })
+        self.satScale = gfx_hud_object_add("/common/hud/Scale", { onChange = on_change, size=scalesz, bgColour=vector3(1,0,0), mgTexture=`bg_sat.png`, mgAlpha=1 })
+        self.valScale = gfx_hud_object_add("/common/hud/Scale", { onChange = on_change, size=scalesz, bgTexture=`bg_val.png`,   bgColour=vec(1,1,1), mgTexture=`bg_val_simple.png`, mgAlpha=0, mgColour=vec(1,1,1), gamma=true, maxValue=10 })
+        self.aScale   = gfx_hud_object_add("/common/hud/Scale", { onChange = on_change, size=scalesz, mgTexture=`bg_alpha.png`, mgColour=vec(1,1,1), mgAlpha=1, bgColour=vec(1,1,1) })
 
         self.hueLabel = gfx_hud_object_add("/common/hud/Label", { size=labsz, value="Hue", alpha=0 })
         self.satLabel = gfx_hud_object_add("/common/hud/Label", { size=labsz, value="Sat", alpha=0 })

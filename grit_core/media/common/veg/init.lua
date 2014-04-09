@@ -36,8 +36,8 @@ material "Tree_aelmLev" {
 }
 
 
-class "Tree_aelm_LOD" (ColClass) { castShadows=true, renderingDistance=350, colMesh=r"Tree_aelm.gcol" }
-class "Tree_aelm" (ColClass) { castShadows=true, renderingDistance=100, lod=r"Tree_aelm_LOD" }
+class "Tree_aelm_LOD" (ColClass) { castShadows=true, renderingDistance=350, colMesh=`Tree_aelm.gcol` }
+class "Tree_aelm" (ColClass) { castShadows=true, renderingDistance=100, lod=`Tree_aelm_LOD` }
 
 
 --paroxum's tree, hes mad

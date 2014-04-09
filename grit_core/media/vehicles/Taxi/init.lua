@@ -22,9 +22,9 @@ local hlightX, hlightY, hlightZ = 0.629, 2.005, 0.142 -- Headlight
 local blightX, blightY, blightZ = 0.782, -2.70, 0.322 -- Brakelight
 local rlightX, rlightY, rlightZ = 0.782, -2.70, 0.214 -- Reverse light
 
-class "../Taxi" (Vehicle) {
-        gfxMesh = r"Body.mesh",
-        colMesh = r"Body.gcol",
+class "." (Vehicle) {
+        gfxMesh = `Body.mesh`,
+        colMesh = `Body.gcol`,
         placementZOffset=1.4,
         powerPlots = {
                 [-1] = { [0] = -6000; [10] = -6000; [25] = -4000; [40] = 0; },
@@ -34,36 +34,36 @@ class "../Taxi" (Vehicle) {
         meshWheelInfo = {
                 front_left = {
                   steer=1; castRadius=0.05; rad=rad; mu=mu_front; sport=1.1; massShare = 1.1;
-                  left=true; attachPos=vector3(-wheelX,wheelY,wheelZ); len=len; mesh=r"Wheel.mesh";
+                  left=true; attachPos=vector3(-wheelX,wheelY,wheelZ); len=len; mesh=`Wheel.mesh`;
                 },
 
                 front_right = {
                   steer=1; castRadius=0.05; rad=rad; mu=mu_front; sport=1.1; massShare = 1.1;
-                  left=false; attachPos=vector3(wheelX,wheelY,wheelZ); len=len; mesh=r"Wheel.mesh";
+                  left=false; attachPos=vector3(wheelX,wheelY,wheelZ); len=len; mesh=`Wheel.mesh`;
                 },
 
                 rear_left = {
                   rad=rad; drive=1; castRadius=0.05; handbrake=true; driveMu = mu_rear_drive; sideMu = mu_rear_side; sport = 1.1; massShare = 0.9;
-                  left=true; attachPos=vector3(-wheelX,wheelY2,wheelZ); len=len; mesh=r"Wheel.mesh";
+                  left=true; attachPos=vector3(-wheelX,wheelY2,wheelZ); len=len; mesh=`Wheel.mesh`;
                 },
 
                 rear_right = {
                   rad=rad; drive=1; castRadius=0.05; handbrake=true; driveMu = mu_rear_drive; sideMu = mu_rear_side; sport = 1.1; massShare = 0.9;
-                  left=false; attachPos=vector3(wheelX,wheelY2,wheelZ); len=len; mesh=r"Wheel.mesh";
+                  left=false; attachPos=vector3(wheelX,wheelY2,wheelZ); len=len; mesh=`Wheel.mesh`;
                 },
         },
 		-- Lights - Headlight
 		lightHeadLeft = {
                 pos=vector3(-hlightX, hlightY, hlightZ), coronaPos=vector3(-hlightX, hlightY+0.2, hlightZ),
                 materials = {
-                        { mesh=r"LightHeadLeft", on=r"LightOn", off=r"Atlas" };
+                        { mesh=`LightHeadLeft`, on=`LightOn`, off=`Atlas` };
                 };
 
         };
         lightHeadRight = {
                 pos=vector3(hlightX, hlightY, hlightZ), coronaPos=vector3(hlightX, hlightY+0.2, hlightZ),
                 materials = {
-                        { mesh=r"LightHeadRight", on=r"LightOn", off=r"Atlas" };
+                        { mesh=`LightHeadRight`, on=`LightOn`, off=`Atlas` };
                 };
         };
 		
@@ -71,13 +71,13 @@ class "../Taxi" (Vehicle) {
         lightBrakeLeft = {
                 pos=vector3(blightX, blightY, blightZ), coronaPos=vector3(blightX, blightY, blightZ), coronaColour=vector3(0.05, 0, 0), coronaSize = 1,
                 materials = {
-                        { mesh=r"LightBrakeLeft", on=r"LightBrakeOn", dim=r"LightBrakeDim", off=r"Atlas" };
+                        { mesh=`LightBrakeLeft`, on=`LightBrakeOn`, dim=`LightBrakeDim`, off=`Atlas` };
                 };
         };
         lightBrakeRight = {
                 pos=vector3(-blightX, blightY, blightZ), coronaPos=vector3(-blightX, blightY, blightZ), coronaColour=vector3(0.05, 0, 0), coronaSize = 1,
                 materials = {
-                        { mesh=r"LightBrakeRight", on=r"LightBrakeOn", dim=r"LightBrakeDim", off=r"Atlas" };
+                        { mesh=`LightBrakeRight`, on=`LightBrakeOn`, dim=`LightBrakeDim`, off=`Atlas` };
                 };
         };
 		

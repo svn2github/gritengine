@@ -15,8 +15,8 @@ material "robot_scout" {
 
 class "." (DetachedCharacterClass) {
 
-	gfxMesh = r"robot_scout.mesh";
-	colMesh = r"robot_scout.gcol";
+	gfxMesh = `robot_scout.mesh`;
+	colMesh = `robot_scout.gcol`;
 	
 	-- distance travelled in one repeating period of gait
 	walkStrideLength = 2.5;

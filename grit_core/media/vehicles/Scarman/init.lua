@@ -28,9 +28,9 @@ local engineX, engineY, engineZ = 0.0, 1.767, 0.093 -- Engine Smoke Pos
 
 local slack = 0.0 -- dunno
 
-class "../Scarman" (Vehicle) {
-        gfxMesh = r"Body.mesh",
-        colMesh = r"Body.gcol",
+class "." (Vehicle) {
+        gfxMesh = `Body.mesh`,
+        colMesh = `Body.gcol`,
         placementZOffset=1.4,
         powerPlots = {
                 [-1] = { [0] = -6000; [10] = -6000; [25] = -4000; [40] = 0; },
@@ -40,22 +40,22 @@ class "../Scarman" (Vehicle) {
         meshWheelInfo = {
                 front_left = {
                   steer=1; castRadius=0.05; rad=rad; mu=mu_front; sport=1.1; massShare = 1.2;
-                  left=true; attachPos=vector3(-wheelX,wheelY,wheelZ); len=len; slack=slack; mesh=r"Wheel.mesh"; brakeMesh=r"BrakePad.mesh"
+                  left=true; attachPos=vector3(-wheelX,wheelY,wheelZ); len=len; slack=slack; mesh=`Wheel.mesh`; brakeMesh=`BrakePad.mesh`
                 },
 
                 front_right = {
                   steer=1; castRadius=0.05; rad=rad; mu=mu_front; sport=1.1; massShare = 1.2;
-                  left=false; attachPos=vector3(wheelX,wheelY,wheelZ); len=len; slack=slack; mesh=r"Wheel.mesh"; brakeMesh=r"BrakePad.mesh"
+                  left=false; attachPos=vector3(wheelX,wheelY,wheelZ); len=len; slack=slack; mesh=`Wheel.mesh`; brakeMesh=`BrakePad.mesh`
                 },
 
                 rear_left = {
                   rad=rad; drive=1; castRadius=0.05; handbrake=true; driveMu = mu_rear_drive; sideMu = mu_rear_side; sport = 1.1; massShare = 0.8;
-                  left=true; attachPos=vector3(-wheelX,wheelY2,wheelZ); len=len; slack=slack; mesh=r"Wheel.mesh"; brakeMesh=r"BrakePad.mesh"
+                  left=true; attachPos=vector3(-wheelX,wheelY2,wheelZ); len=len; slack=slack; mesh=`Wheel.mesh`; brakeMesh=`BrakePad.mesh`
                 },
 
                 rear_right = {
                   rad=rad; drive=1; castRadius=0.05; handbrake=true; driveMu = mu_rear_drive; sideMu = mu_rear_side; sport = 1.1; massShare = 0.8;
-                  left=false; attachPos=vector3(wheelX,wheelY2,wheelZ); len=len; slack=slack; mesh=r"Wheel.mesh"; brakeMesh=r"BrakePad.mesh"
+                  left=false; attachPos=vector3(wheelX,wheelY2,wheelZ); len=len; slack=slack; mesh=`Wheel.mesh`; brakeMesh=`BrakePad.mesh`
                 },
         },
 		-- Lights - Headlight
