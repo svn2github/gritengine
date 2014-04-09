@@ -17,6 +17,7 @@
 LUAI_DDEF const char *const luaP_opnames[NUM_OPCODES+1] = {
   "MOVE",
   "LOADK",
+  "LOADKPATH",
   "LOADKX",
   "LOADBOOL",
   "LOADNIL",
@@ -65,6 +66,7 @@ LUAI_DDEF const lu_byte luaP_opmodes[NUM_OPCODES] = {
 /*       T  A    B       C     mode		   opcode	*/
   opmode(0, 1, OpArgR, OpArgN, iABC)		/* OP_MOVE */
  ,opmode(0, 1, OpArgK, OpArgN, iABx)		/* OP_LOADK */
+ ,opmode(0, 1, OpArgK, OpArgN, iABx)		/* OP_LOADKPATH */
  ,opmode(0, 1, OpArgN, OpArgN, iABx)		/* OP_LOADKX */
  ,opmode(0, 1, OpArgU, OpArgU, iABC)		/* OP_LOADBOOL */
  ,opmode(0, 1, OpArgU, OpArgN, iABC)		/* OP_LOADNIL */

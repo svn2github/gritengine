@@ -950,6 +950,26 @@ void luaV_finishOp (lua_State *L) {
 #define vmcase(l,b)	case l: {b}  break;
 #define vmcasenb(l,b)	case l: {b}		/* nb = no break */
 
+static TString *resolve_absolute_path (lua_State *L, const char *file, const char *rel)
+{
+  // strip off the file from file, leaving only the dir
+  unsigned file_len = strlen(file);
+  unsigned rel_len = strlen(rel);
+  char *str = malloc(file_len + rel_len + 3);
+  unsigned last_slash = 0;
+  for (unsigned i=0 ; i<file_len ; ++i) {
+    str[i] = file[i];
+    if (file[i] == '/') last_slash = i;
+  }
+  str[last_slash] = '/';
+  for (unsigned i=0 ; i<rel_len ; ++i) {
+    str[last_slash + i + 1] = rel[i];
+  }
+  TString *r = luaS_new(L, str);
+  free(str);
+  return r;
+}
+
 void luaV_execute (lua_State *L) {
   CallInfo *ci = L->ci;
   LClosure *cl;
@@ -980,6 +1000,37 @@ void luaV_execute (lua_State *L) {
         TValue *rb = k + GETARG_Bx(i);
         setobj2s(L, ra, rb);
       )
+      case OP_LOADKPATH: {
+        TValue *rb = k + GETARG_Bx(i);
+        lua_assert(ttisstring(rb));
+        const char *rel = getstr(tsvalue(rb));
+        TString *str;
+        if (rel[0] == '/') {
+          // rel is actually an absolute path, nothing to do...
+          str = luaS_new(L, rel);
+        } else {
+          const char *src = "/";
+          for (CallInfo *frame=ci ; frame!=&L->base_ci ; frame=frame->previous) {
+            StkId func = frame->func;
+            lua_assert(ttisfunction(func));
+            if (!ttisclosure(func)) continue;
+            Closure *cl = clvalue(func);
+            if (!cl) continue;
+            if (cl->c.tt == LUA_TCCL) continue;
+            Proto *p = cl->l.p;
+            if (!p) continue;
+            if (!p->source) continue;
+            const char *file = getstr(p->source);
+            if (file[0] == '@') {
+              src = &file[1];
+              break;
+            }
+          }
+          str = resolve_absolute_path(L, src, rel);
+        }
+        setsvalue(L, ra, str);
+        checkGC(L, ra + 1);
+      } break;
       vmcase(OP_LOADKX,
         TValue *rb;
         lua_assert(GET_OPCODE(*ci->u.l.savedpc) == OP_EXTRAARG);

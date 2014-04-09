@@ -316,6 +316,9 @@ static void PrintCode(const Proto* f)
    case OP_LOADK:
     printf("\t; "); PrintConstant(f,bx);
     break;
+   case OP_LOADKPATH:
+    printf("\t; path: "); PrintConstant(f,bx);
+    break;
    case OP_GETUPVAL:
    case OP_SETUPVAL:
     printf("\t; %s",UPVALNAME(b));

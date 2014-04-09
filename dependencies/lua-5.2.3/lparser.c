@@ -60,7 +60,7 @@ static void expr (LexState *ls, expdesc *v);
 static void anchor_token (LexState *ls) {
   /* last token from outer function must be EOS */
   lua_assert(ls->fs != NULL || ls->t.token == TK_EOS);
-  if (ls->t.token == TK_NAME || ls->t.token == TK_STRING) {
+  if (ls->t.token == TK_NAME || ls->t.token == TK_STRING || ls->t.token == TK_PATH) {
     TString *ts = ls->t.seminfo.ts;
     luaX_newstring(ls, getstr(ts), ts->tsv.len);
   }
@@ -154,6 +154,10 @@ static void init_exp (expdesc *e, expkind k, int i) {
 
 static void codestring (LexState *ls, expdesc *e, TString *s) {
   init_exp(e, VK, luaK_stringK(ls->fs, s));
+}
+
+static void codepath (LexState *ls, expdesc *e, TString *s) {
+  init_exp(e, VKPATH, luaK_stringK(ls->fs, s));
 }
 
 
@@ -845,6 +849,11 @@ static void funcargs (LexState *ls, expdesc *f, int line) {
       luaX_next(ls);  /* must use `seminfo' before `next' */
       break;
     }
+    case TK_PATH: {  /* funcargs -> STRING */
+      codepath(ls, &args, ls->t.seminfo.ts);
+      luaX_next(ls);  /* must use `seminfo' before `next' */
+      break;
+    }
     default: {
       luaX_syntaxerror(ls, "function arguments expected");
     }
@@ -923,7 +932,7 @@ static void suffixedexp (LexState *ls, expdesc *v) {
         funcargs(ls, v, line);
         break;
       }
-      case '(': case TK_STRING: case '{': {  /* funcargs */
+      case '(': case TK_STRING: case TK_PATH: case '{': {  /* funcargs */
         luaK_exp2nextreg(fs, v);
         funcargs(ls, v, line);
         break;
@@ -945,6 +954,10 @@ static void simpleexp (LexState *ls, expdesc *v) {
     }
     case TK_STRING: {
       codestring(ls, v, ls->t.seminfo.ts);
+      break;
+    }
+    case TK_PATH: {
+      codepath(ls, v, ls->t.seminfo.ts);
       break;
     }
     case TK_NIL: {

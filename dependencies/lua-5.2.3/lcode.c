@@ -258,6 +258,11 @@ int luaK_codek (FuncState *fs, int reg, int k) {
 }
 
 
+int luaK_codekpath (FuncState *fs, int reg, int k) {
+    return luaK_codeABx(fs, OP_LOADKPATH, reg, k);
+}
+
+
 void luaK_checkstack (FuncState *fs, int n) {
   int newstack = fs->freereg + n;
   if (newstack > fs->f->maxstacksize) {
@@ -431,6 +436,10 @@ static void discharge2reg (FuncState *fs, expdesc *e, int reg) {
     }
     case VK: {
       luaK_codek(fs, reg, e->u.info);
+      break;
+    }
+    case VKPATH: {
+      luaK_codekpath(fs, reg, e->u.info);
       break;
     }
     case VKNUM: {

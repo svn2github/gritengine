@@ -22,6 +22,7 @@ typedef enum {
   VTRUE,
   VFALSE,
   VK,		/* info = index of constant in `k' */
+  VKPATH,	/* info = index of constant in `k' */
   VKNUM,	/* nval = numerical value */
   VNONRELOC,	/* info = result register */
   VLOCAL,	/* info = local register */

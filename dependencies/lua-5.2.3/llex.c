@@ -92,6 +92,7 @@ static const char *txtToken (LexState *ls, int token) {
   switch (token) {
     case TK_NAME:
     case TK_STRING:
+    case TK_PATH:
     case TK_NUMBER:
       save(ls, '\0');
       return luaO_pushfstring(ls->L, LUA_QS, luaZ_buffer(ls->buff));
@@ -466,6 +467,10 @@ static int llex (LexState *ls, SemInfo *seminfo) {
       case '"': case '\'': {  /* short literal strings */
         read_string(ls, ls->current, seminfo);
         return TK_STRING;
+      }
+      case '`': {  /* relative paths */
+        read_string(ls, ls->current, seminfo);
+        return TK_PATH;
       }
       case '.': {  /* '.', '..', '...', or number */
         save_and_next(ls);
