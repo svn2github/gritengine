@@ -1,6 +1,6 @@
 -- size of the whole screen
 
-hud_class "DebugLayer" {
+hud_class `DebugLayer` {
 
     buttonDescs = { };
     colour = vec(0.1, 0.1, 0.1);
@@ -10,7 +10,7 @@ hud_class "DebugLayer" {
         self.needsParentResizedCallbacks = true
         self.buttons = { padding = 10 }
 
-        self.consoleButton = gfx_hud_object_add("FlatButton", {
+        self.consoleButton = gfx_hud_object_add(`Button`, {
             pressedCallback = function (button) self:onConsolePressed() end;
             caption = "Console";
             orientation = -90;
@@ -21,7 +21,7 @@ hud_class "DebugLayer" {
         for i, desc in ipairs(self.buttonDescs) do
             -- create 
             local panel = desc.panel
-            self.buttons[i] = gfx_hud_object_add("FlatButton", {
+            self.buttons[i] = gfx_hud_object_add(`Button`, {
                 pressedCallback = function (button) self:onPanePress(i) end;
                 caption = desc.name;
                 orientation = -90;
@@ -29,7 +29,7 @@ hud_class "DebugLayer" {
             })
         end
 
-        self.buttonStack = gfx_hud_object_add("/common/hud/StackY", self.buttons)
+        self.buttonStack = gfx_hud_object_add(`StackY`, self.buttons)
         self.buttonStack.parent = self
 
         local sp = self.selectedPane
@@ -104,7 +104,7 @@ if debug_layer ~= nil then
     console_enabled = debug_layer.consoleEnabled
     safe_destroy(debug_layer)
 end
-debug_layer = gfx_hud_object_add("DebugLayer", {
+debug_layer = gfx_hud_object_add(`DebugLayer`, {
     console = console;
     consoleEnabled = console_enabled;
     selectedPane = selected_pane;
