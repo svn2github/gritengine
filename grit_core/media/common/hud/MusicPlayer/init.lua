@@ -34,7 +34,7 @@ hud_class "." {
 		self.audiosource = audio_source_make_ambient(playlist[self.trackID]);
 		self.texture = "body.png"
 		
-		self.showHideButton = gfx_hud_object_add("/common/hud/FlatButton", {
+		self.showHideButton = gfx_hud_object_add("/common/hud/Button", {
             caption=":";
             font="/common/fonts/misc.fixed";
             texture="/common/hud/CornerTextures/Filled04.png";
@@ -46,7 +46,7 @@ hud_class "." {
 		self.showHideButton.pressedCallback = function(this)
 		end
 		
-		self.playPauseButton = gfx_hud_object_add("/common/hud/FlatButton", {
+		self.playPauseButton = gfx_hud_object_add("/common/hud/Button", {
             caption="▶",
             font="/common/fonts/misc.fixed",
             size=vec(48, 32),
@@ -65,7 +65,7 @@ hud_class "." {
 			end
 		end
 		
-		self.prevSongButton = gfx_hud_object_add("/common/hud/FlatButton", {
+		self.prevSongButton = gfx_hud_object_add("/common/hud/Button", {
             caption="<",
             font="/common/fonts/misc.fixed",
             size=vec(32, 24),
@@ -90,7 +90,7 @@ hud_class "." {
 			end
 		end
 		
-		self.nextSongButton = gfx_hud_object_add("/common/hud/FlatButton", {
+		self.nextSongButton = gfx_hud_object_add("/common/hud/Button", {
             caption=">",
             font="/common/fonts/misc.fixed",
             size=vec(32, 24),

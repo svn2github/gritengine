@@ -203,7 +203,7 @@ hud_class "." {
             size = vec(70,20);
             alpha = 0;
         })
-        self.timeLeftButton = gfx_hud_object_add("/common/hud/FlatButton", {
+        self.timeLeftButton = gfx_hud_object_add("/common/hud/Button", {
             caption = "◄";
             font = "/common/fonts/misc.fixed";
             pressedCallback = function (self2)
@@ -211,7 +211,7 @@ hud_class "." {
             end;
             size = vec(32,20);
         })
-        self.timeRightButton = gfx_hud_object_add("/common/hud/FlatButton", {
+        self.timeRightButton = gfx_hud_object_add("/common/hud/Button", {
             caption = "►";
             font = "/common/fonts/misc.fixed";
             pressedCallback = function (self2)
@@ -219,14 +219,14 @@ hud_class "." {
             end;
             size = vec(32,20);
         })
-        self.loadButton = gfx_hud_object_add("/common/hud/FlatButton", {
+        self.loadButton = gfx_hud_object_add("/common/hud/Button", {
             caption = "Load";
             pressedCallback = function (self2)
                 self:load()
             end;
             size = vec(48,20);
         })
-        self.saveButton = gfx_hud_object_add("/common/hud/FlatButton", {
+        self.saveButton = gfx_hud_object_add("/common/hud/Button", {
             caption = "Save";
             pressedCallback = function (self2)
                 self:save()
@@ -250,7 +250,7 @@ hud_class "." {
             gfx_hud_object_add("/common/hud/StackX", {
                 self.title,
                 vector2(200,0),
-                gfx_hud_object_add("/common/hud/FlatButton", {
+                gfx_hud_object_add("/common/hud/Button", {
                     caption = "X";
                     font = "/common/fonts/misc.fixed";
                     pressedCallback = function (self2)

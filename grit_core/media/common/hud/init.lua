@@ -4,7 +4,7 @@ include "base.lua"
 
 include "stack.lua"
 
-include "FlatButton/init.lua"
+include "Button/init.lua"
 include "label.lua"
 include "editbox.lua"
 include "scale.lua"
