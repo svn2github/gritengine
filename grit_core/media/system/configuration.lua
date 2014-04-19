@@ -1,8 +1,8 @@
 -- (c) David Cunningham 2009, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
-print("Loading user configuration")
+print "Loading user configuration"
 
-safe_include("/user_cfg.lua")
+safe_include `/user_cfg.lua`
 
 user_cfg = user_cfg or { }
 debug_cfg = debug_cfg or { }

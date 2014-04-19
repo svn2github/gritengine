@@ -1,8 +1,8 @@
 -- (c) David Cunningham 2012, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
-print("Loading env.lua")
+print "Loading env.lua" 
 
-include "sky.lua"
+include `sky.lua`
 
 env_cube_dawn_begin_time = 5*60*60
 env_cube_noon_begin_time = 8*60*60
@@ -10,15 +10,15 @@ env_cube_dusk_begin_time = 17*60*60
 env_cube_dark_begin_time = 20*60*60
     
 --TODO: this cubemap info should be also taken from map env overrides, maybe?
-env_cube_dawn = "/system/env_cube_dawn.envcube.tiff"
-env_cube_noon = "/system/env_cube_noon.envcube.tiff"
-env_cube_dusk = "/system/env_cube_dusk.envcube.tiff"
-env_cube_dark = "/system/env_cube_dark.envcube.tiff"
+env_cube_dawn = `env_cube_dawn.envcube.tiff`
+env_cube_noon = `env_cube_noon.envcube.tiff`
+env_cube_dusk = `env_cube_dusk.envcube.tiff`
+env_cube_dark = `env_cube_dark.envcube.tiff`
 
 gfx_env_cube(env_cube_noon)
 gfx_global_exposure(1)
 gfx_option("BLOOM_ITERATIONS",1)
-gfx_colour_grade("/system/standard.lut.png")
+gfx_colour_grade(`standard.lut.png`)
 
 function env_recompute()
 
@@ -189,7 +189,7 @@ local function change (self, k, v)
 end
 
 
-include "env_cycle.lua"
+include `env_cycle.lua`
 
 --[[
 function save_env_cycle(filename)
@@ -236,12 +236,12 @@ else
 
 end
 
-disk_resource_load_indefinitely("/system/SkyCube.mesh")
-sky_ent = gfx_sky_body_make("/system/SkyCube.mesh", 180)
-disk_resource_load_indefinitely("/system/SkyMoon.mesh")
-moon_ent = gfx_sky_body_make("/system/SkyMoon.mesh", 120)
-disk_resource_load_indefinitely("/system/SkyClouds.mesh")
-clouds_ent = gfx_sky_body_make("/system/SkyClouds.mesh", 60)
+disk_resource_load_indefinitely(`SkyCube.mesh`)
+sky_ent = gfx_sky_body_make(`SkyCube.mesh`, 180)
+disk_resource_load_indefinitely(`SkyMoon.mesh`)
+moon_ent = gfx_sky_body_make(`SkyMoon.mesh`, 120)
+disk_resource_load_indefinitely(`SkyClouds.mesh`)
+clouds_ent = gfx_sky_body_make(`SkyClouds.mesh`, 60)
 
 function env:shutdown()
     safe_destroy(sky_ent)

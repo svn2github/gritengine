@@ -95,4 +95,4 @@ local codepoints = {
     [0x007d] = {  158,   44,   10,   21 }, -- }
     [0x007e] = {  168,   44,   13,   21 }, -- ~
 }
-gfx_font_define("Verdana16", "font_verdana16.png", 21, codepoints)
+gfx_font_define(`Verdana16`, `font_verdana16.png`, 21, codepoints)

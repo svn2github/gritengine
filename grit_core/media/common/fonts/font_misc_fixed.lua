@@ -2274,4 +2274,4 @@ local codepoints = {
     [0x2afe] = {  498,  148,    6,   13 }, -- ⫾
     [0x2aff] = {  504,  148,    6,   13 }, -- ⫿
 }
-gfx_font_define("misc.fixed", "font_misc_fixed.png", 13, codepoints)
+gfx_font_define(`misc.fixed`, `font_misc_fixed.png`, 13, codepoints)

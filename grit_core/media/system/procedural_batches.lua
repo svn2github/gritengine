@@ -1,6 +1,6 @@
 -- (c) David Cunningham 2009, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
-print("Loading procedural_batches.lua")
+print "Loading procedural_batches.lua"
 
 -- TODO: error check (spelling of fields)
 ProceduralBatchClasses = ProceduralBatchClasses or {}
@@ -10,7 +10,7 @@ function physics:setProceduralBatchClass(name, tab)
                 if tab[k] == nil then tab[k] = v end 
         end
 
-        default("mesh", "/common/veg/TropPlant1.mesh")
+        default("mesh", `/common/veg/TropPlant1.mesh`)
         default("triangles", 50000)
         default("tangents", false)
         default("density", 0.01)

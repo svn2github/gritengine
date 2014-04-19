@@ -1,8 +1,8 @@
 -- (c) David Cunningham and the Grit Game Engine project 2013, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
-include("client_input.lua")
+include `client_input.lua` 
 
-print("Loading client.lua")
+print "Loading client.lua"
 
 local STATE_IDLE = 1
 local STATE_CHALLENGING = 2

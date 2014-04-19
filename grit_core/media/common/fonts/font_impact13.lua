@@ -95,4 +95,4 @@ local codepoints = {
     [0x007d] = {   46,   94,    5,   17 }, -- }
     [0x007e] = {   51,   94,    7,   17 }, -- ~
 }
-gfx_font_define("Impact13", "font_impact13.png", 17, codepoints)
+gfx_font_define(`Impact13`, `font_impact13.png`, 17, codepoints)

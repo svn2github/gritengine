@@ -95,4 +95,4 @@ local codepoints = {
     [0x007d] = {   62,   32,    5,   16 }, -- }
     [0x007e] = {   67,   32,    8,   16 }, -- ~
 }
-gfx_font_define("Arial14", "font_arial14.png", 16, codepoints)
+gfx_font_define(`Arial14`, `font_arial14.png`, 16, codepoints)

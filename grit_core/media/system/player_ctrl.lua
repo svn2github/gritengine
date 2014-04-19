@@ -1,27 +1,27 @@
 -- (c) David Cunningham 2009, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
-print("Loading player_ctrl.lua")
+print "Loading player_ctrl.lua"
 
 if menu_binds ~= nil then menu_binds:destroy() end
-menu_binds = InputFilter(0, "menu_binds")
+menu_binds = InputFilter(0, `menu_binds`)
 
 if debug_binds ~= nil then debug_binds:destroy() end
-debug_binds = InputFilter(50, "debug_binds")
+debug_binds = InputFilter(50, `debug_binds`)
 
 if common_binds ~= nil then common_binds:destroy() end
-common_binds = InputFilter(100, "common_binds")
+common_binds = InputFilter(100, `common_binds`)
 
 if playing_binds ~= nil then playing_binds:destroy() end
-playing_binds = InputFilter(150, "playing_binds")
+playing_binds = InputFilter(150, `playing_binds`)
 
 if playing_actor_binds ~= nil then playing_actor_binds:destroy() end
-playing_actor_binds = InputFilter(170, "playing_actor_binds")
+playing_actor_binds = InputFilter(170, `playing_actor_binds`)
 
 if playing_vehicle_binds ~= nil then playing_vehicle_binds:destroy() end
-playing_vehicle_binds = InputFilter(171, "playing_vehicle_binds")
+playing_vehicle_binds = InputFilter(171, `playing_vehicle_binds`)
 
 if playing_ghost_binds ~= nil then playing_ghost_binds:destroy() end
-playing_ghost_binds = InputFilter(172, "playing_ghost_binds")
+playing_ghost_binds = InputFilter(172, `playing_ghost_binds`)
 
 debug_binds.modal = true
 playing_binds.mouseCapture = true
@@ -359,7 +359,7 @@ end
 
 function fire_extended(v,t,spin)
         v = v or 40
-        t = t or "/common/props/debug/crates/Crate"
+        t = t or `/common/props/debug/crates/Crate`
         local q = player_ctrl.camDir
         local x,y,z = unpack(player_ctrl.camPos)
         local o = object (t) (x,y,z) {rot=q, temporary=true}
@@ -385,25 +385,25 @@ end
 function stack(pos,q,height,class)
         pos = pos or pick_pos()
         q = q or player_ctrl:yawQuat()
-        object "/common/props/debug/crates/Stack" (unpack(pos)) {rot=q, brickClass=class, height=height}
+        object `/common/props/debug/crates/Stack` (unpack(pos)) {rot=q, brickClass=class, height=height}
 end             
                 
 function wall(pos,q,x_min,x_max,height)
         pos = pos or pick_pos()
         q = q or player_ctrl:yawQuat()
-        object "/common/props/debug/crates/Wall" (unpack(pos)) {rot=q, xMin=x_min, xMax=x_max, height=height}
+        object `/common/props/debug/crates/Wall` (unpack(pos)) {rot=q, xMin=x_min, xMax=x_max, height=height}
 end                     
 
 function bowling(class,space,rows,pos,q)
         pos = pos or pick_pos()
         q = q or player_ctrl:yawQuat()
-        object "/common/props/bowling/Deck" (unpack(pos)) {rot=q, pinClass=class, space=space, rows=rows}
+        object `/common/props/bowling/Deck` (unpack(pos)) {rot=q, pinClass=class, space=space, rows=rows}
 end
 
 function jenga(h,pos,q)
         pos = pos or pick_pos()
         q = q or player_ctrl:yawQuat()
-        object "/common/props/debug/JengaStack" (unpack(pos)) {rot=q, height=h}
+        object `/common/props/debug/JengaStack` (unpack(pos)) {rot=q, height=h}
 end
 
 function cone_line (len, sep, pos, q)
@@ -413,7 +413,7 @@ function cone_line (len, sep, pos, q)
         q = q or player_ctrl:yawQuat()
         local inc = sep * (q * V_FORWARDS)
         local dist = 0
-        local classname = "/common/props/street/TrafficCone"
+        local classname = `/common/props/street/TrafficCone`
         local zoff = class_get(classname).placementZOffset
         while dist <= len do
                 object (classname) (pos.x, pos.y, pos.z+zoff) { placed=true }

@@ -1,6 +1,6 @@
-include "/system/shaders.lua"
+include `/system/shaders.lua`
 
-local noise_tex = "system/HiFreqNoiseGauss.64.png"
+local noise_tex = `HiFreqNoiseGauss.64.png`
 
 local emissive_bias1, emissive_bias2
 if gfx_d3d9() then
@@ -91,7 +91,7 @@ local function material_caster (name, original, world, tab)
         -- stipple texture
         if true then
                 mat:createTextureUnitState(0,0)
-                mat:setTextureName(0,0,tex_index, "system/stipple.png")
+                mat:setTextureName(0,0,tex_index, (`stipple.png`):sub(2))
                 mat:setTextureFiltering(0,0,tex_index,"POINT","POINT","NONE")
                 tex_index = tex_index + 1
         end
@@ -388,7 +388,7 @@ local function material_internal (name, original, shadow_mat, fade, world, tab)
                 end
                 if gfx_option("SHADOW_FILTER_DITHER_TEXTURE") then
                         mat:createTextureUnitState(0,0)
-                        mat:setTextureName(0,0,tex_index,noise_tex)
+                        mat:setTextureName(0,0,tex_index,noise_tex:sub(2))
                         mat:setTextureFiltering(0,0,tex_index,"POINT","POINT","NONE")
                         tex_index = tex_index + 1
                 end

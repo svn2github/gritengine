@@ -14,11 +14,11 @@ collectgarbage("setstepmul",150) -- collect at blah% the rate of new object crea
 
 initialise_all_resource_groups()
 
-include("strict.lua")
+include `strict.lua` 
 
-include("abbrev.lua")
+include `abbrev.lua` 
 
-include("util.lua")
+include `util.lua` 
 
 if audio_master_volume == nil then audio_master_volume = function() end end
 
@@ -113,35 +113,35 @@ function main:run (...)
 end
 
 
-include("unicode_test_strings.lua")
+include `unicode_test_strings.lua` 
 
 
-include("gfx.lua")
+include `gfx.lua` 
 
-include("materials.lua")
+include `materials.lua` 
 
-include("physics.lua")
-include("physical_materials.lua")
-include("procedural_objects.lua")
-include("procedural_batches.lua")
+include `physics.lua` 
+include `physical_materials.lua` 
+include `procedural_objects.lua` 
+include `procedural_batches.lua` 
 
-include("pid_ctrl.lua")
+include `pid_ctrl.lua` 
 
-include("capturer.lua")
+include `capturer.lua` 
 
-include("player_ctrl.lua")
+include `player_ctrl.lua` 
 
-include("configuration.lua")
+include `configuration.lua` 
 
-include("env.lua")
+include `env.lua` 
 
-include("audio.lua")
+include `audio.lua` 
 
-include("net.lua")
+include `net.lua` 
 
-include("/common/init.lua")
+include `/common/init.lua` 
 
-include("/vehicles/init.lua")
+include `/vehicles/init.lua` 
 
-safe_include("/user_script.lua")
+safe_include `/user_script.lua` 
 

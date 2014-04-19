@@ -2,7 +2,7 @@
 
 print("Loading sky.lua")
 
-sky_shader "SkyDefault" {
+sky_shader `SkyDefault` {
 
     alphaMask = uniform_float(1);
     alphaRejectThreshold = uniform_float(-1);
@@ -25,15 +25,15 @@ sky_shader "SkyDefault" {
     ]];
 }
 
-sky_material "Moon" {
-    emissiveMap = uniform_texture { name = "starfield.dds" };
+sky_material `Moon` {
+    emissiveMap = uniform_texture { name = `starfield.dds` };
     emissiveMask = uniform_float(0.3, 0.3, 0.3);
     alphaRejectThreshold = uniform_float(0.5);
 }
 
 
 
-sky_shader "SkyBackground" { -- {{{
+sky_shader `SkyBackground` { -- {{{
 
     starfieldMask = uniform_float(1, 1, 1);
 
@@ -201,21 +201,21 @@ sky_shader "SkyBackground" { -- {{{
 -- }}}
 
 
-sky_material "Sky" {
+sky_material `Sky` {
     starfieldMap = uniform_texture {
         --addrMode = "CLAMP"; minFilter = "LINEAR"; magFilter = "LINEAR"; mipFilter = "ANISOTROPIC"; anisotropy = 16;
-        name = "starfield.dds";
+        name = `starfield.dds`;
     };
-    perlin = uniform_texture { name = "PerlinNoise.png" };
-    perlinN = uniform_texture { name = "PerlinNoiseN.png" };
+    perlin = uniform_texture { name = `PerlinNoise.png` };
+    perlinN = uniform_texture { name = `PerlinNoiseN.png` };
     starfieldMask = uniform_float(0.2,0.2,0.2);
-    shader = "SkyBackground";
+    shader = `SkyBackground`;
 }
 
 
 
 
-sky_shader "SkyClouds" { -- {{{
+sky_shader `SkyClouds` { -- {{{
 
     perlin = uniform_texture {
         defaultColour = vector3(0,0,0);
@@ -318,9 +318,9 @@ sky_shader "SkyClouds" { -- {{{
 -- }}}
 
 
-sky_material "Clouds" {
-    perlin = uniform_texture { name = "PerlinNoise.png" };
-    perlinN = uniform_texture { name = "PerlinNoiseN.png" };
+sky_material `Clouds` {
+    perlin = uniform_texture { name = `PerlinNoise.png` };
+    perlinN = uniform_texture { name = `PerlinNoiseN.png` };
     sceneBlend = 'ALPHA';
-    shader = "SkyClouds";
+    shader = `SkyClouds`;
 }
