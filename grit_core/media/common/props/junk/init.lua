@@ -1,24 +1,24 @@
 -- (c) David Cunningham 2009, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
-material "PizzaBox" { diffuseMap = "PizzaBox.dds", }
-material "TrashCanShite" {diffuseMap="TrashCanShite_d.dds", specularFromDiffuseAlpha=true, }
-material "WineBottle" {diffuseMap = "WineBottle_d.dds", clamp = true, specularFromDiffuseAlpha=true, }
+material `PizzaBox` { diffuseMap = `PizzaBox.dds`, }
+material `TrashCanShite` {diffuseMap=`TrashCanShite_d.dds`, specularFromDiffuseAlpha=true, }
+material `WineBottle` {diffuseMap = `WineBottle_d.dds`, clamp = true, specularFromDiffuseAlpha=true, }
 
-material "Money" { diffuseMap = "Money_d.dds" }
-material "Brick" { diffuseColour = srgb(128,0,0) }
+material `Money` { diffuseMap = `Money_d.dds` }
+material `Brick` { diffuseColour = srgb(128,0,0) }
 
-class "TrashCanShiteBody" (ColClass) {renderingDistance=90,castShadows=true, placementZOffset=0.36, placementRandomRotation=true}
-class "TrashCanShiteLid" (ColClass) {renderingDistance=90,castShadows=true, placementZOffset=0.05, placementRandomRotation=true}
+class `TrashCanShiteBody` (ColClass) {renderingDistance=90,castShadows=true, placementZOffset=0.36, placementRandomRotation=true}
+class `TrashCanShiteLid` (ColClass) {renderingDistance=90,castShadows=true, placementZOffset=0.05, placementRandomRotation=true}
 
-include "classes.lua"
+include `classes.lua`
 
-pile "TrashCanShite" {
+pile `TrashCanShite` {
     renderingDistance = 100;
-    object "TrashCanShiteBody" (0,0,0.3617) { };
-    object "TrashCanShiteLid" (0,0,0.7425) { };
+    object `TrashCanShiteBody` (0,0,0.3617) { };
+    object `TrashCanShiteLid` (0,0,0.7425) { };
 }
 
-class "Money" (ColClass) {
+class `Money` (ColClass) {
     renderingDistance = 50.0;
     castShadows = false;
     placementZOffset = 0.014999999664723873;
@@ -28,7 +28,7 @@ class "Money" (ColClass) {
     }
 }
 
-class "BrickWall" (ProcPileClass) {
+class `BrickWall` (ProcPileClass) {
     spawnObjects = function(persistent, spawn)
         local brick_class = persistent.brickClass
         local x_min = persistent.xMin
@@ -49,5 +49,5 @@ class "BrickWall" (ProcPileClass) {
     xMin = -16;
     xMax = 16;
     height = 30;
-    brickClass = "/common/props/junk/Brick"
+    brickClass = `Brick`
 }
