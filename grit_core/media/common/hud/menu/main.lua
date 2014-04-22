@@ -79,8 +79,6 @@ hud_class "Main" {
     end;
 
     destroy = function (self)
-        safe_destroy(self.mainContent)
-        safe_destroy(self.optionsContent)
     end;
     
     setContent = function (self, content)

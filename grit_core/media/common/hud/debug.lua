@@ -85,9 +85,6 @@ hud_class `DebugLayer` {
     end;
 
     destroy = function (self)
-        for i, button in ipairs(self.buttons or {}) do
-            safe_destroy(button)
-        end
     end;
 
     parentResizedCallback = function (self, psize)

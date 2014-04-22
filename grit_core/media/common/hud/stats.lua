@@ -53,12 +53,6 @@ hud_class "Stats" {
     end;
 
     destroy = function (self)
-        self.stack = safe_destroy(self.stack)
-        if self.labels ~= nil then
-            for k,v in pairs(self.labels) do
-                safe_destroy(v)
-            end
-        end
     end;
 
     frameCallback = function (self, elapsed)

@@ -77,7 +77,6 @@ hud_class "Console" {
     end;
 
     destroy = function (self)
-        safe_destroy(self.text)
     end;
 
     poll = function (self)

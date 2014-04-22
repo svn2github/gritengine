@@ -56,10 +56,6 @@ hud_class "StackY" {
         end
     end;
     destroy = function (self)
-        for k,v in ipairs(self.contents or { }) do
-            safe_destroy(v)
-        end
-        self.contents = nil
     end;
 }
 
@@ -122,10 +118,6 @@ hud_class "StackX" {
         end
     end;
     destroy = function (self)
-        for k,v in ipairs(self.contents or { }) do
-            safe_destroy(v)
-        end
-        self.contents = nil
     end;
 }
 
@@ -151,7 +143,6 @@ hud_class "Border" {
         end
     end;
     destroy = function (self)
-        self.contents = safe_destroy(self.contents)
     end;
 }
 

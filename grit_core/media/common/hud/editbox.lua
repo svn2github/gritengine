@@ -43,8 +43,6 @@ hud_class "EditBox" (extends (BorderPane) {
     end;
     
     destroy = function (self)
-        self.text = safe_destroy(self.text)
-        BorderPane.destroy(self)
     end;
 
     mouseMoveCallback = function (self, local_pos, screen_pos, inside)

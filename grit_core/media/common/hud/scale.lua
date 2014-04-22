@@ -53,10 +53,6 @@ hud_class "Scale" {
     end;
 
     destroy = function (self)
-        self.needsInputCallbacks = false
-        safe_destroy(self.editBox)
-        safe_destroy(self.slider)
-        safe_destroy(self.sliderBackground)
     end;
     
     setGreyed = function (self, v)

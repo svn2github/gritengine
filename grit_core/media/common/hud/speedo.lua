@@ -17,7 +17,6 @@ hud_class "Speedo" {
     end;
 
     destroy = function (self)
-        self.labels = safe_destroy(self.labels)
     end;
 
     frameCallback = function (self, elapsed)

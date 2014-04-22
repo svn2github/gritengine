@@ -56,7 +56,6 @@ hud_class "." {
     end;
 
     destroy = function (self)
-        self.contents = safe_destroy(self.contents)
     end;
 
     updateBgColour = function (self)

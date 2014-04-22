@@ -438,8 +438,6 @@ hud_class "." {
     end;
 
     destroy = function(self)
-        self.contents = safe_destroy(self.contents)
-        self.marker = safe_destroy(self.marker)
     end;
     
     mouseMoveCallback = function (self, local_pos, screen_pos, inside)

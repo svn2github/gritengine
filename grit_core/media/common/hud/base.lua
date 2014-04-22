@@ -40,16 +40,8 @@ BorderPane = {
     end;
 
     destroy = function (self)
-        self.bottom = safe_destroy(self.bottom)
-        self.top = safe_destroy(self.top)
-        self.left = safe_destroy(self.left)
-        self.right = safe_destroy(self.right)
     end;
 }
-
-
--- TODO: an official way of extending hud classes would probably be a good idea
-hud_class "BorderPane" (BorderPane)
 
 
 hud_class "Positioner" {     

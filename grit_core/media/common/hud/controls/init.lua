@@ -2,8 +2,8 @@
 
 control_being_dragged = nil
 
-hud_class "DragIcon" {
-    texture="ColourDrag.png";
+hud_class `DragIcon` {
+    texture = `ColourDrag.png`;
     zOrder = 7;
     mouseMoveCallback = function (self, local_pos, screen_pos)
         self.position = screen_pos
@@ -32,7 +32,8 @@ hud_class "DragIcon" {
         input_filter_set_cursor_hidden(false)
     end
 }
-control_beaker = gfx_hud_object_add("DragIcon", { enabled = false })
+safe_destroy(control_beaker)
+control_beaker = gfx_hud_object_add(`DragIcon`, { enabled = false })
 
 local Control = {
 
@@ -46,16 +47,12 @@ local Control = {
         self.needsInputCallbacks = true
         self.alpha = 0
         if self.showCaption then
-            self.label = gfx_hud_object_add("/common/hud/Label", {parent=self, borderColour=vector3(0,0,0), value=self.caption, alpha = 0});
+            self.label = gfx_hud_object_add(`/common/hud/Label`, {parent=self, borderColour=vector3(0,0,0), value=self.caption, alpha = 0});
         else
             self.size = vec(self.width, self.size.y)
         end
         self.inside = false
         self.greyed = not not self.greyed
-    end;
-    
-    destroy = function(self)
-        self.label = safe_destroy(self.label)
     end;
     
     mouseMoveCallback = function (self, local_pos, screen_pos, inside)
@@ -107,20 +104,18 @@ local Control = {
     end;
 }
 
-hud_class "ColourControl" (extends(Control) {
+hud_class `ColourControl` (extends(Control) {
     initialColour = vector3(1,1,0.5);
     initialAlpha = 1;
     init = function (self)
         Control.init(self)
-        self.square = gfx_hud_object_add("/common/hud/Rect", {parent=self, texture = "Capsule.png"})
-        self.alphaSquare = gfx_hud_object_add("/common/hud/Rect", {parent=self, texture = "CapsuleAlpha.png"})
+        self.square = gfx_hud_object_add(`/common/hud/Rect`, {parent=self, texture = `Capsule.png`})
+        self.alphaSquare = gfx_hud_object_add(`/common/hud/Rect`, {parent=self, texture = `CapsuleAlpha.png`})
         self:setColour(self.initialColour, self.initialAlpha)
         self:updateAppearance()
         self:updateChildrenSize();
     end;
     destroy = function(self)
-        self.square = safe_destroy(self.square)
-        Control.destroy(self)
     end;
     updateAppearance = function (self)
         if self.greyed then
@@ -161,14 +156,14 @@ hud_class "ColourControl" (extends(Control) {
     end;
 })
 
-hud_class "ValueControl" (extends(Control) {
+hud_class `ValueControl` (extends(Control) {
     initialValue = 1;
     format = "%0.3f";
     maxValue = 1;
     init = function (self)
         Control.init(self)    
-        self.valueDisplay = gfx_hud_object_add("/common/hud/EditBox", {
-            font="/common/fonts/TinyFont";
+        self.valueDisplay = gfx_hud_object_add(`/common/hud/EditBox`, {
+            font=`/common/fonts/TinyFont`;
             parent=self;
             borderColour=vector3(1,1,1);
             number=true;
@@ -198,8 +193,6 @@ hud_class "ValueControl" (extends(Control) {
         self:setValue(self.initialValue)
     end;
     destroy = function(self)
-        self.valueDisplay = safe_destroy(self.valueDisplay)
-        Control.destroy(self)
     end;
     setGreyed = function (self, v)
         Control.setGreyed(self, v)
@@ -229,18 +222,16 @@ hud_class "ValueControl" (extends(Control) {
     end;
 })
 
-hud_class "EnumControl" (extends (Control) {
+hud_class `EnumControl` (extends (Control) {
     value = 1;
     options = { "False", "True" };
     init = function (self)
         Control.init(self)
-        self.valueDisplay = gfx_hud_object_add("/common/hud/Label", {parent=self, borderColour=vector3(0,0,0)})
+        self.valueDisplay = gfx_hud_object_add(`/common/hud/Label`, {parent=self, borderColour=vector3(0,0,0)})
         self:setValue(self.value)
         self:updateChildrenSize()
     end;
     destroy = function (self)
-        self.valueDisplay = safe_destroy(self.valueDisplay)
-        Control.destroy(self)
     end;
     setGreyed = function (self, v)
         Control.setGreyed(self, v)

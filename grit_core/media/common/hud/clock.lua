@@ -15,7 +15,6 @@ hud_class "Clock" {
     end;
 
     destroy = function (self)
-        self.label = safe_destroy(self.label)
     end;
 
     frameCallback = function (self, elapsed)

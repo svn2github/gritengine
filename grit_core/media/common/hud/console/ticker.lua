@@ -31,7 +31,6 @@ hud_class "Ticker" {
     end;
 
     destroy = function (self)
-        safe_destroy(self.text)
     end;
 
     frameCallback = function (self, elapsed)

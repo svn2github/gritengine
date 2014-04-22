@@ -90,6 +90,10 @@ function time_micros(f, ...)
         return after - before
 end
 
+function gc()
+    collectgarbage("collect")
+end
+
 
 function rgb (r,g,b) return vector3(r,g,b)/255 end
 function srgb(r,g,b) return rgb(r,g,b) ^ 2.2 end

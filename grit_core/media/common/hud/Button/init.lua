@@ -46,8 +46,6 @@ hud_class "." {
     end;
     
     destroy = function (self)
-        safe_destroy(self.text)
-        safe_destroy(self.border)
     end;
     
     setCaption = function (self, v)

@@ -62,14 +62,6 @@ hud_class "." {
         self.E.inheritOrientation = false
     end;
     destroy = function (self)
-        safe_destroy(self.pointer)
-        safe_destroy(self.ring)
-        safe_destroy(self.player)
-        safe_destroy(self.text)
-        safe_destroy(self.N)
-        safe_destroy(self.S)
-        safe_destroy(self.W)
-        safe_destroy(self.E)
     end;
     frameCallback = function (self, elapsed)
         local orientation = -player_ctrl.camYaw

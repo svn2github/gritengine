@@ -119,12 +119,8 @@ hud_class "." {
 		if self.audiosource then
 			self.audiosource:stop()
 			self.audiosource:destroy()
+            self.audiosource = nil
 		end
-		safe_destroy(self.trackname)
-		safe_destroy(self.showHideButton)
-		safe_destroy(self.playPauseButton)
-		safe_destroy(self.prevSongButton)
-		safe_destroy(self.nextSongButton)
 	end;
 	frameCallback = function (self, elapsed)
 		if self.isplaying and (not self.audiosource.playing) then

@@ -24,7 +24,6 @@ hud_class "Label" {
     end;
 
     destroy = function (self)
-        self.text = safe_destroy(self.text)
     end;
 
     setGreyed = function (self, v)
