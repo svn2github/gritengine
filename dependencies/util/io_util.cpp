@@ -90,6 +90,6 @@ static std::string collapse_path (const std::string &path)
 std::string absolute_path (const std::string &dir, const std::string &rel)
 {
     APP_ASSERT(dir[0] == '/');
-    if (rel[0] == '/') return rel;
+    if (rel[0] == '/') return collapse_path(rel);
     return collapse_path(dir + rel);
 }
