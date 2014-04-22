@@ -1,4 +1,3 @@
-
 -- http://www.edmunds.com/ford/crown-victoria/2011/features-specs.html
 
 -- length: 5.38
@@ -22,7 +21,7 @@ local hlightX, hlightY, hlightZ = 0.629, 2.005, 0.142 -- Headlight
 local blightX, blightY, blightZ = 0.782, -2.70, 0.322 -- Brakelight
 local rlightX, rlightY, rlightZ = 0.782, -2.70, 0.214 -- Reverse light
 
-class "." (Vehicle) {
+class `.` (Vehicle) {
         gfxMesh = `Body.mesh`,
         colMesh = `Body.gcol`,
         placementZOffset=1.4,
@@ -34,34 +33,34 @@ class "." (Vehicle) {
         meshWheelInfo = {
                 front_left = {
                   steer=1; castRadius=0.05; rad=rad; mu=mu_front; sport=1.1; massShare = 1.1;
-                  left=true; attachPos=vector3(-wheelX,wheelY,wheelZ); len=len; mesh=`Wheel.mesh`;
+                  left=true; attachPos=vec(-wheelX,wheelY,wheelZ); len=len; mesh=`Wheel.mesh`;
                 },
 
                 front_right = {
                   steer=1; castRadius=0.05; rad=rad; mu=mu_front; sport=1.1; massShare = 1.1;
-                  left=false; attachPos=vector3(wheelX,wheelY,wheelZ); len=len; mesh=`Wheel.mesh`;
+                  left=false; attachPos=vec(wheelX,wheelY,wheelZ); len=len; mesh=`Wheel.mesh`;
                 },
 
                 rear_left = {
                   rad=rad; drive=1; castRadius=0.05; handbrake=true; driveMu = mu_rear_drive; sideMu = mu_rear_side; sport = 1.1; massShare = 0.9;
-                  left=true; attachPos=vector3(-wheelX,wheelY2,wheelZ); len=len; mesh=`Wheel.mesh`;
+                  left=true; attachPos=vec(-wheelX,wheelY2,wheelZ); len=len; mesh=`Wheel.mesh`;
                 },
 
                 rear_right = {
                   rad=rad; drive=1; castRadius=0.05; handbrake=true; driveMu = mu_rear_drive; sideMu = mu_rear_side; sport = 1.1; massShare = 0.9;
-                  left=false; attachPos=vector3(wheelX,wheelY2,wheelZ); len=len; mesh=`Wheel.mesh`;
+                  left=false; attachPos=vec(wheelX,wheelY2,wheelZ); len=len; mesh=`Wheel.mesh`;
                 },
         },
 		-- Lights - Headlight
 		lightHeadLeft = {
-                pos=vector3(-hlightX, hlightY, hlightZ), coronaPos=vector3(-hlightX, hlightY+0.2, hlightZ),
+                pos=vec(-hlightX, hlightY, hlightZ), coronaPos=vec(0, 0.2, 0),
                 materials = {
                         { mesh=`LightHeadLeft`, on=`LightOn`, off=`Atlas` };
                 };
 
         };
         lightHeadRight = {
-                pos=vector3(hlightX, hlightY, hlightZ), coronaPos=vector3(hlightX, hlightY+0.2, hlightZ),
+                pos=vec(hlightX, hlightY, hlightZ), coronaPos=vec(0, 0.2, 0),
                 materials = {
                         { mesh=`LightHeadRight`, on=`LightOn`, off=`Atlas` };
                 };
@@ -69,45 +68,45 @@ class "." (Vehicle) {
 		
 		--Brake lights
         lightBrakeLeft = {
-                pos=vector3(blightX, blightY, blightZ), coronaPos=vector3(blightX, blightY, blightZ), coronaColour=vector3(0.05, 0, 0), coronaSize = 1,
+                pos=vec(blightX, blightY, blightZ), coronaColour=vec(0.05, 0, 0), coronaSize = 1,
                 materials = {
                         { mesh=`LightBrakeLeft`, on=`LightBrakeOn`, dim=`LightBrakeDim`, off=`Atlas` };
                 };
         };
         lightBrakeRight = {
-                pos=vector3(-blightX, blightY, blightZ), coronaPos=vector3(-blightX, blightY, blightZ), coronaColour=vector3(0.05, 0, 0), coronaSize = 1,
+                pos=vec(-blightX, blightY, blightZ), coronaColour=vec(0.05, 0, 0), coronaSize = 1,
                 materials = {
                         { mesh=`LightBrakeRight`, on=`LightBrakeOn`, dim=`LightBrakeDim`, off=`Atlas` };
                 };
         };
 		
         lightReverseLeft = {
-                pos=vector3(rlightX, rlightY, rlightZ), coronaPos=vector3(rlightX, rlightY, rlightZ), coronaColour=vector3(0.03, 0.03, 0.03), coronaSize = 0.7,
+                pos=vec(rlightX, rlightY, rlightZ), coronaColour=vec(0.03, 0.03, 0.03), coronaSize = 0.7,
         };
         lightReverseRight = {
-                pos=vector3(-rlightX, rlightY, rlightZ), coronaPos=vector3(-rlightX, rlightY, rlightZ), coronaColour=vector3(0.03, 0.03, 0.03), coronaSize = 0.7,
+                pos=vec(-rlightX, rlightY, rlightZ), coronaColour=vec(0.03, 0.03, 0.03), coronaSize = 0.7,
         };
 
         engineSmokeVents = {
-                vector3(0, 2.247, 0.2);
+                vec(0, 2.247, 0.2);
         };
         exhaustSmokeVents = {
-                vector3(0.689, -2.801, -0.274);
+                vec(0.689, -2.801, -0.274);
         };
 }
 
-include "classes.lua"
+include `classes.lua`
 
 
 -- most materials are temporal and will probably joined
-material "Atlas" { glossMap="Gloss.png"; diffuseMap="Diffuse.png"; shadowBias=0.05 }
-material "GlowingParts" { glossMap="Gloss.png"; diffuseMap="Diffuse.png"; emissiveMap="Diffuse.png"; emissiveColour=vector3(0.4,0.4,0.4), shadowBias=0.05 }
-material "LightOn" { emissiveMap="Diffuse.png", emissiveColour=vector3(4,4,4); }
-material "LightBrakeOn" { emissiveMap="Diffuse.png", emissiveColour=vector3(6,0,0); diffuseColour=vector3(0,0,0); specular=0; gloss=0; }
-material "LightBrakeDim" { emissiveMap="Diffuse.png", emissiveColour=vector3(2,0,0); diffuseColour=vector3(0,0,0); specular=0; gloss=0; }
+material `Atlas` { glossMap=`Gloss.png`; diffuseMap=`Diffuse.png`; shadowBias=0.05 }
+material `GlowingParts` { glossMap=`Gloss.png`; diffuseMap=`Diffuse.png`; emissiveMap=`Diffuse.png`; emissiveColour=vec(0.4,0.4,0.4), shadowBias=0.05 }
+material `LightOn` { emissiveMap=`Diffuse.png`, emissiveColour=vec(4,4,4); }
+material `LightBrakeOn` { emissiveMap=`Diffuse.png`, emissiveColour=vec(6,0,0); diffuseColour=vec(0,0,0); specular=0; gloss=0; }
+material `LightBrakeDim` { emissiveMap=`Diffuse.png`, emissiveColour=vec(2,0,0); diffuseColour=vec(0,0,0); specular=0; gloss=0; }
 
-material "LightHeadLeft" { glossMap="Gloss.png"; diffuseMap="Diffuse.png"; shadowBias=0.05 }
-material "LightHeadRight" { glossMap="Gloss.png"; diffuseMap="Diffuse.png"; shadowBias=0.05 }
-material "LightBrakeLeft" { glossMap="Gloss.png"; diffuseMap="Diffuse.png"; shadowBias=0.05 }
-material "LightBrakeRight" { glossMap="Gloss.png"; diffuseMap="Diffuse.png"; shadowBias=0.05 }
+material `LightHeadLeft` { glossMap=`Gloss.png`; diffuseMap=`Diffuse.png`; shadowBias=0.05 }
+material `LightHeadRight` { glossMap=`Gloss.png`; diffuseMap=`Diffuse.png`; shadowBias=0.05 }
+material `LightBrakeLeft` { glossMap=`Gloss.png`; diffuseMap=`Diffuse.png`; shadowBias=0.05 }
+material `LightBrakeRight` { glossMap=`Gloss.png`; diffuseMap=`Diffuse.png`; shadowBias=0.05 }
 

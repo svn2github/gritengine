@@ -11,8 +11,8 @@ class "." (Plane) {
     placementZOffset=0.4,
 
 	--CM Arm relative to origin. In meters. (Will be multiplied by weight to derrive torque.)
-	--cmArm = vector3(0, -2.0, -0.5),
-	cmArm = vector3(0,0,0),
+	--cmArm = vec(0, -2.0, -0.5),
+	cmArm = vec(0,0,0),
 
 	--One plot for each engine. Units: [m/s] = N (Bonanza: prop wash ~ 44m/s.)
 	thrustPlots = {
@@ -30,13 +30,13 @@ class "." (Plane) {
 			--Positive for counter-clockwise.
 			rpm = 2000;
 			diameter = 9.8;
-			cpr = vector3(0,0,1);
-			act = vector3(0,0,1);
+			cpr = vec(0,0,1);
+			act = vec(0,0,1);
 			glide = 7;
 			--Lift at %Collective. Hover = 0.5
 			lift = {[0] = 10000; [0.5] = 14550; [1.0] = 20000;};
-			cyclicx = vector3(-0.1,0.0,0.0);
-			cyclicy = vector3(0.0,-0.1,0.0);
+			cyclicx = vec(-0.1,0.0,0.0);
+			cyclicy = vec(0.0,-0.1,0.0);
 			ctype = "rotor";
 		};
 		--Anti-torque. (Tail rotor.)
@@ -44,13 +44,13 @@ class "." (Plane) {
 			--Doesn't actually matter for anti-torque.
 			rpm = 2000;
 			diameter = 2;
-			cpr = vector3(0,7,0);
-			act = vector3(-1,0,0);
+			cpr = vec(0,7,0);
+			act = vec(-1,0,0);
 			glide = 7;
 			--"Lift" of the rotor. Needs to counter torque produced by 2/3R of main rotor at given glide.
 			lift = {[0] = 0; [0.5] = 970; [1.0] = 1940;};
-			cyclicx = vector3(0.0,0.0,0.0);
-			cyclicy = vector3(0.0,0.0,0.0);
+			cyclicx = vec(0.0,0.0,0.0);
+			cyclicy = vec(0.0,0.0,0.0);
 			ctype = "torque";
 		};
 	},

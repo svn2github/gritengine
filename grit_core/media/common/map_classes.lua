@@ -32,8 +32,7 @@ function light_from_table (l, tab)
                         l.coronaColour = tab.diff / sz 
                 end
         end
-        local clp = tab.coronaPos or tab.pos
-        if clp then l.coronaLocalPosition = clp end
+        l.coronaLocalPosition = tab.coronaPos or vec(0,0,0)
         return l
 end
 

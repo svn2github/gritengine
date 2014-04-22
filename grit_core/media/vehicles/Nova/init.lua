@@ -6,7 +6,7 @@ local wx, wf, wb, wz = 0.603, 1.311, -1.108, 0.0 -- wheel position data, see bel
 local len_f = 0.25
 local len_b = 0.3
 
-class "." (Vehicle) {
+class `.` (Vehicle) {
         gfxMesh = `Body.mesh`,
         colMesh = `Body.gcol`,
         placementZOffset=0.4,
@@ -18,45 +18,45 @@ class "." (Vehicle) {
         meshWheelInfo = {
                 front_left = {
                   steer=1; drive=1; castRadius=0.05; rad=rad; driveMu=drive_mu; sideMu = side_mu;
-                  left=true; attachPos=vector3(-wx,wf,wz); len=len_f; mesh=`Wheel.mesh`;
+                  left=true; attachPos=vec(-wx,wf,wz); len=len_f; mesh=`Wheel.mesh`;
                 },
 
                 front_right = {
                   steer=1; drive=1; castRadius=0.05; rad=rad; driveMu=drive_mu; sideMu = side_mu;
-                  left=false; attachPos=vector3(wx,wf,wz); len=len_f; mesh=`Wheel.mesh`;
+                  left=false; attachPos=vec(wx,wf,wz); len=len_f; mesh=`Wheel.mesh`;
                 },
 
                 rear_left = {
                   rad=rad; castRadius=0.05; handbrake=true; driveMu=rear_mu; sideMu = side_mu;
-                  left=true; attachPos=vector3(-wx,wb,wz); len=len_b; mesh=`Wheel.mesh`;
+                  left=true; attachPos=vec(-wx,wb,wz); len=len_b; mesh=`Wheel.mesh`;
                 },
 
                 rear_right = {
                   rad=rad; castRadius=0.05; handbrake=true; driveMu=rear_mu; sideMu = side_mu;
-                  left=false; attachPos=vector3(wx,wb,wz); len=len_b; mesh=`Wheel.mesh`;
+                  left=false; attachPos=vec(wx,wb,wz); len=len_b; mesh=`Wheel.mesh`;
                 },
         },
         health = 40000,
         lightHeadLeft = {
-                pos=vector3(-0.65, 1.8, 0.05), coronaPos=vector3(-0.65, 1.8, 0.05),
+                pos=vec(-0.65, 1.8, 0.05),
         },
         lightHeadRight = {
-                pos=vector3( 0.65, 1.8, 0.05), coronaPos=vector3( 0.65, 1.8, 0.05),
+                pos=vec( 0.65, 1.8, 0.05),
         },
         lightBrakeLeft = {
-                pos=vector3(-0.7, -2.0, 0.15), coronaPos=vector3(-0.7, -2.0, 0.15), coronaColour=vector3(0.05, 0, 0), coronaSize = 1,
+                pos=vec(-0.7, -2.0, 0.15), coronaColour=vec(0.05, 0, 0), coronaSize = 1,
         },
         lightBrakeRight = {
-                pos=vector3( 0.7, -2.0, 0.15), coronaPos=vector3( 0.7, -2.0, 0.15), coronaColour=vector3(0.05, 0, 0), coronaSize = 1,
+                pos=vec( 0.7, -2.0, 0.15), coronaColour=vec(0.05, 0, 0), coronaSize = 1,
         },
         lightReverseLeft = {
-                pos=vector3(-0.7, -2.0, -0.05), coronaPos=vector3(-0.7, -2.0, -0.05), coronaColour=vector3(0.03, 0.03, 0.03), coronaSize = 0.7,
+                pos=vec(-0.7, -2.0, -0.05), coronaColour=vec(0.03, 0.03, 0.03), coronaSize = 0.7,
         },
         engineSmokeVents = {
-                vector3(0, 1.350000, 0.300000);
+                vec(0, 1.350000, 0.300000);
         };
 }
 
-material "Body" { diffuseMap = "Body.dds"; }
-material "Wheel" { diffuseMap = "Tyre.dds"; }
+material `Body` { diffuseMap = `Body.dds`; }
+material `Wheel` { diffuseMap = `Tyre.dds`; }
 

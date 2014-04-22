@@ -5,7 +5,7 @@ local rad = 0.35 -- wheel radius
 local wx, wf, wb, wz = 0.90, 1.40, -1.45, 0.36 -- wheel position data, see below \ side separation, side deplacement, axe separation, height
 local slack = 0.263
 
-class "." (Vehicle) {
+class `.` (Vehicle) {
         gfxMesh = `Body.mesh`,
         colMesh = `Body.gcol`,
         placementZOffset=0.4,
@@ -17,22 +17,22 @@ class "." (Vehicle) {
         meshWheelInfo = {
                 front_left = {
                   steer=1; castRadius=0.05; rad=rad; mu=front_mu; sport=1.1;
-                  left=true; attachPos=vector3(-wx,wf,wz); len=len; slack=slack; mesh=`Wheel.mesh`; brakeMesh=`BrakePad.mesh`
+                  left=true; attachPos=vec(-wx,wf,wz); len=len; slack=slack; mesh=`Wheel.mesh`; brakeMesh=`BrakePad.mesh`
                 },
 
                 front_right = {
                   steer=1; castRadius=0.05; rad=rad; mu=front_mu; sport=1.1;
-                  left=false; attachPos=vector3(wx,wf,wz); len=len; slack=slack; mesh=`Wheel.mesh`; brakeMesh=`BrakePad.mesh`
+                  left=false; attachPos=vec(wx,wf,wz); len=len; slack=slack; mesh=`Wheel.mesh`; brakeMesh=`BrakePad.mesh`
                 },
 
                 rear_left = {
                   rad=rad; drive=1; castRadius=0.05; handbrake=true; mu=mu; sport = 1.3;
-                  left=true; attachPos=vector3(-wx,wb,wz); len=len; slack=slack; mesh=`Wheel.mesh`; brakeMesh=`BrakePad.mesh`
+                  left=true; attachPos=vec(-wx,wb,wz); len=len; slack=slack; mesh=`Wheel.mesh`; brakeMesh=`BrakePad.mesh`
                 },
 
                 rear_right = {
                   rad=rad; drive=1; castRadius=0.05; handbrake=true; mu=mu; sport = 1.3;
-                  left=false; attachPos=vector3(wx,wb,wz); len=len; slack=slack; mesh=`Wheel.mesh`; brakeMesh=`BrakePad.mesh`
+                  left=false; attachPos=vec(wx,wb,wz); len=len; slack=slack; mesh=`Wheel.mesh`; brakeMesh=`BrakePad.mesh`
                 },
         },
         colourSpec = {
@@ -58,29 +58,29 @@ class "." (Vehicle) {
                 },
         },
         lightHeadLeft = {
-                pos=vector3(-0.75, 2.2, 0.25), coronaPos=vector3(-0.75, 2.2, 0.25),
+                pos=vec(-0.75, 2.2, 0.25),
         },
         lightHeadRight = {
-                pos=vector3( 0.75, 2.2, 0.25), coronaPos=vector3( 0.75, 2.2, 0.25),
+                pos=vec( 0.75, 2.2, 0.25),
         },
         lightBrakeLeft = {
-                pos=vector3(-0.6, -2.1, 0.6), coronaPos=vector3(-0.6, -2.0, 0.6), coronaColour=vector3(0.05, 0, 0), coronaSize = 1,
+                pos=vec(-0.6, -2.1, 0.6), coronaColour=vec(0.05, 0, 0), coronaSize = 1,
         },
         lightBrakeRight = {
-                pos=vector3( 0.6, -2.1, 0.6), coronaPos=vector3( 0.6, -2.0, 0.6), coronaColour=vector3(0.05, 0, 0), coronaSize = 1,
+                pos=vec( 0.6, -2.1, 0.6), coronaColour=vec(0.05, 0, 0), coronaSize = 1,
         },
         lightReverseLeft = {
-                pos=vector3(-0.7, -2.1, 0.6), coronaPos=vector3(-0.7, -2.0, 0.6), coronaColour=vector3(0.03, 0.03, 0.03), coronaSize = 0.7,
+                pos=vec(-0.7, -2.1, 0.6), coronaColour=vec(0.03, 0.03, 0.03), coronaSize = 0.7,
         },
         lightReverseRight = {
-                pos=vector3( 0.7, -2.1, 0.6), coronaPos=vector3( 0.7, -2.0, 0.6), coronaColour=vector3(0.03, 0.03, 0.03), coronaSize = 0.7,
+                pos=vec( 0.7, -2.1, 0.6), coronaColour=vec(0.03, 0.03, 0.03), coronaSize = 0.7,
         },
         engineSmokeVents = {
-                vector3(0, 2.05, 0.35);
+                vec(0, 2.05, 0.35);
         };
         exhaustSmokeVents = {
-                vector3(0.62,-2.15, 0.1);
-                vector3(-0.62,-2.15, 0.1);
+                vec(0.62,-2.15, 0.1);
+                vec(-0.62,-2.15, 0.1);
         };
 }
 
@@ -88,15 +88,15 @@ class "." (Vehicle) {
 
 -- most materials are temporal and will probably joined
 local g, s = 1, 1
-material "Body" { paintColour = 1; microFlakes=true; gloss=g ; specular = s }
-material "Wheel" { diffuseMap = "glass.png"; gloss=1 }
-material "backlight" { diffuseMap = "backlight.png"; }
-material "Grey" { diffuseMap = "grey.png";  }
-material "BrakeCaliper" { diffuseColour ={20,0,0}; }
-material "Black" { diffuseMap = "black.png";  }
-material "LightBlack" { diffuseMap = "lightblack.png"; gloss=1 ; }
-material "Tyre" { diffuseMap = "tyre.png" }
-material "Silver" { diffuseColour ={0.221,0.221,0.221};  }
-material "Grill" { diffuseMap = "grill_grey.jpg";  }
-material "Glass" { diffuseMap = "glass.png"; alpha = true; gloss=1 ; specular = s }
+material `Body` { paintColour = 1; microFlakes=true; gloss=g ; specular = s }
+material `Wheel` { diffuseMap = `glass.png`; gloss=1 }
+material `backlight` { diffuseMap = `backlight.png`; }
+material `Grey` { diffuseMap = `grey.png`;  }
+material `BrakeCaliper` { diffuseColour ={20,0,0}; }
+material `Black` { diffuseMap = `black.png`;  }
+material `LightBlack` { diffuseMap = `lightblack.png`; gloss=1 ; }
+material `Tyre` { diffuseMap = `tyre.png` }
+material `Silver` { diffuseColour ={0.221,0.221,0.221};  }
+material `Grill` { diffuseMap = `grill_grey.jpg`;  }
+material `Glass` { diffuseMap = `glass.png`; alpha = true; gloss=1 ; specular = s }
 

@@ -28,7 +28,7 @@ local engineX, engineY, engineZ = 0.0, 1.767, 0.093 -- Engine Smoke Pos
 
 local slack = 0.0 -- dunno
 
-class "." (Vehicle) {
+class `.` (Vehicle) {
         gfxMesh = `Body.mesh`,
         colMesh = `Body.gcol`,
         placementZOffset=1.4,
@@ -40,61 +40,49 @@ class "." (Vehicle) {
         meshWheelInfo = {
                 front_left = {
                   steer=1; castRadius=0.05; rad=rad; mu=mu_front; sport=1.1; massShare = 1.2;
-                  left=true; attachPos=vector3(-wheelX,wheelY,wheelZ); len=len; slack=slack; mesh=`Wheel.mesh`; brakeMesh=`BrakePad.mesh`
+                  left=true; attachPos=vec(-wheelX,wheelY,wheelZ); len=len; slack=slack; mesh=`Wheel.mesh`; brakeMesh=`BrakePad.mesh`
                 },
 
                 front_right = {
                   steer=1; castRadius=0.05; rad=rad; mu=mu_front; sport=1.1; massShare = 1.2;
-                  left=false; attachPos=vector3(wheelX,wheelY,wheelZ); len=len; slack=slack; mesh=`Wheel.mesh`; brakeMesh=`BrakePad.mesh`
+                  left=false; attachPos=vec(wheelX,wheelY,wheelZ); len=len; slack=slack; mesh=`Wheel.mesh`; brakeMesh=`BrakePad.mesh`
                 },
 
                 rear_left = {
                   rad=rad; drive=1; castRadius=0.05; handbrake=true; driveMu = mu_rear_drive; sideMu = mu_rear_side; sport = 1.1; massShare = 0.8;
-                  left=true; attachPos=vector3(-wheelX,wheelY2,wheelZ); len=len; slack=slack; mesh=`Wheel.mesh`; brakeMesh=`BrakePad.mesh`
+                  left=true; attachPos=vec(-wheelX,wheelY2,wheelZ); len=len; slack=slack; mesh=`Wheel.mesh`; brakeMesh=`BrakePad.mesh`
                 },
 
                 rear_right = {
                   rad=rad; drive=1; castRadius=0.05; handbrake=true; driveMu = mu_rear_drive; sideMu = mu_rear_side; sport = 1.1; massShare = 0.8;
-                  left=false; attachPos=vector3(wheelX,wheelY2,wheelZ); len=len; slack=slack; mesh=`Wheel.mesh`; brakeMesh=`BrakePad.mesh`
+                  left=false; attachPos=vec(wheelX,wheelY2,wheelZ); len=len; slack=slack; mesh=`Wheel.mesh`; brakeMesh=`BrakePad.mesh`
                 },
         },
 		-- Lights - Headlight
 		lightHeadLeft = {
-                pos=vector3(hlightX, hlightY, hlightZ), coronaPos=vector3(hlightX, hlightY, hlightZ),
-				pos=vector3(hlight2X, hlight2Y, hlight2Z), coronaPos=vector3(hlight2X, hlight2Y, hlight2Z),
+                pos=vec(hlightX, hlightY, hlightZ),
+				pos=vec(hlight2X, hlight2Y, hlight2Z),
         };
         lightHeadRight = {
-                pos=vector3(-hlightX, hlightY, hlightZ), coronaPos=vector3(-hlightX, hlightY, hlightZ),
-				pos=vector3(-hlight2X, hlight2Y, hlight2Z), coronaPos=vector3(-hlight2X, hlight2Y, hlight2Z)
+                pos=vec(-hlightX, hlightY, hlightZ),
+				pos=vec(-hlight2X, hlight2Y, hlight2Z),
         };
-		--lightHeadLeft = {
-        --        pos=vector3(hlight2X, hlight2Y, hlight2Z), coronaPos=vector3(hlight2X, hlight2Y, hlight2Z),
-        --};
-        --lightHeadRight = {
-        --        pos=vector3(-hlight2X, hlight2Y, hlight2Z), coronaPos=vector3(-hlight2X, hlight2Y, hlight2Z),
-        --};
 		
 		--Brake lights
         lightBrakeLeft = {
-                pos=vector3(blightX, blightY, blightZ), coronaPos=vector3(blightX, blightY, blightZ), coronaColour=vector3(0.05, 0, 0), coronaSize = 1,
-				pos=vector3(blight2X, blight2Y, blight2Z), coronaPos=vector3(blight2X, blight2Y, blight2Z), coronaColour=vector3(0.05, 0, 0), coronaSize = 1,
+                pos=vec(blightX, blightY, blightZ), coronaColour=vec(0.05, 0, 0), coronaSize = 1,
+				pos=vec(blight2X, blight2Y, blight2Z), coronaColour=vec(0.05, 0, 0), coronaSize = 1,
         };
         lightBrakeRight = {
-                pos=vector3(-blightX, blightY, blightZ), coronaPos=vector3(-blightX, blightY, blightZ), coronaColour=vector3(0.05, 0, 0), coronaSize = 1,
-				pos=vector3(-blight2X, blight2Y, blight2Z), coronaPos=vector3(-blight2X, blight2Y, blight2Z), coronaColour=vector3(0.05, 0, 0), coronaSize = 1,
+                pos=vec(-blightX, blightY, blightZ), coronaColour=vec(0.05, 0, 0), coronaSize = 1,
+				pos=vec(-blight2X, blight2Y, blight2Z), coronaColour=vec(0.05, 0, 0), coronaSize = 1,
         };
-		--lightBrakeLeft = {
-        --        pos=vector3(blight2X, blight2Y, blight2Z), coronaPos=vector3(blight2X, blight2Y, blight2Z), coronaColour=vector3(0.05, 0, 0), coronaSize = 1,
-        --};
-        --lightBrakeRight = {
-        --        pos=vector3(-blight2X, blight2Y, blight2Z), coronaPos=vector3(-blight2X, blight2Y, blight2Z), coronaColour=vector3(0.05, 0, 0), coronaSize = 1,
-        --};
 		
         lightReverseLeft = {
-                pos=vector3(rlightX, rlightY, rlightZ), coronaPos=vector3(rlightX, rlightY, rlightZ), coronaColour=vector3(0.03, 0.03, 0.03), coronaSize = 0.7,
+                pos=vec(rlightX, rlightY, rlightZ), coronaColour=vec(0.03, 0.03, 0.03), coronaSize = 0.7,
         };
         lightReverseRight = {
-                pos=vector3(-rlightX, rlightY, rlightZ), coronaPos=vector3(-rlightX, rlightY, rlightZ), coronaColour=vector3(0.03, 0.03, 0.03), coronaSize = 0.7,
+                pos=vec(-rlightX, rlightY, rlightZ), coronaColour=vec(0.03, 0.03, 0.03), coronaSize = 0.7,
         };
 		-- Colors
 		colourSpec = {
@@ -112,29 +100,29 @@ class "." (Vehicle) {
                 },
         },
         engineSmokeVents = {
-                vector3(engineX, engineY, engineZ);
+                vec(engineX, engineY, engineZ);
         };
         exhaustSmokeVents = {
-                vector3(exhaustX, exhaustY, exhaustZ);
-                vector3(-exhaustX, exhaustY, exhaustZ);
+                vec(exhaustX, exhaustY, exhaustZ);
+                vec(-exhaustX, exhaustY, exhaustZ);
         };
 }
 
 
-class "Wheel" (ColClass) { placementZOffset = 0.3; castShadows = true }
+class `Wheel` (ColClass) { placementZOffset = 0.3; castShadows = true }
 
 
 -- most materials are temporal and will probably joined
 local g, s = 0.6, 0.04
 -- when using paint, set spec and gloss to 1, they will be masked by the paint colour
-material "Carpaint" { paintColour = 1; specular=1; gloss = 1; microFlakes=true; shadowBias=0.05 }
-material "LightPlastic" { diffuseColour=vector3(0.2, 0.2, 0.2); specular=0.04; gloss=0.5; }
-material "Chrome" { diffuseColour=0.09*vector3(1,1,1); specular=0.15; gloss = 1; }
-material "Pattern" { diffuseColour=vector3(0.2, 0.2, 0.2), specular=0.04, gloss=0.25 }
-material "Interior" { diffuseColour=vector3(0.2, 0.2, 0.2), specular=0.04, gloss=0.2 }
-material "Rubber" { diffuseColour=vector3(0.2, 0.2, 0.2), specualar=0.04, gloss=0  }
-material "Headlight" { gloss = g; specular=s; alpha=0.7 }
-material "Brakelight" { diffuseColour=vector3(1,0,0), gloss = g; specular=s; alpha=0.7 }
-material "Turnlight" { diffuseColour=vector3(1.0,0.597,0), gloss=g; specular=s; alpha =0.7 }
-material "Windows" { diffuseColour=vector3(0.035, 0.035, 0.035), gloss=1; specular=0.045; alpha =0.8 }
+material `Carpaint` { paintColour = 1; specular=1; gloss = 1; microFlakes=true; shadowBias=0.05 }
+material `LightPlastic` { diffuseColour=vec(0.2, 0.2, 0.2); specular=0.04; gloss=0.5; }
+material `Chrome` { diffuseColour=0.09*vec(1,1,1); specular=0.15; gloss = 1; }
+material `Pattern` { diffuseColour=vec(0.2, 0.2, 0.2), specular=0.04, gloss=0.25 }
+material `Interior` { diffuseColour=vec(0.2, 0.2, 0.2), specular=0.04, gloss=0.2 }
+material `Rubber` { diffuseColour=vec(0.2, 0.2, 0.2), specualar=0.04, gloss=0  }
+material `Headlight` { gloss = g; specular=s; alpha=0.7 }
+material `Brakelight` { diffuseColour=vec(1,0,0), gloss = g; specular=s; alpha=0.7 }
+material `Turnlight` { diffuseColour=vec(1.0,0.597,0), gloss=g; specular=s; alpha =0.7 }
+material `Windows` { diffuseColour=vec(0.035, 0.035, 0.035), gloss=1; specular=0.045; alpha =0.8 }
 

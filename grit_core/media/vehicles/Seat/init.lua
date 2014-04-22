@@ -3,7 +3,7 @@ local mu_rear_side = 3.1
 local mu_rear_drive = 3.1
 local rad = 0.348 -- wheels
 
-class "." (Vehicle) {
+class `.` (Vehicle) {
         gfxMesh=`Body.mesh`,
         colMesh=`Body.gcol`,
         placementZOffset=0.4,
@@ -62,31 +62,31 @@ class "." (Vehicle) {
                 },
         },
         lightHeadLeft = {
-                pos=vector3(-0.65, 1.8, 0.2), coronaPos=vector3(-0.65, 1.8, 0.2),
+                pos=vec(-0.65, 1.8, 0.2),
         },
         lightHeadRight = {
-                pos=vector3( 0.65, 1.8, 0.2), coronaPos=vector3( 0.65, 1.8, 0.2),
+                pos=vec( 0.65, 1.8, 0.2),
         },
         lightBrakeLeft = {
-                pos=vector3(-0.63, -2.3, 0.45), coronaPos=vector3(-0.63, -2.25, 0.45), coronaColour=vector3(0.05, 0, 0), coronaSize = 1,
+                pos=vec(-0.63, -2.3, 0.45), coronaColour=vec(0.05, 0, 0), coronaSize = 1,
         },
         lightBrakeRight = {
-                pos=vector3( 0.63, -2.3, 0.45), coronaPos=vector3( 0.63, -2.25, 0.45), coronaColour=vector3(0.05, 0, 0), coronaSize = 1,
+                pos=vec( 0.63, -2.3, 0.45), coronaColour=vec(0.05, 0, 0), coronaSize = 1,
         },
         lightReverseLeft = {
-                pos=vector3(-0.53, -2.1, 0.53), coronaPos=vector3(-0.53, -2.1, 0.53), coronaColour=vector3(0.03, 0.03, 0.03), coronaSize = 0.7,
+                pos=vec(-0.53, -2.1, 0.53), coronaColour=vec(0.03, 0.03, 0.03), coronaSize = 0.7,
         },
         lightReverseRight = {
-                pos=vector3( 0.53, -2.1, 0.53), coronaPos=vector3( 0.53, -2.1, 0.53), coronaColour=vector3(0.03, 0.03, 0.03), coronaSize = 0.7,
+                pos=vec( 0.53, -2.1, 0.53), coronaColour=vec(0.03, 0.03, 0.03), coronaSize = 0.7,
         },
         engineSmokeVents = {
-                vector3(-0.25, 1.95, 0.2);
-                vector3( 0.25, 1.95, 0.2);
+                vec(-0.25, 1.95, 0.2);
+                vec( 0.25, 1.95, 0.2);
         };
         exhaustSmokeVents = {
-                vector3(-0.45, -2.3, -0.14);
+                vec(-0.45, -2.3, -0.14);
         };
 }
 
-material "Body" { blendedBones=1, diffuseMap = "Body.dds", paintByDiffuseAlpha = true, paintColour="Body_c.dds", microFlakes = true }
+material `Body` { blendedBones=1, diffuseMap = `Body.dds`, paintByDiffuseAlpha = true, paintColour=`Body_c.dds`, microFlakes = true }
 

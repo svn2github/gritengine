@@ -9,7 +9,7 @@ local drive_rear = 2
 
 drive_front, drive_rear = drive_front/(0.5*drive_front+0.5*drive_rear), drive_rear/(0.5*drive_front+0.5*drive_rear)
 
-class "." (Vehicle) {
+class `.` (Vehicle) {
         gfxMesh=`Body.mesh`,
         colMesh=`Body.gcol`,
         placementZOffset=0.4,
@@ -53,59 +53,59 @@ class "." (Vehicle) {
                 },
         },
         lightHeadLeft = {
-                pos=vector3(-0.7, 2.2, 0.25), coronaPos=vector3(-0.7, 2.2, 0.25),
+                pos=vec(-0.7, 2.2, 0.25),
                 materials = {
                         { mesh=`LightHeadLeft`, on=`LightOn`, off=`LightOff` };
                         { mesh=`LightHeadLeftGlass`, on=`LightOnGlass`, off=`LightOffGlass` };
                 }
         };
         lightHeadRight = {
-                pos=vector3( 0.7, 2.2, 0.25), coronaPos=vector3( 0.7, 2.2, 0.25),
+                pos=vec( 0.7, 2.2, 0.25),
                 materials = {
                         { mesh=`LightHeadRight`, on=`LightOn`, off=`LightOff` };
                         { mesh=`LightHeadRightGlass`, on=`LightOnGlass`, off=`LightOffGlass` };
                 }
         };
         lightBrakeLeft = {
-                pos=vector3(-0.6, -2.0, 0.25), coronaPos=vector3(-0.6, -2.0, 0.25), coronaColour=vector3(0.05, 0, 0), coronaSize = 1,
+                pos=vec(-0.6, -2.0, 0.25), coronaColour=vec(0.05, 0, 0), coronaSize = 1,
                 materials = {
                         { mesh=`LightBrakeLeft`, on=`LightBrakeOn`, dim=`LightBrakeDim`, off=`LightOff` };
                 }
         };
         lightBrakeRight = {
-                pos=vector3( 0.6, -2.0, 0.25), coronaPos=vector3( 0.6, -2.0, 0.25), coronaColour=vector3(0.05, 0, 0), coronaSize = 1,
+                pos=vec( 0.6, -2.0, 0.25), coronaColour=vec(0.05, 0, 0), coronaSize = 1,
                 materials = {
                         { mesh=`LightBrakeRight`, on=`LightBrakeOn`, dim=`LightBrakeDim`, off=`LightOff` };
                 }
         };
         lightReverseLeft = {
-                pos=vector3(-0.7, -2.0, 0.25), coronaPos=vector3(-0.7, -2.0, 0.25), coronaColour=vector3(0.03, 0.03, 0.03), coronaSize = 0.7,
+                pos=vec(-0.7, -2.0, 0.25), coronaColour=vec(0.03, 0.03, 0.03), coronaSize = 0.7,
                 materials = {
                         { mesh=`LightReverse`, on=`LightOn`, off=`LightOff` };
                 }
         };
         lightReverseRight = {
-                pos=vector3( 0.7, -2.0, 0.25), coronaPos=vector3( 0.7, -2.0, 0.25), coronaColour=vector3(0.03, 0.03, 0.03), coronaSize = 0.7,
+                pos=vec( 0.7, -2.0, 0.25), coronaColour=vec(0.03, 0.03, 0.03), coronaSize = 0.7,
                 materials = {
                         { mesh=`LightReverse`, on=`LightOn`, off=`LightOff` };
                 }
         };
         engineSmokeVents = {
-                vector3(-0.25, 1.95, 0.4);
-                vector3( 0.25, 1.95, 0.4);
+                vec(-0.25, 1.95, 0.4);
+                vec( 0.25, 1.95, 0.4);
         };
         exhaustSmokeVents = {
-                vector3(0.56, -2.05, -0.22);
+                vec(0.56, -2.05, -0.22);
         };
 }
 
-material "Body" { blendedBones=1, diffuseMap = "Body.dds"; paintByDiffuseAlpha = true; paintColour = "Body_c.dds"; microFlakes=true }
-material "LightBrakeOn" { blendedBones=1, emissiveMap = "Body.dds"; emissiveColour={20,0,0}; diffuseMap = "Body.dds"  }
-material "LightBrakeDim" { blendedBones=1, emissiveMap = "Body.dds"; emissiveColour={3,0,0}; diffuseMap = "Body.dds"  }
-material "LightOn" { blendedBones=1, emissiveMap = "Body.dds"; emissiveColour={8,8,8}; diffuseMap = "Body.dds"  }
-material "LightOff" { blendedBones=1, diffuseMap = "Body.dds"  }
-material "LightOnGlass" { blendedBones=1, emissiveColour={0.3,0.3,0.3}; diffuseMap = "Body.dds"; alpha = 0;  }
-material "LightOffGlass" { blendedBones=1, diffuseMap = "Body.dds"; alpha = true;  }
+material `Body` { blendedBones=1, diffuseMap = `Body.dds`; paintByDiffuseAlpha = true; paintColour = `Body_c.dds`; microFlakes=true }
+material `LightBrakeOn` { blendedBones=1, emissiveMap = `Body.dds`; emissiveColour={20,0,0}; diffuseMap = `Body.dds`  }
+material `LightBrakeDim` { blendedBones=1, emissiveMap = `Body.dds`; emissiveColour={3,0,0}; diffuseMap = `Body.dds`  }
+material `LightOn` { blendedBones=1, emissiveMap = `Body.dds`; emissiveColour={8,8,8}; diffuseMap = `Body.dds`  }
+material `LightOff` { blendedBones=1, diffuseMap = `Body.dds`  }
+material `LightOnGlass` { blendedBones=1, emissiveColour={0.3,0.3,0.3}; diffuseMap = `Body.dds`; alpha = 0;  }
+material `LightOffGlass` { blendedBones=1, diffuseMap = `Body.dds`; alpha = true;  }
 
 --[[
 

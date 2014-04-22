@@ -2,7 +2,7 @@ local mu_front = 2.5
 local mu_back = 2.0
 local rad = 0.348 -- wheels
 
-class "." (Vehicle) {
+class `.` (Vehicle) {
         gfxMesh=`Body.mesh`,
         colMesh=`Body.gcol`,
         placementZOffset=0.4,
@@ -29,28 +29,28 @@ class "." (Vehicle) {
                 },
         },
         lightHeadLeft = {
-                pos=vector3(-0.75, 1.6, 0.25), coronaPos=vector3(-0.75, 1.6, 0.25),
+                pos=vec(-0.75, 1.6, 0.25), 
         },
         lightHeadRight = {
-                pos=vector3( 0.75, 1.6, 0.25), coronaPos=vector3( 0.75, 1.6, 0.25),
+                pos=vec( 0.75, 1.6, 0.25), 
         },
         lightBrakeLeft = {
-                pos=vector3(-0.65, -2.0, 0.9), coronaPos=vector3(-0.65, -2.0, 0.9), coronaColour=vector3(0.05, 0, 0), coronaSize = 1,
+                pos=vec(-0.65, -2.0, 0.9), coronaColour=vec(0.05, 0, 0), coronaSize = 1,
         },
         lightBrakeRight = {
-                pos=vector3( 0.65, -2.0, 0.9), coronaPos=vector3( 0.65, -2.0, 0.9), coronaColour=vector3(0.05, 0, 0), coronaSize = 1,
+                pos=vec( 0.65, -2.0, 0.9), coronaColour=vec(0.05, 0, 0), coronaSize = 1,
         },
         lightReverseRight = {
-                pos=vector3( 0.7, -2.5, -0.1), coronaPos=vector3( 0.75, -2.5, -0.1), coronaColour=vector3(0.03, 0.03, 0.03), coronaSize = 0.7,
+                pos=vec( 0.7, -2.5, -0.1), coronaColour=vec(0.03, 0.03, 0.03), coronaSize = 0.7,
         },
         engineSmokeVents = {
-                vector3(-0.55, 1.2, 0.45);
-                vector3( 0.55, 1.2, 0.45);
+                vec(-0.55, 1.2, 0.45);
+                vec( 0.55, 1.2, 0.45);
         };
         exhaustSmokeVents = {
-                vector3(0.60, -2.56, -0.15);
+                vec(0.60, -2.56, -0.15);
         };
 }
 
-material "Body" { blendedBones=1, diffuseMap = "Body.jpg"; }
+material `Body` { blendedBones=1, diffuseMap = `Body.jpg`; }
 

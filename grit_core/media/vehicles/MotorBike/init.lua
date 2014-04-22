@@ -2,8 +2,7 @@ local rad = 0.3 -- wheels
 local len = 0.12
 local wf, wb, wz = 0.49, -0.839, -0.14 
 
-class "." (Bike) {
-        name="MotorBike",
+class `.` (Bike) {
         gfxMesh=`Body.mesh`,
         colMesh=`Body.gcol`,
         placementZOffset=0.4,
@@ -32,21 +31,20 @@ class "." (Bike) {
                 },
         },
         lightHeadCenter = {
-                pos=vector3(0, 0.7, 0.2), coronaPos=vector3(0, 0.7, 0.2),
+                pos=vec(0, 0.7, 0.2),
         },
         lightBrakeCenter = {
-                pos=vector3(0, -1.1, 0.4), coronaPos=vector3(0, -1.1, 0.4), coronaColour=vector3(0.05, 0, 0), coronaSize = 1,
+                pos=vec(0, -1.1, 0.4), coronaColour=vec(0.05, 0, 0), coronaSize = 1,
         },
         lightReverseCenter = {
-                pos=vector3(0, -1.1, 0.35), coronaPos=vector3(0, -1.1, 0.35), coronaColour=vector3(0.03, 0.03, 0.03), coronaSize = 0.7,
+                pos=vec(0, -1.1, 0.35), coronaColour=vec(0.03, 0.03, 0.03), coronaSize = 0.7,
         },
         engineSmokeVents = {
-                vector3(0.0, 0.650000, 0.000000);
+                vec(0.0, 0.65, 0.0);
         };
 }
 
 
-material "Body" { blendedBones=1, diffuseColour = {1, .8, 0} }
-material "FrontWheel" { blendedBones=1, diffuseColour = 0xFF3F3F3F }
-material "RearWheel" { blendedBones=1, diffuseColour = 0xFF3F3F3F }
-
+material `Body` { blendedBones=1, diffuseColour = {1, .8, 0} }
+material `FrontWheel` { blendedBones=1, diffuseColour = 0xFF3F3F3F }
+material `RearWheel` { blendedBones=1, diffuseColour = 0xFF3F3F3F }
