@@ -952,29 +952,115 @@ void luaV_finishOp (lua_State *L) {
 
 static TString *resolve_absolute_path (lua_State *L, const char *file, const char *rel)
 {
-  // strip off the file from file, leaving only the dir
-  unsigned file_len;
-  unsigned rel_len;
+  // Resolves and canonicalises rel (in the context of the dir part of file).
+  // Handles .. and .
+  // Breaks up both file and rel into a list of dirs.
+  // Chops the filename from file.
+  // Compresses this to handle .. and .
+  // Reconsitutes into an absolute path.
+  unsigned file_len, rel_len;
+  char **pieces, **pieces2;
   char *str;
-  unsigned last_slash = 0;
   unsigned i;
+  unsigned piece_id = 0;
+  unsigned pieces2_id = 0;
   TString *r;
 
+  char *file2, *rel2;
   file_len = strlen(file);
   rel_len = strlen(rel);
-  str = malloc(file_len + rel_len + 3);
+  file2 = malloc(file_len+1);
+  rel2 = malloc(rel_len+1);
+  strcpy(file2, file);
+  strcpy(rel2, rel);
+  // Conservative upper limit on the number of pieces.
+  // Even this is a tiny amount of memory though, so we're fine.
+  pieces = malloc(sizeof(char*) * (file_len + rel_len));
+  pieces2 = malloc(sizeof(char*) * (file_len + rel_len));
   
-  for (i=0 ; i<file_len ; ++i) {
-    str[i] = file[i];
-    if (file[i] == '/') last_slash = i;
+  if (rel2[0] != '/') {
+    unsigned last_slash = 0;
+    lua_assert(file2[0] == '/');
+    // Note: this strips everything after the last /
+    for (i=1 ; i<file_len ; ++i) {
+      if (file2[i] == '/') {
+        file2[i] = '\0';
+        pieces[piece_id++] = &file2[last_slash+1];
+        last_slash = i;
+      }
+    }
+    last_slash = -1;
+    for (i=0 ; i<rel_len ; ++i) {
+      if (rel2[i] == '/') {
+        rel2[i] = '\0';
+        pieces[piece_id++] = &rel2[last_slash+1];
+        last_slash = i;
+      }
+    }
+    pieces[piece_id++] = &rel2[last_slash+1];
+  } else {
+    unsigned last_slash = 0;
+    for (i=1 ; i<rel_len ; ++i) {
+      if (rel2[i] == '/') {
+        rel2[i] = '\0';
+        pieces[piece_id++] = &rel2[last_slash+1];
+        last_slash = i;
+      }
+    }
+    pieces[piece_id++] = &rel2[last_slash+1];
   }
-  str[last_slash] = '/';
-  for (i=0 ; i<rel_len ; ++i) {
-    str[last_slash + i + 1] = rel[i];
+
+  // compress out the . and ..
+  {
+    unsigned sz = 2; // leading / and terminating '\0'
+    for (i=0 ; i<piece_id ; ++i) {
+      if (!strcmp(pieces[i], ".")) {
+        // skip it
+      } else if (!strcmp(pieces[i], "")) {
+        // skip it
+      } else if (!strcmp(pieces[i], "..")) {
+        // condition ensures that /../foo is handled (by ignoring the ..)
+        if (pieces2_id == 0) {
+          free(pieces2);
+          free(pieces);
+          free(file2);
+          free(rel2);
+          luaG_runerror(L, "Too many .. in path.");
+        }
+        pieces2_id--;
+      } else {
+        pieces2[pieces2_id++] = pieces[i];
+        sz += strlen(pieces[i]) + 1; // include next / or '\0'
+      }
+    }
+    str = malloc(sz);
   }
-  str[last_slash + rel_len + 1] = '\0';
+  free(pieces);
+
+  // now concatenate into a string
+  {
+    unsigned str_id = 0;
+    unsigned i = 0;
+    str[str_id++] = '/';
+    for (i=0 ; i<pieces2_id ; ++i) {
+      unsigned j=0;
+      char *piece;
+      unsigned piece_len;
+      piece = pieces2[i];
+      piece_len = strlen(piece);
+      if (i > 0) str[str_id++] = '/';
+      for (j=0 ; j<piece_len ; ++j)
+        str[str_id++] = piece[j];
+    }
+    str[str_id++] = '\0';
+  }
+  free(pieces2);
+
   r = luaS_new(L, str);
   free(str);
+
+  free(file2);
+  free(rel2);
   return r;
 }
 
@@ -1016,8 +1102,7 @@ void luaV_execute (lua_State *L) {
         lua_assert(ttisstring(rb));
 		rel = getstr(tsvalue(rb));
         if (rel[0] == '/') {
-          // rel is actually an absolute path, nothing to do...
-          str = luaS_new(L, rel);
+          str = resolve_absolute_path(L, "/", rel);
         } else {
           const char *src = "/";
 		  CallInfo *frame;
