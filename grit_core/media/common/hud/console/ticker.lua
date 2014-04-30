@@ -1,9 +1,9 @@
-hud_class "Ticker" {
+hud_class `Ticker` {
 
     height = 400;
     border = 4;
     bufferSize = 100;
-    font = "/common/fonts/misc.fixed";
+    font = `/common/fonts/misc.fixed`;
     messageTime = 8;
     alpha = 0;
     textColour = vec(.75, .75, .75);

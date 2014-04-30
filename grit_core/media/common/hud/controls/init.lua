@@ -40,14 +40,14 @@ local Control = {
     caption = "Unnamed";
     showCaption = true;
 
-    size = vector2(100,20);
+    size = vec(100, 20);
     width = 20;
     
     init = function (self)
         self.needsInputCallbacks = true
         self.alpha = 0
         if self.showCaption then
-            self.label = gfx_hud_object_add(`/common/hud/Label`, {parent=self, borderColour=vector3(0,0,0), value=self.caption, alpha = 0});
+            self.label = gfx_hud_object_add(`/common/hud/Label`, {parent=self, borderColour=vec(0, 0, 0), value=self.caption, alpha = 0});
         else
             self.size = vec(self.width, self.size.y)
         end
@@ -105,7 +105,7 @@ local Control = {
 }
 
 hud_class `ColourControl` (extends(Control) {
-    initialColour = vector3(1,1,0.5);
+    initialColour = vec(1, 1, 0.5);
     initialAlpha = 1;
     init = function (self)
         Control.init(self)
@@ -165,7 +165,7 @@ hud_class `ValueControl` (extends(Control) {
         self.valueDisplay = gfx_hud_object_add(`/common/hud/EditBox`, {
             font=`/common/fonts/TinyFont`;
             parent=self;
-            borderColour=vector3(1,1,1);
+            borderColour=vec(1,1,1);
             number=true;
             text="INIT";
             maxLength=self.maxLength;
@@ -227,7 +227,7 @@ hud_class `EnumControl` (extends (Control) {
     options = { "False", "True" };
     init = function (self)
         Control.init(self)
-        self.valueDisplay = gfx_hud_object_add(`/common/hud/Label`, {parent=self, borderColour=vector3(0,0,0)})
+        self.valueDisplay = gfx_hud_object_add(`/common/hud/Label`, {parent=self, borderColour=vec(0,0,0)})
         self:setValue(self.value)
         self:updateChildrenSize()
     end;

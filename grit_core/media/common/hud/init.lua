@@ -42,9 +42,9 @@ else
 end
 console = gfx_hud_object_add(`console/Console`, {buffer=buffer, cmdBuffer=other_buffer, shadow=vec(1,-1)})
 console_frame = gfx_hud_object_add(`Stretcher`, {
-    child=console, zOrder=7, position=vec(500,300);
+    child=console, zOrder=7, position=vec(500, 300);
     calcRect = function (self, psize)
-        return 40, math.floor(psize.y * 0.6), psize.x, psize.y
+        return 40, psize.y * 0.6, psize.x, psize.y
     end
 })
 
@@ -67,15 +67,15 @@ music_player.position = music_player.size / 2 + vec(50,10)
 
 -- Compass / Pos / Speedo
 safe_destroy(compass)
-compass = gfx_hud_object_add(`Compass`, {parent=hud_top_right, position=vector2(-64, -64)})
+compass = gfx_hud_object_add(`Compass`, {parent=hud_top_right, position=vec(-64, -64)})
 
 safe_destroy(speedo)
 speedo = gfx_hud_object_add(`Speedo`, {parent=hud_top_right})
-speedo.position=vector2(-64, -128 - speedo.size.y/2)
+speedo.position=vec(-64, -128 - speedo.size.y/2)
 
 safe_destroy(clock)
 clock = gfx_hud_object_add(`Clock`, { parent=hud_top_right, size=vec(190,50) })
-clock.position=-clock.size/2 - vector2(130,4)
+clock.position = -clock.size/2 - vec(130, 4)
 
 safe_destroy(stats)
 stats = gfx_hud_object_add(`Stats`, {
@@ -90,7 +90,7 @@ stats = gfx_hud_object_add(`Stats`, {
             local fail = 0.015 / min_ft -- 15ms is frame max time
             local green = clamp(fail,0,1)
             local red = clamp(1-fail,0,1)
-            local colour = vector3(red, green, 0)
+            local colour = vec(red, green, 0)
             return text, colour
         end;
 
@@ -156,12 +156,11 @@ stats = gfx_hud_object_add(`Stats`, {
         self.minimal = not self.minimal
     end;
 })
---stats.position=vector2(-1,1) * stats.size / 2
 
 if env_cycle_editor ~= nil and not env_cycle_editor.destroyed then
 	safe_destroy(env_cycle_editor)
 end
 env_cycle_editor = gfx_hud_object_add(`EnvCycleEditor`, { } )
-env_cycle_editor.position = env_cycle_editor.size / 2 + vector2(50,10)
+env_cycle_editor.position = env_cycle_editor.size/2 + vec(50, 10)
 
 include `debug.lua`

@@ -1,2 +1,2 @@
-include "ticker.lua"
-include "console.lua"
+include `ticker.lua`
+include `console.lua`

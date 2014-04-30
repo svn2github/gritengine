@@ -37,7 +37,7 @@ hud_class "." {
 
     size=vec(100,100); -- updated by code later, this just stops it being set to the texture size, which is wrong
 
-    colour=vector3(.2,.2,.2);
+    colour=vec(.2, .2, .2);
 
     -- WAYS TO INTERACT:
     -- * change time, requires update of colours in controls and colour picker
@@ -181,7 +181,7 @@ hud_class "." {
         self.byCaption = { }
         local function add (kind, caption, tab)
             local base = {
-                size = vector2(149,16);
+                size = vec(149, 16);
                 width = 32;
                 caption = caption;
                 maxLength = 5;
@@ -245,11 +245,11 @@ hud_class "." {
         self.contents = gfx_hud_object_add("/common/hud/StackY", {
             padding = 4,
 
-            vector2(0,2),
+            vec(0, 2),
 
             gfx_hud_object_add("/common/hud/StackX", {
                 self.title,
-                vector2(200,0),
+                vec(200, 0),
                 gfx_hud_object_add("/common/hud/Button", {
                     caption = "X";
                     font = "/common/fonts/misc.fixed";
@@ -260,7 +260,7 @@ hud_class "." {
                 })
             }),
 
-            vector2(0,2),
+            vec(0, 2),
             
             gfx_hud_object_add("/common/hud/Border", {
                 padding = 8;
@@ -269,9 +269,9 @@ hud_class "." {
                 gfx_hud_object_add("/common/hud/StackX", {
                     padding = 0,
                     self.fileName,
-                    vector2(4,0),
+                    vec(4, 0),
                     self.loadButton,
-                    vector2(4,0),
+                    vec(4, 0),
                     self.saveButton
                 }),
             }),
@@ -291,14 +291,14 @@ hud_class "." {
                         add("ColourControl", "Palette5", { needsAlpha = true, showCaption = false } ),
                         add("ColourControl", "Palette6", { needsAlpha = true, showCaption = false } ),
                         add("ColourControl", "Palette7", { needsAlpha = true, showCaption = false } ),
-                        vector2(16,0),
+                        vec(16, 0),
                         self.timeLabel,
-                        vector2(2,0),
+                        vec(2, 0),
                         self.timeLeftButton,
                         self.timeRightButton,
                     }),
 
-                    vector2(0,12),
+                    vec(0, 12),
 
                     self.colourPicker,
             
@@ -375,7 +375,7 @@ hud_class "." {
 
         self.marker = gfx_hud_object_add("/common/hud/Rect", { parent=self, texture="marker.png", zOrder=6})
 
-        self.size = self.contents.size + vector2(16,16)
+        self.size = self.contents.size + vec(16, 16)
 
         self:controlClicked("Gradient6")
 

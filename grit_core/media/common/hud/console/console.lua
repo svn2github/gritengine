@@ -1,6 +1,6 @@
 
 
-hud_class "Console" {
+hud_class `Console` {
 
     promptPrefix = "lua> ";
 
@@ -13,7 +13,7 @@ hud_class "Console" {
     textColour = vec(.75, .75, .75);
     bufferSize = 10000;
     cmdBufferSize = 1000;
-    font = "/common/fonts/misc.fixed";
+    font = `/common/fonts/misc.fixed`;
     messageTime = 8;
 
     init = function (self)

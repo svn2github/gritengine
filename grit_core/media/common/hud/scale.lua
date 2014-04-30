@@ -2,15 +2,15 @@
 
 hud_class "Scale" {
 
-    size = vector2(400,20);
+    size = vec(400, 20);
 
-    bgColour = vector3(0.5, 0.5, 0.5);
+    bgColour = vec(0.5, 0.5, 0.5);
     bgTexture = nil;
     mgAlpha = 0;
-    mgColour = vector3(0.5, 0.5, 0.5);
+    mgColour = vec(0.5, 0.5, 0.5);
     mgTexture = nil;
 
-    fgColour = vector3(1,1,1);
+    fgColour = vec(1, 1, 1);
 
     value = 1;
     maxValue = 1;
@@ -20,12 +20,12 @@ hud_class "Scale" {
         self.needsInputCallbacks = true
 
         self.editBox = gfx_hud_object_add("EditBox", {
-            parent=self, number=true, maxLength=5, borderColour=vector3(1,1,1),
+            parent=self, number=true, maxLength=5, borderColour=vec(1, 1, 1),
             onChange = function(self2) self:editChanged() end,
             onEditting = function(self2, v) self:editEditting(v) end
         })
 
-        self.colour = vector3(0, 0, 0)
+        self.colour = vec(0, 0, 0)
         self.greyed = false
 
         self.sliderBackground = gfx_hud_object_add("Rect")
@@ -41,13 +41,13 @@ hud_class "Scale" {
         self.sliderMidground.texture = self.mgTexture
         
 
-        self.slider = gfx_hud_object_add("Rect", {parent=self.sliderMidground, colour=vector3(0,0,0)})
+        self.slider = gfx_hud_object_add("Rect", {parent=self.sliderMidground, colour=vec(0, 0, 0)})
         self.sliderInside = gfx_hud_object_add("Rect", {parent=self.slider, colour=self.fgColour})
         self:updateChildrenSize()
 
         self.inside = false
         self.dragging = false
-        self.localPos = vector2(0,0)
+        self.localPos = vec(0, 0)
 
         self:setValue(self.value);
     end;
@@ -146,13 +146,13 @@ hud_class "Scale" {
         if self.gamma then
             val = math.pow(val, 1/2.2)
         end
-        self.slider.position = vector2((val - 0.5) * (self.sliderMidground.size.x-1),0)
+        self.slider.position = vec((val - 0.5) * (self.sliderMidground.size.x-1),0)
         if self.greyed then
-            self.sliderBackground.colour = vector3(0.5, 0.5, 0.5)
+            self.sliderBackground.colour = vec(0.5, 0.5, 0.5)
             self.sliderBackground.texture = nil
             self.sliderMidground.enabled = false
-            self.slider.colour = vector3(0.35, 0.35, 0.35)
-            self.sliderInside.colour = vector3(0.65, 0.65, 0.65)
+            self.slider.colour = vec(0.35, 0.35, 0.35)
+            self.sliderInside.colour = vec(0.65, 0.65, 0.65)
         else
             self.sliderBackground.colour = self.bgColour
             self.sliderBackground.texture = self.bgTexture
@@ -160,7 +160,7 @@ hud_class "Scale" {
             self.sliderMidground.texture = self.mgTexture
             self.sliderMidground.alpha = self.mgAlpha
             self.sliderMidground.enabled = true
-            self.slider.colour = vector3(0,0,0)
+            self.slider.colour = vec(0, 0, 0)
             self.sliderInside.colour = self.fgColour
         end        
     end;
@@ -185,8 +185,8 @@ hud_class "Scale" {
         self.sliderMidground:setRect(left+1, bottom+1, right-1-40-1, top-1)
         self.editBox:setRect(right-1-40, bottom+1, right-1, top-1)
         self.editBox:updateChildrenSize()
-        self.slider.size = vector2(3, sz.y-2)
-        self.sliderInside.size = vector2(1, sz.y-2)
+        self.slider.size = vec(3, sz.y-2)
+        self.sliderInside.size = vec(1, sz.y-2)
         self:updateAppearance()
     end;
     

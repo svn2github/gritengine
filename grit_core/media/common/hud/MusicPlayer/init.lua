@@ -13,7 +13,7 @@ for i,v in ipairs(playlist) do
 end
 
 hud_class "." {
-	size = vector2(512, 256);
+	size = vec(512, 256);
 	font = "/common/fonts/misc.fixed";
 	--alpha = 0;
 	init = function(self)
@@ -23,8 +23,8 @@ hud_class "." {
 		--currenty playing audio source will be stored here
 		self.trackname = gfx_hud_text_add(self.font)
 		self.trackname.parent = self
-		self.trackname.position = vector2(0, self.size.y/2-64)
-		self.trackname.colour = vector3(0,0,0)
+		self.trackname.position = vec(0, self.size.y/2-64)
+		self.trackname.colour = vec(0, 0, 0)
 		self.trackname.text = playlist[self.trackID]
         -- TODO: maybe load should be a no-op?  or add ensure_loaded?
         disk_resource_acquire(playlist[self.trackID])
@@ -42,7 +42,7 @@ hud_class "." {
             size=vec(16, 16);
             parent=self,
         })
-		self.showHideButton.position = vector2(self.size.x/2-32, self.size.y/2-18)
+		self.showHideButton.position = vec(self.size.x/2-32, self.size.y/2-18)
 		self.showHideButton.pressedCallback = function(this)
 		end
 		
@@ -52,7 +52,7 @@ hud_class "." {
             size=vec(48, 32),
             parent=self,
         })
-		self.playPauseButton.position = vector2(0, -90)
+		self.playPauseButton.position = vec(0, -90)
 		self.playPauseButton.pressedCallback = function(this)
 			if self.audiosource.playing then
 				self.isplaying = false
@@ -71,7 +71,7 @@ hud_class "." {
             size=vec(32, 24),
             parent=self,
         })
-		self.prevSongButton.position = vector2(-52, -90)
+		self.prevSongButton.position = vec(-52, -90)
 		self.prevSongButton.pressedCallback = function(this)
 			if self.audiosource.playing then
 				self.audiosource:stop()
@@ -96,7 +96,7 @@ hud_class "." {
             size=vec(32, 24),
             parent=self,
         })
-		self.nextSongButton.position = vector2(52, -90)
+		self.nextSongButton.position = vec(52, -90)
 		self.nextSongButton.pressedCallback = function(this)
 			if self.audiosource.playing then
 				self.audiosource:stop()

@@ -38,10 +38,10 @@ hud_class "StackY" {
         if h > 0 then h = h - self.padding end
         local y = h / 2
         for k,v in ipairs(self.contents) do
-            v.position = vector2(self.alignment[k]*(w - v.bounds.x)/2, y - v.bounds.y/2)                
+            v.position = vec(self.alignment[k]*(w - v.bounds.x)/2, y - v.bounds.y/2)                
             y = y - (v.bounds.y + self.padding)
         end
-        self.size = vector2(w,h)
+        self.size = vec(w, h)
     end;
     callAll = function (self, funcname, ...)
         for k,v in ipairs(self.contents or { }) do
@@ -100,10 +100,10 @@ hud_class "StackX" {
         if w > 0 then w = w - self.padding end
         local x = -w / 2
         for k,v in ipairs(self.contents) do
-            v.position = vector2(x + v.bounds.x/2, self.alignment[k]*(h - v.bounds.y)/2)                
+            v.position = vec(x + v.bounds.x/2, self.alignment[k]*(h - v.bounds.y)/2)                
             x = x + (v.bounds.x + self.padding)
         end
-        self.size = vector2(w,h)
+        self.size = vec(w, h)
     end;
     callAll = function (self, funcname, ...)
         for k,v in ipairs(self.contents or { }) do
@@ -124,13 +124,13 @@ hud_class "StackX" {
 hud_class "Border" {
     padding = 4;
     texture = "CornerTextures/Border02.png";
-    size = vec(1,1);
+    size = vec(1, 1);
     cornered = true;
     init = function (self)
         self.contents = self[1]
         self[1] = nil
         self.contents.parent = self
-        self.size = self.contents.bounds + vec(2,2) * self.padding
+        self.size = self.contents.bounds + vec(2,2)*self.padding
     end;
     callAll = function (self, funcname, ...)
         local func = self.contents[funcname]

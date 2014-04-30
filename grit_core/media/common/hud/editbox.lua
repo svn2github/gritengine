@@ -4,8 +4,8 @@
 
 hud_class "EditBox" (extends (BorderPane) {
 
-    textColour = vector3(0,0,0);
-    selectedBorderColour = vector3(1,0,0);
+    textColour = vec(0, 0, 0);
+    selectedBorderColour = vec(1, 0, 0);
     font = "/common/fonts/Verdana12";
     value = "Text";
     number = false;
@@ -34,7 +34,7 @@ hud_class "EditBox" (extends (BorderPane) {
     
     setGreyed = function (self, v)
         if v then
-            self.text.colour = vector3(0.5, 0.5, 0.5)
+            self.text.colour = vec(0.5, 0.5, 0.5)
             self:setEditting(false)
         else
             self.text.colour = self.textColour
@@ -103,9 +103,9 @@ hud_class "EditBox" (extends (BorderPane) {
         if self.alignment == "CENTRE" then
             self.text.position = vec(0,0)
         elseif self.alignment == "LEFT" then
-            self.text.position = - vector2(self.size.x/2 -4 - self.text.size.x/2, 0)
+            self.text.position = - vec(self.size.x/2 -4 - self.text.size.x/2, 0)
         elseif self.alignment == "RIGHT" then
-            self.text.position = vector2(self.size.x/2 -4 - self.text.size.x/2, 0)
+            self.text.position = vec(self.size.x/2 -4 - self.text.size.x/2, 0)
         end
     end;
     

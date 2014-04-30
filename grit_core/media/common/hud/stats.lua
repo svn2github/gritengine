@@ -3,11 +3,10 @@
 hud_class "Stats" {
 
     width = 255;
-    defaultColour = vector3(1,1,1)*.75;
+    defaultColour = vec(1,1,1)*.75;
 
     init = function (self)
         self.alpha = 0
-        self.size = vector2(0,0)
         self.needsFrameCallbacks = true
         self.needsInputCallbacks = true
         self:setSelection(self.keys)
@@ -38,7 +37,7 @@ hud_class "Stats" {
             local stat = self.stats[name]
             if stat ~= nil then
                 local label = gfx_hud_object_add("/common/hud/Label", {
-                    size=vector2(self.width, 15),
+                    size=vec(self.width, 15),
                     alignment="RIGHT",
                     textColour=vec(0,0,0),
                     font="/common/fonts/misc.fixed",
@@ -49,7 +48,7 @@ hud_class "Stats" {
         end
         self.stack = gfx_hud_object_add("/common/hud/StackY", tab)
 
-        self.stack.position = self.stack.size/2 * vector2(-1,1)
+        self.stack.position = self.stack.size/2 * vec(-1,1)
     end;
 
     destroy = function (self)

@@ -35,9 +35,9 @@ hud_class "Label" {
         if self.alignment == "CENTRE" then
             self.text.position = vec(0,0)
         elseif self.alignment == "LEFT" then
-            self.text.position = - vector2(self.size.x/2 -4 - self.text.size.x/2, 0)
+            self.text.position = - vec(self.size.x/2 -4 - self.text.size.x/2, 0)
         elseif self.alignment == "RIGHT" then
-            self.text.position = vector2(self.size.x/2 -4 - self.text.size.x/2, 0)
+            self.text.position = vec(self.size.x/2 -4 - self.text.size.x/2, 0)
         end
     end;
 
