@@ -374,7 +374,10 @@ function fire_extended(v,t,spin)
         end
 end
 
-function place(class,height)
+function place(class, height)
+        if class:sub(1,1) ~= '/' then
+            error("Expected an absolute path but got \""..class.."\".  Did you use regular quotes instead of ``?")
+        end
         local cl = class_get(class)
         height = (height or 0) + (cl.placementZOffset or 0)
         local x,y,z = unpack(pick_pos())
