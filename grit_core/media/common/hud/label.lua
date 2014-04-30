@@ -1,10 +1,10 @@
 -- (c) David Cunningham 2014, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
-hud_class "Label" {
+hud_class `Label` {
 
     textColour = vec(1, 1, 1);
     greyColour = vec(0.5, 0.5, 0.5);
-    font = "/common/fonts/Verdana12";
+    font = `/common/fonts/Verdana12`;
     value = "No label";
     alignment = "CENTRE";
 

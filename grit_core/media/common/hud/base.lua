@@ -1,16 +1,16 @@
 -- (c) David Cunningham 2013, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
-hud_class "Rect" { }
+hud_class `Rect` { }
 
 BorderPane = {
     borderColour = vec(0, 0, 0);
     colour = vec(1, 1, 1);
     alpha = 1;
     init = function (self)
-        self.top    = gfx_hud_object_add("/common/hud/Rect", {parent=self})
-        self.bottom = gfx_hud_object_add("/common/hud/Rect", {parent=self})
-        self.left   = gfx_hud_object_add("/common/hud/Rect", {parent=self})
-        self.right  = gfx_hud_object_add("/common/hud/Rect", {parent=self})
+        self.top    = gfx_hud_object_add(`/common/hud/Rect`, {parent=self})
+        self.bottom = gfx_hud_object_add(`/common/hud/Rect`, {parent=self})
+        self.left   = gfx_hud_object_add(`/common/hud/Rect`, {parent=self})
+        self.right  = gfx_hud_object_add(`/common/hud/Rect`, {parent=self})
         self:setBorderColour(self.borderColour)
         BorderPane.updateChildrenSize(self)
     end;
@@ -44,7 +44,7 @@ BorderPane = {
 }
 
 
-hud_class "Positioner" {     
+hud_class `Positioner` {     
     size = vec(0, 0);    
     factor = vec(1, 1);
     offset = vec(0, 0);
@@ -59,7 +59,7 @@ hud_class "Positioner" {
     end;    
 }   
 
-hud_class "Stretcher" {     
+hud_class `Stretcher` {     
     alpha = 0;
     init = function (self)  
         self.needsParentResizedCallbacks = true;    
@@ -82,10 +82,10 @@ hud_class "Stretcher" {
     end;
 }   
 
-hud_center = hud_center or gfx_hud_object_add("Positioner", { factor = vec(0.5, 0.5) })
-hud_bottom_left = hud_bottom_left or gfx_hud_object_add("Positioner", { factor = vec(0.0, 0.0) })
-hud_bottom_right = hud_bottom_right or gfx_hud_object_add("Positioner", { factor = vec(1.0, 0.0) })
-hud_top_left = hud_top_left or gfx_hud_object_add("Positioner", { factor = vec(0.0, 1.0) })
-hud_top_right = hud_top_right or gfx_hud_object_add("Positioner", { factor = vec(1.0, 1.0) })
+hud_center = hud_center or gfx_hud_object_add(`Positioner`, { factor = vec(0.5, 0.5) })
+hud_bottom_left = hud_bottom_left or gfx_hud_object_add(`Positioner`, { factor = vec(0.0, 0.0) })
+hud_bottom_right = hud_bottom_right or gfx_hud_object_add(`Positioner`, { factor = vec(1.0, 0.0) })
+hud_top_left = hud_top_left or gfx_hud_object_add(`Positioner`, { factor = vec(0.0, 1.0) })
+hud_top_right = hud_top_right or gfx_hud_object_add(`Positioner`, { factor = vec(1.0, 1.0) })
 
 

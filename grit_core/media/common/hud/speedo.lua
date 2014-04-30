@@ -1,6 +1,6 @@
 -- (c) David Cunningham 2013, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
-hud_class "Speedo" {
+hud_class `Speedo` {
 	--metricUnits = false; --uses user_cfg value for convinience
     init = function (self)
 		self.alpha = 0
@@ -10,8 +10,8 @@ hud_class "Speedo" {
 		self.labels = gfx_hud_object_add("StackY", {
 			parent = self,
 			padding = -1,
-			gfx_hud_object_add("Label", {font = "/common/fonts/TinyFont", size=vec(width, 10), colour=vec(0,0,0) }),
-			gfx_hud_object_add("Label", {font = "/common/fonts/misc.fixed", size=vec(width, 15), colour=vec(0,0,0) }),
+			gfx_hud_object_add(`Label`, {font = `/common/fonts/TinyFont`, size=vec(width, 10), colour=vec(0,0,0) }),
+			gfx_hud_object_add(`Label`, {font = `/common/fonts/misc.fixed`, size=vec(width, 15), colour=vec(0,0,0) }),
 		})
 		self.size = self.labels.size
     end;

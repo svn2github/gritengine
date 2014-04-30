@@ -1,12 +1,12 @@
 -- (c) David Cunningham 2013, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
-hud_class "Clock" {
+hud_class `Clock` {
 
     init = function (self)
         self.alpha = 0
         self.needsFrameCallbacks = true
         self.needsInputCallbacks = true
-        local font = "/common/fonts/Impact50"
+        local font = `/common/fonts/Impact50`
         self.label = gfx_hud_text_add(font)
         self.label.parent = self
         self.label.letterTopColour=vec(0.6,0.6,0.6)

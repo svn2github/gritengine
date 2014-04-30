@@ -1,22 +1,22 @@
 -- (c) David Cunningham 2013, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
-hud_class "." {
+hud_class `.` {
 
     cornered=true;
     padding=vec(8,6);
 
-    texture = "/common/hud/CornerTextures/Filled08.png";
+    texture = `/common/hud/CornerTextures/Filled08.png`;
     baseColour = vec(1,1,1) * 0.25;
     hoverColour = vec(1, 0.5, 0) * 0.5;
     clickColour = vec(1, 0.5, 0);
 
-    borderTexture = "/common/hud/CornerTextures/Border08.png";
-    borderColour = vec(1,1,1) * 0.6;
+    borderTexture = `/common/hud/CornerTextures/Border08.png`;
+    borderColour = vec(1, 1, 1) * 0.6;
 
-    font = "/common/fonts/Verdana12";
+    font = `/common/fonts/Verdana12`;
     caption = "Button";
-    captionColour = vec(1,1,1) * 0.7;
-    captionColourGreyed = vec(1,1,1) * 0.4;
+    captionColour = vec(1, 1, 1) * 0.7;
+    captionColourGreyed = vec(1, 1, 1) * 0.4;
 
     init = function (self)
         self.needsInputCallbacks = true
@@ -33,17 +33,21 @@ hud_class "." {
         self.inside = false
         if self.greyed == nil then self.greyed = false end
 
-        self.border = gfx_hud_object_add("/common/hud/Rect", {
+        self.border = gfx_hud_object_add(`/common/hud/Rect`, {
             texture=self.borderTexture,
             colour=self.borderColour,
             parent=self,
-            size=self.size,
             cornered=true
         })
         
+        self:updateChildrenSize()
         self:refreshState();
     end;
-    
+
+    updateChildrenSize = function (self)
+        self.border.size = self.size
+    end;
+   
     destroy = function (self)
     end;
     

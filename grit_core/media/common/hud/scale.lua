@@ -1,6 +1,6 @@
 -- (c) 2013 Dave Cunningham and the Grit Game Engine Project, licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
-hud_class "Scale" {
+hud_class `Scale` {
 
     size = vec(400, 20);
 
@@ -19,7 +19,7 @@ hud_class "Scale" {
     init = function (self)
         self.needsInputCallbacks = true
 
-        self.editBox = gfx_hud_object_add("EditBox", {
+        self.editBox = gfx_hud_object_add(`EditBox`, {
             parent=self, number=true, maxLength=5, borderColour=vec(1, 1, 1),
             onChange = function(self2) self:editChanged() end,
             onEditting = function(self2, v) self:editEditting(v) end
@@ -28,21 +28,21 @@ hud_class "Scale" {
         self.colour = vec(0, 0, 0)
         self.greyed = false
 
-        self.sliderBackground = gfx_hud_object_add("Rect")
+        self.sliderBackground = gfx_hud_object_add(`Rect`)
         self.sliderBackground.parent = self
         self.sliderBackground.colour = self.bgColour
         self.sliderBackground.texture = self.bgTexture
         self.sliderBackground.zOrder = 0
 
-        self.sliderMidground = gfx_hud_object_add("Rect")
+        self.sliderMidground = gfx_hud_object_add(`Rect`)
         self.sliderMidground.parent = self
         self.sliderMidground.colour = self.mgColour
         self.sliderMidground.alpha = self.mgAlpha
         self.sliderMidground.texture = self.mgTexture
         
 
-        self.slider = gfx_hud_object_add("Rect", {parent=self.sliderMidground, colour=vec(0, 0, 0)})
-        self.sliderInside = gfx_hud_object_add("Rect", {parent=self.slider, colour=self.fgColour})
+        self.slider = gfx_hud_object_add(`Rect`, {parent=self.sliderMidground, colour=vec(0, 0, 0)})
+        self.sliderInside = gfx_hud_object_add(`Rect`, {parent=self.slider, colour=self.fgColour})
         self:updateChildrenSize()
 
         self.inside = false

@@ -1,10 +1,10 @@
 -- (c) Alexey "Razzeeyy" Shmakov 2013, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
 local playlist = {
-	"Massimo_Ruberti_-_02_-_Sabotage.ogg",
-	"Massimo_Ruberti_-_03_-_Last_bird_in_the_valley.ogg",
-	"Massimo_Ruberti_-_04_-_Aldo__Lea.ogg",
-	"Massimo_Ruberti_-_06_-_The_wind.ogg"
+	`Massimo_Ruberti_-_02_-_Sabotage.ogg`,
+	`Massimo_Ruberti_-_03_-_Last_bird_in_the_valley.ogg`,
+	`Massimo_Ruberti_-_04_-_Aldo__Lea.ogg`,
+	`Massimo_Ruberti_-_06_-_The_wind.ogg`
 }
 
 for i,v in ipairs(playlist) do
@@ -12,9 +12,9 @@ for i,v in ipairs(playlist) do
 		disk_resource_add(v)
 end
 
-hud_class "." {
+hud_class `.` {
 	size = vec(512, 256);
-	font = "/common/fonts/misc.fixed";
+	font = `/common/fonts/misc.fixed`;
 	--alpha = 0;
 	init = function(self)
 		self.needsFrameCallbacks = true
@@ -32,13 +32,13 @@ hud_class "." {
             disk_resource_load(playlist[self.trackID])
         end
 		self.audiosource = audio_source_make_ambient(playlist[self.trackID]);
-		self.texture = "body.png"
+		self.texture = `body.png`
 		
-		self.showHideButton = gfx_hud_object_add("/common/hud/Button", {
+		self.showHideButton = gfx_hud_object_add(`/common/hud/Button`, {
             caption=":";
-            font="/common/fonts/misc.fixed";
-            texture="/common/hud/CornerTextures/Filled04.png";
-            borderTexture="/common/hud/CornerTextures/Border04.png";
+            font=`/common/fonts/misc.fixed`;
+            texture=`/common/hud/CornerTextures/Filled04.png`;
+            borderTexture=`/common/hud/CornerTextures/Border04.png`;
             size=vec(16, 16);
             parent=self,
         })
@@ -46,9 +46,9 @@ hud_class "." {
 		self.showHideButton.pressedCallback = function(this)
 		end
 		
-		self.playPauseButton = gfx_hud_object_add("/common/hud/Button", {
+		self.playPauseButton = gfx_hud_object_add(`/common/hud/Button`, {
             caption="▶",
-            font="/common/fonts/misc.fixed",
+            font=`/common/fonts/misc.fixed`,
             size=vec(48, 32),
             parent=self,
         })
@@ -65,9 +65,9 @@ hud_class "." {
 			end
 		end
 		
-		self.prevSongButton = gfx_hud_object_add("/common/hud/Button", {
+		self.prevSongButton = gfx_hud_object_add(`/common/hud/Button`, {
             caption="<",
-            font="/common/fonts/misc.fixed",
+            font=`/common/fonts/misc.fixed`,
             size=vec(32, 24),
             parent=self,
         })
@@ -90,9 +90,9 @@ hud_class "." {
 			end
 		end
 		
-		self.nextSongButton = gfx_hud_object_add("/common/hud/Button", {
+		self.nextSongButton = gfx_hud_object_add(`/common/hud/Button`, {
             caption=">",
-            font="/common/fonts/misc.fixed",
+            font=`/common/fonts/misc.fixed`,
             size=vec(32, 24),
             parent=self,
         })

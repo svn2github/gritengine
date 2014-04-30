@@ -1,6 +1,6 @@
 -- (c) David Cunningham 2013, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
-hud_class "StackY" {
+hud_class `StackY` {
     padding = 0;
     init = function (self)
         self.alpha = 0
@@ -59,7 +59,7 @@ hud_class "StackY" {
     end;
 }
 
-hud_class "StackX" {
+hud_class `StackX` {
     padding = 0;
     init = function (self)
         self.alpha = 0
@@ -121,24 +121,22 @@ hud_class "StackX" {
     end;
 }
 
-hud_class "Border" {
+hud_class `Border` {
     padding = 4;
-    texture = "CornerTextures/Border02.png";
+    texture = `CornerTextures/Border02.png`;
     size = vec(1, 1);
     cornered = true;
     init = function (self)
-        self.contents = self[1]
-        self[1] = nil
-        self.contents.parent = self
-        self.size = self.contents.bounds + vec(2,2)*self.padding
+        self.child.parent = self
+        self.size = self.child.bounds + vec(2,2)*self.padding
     end;
     callAll = function (self, funcname, ...)
-        local func = self.contents[funcname]
+        local func = self.child[funcname]
         if func ~= nil then
-            func(self.contents, ...)
+            func(self.child, ...)
         else
-            if self.contents.callAll ~= nil then
-                self.contents:callAll(funcname, ...)
+            if self.child.callAll ~= nil then
+                self.child:callAll(funcname, ...)
             end
         end
     end;

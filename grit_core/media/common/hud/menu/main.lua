@@ -1,4 +1,4 @@
-hud_class "Main" {
+hud_class `Main` {
     colour = vec(1, 0.5, 0)*0.5;
     
     padding = 16;
@@ -7,13 +7,13 @@ hud_class "Main" {
         self.needsParentResizedCallbacks = true
         
         local function newButton(caption, inittab)
-            local button = gfx_hud_object_add("Button", inittab)
+            local button = gfx_hud_object_add(`Button`, inittab)
             button:setCaption(caption)
             return button
         end
         
         local function newContent(inittab)
-            local content = gfx_hud_object_add("../StackY", inittab)
+            local content = gfx_hud_object_add(`../StackY`, inittab)
             content.parent = self
             content.enabled = false
             return content
@@ -43,7 +43,7 @@ hud_class "Main" {
         local mouseSensWidget = function()
             local info = newButton("Sensitivity", {greyed = true,
                                                            captionColourGreyed = vec(0,0,0)})
-            local slider = gfx_hud_object_add("/common/hud/Scale", {
+            local slider = gfx_hud_object_add(`/common/hud/Scale`, {
                                                 size = vec(256, 48),
                                                 onChange = function(self)
                                                     user_cfg.mouseSensitivity = clamp(self.value, 0.001, 1)
@@ -51,7 +51,7 @@ hud_class "Main" {
                                              })
             info.parent = slider
             slider:setValue(user_cfg.mouseSensitivity)
-            return gfx_hud_object_add("../StackX", {padding = 6, info, slider})
+            return gfx_hud_object_add(`../StackX`, {padding = 6, info, slider})
         end;
         
         self.optionsContent = newContent({ padding = self.padding,

@@ -45,7 +45,7 @@ console_frame = gfx_hud_object_add(`Stretcher`, {
     child=console, zOrder=7, position=vec(500, 300);
     calcRect = function (self, psize)
         return 40, psize.y * 0.6, psize.x, psize.y
-    end
+    end;
 })
 
 -- Menu

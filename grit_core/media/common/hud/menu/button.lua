@@ -1,12 +1,12 @@
-hud_class "Button" {
+hud_class `Button` {
     caption = "Button";
-    captionColour = vec(0,0,0);
+    captionColour = vec(0, 0, 0);
     captionColourClick = vec(1, 0.5, 0);
     captionColourHover = vec(1, 1, 1);
     captionColourGreyed = vec(0.4, 0.4, 0.4);
-    font = "/common/fonts/Impact50";
+    font = `/common/fonts/Impact50`;
     
-    colour = vec(1,1,1)*0.5;
+    colour = vec(1, 1, 1) * 0.5;
     alpha = 0;
     
     init = function (self)

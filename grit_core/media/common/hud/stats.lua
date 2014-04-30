@@ -1,6 +1,6 @@
 -- (c) David Cunningham 2013, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
-hud_class "Stats" {
+hud_class `Stats` {
 
     width = 255;
     defaultColour = vec(1,1,1)*.75;
@@ -36,17 +36,17 @@ hud_class "Stats" {
         for k,name in ipairs(self.keys) do
             local stat = self.stats[name]
             if stat ~= nil then
-                local label = gfx_hud_object_add("/common/hud/Label", {
+                local label = gfx_hud_object_add(`Label`, {
                     size=vec(self.width, 15),
                     alignment="RIGHT",
                     textColour=vec(0,0,0),
-                    font="/common/fonts/misc.fixed",
+                    font=`/common/fonts/misc.fixed`,
                 })
                 self.labels[name] = label
                 tab[k] = label
             end
         end
-        self.stack = gfx_hud_object_add("/common/hud/StackY", tab)
+        self.stack = gfx_hud_object_add(`StackY`, tab)
 
         self.stack.position = self.stack.size/2 * vec(-1,1)
     end;

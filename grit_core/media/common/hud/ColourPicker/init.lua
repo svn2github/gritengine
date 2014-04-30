@@ -1,6 +1,6 @@
 -- (c) David Cunningham 2014, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
-hud_class "." {
+hud_class `.` {
 
     init = function (self)
         self.alpha = 0

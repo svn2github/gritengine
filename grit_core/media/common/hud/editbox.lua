@@ -2,11 +2,11 @@
 -- Value is always text.  Can set .number to restrict input to numbers, but 
 -- empty string is still a valid state. If using .number, use tonumber(blah.value) or 0
 
-hud_class "EditBox" (extends (BorderPane) {
+hud_class `EditBox` (extends (BorderPane) {
 
     textColour = vec(0, 0, 0);
     selectedBorderColour = vec(1, 0, 0);
-    font = "/common/fonts/Verdana12";
+    font = `/common/fonts/Verdana12`;
     value = "Text";
     number = false;
     alignment = "CENTER";

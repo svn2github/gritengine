@@ -1,7 +1,7 @@
 -- (c) Alexey "Razzeeyy" Shmakov 2013, licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 -- (c) Dave Cunningham and the Grit Game Engine Project, licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
-hud_class "." {
+hud_class `.` {
     size = vec(128, 128);
     alpha = 0;
 
