@@ -311,8 +311,10 @@ hud_class `.` {
                 texture = `/common/hud/CornerTextures/Border04.png`;
                 child = gfx_hud_object_add(`/common/hud/StackX`, {
                     padding = x_spacer,
+
+                    { align = "TOP" };
                     
-                    { "TOP", gfx_hud_object_add(`/common/hud/StackY`, {
+                    gfx_hud_object_add(`/common/hud/StackY`, {
                         padding = spacer,
                         add("ColourControl", "Gradient6", { needsAlpha = true } ),
                         add("ColourControl", "Gradient5", { needsAlpha = true } ),
@@ -320,9 +322,9 @@ hud_class `.` {
                         add("ColourControl", "Gradient3", { needsAlpha = true } ),
                         add("ColourControl", "Gradient2", { needsAlpha = true } ),
                         add("ColourControl", "Gradient1", { needsAlpha = true } ),
-                    })},
+                    }),
 
-                    { "TOP", gfx_hud_object_add(`/common/hud/StackY`, {
+                    gfx_hud_object_add(`/common/hud/StackY`, {
                         padding = spacer,
                         add("ColourControl", "Sun Gradient6", { needsAlpha = true } ),
                         add("ColourControl", "Sun Gradient5", { needsAlpha = true } ),
@@ -330,7 +332,9 @@ hud_class `.` {
                         add("ColourControl", "Sun Gradient3", { needsAlpha = true } ),
                         add("ColourControl", "Sun Gradient2", { needsAlpha = true } ),
                         add("ColourControl", "Sun Gradient1", { needsAlpha = true } ),
-                    })},
+                    }),
+
+                    { align = "CENTRE" };
 
                     gfx_hud_object_add(`/common/hud/StackY`, {
                         padding = spacer;

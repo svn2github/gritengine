@@ -6,26 +6,33 @@ hud_class `StackY` {
         self.alpha = 0
         self.alignment = { }
         self.contents = { }
+        local alignment = 0
+        local counter = 1
         for k,v in ipairs(self.table) do
-            local alignment = 0
             if type(v) == "table" then
-                if v[1] == "LEFT" then
-                    alignment = -1
-                elseif  v[1] == "CENTER" then
-                    alignment = 0
-                elseif v[1] == "RIGHT" then
-                    alignment = 1
-                else
-                    error("Unrecognised horizontal alignment: \""..tostring(v[1]).."\"")
+                for mk, mv in pairs(table) do
+                    if mk == "align" then
+                        if mv == "LEFT" then
+                            alignment = -1
+                        elseif mv == "CENTER" then
+                            alignment = 0
+                        elseif mv == "RIGHT" then
+                            alignment = 1
+                        else
+                            error("Unrecognised horizontal alignment: \""..tostring(v).."\"")
+                        end
+                    end
                 end
-                v = v[2]
-            end
-            if type(v) == "vector2" then
+                v = nil
+            elseif type(v) == "vector2" then
                 v = { bounds=v }
             end
-            self.contents[k] = v
-            self.alignment[k] = alignment
-            v.parent = self
+            if v then
+                self.contents[counter] = v
+                self.alignment[counter] = alignment
+                counter = counter + 1
+                v.parent = self
+            end
         end
         for k,v in ipairs(self.contents) do
             self[k] = nil
@@ -65,29 +72,35 @@ hud_class `StackX` {
         self.alpha = 0
         self.contents = { }
         self.alignment = { }
+        local counter = 1
+        local alignment = 0
         for k,v in ipairs(self.table) do
-            local alignment = 0
             if type(v) == "table" then
-                if v[1] == "TOP" then
-                    alignment = 1
-                elseif  v[1] == "CENTER" then
-                    alignment = 0
-                elseif v[1] == "BOTTOM" then
-                    alignment = -1
-                else
-                    error("Unrecognised vertical alignment: \""..tostring(v[1]).."\"")
+                for mk, mv in pairs(v) do
+                    if mk == "align" then
+                        if mv == "TOP" then
+                            alignment = 1
+                        elseif mv == "CENTRE" then
+                            alignment = 0
+                        elseif mv == "BOTTOM" then
+                            alignment = -1
+                        else
+                            error("Unrecognised vertical alignment: \""..tostring(mv).."\"")
+                        end
+                    else
+                        error("Unrecognised modifier: "..tostring(mk))
+                    end
                 end
-                v = v[2]
-                if v == nil then
-                    error("Expected a GfxHud element in second element of table.")
-                end
-            end
-            if type(v) == "vector2" then
+                v = nil
+            elseif type(v) == "vector2" then
                 v = { bounds=v }
             end
-            self.contents[k] = v
-            self.alignment[k] = alignment
-            v.parent = self
+            if v then
+                self.contents[counter] = v
+                self.alignment[counter] = alignment
+                v.parent = self
+                counter = counter + 1
+            end
         end
         for k,v in ipairs(self.contents) do
             self[k] = nil
