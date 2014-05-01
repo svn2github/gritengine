@@ -8,9 +8,9 @@ hud_class `StackY` {
         self.contents = { }
         local alignment = 0
         local counter = 1
-        for k,v in ipairs(self.table) do
+        for k, v in ipairs(self.table) do
             if type(v) == "table" then
-                for mk, mv in pairs(table) do
+                for mk, mv in pairs(v) do
                     if mk == "align" then
                         if mv == "LEFT" then
                             alignment = -1
@@ -19,8 +19,10 @@ hud_class `StackY` {
                         elseif mv == "RIGHT" then
                             alignment = 1
                         else
-                            error("Unrecognised horizontal alignment: \""..tostring(v).."\"")
+                            error("Unrecognised horizontal alignment: \""..tostring(mv).."\"")
                         end
+                    else
+                        error("Unrecognised modifier: "..tostring(mk))
                     end
                 end
                 v = nil
