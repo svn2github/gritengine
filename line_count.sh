@@ -19,3 +19,7 @@
 
     find exporters \( -name '*.py' \)
 ) | xargs wc -l
+
+(
+    find grit_core/doc/grit_book \( -name '*.xml' \)
+) | xargs wc

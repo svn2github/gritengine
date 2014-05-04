@@ -169,10 +169,10 @@ end
 
 if player_ctrl == nil then
     player_ctrl = {
-    	mouseRel = vec(0,0), --this holds relative mouse position change from the last update
-    	
-    	mouseTotalRel = vec(0,0), --this holds summ of all mouse position changes
-    	--also this guys (above) are reset when player gets in/out of any controllable object
+        mouseRel = vec(0,0), --this holds relative mouse position change from the last update
+        
+        mouseTotalRel = vec(0,0), --this holds summ of all mouse position changes
+        --also this guys (above) are reset when player gets in/out of any controllable object
     
         camYaw = 0,
         camPitch = 0,
@@ -199,7 +199,7 @@ playing_binds.mouseMoveCallback = function (rel)
 
     player_ctrl.mouseRel = rel * sens
     
-	player_ctrl.mouseTotalRel = player_ctrl.mouseTotalRel + rel*sens
+    player_ctrl.mouseTotalRel = player_ctrl.mouseTotalRel + rel*sens
 
     local inv = user_cfg.mouseInvert and -1 or 1
     
@@ -252,7 +252,7 @@ function player_ctrl:beginControlObj(obj)
         else
             error("Unrecognised kind of bindings: "..tostring(bindings))
         end
-    	player_ctrl.mouseTotalRel = vec(0,0)
+        player_ctrl.mouseTotalRel = vec(0,0)
     end
 end
 

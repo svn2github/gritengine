@@ -158,7 +158,7 @@ stats = gfx_hud_object_add(`Stats`, {
 })
 
 if env_cycle_editor ~= nil and not env_cycle_editor.destroyed then
-	safe_destroy(env_cycle_editor)
+    safe_destroy(env_cycle_editor)
 end
 env_cycle_editor = gfx_hud_object_add(`EnvCycleEditor`, { } )
 env_cycle_editor.position = env_cycle_editor.size/2 + vec(50, 10)

@@ -6,7 +6,7 @@ SoundEmitterClass = {
                 persistent:addDiskResource(persistent.audioFile or persistent.className..".wav")
         end;
         activate = function (persistent, instance)
-                instance.audio = audio_source_make(persistent.audioFile or persistent.className..".wav")
+                instance.audio = audio_body_make(persistent.audioFile or persistent.className..".wav")
                 instance.audio.looping = true
                 instance.audio.position = persistent.spawnPos
                 if persistent.pitch then

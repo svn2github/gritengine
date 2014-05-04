@@ -51,8 +51,8 @@ class `.` (Vehicle) {
                   left=false; attachPos=vec(wheelX,wheelY2,wheelZ); len=len; mesh=`Wheel.mesh`;
                 },
         },
-		-- Lights - Headlight
-		lightHeadLeft = {
+        -- Lights - Headlight
+        lightHeadLeft = {
                 pos=vec(-hlightX, hlightY, hlightZ), coronaPos=vec(0, 0.2, 0),
                 materials = {
                         { mesh=`LightHeadLeft`, on=`LightOn`, off=`Atlas` };
@@ -65,8 +65,8 @@ class `.` (Vehicle) {
                         { mesh=`LightHeadRight`, on=`LightOn`, off=`Atlas` };
                 };
         };
-		
-		--Brake lights
+        
+        --Brake lights
         lightBrakeLeft = {
                 pos=vec(blightX, blightY, blightZ), coronaColour=vec(0.05, 0, 0), coronaSize = 1,
                 materials = {
@@ -79,7 +79,7 @@ class `.` (Vehicle) {
                         { mesh=`LightBrakeRight`, on=`LightBrakeOn`, dim=`LightBrakeDim`, off=`Atlas` };
                 };
         };
-		
+        
         lightReverseLeft = {
                 pos=vec(rlightX, rlightY, rlightZ), coronaColour=vec(0.03, 0.03, 0.03), coronaSize = 0.7,
         };

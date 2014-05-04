@@ -34,9 +34,9 @@ hud_class `Ticker` {
     end;
 
     frameCallback = function (self, elapsed)
-		if console ~= nil then
-			console:poll()
-		end
+        if console ~= nil then
+            console:poll()
+        end
         local count = #self.buffer
         local needs_redraw = false
         local i = 1

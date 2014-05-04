@@ -58,45 +58,45 @@ class `.` (Vehicle) {
                   left=false; attachPos=vec(wheelX,wheelY2,wheelZ); len=len; slack=slack; mesh=`Wheel.mesh`; brakeMesh=`BrakePad.mesh`
                 },
         },
-		-- Lights - Headlight
-		lightHeadLeft = {
+        -- Lights - Headlight
+        lightHeadLeft = {
                 pos=vec(hlightX, hlightY, hlightZ),
-				pos=vec(hlight2X, hlight2Y, hlight2Z),
+                pos=vec(hlight2X, hlight2Y, hlight2Z),
         };
         lightHeadRight = {
                 pos=vec(-hlightX, hlightY, hlightZ),
-				pos=vec(-hlight2X, hlight2Y, hlight2Z),
+                pos=vec(-hlight2X, hlight2Y, hlight2Z),
         };
-		
-		--Brake lights
+        
+        --Brake lights
         lightBrakeLeft = {
                 pos=vec(blightX, blightY, blightZ), coronaColour=vec(0.05, 0, 0), coronaSize = 1,
-				pos=vec(blight2X, blight2Y, blight2Z), coronaColour=vec(0.05, 0, 0), coronaSize = 1,
+                pos=vec(blight2X, blight2Y, blight2Z), coronaColour=vec(0.05, 0, 0), coronaSize = 1,
         };
         lightBrakeRight = {
                 pos=vec(-blightX, blightY, blightZ), coronaColour=vec(0.05, 0, 0), coronaSize = 1,
-				pos=vec(-blight2X, blight2Y, blight2Z), coronaColour=vec(0.05, 0, 0), coronaSize = 1,
+                pos=vec(-blight2X, blight2Y, blight2Z), coronaColour=vec(0.05, 0, 0), coronaSize = 1,
         };
-		
+        
         lightReverseLeft = {
                 pos=vec(rlightX, rlightY, rlightZ), coronaColour=vec(0.03, 0.03, 0.03), coronaSize = 0.7,
         };
         lightReverseRight = {
                 pos=vec(-rlightX, rlightY, rlightZ), coronaColour=vec(0.03, 0.03, 0.03), coronaSize = 0.7,
         };
-		-- Colors
-		colourSpec = {
-				{ probability=1, { "ice_silver",  },
+        -- Colors
+        colourSpec = {
+                { probability=1, { "ice_silver",  },
                 },
                 { probability=1, { "velvet_red",  },
                 },
-				{ probability=1, { "carbon_gray",  },
+                { probability=1, { "carbon_gray",  },
                 },
-				{ probability=1, { "midnight_black",  },
+                { probability=1, { "midnight_black",  },
                 },
-				{ probability=1, { "cream_white",  },
+                { probability=1, { "cream_white",  },
                 },
-				{ probability=1, { "crystal_blue",  },
+                { probability=1, { "crystal_blue",  },
                 },
         },
         engineSmokeVents = {

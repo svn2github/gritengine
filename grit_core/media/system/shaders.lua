@@ -243,7 +243,7 @@ local function make_program_wireframe_cg (overlay, blended_bones, world)
         -- material does a wireframe in emissive white
         fname, vname = shader_wireframe_names(overlay, blended_bones, world)
 
-		print ("Compiling shader: ", vname, fname)
+        print ("Compiling shader: ", vname, fname)
         local defines = "-O3"
                       .." -DUSE_OVERLAY_OFFSET="..(overlay and "1" or "0")
                       .." -DBLENDED_BONES="..blended_bones
@@ -813,7 +813,7 @@ end
 local function make_program_tonemap_cg ()
         local fname = "tonemap"
 
-	    print ("Compiling shader: ", fname)
+        print ("Compiling shader: ", fname)
         local defines = "-O3"
         defines = defines .. configuration_defines()
 
@@ -831,7 +831,7 @@ local function make_program_bloom_cg ()
         local fname, fp, defines
 
         fname = "bloom_filter_then_horz_blur"
-       	print ("Compiling shader: ", fname)
+           print ("Compiling shader: ", fname)
         defines = "-O3"
         defines = defines .. configuration_defines()
         defines = defines .. " -DBLOOM_HORZ=1"

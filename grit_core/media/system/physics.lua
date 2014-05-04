@@ -31,20 +31,20 @@ end
 
 -- also called by F11
 function physics_frame_step (step_size, elapsed_time)
-	local elapsed = physics.leftOver + elapsed_time * physics.speed
-	local iterations = 0
-	while elapsed>=step_size do
-		if iterations >= physics.maxSteps then
-			-- no more processing, throw away remaining time
-			physics.leftOver = 0
-			return
-		end
-		elapsed = elapsed - step_size
-		physics_step(step_size)
-		iterations = iterations + 1
-	end
-	
-	physics.leftOver = elapsed
+    local elapsed = physics.leftOver + elapsed_time * physics.speed
+    local iterations = 0
+    while elapsed>=step_size do
+        if iterations >= physics.maxSteps then
+            -- no more processing, throw away remaining time
+            physics.leftOver = 0
+            return
+        end
+        elapsed = elapsed - step_size
+        physics_step(step_size)
+        iterations = iterations + 1
+    end
+    
+    physics.leftOver = elapsed
 end
 
 physics.stepCallbacks:insert("Core", function (elapsed)
@@ -70,7 +70,7 @@ local function frameCallback()
         physics.leftOver = 0
         physics_step(step_size)
     else
-		physics_frame_step(step_size, elapsed_time)
+        physics_frame_step(step_size, elapsed_time)
     end
     
     return true

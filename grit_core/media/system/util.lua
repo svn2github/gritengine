@@ -112,13 +112,13 @@ function colour_desaturate (r,g,b, amt)
 end
 
 function tone_map (v)
-	v = v * gfx_global_exposure()
-	return gfx_colour_grade_look_up(gamma_encode(v / (1 + v)))
+    v = v * gfx_global_exposure()
+    return gfx_colour_grade_look_up(gamma_encode(v / (1 + v)))
 end
 
 function tone_map_val (v)
-	local c = RGBtoHSV(v)
-	return HSVtoRGB(vector3(c.x, c.y, c.z/(1+c.z)))
+    local c = RGBtoHSV(v)
+    return HSVtoRGB(vector3(c.x, c.y, c.z/(1+c.z)))
 end
 
 function colour_ensure_vector3 (t) 
@@ -506,9 +506,9 @@ end
 
 function safe_destroy(obj)
         if obj==nil then return end
-		if type(obj)~="userdata" and type(obj)~="table" then return end
-		local d = obj.destroy
-		if d == nil then return end
+        if type(obj)~="userdata" and type(obj)~="table" then return end
+        local d = obj.destroy
+        if d == nil then return end
         d(obj)
 end
 

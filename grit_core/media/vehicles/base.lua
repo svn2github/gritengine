@@ -38,7 +38,7 @@ Vehicle = extends (ColClass) {
         brakePlot = { [-10] = 100; [0] = 100; [10] = 2500; [20] = 2500; [40] = 2500; };
 
         lightDefaults = {
-				-- car lights:
+                -- car lights:
                 lightHeadLeft = {
                         isHeadLight = true;
                         range = 100; diff = 5*vector3(1,0.9,0.8);
@@ -92,7 +92,7 @@ Vehicle = extends (ColClass) {
                         coronaSize = 0;
                 };
 
-				-- bike lights:
+                -- bike lights:
                 lightHeadCenter = {
                         diff = vector3(1,1,1);
                         isHeadLight = true;

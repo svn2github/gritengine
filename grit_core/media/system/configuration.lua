@@ -614,10 +614,10 @@ local function commit(c, p, flush, partial)
                 gfx_option("FOG",v)
                 reset_shaders = true
             elseif k == "physicsWireFrame" then
-				print("Physics wire frame: "..(v and "on" or "off"))
+                print("Physics wire frame: "..(v and "on" or "off"))
                 physics_option("DEBUG_WIREFRAME", v)
             elseif k == "physicsDebugWorld" then
-				print("Physics debug world: "..(v and "on" or "off"))
+                print("Physics debug world: "..(v and "on" or "off"))
                 physics.debugWorld = v
             elseif k == "mouseSensitivity" then
                 -- next mouse movement picks this up

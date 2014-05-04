@@ -13,7 +13,7 @@ class "../Sinbad2" (BaseClass) {
 
         BaseClass.activate(persistent, instance)
 
-    	persistent.needsStepCallbacks = true
+        persistent.needsStepCallbacks = true
 
         for _,v in ipairs({instance.gfx:getAllAnimations()}) do
             instance[v.."Len"] = instance.gfx:getAnimationLength(v)
@@ -50,12 +50,12 @@ class "." {} {
     placementZOffset = 5;
 
     init = function (persistent)
-    	persistent:addDiskResource("Body.mesh")
+        persistent:addDiskResource("Body.mesh")
     end;
             
     activate = function (persistent,instance)
 
-    	persistent.needsStepCallbacks = true
+        persistent.needsStepCallbacks = true
 
         instance.pivot = gfx_body_make()
         instance.pivot.localPosition = persistent.spawnPos

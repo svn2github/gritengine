@@ -34,13 +34,13 @@ class `.` (Hover) {
             steerRight = { V_ZERO, V_LEFT*mass*5 };
         };
         
-		colourSpec = {
+        colourSpec = {
                 { probability=1, { "velvet_red",},},
-				{ probability=1, { "ice_silver",},},
-				{ probability=1, { "carbon_gray",},},
-				{ probability=1, { "midnight_black",},},
-				{ probability=1, { "cream_white",},},
-				{ probability=1, { "crystal_blue",},},
+                { probability=1, { "ice_silver",},},
+                { probability=1, { "carbon_gray",},},
+                { probability=1, { "midnight_black",},},
+                { probability=1, { "cream_white",},},
+                { probability=1, { "crystal_blue",},},
         };
         
         engineSmokeVents = {

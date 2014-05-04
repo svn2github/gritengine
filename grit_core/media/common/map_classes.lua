@@ -334,14 +334,14 @@ end
 
 function top_down_cam_update(persistent)
     --this is a pure top down camera, always facing down
-	local instance = persistent.instance
-	local body = instance.body
+    local instance = persistent.instance
+    local body = instance.body
     local vehicle_point = body.worldOrientation * V_FORWARDS
     
-  	local vehicle_dir = quat(V_FORWARDS, vehicle_point*vector3(1,1,0))
+      local vehicle_dir = quat(V_FORWARDS, vehicle_point*vector3(1,1,0))
     
     if vehicle_point.x == 0 or vehicle_point.y == 0 then
-    	return
+        return
     end
     
     
@@ -358,7 +358,7 @@ function top_angled_cam_update(persistent)
     --this is a locked pitch angle camera pretty much similar to regular_chase_cam
     player_ctrl.camPitch = -45
     player_ctrl.lastMouseMoveTime = 0 --this makes camera always adjusting it's yaw rotation, disregarding mouse movements
-	regular_chase_cam_update(persistent)
+    regular_chase_cam_update(persistent)
 end
 
 function ensure_absolute_path(persistent, path)
@@ -380,7 +380,7 @@ ColClass = extends (BaseClass) {
                         local damage = #impulse
                         if damage > persistent.impulseDamageThreshold then
                                 local volume = damage / persistent.impulseDamageThreshold - 1
-                                audio_play("/common/sounds/collision.wav", wpos, volume, 3, 1, 1+math.random()*0.3)
+                                audio_play("/common/sounds/collision.wav", volume, 1+math.random()*0.3, wpos, 3, 1)
                                 persistent:receiveDamage(damage)
                         end
                 end

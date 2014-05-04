@@ -28,7 +28,7 @@ include `ramps/init.lua`
 
 local tab = {
 --[[
-	-- can be accessed through simple menu
+    -- can be accessed through simple menu
     ["1"] = `props/nature/Log1`;
     ["2"] = `props/debug/crates/Big`;
     ["3"] = `props/junk/Brick`;
@@ -40,7 +40,7 @@ local tab = {
     ["9"] = `props/junk/WineBottle1`;
     ["0"] = `props/junk/WineBottle2`;
 --]]
-  	["t"] = `props/junk/Money`;
+    ["t"] = `props/junk/Money`;
     ["y"] = `props/race_track/Tyre`;
     ["u"] = `props/junk/PizzaBox`;
     ["i"] = `props/furniture/WorkBench`;

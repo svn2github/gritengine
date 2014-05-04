@@ -12,7 +12,7 @@ hud_class `Positioner` {
         self.needsParentResizedCallbacks = true;    
     end;    
     parentResizedCallback = function (self, psize)
-    	self.size = psize
+        self.size = psize
         self.position = psize*self.factor + self.offset
     end;    
 }   
@@ -25,7 +25,7 @@ hud_class `Stretcher` {
         self:updateChildrenSize()
     end;    
     updateChildrenSize = function (self)
-    	self.child.size = self.size
+        self.child.size = self.size
         if self.child.updateChildrenSize then
             self.child:updateChildrenSize()
         end

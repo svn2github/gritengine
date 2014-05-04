@@ -90,7 +90,7 @@ class "Character" (ColClass) {
         instance.localMove = V_ZERO
         instance.offGround = false
         instance.fallVelocity = 0
-		instance.speed = 0
+        instance.speed = 0
         self:updateMovementState()
         local body = instance.body
 
@@ -120,7 +120,7 @@ class "Character" (ColClass) {
         -- check pat to destination above step hieght
         -- 
         local curr_foot = body.worldPosition
-		local old_foot = curr_foot
+        local old_foot = curr_foot
         local height = self.height
         local half_height = self.height/2
         local curr_centre = curr_foot + vector3(0,0,half_height)
@@ -246,13 +246,13 @@ class "Character" (ColClass) {
 
         
         body.worldPosition = curr_foot
-		
-		instance.speed = #(old_foot-curr_foot)/elapsed
+        
+        instance.speed = #(old_foot-curr_foot)/elapsed
     end;
-	
-	getSpeed = function (self)
-		return self.instance.speed
-	end;
+    
+    getSpeed = function (self)
+        return self.instance.speed
+    end;
 
     updateMovementState = function (self)
         local ins = self.instance

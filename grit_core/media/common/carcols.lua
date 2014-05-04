@@ -5,29 +5,29 @@ local std_spec2 = vector3(0.05, 0, 0.7)
 
 carcols = {
 -- please if you define colors put them in the accurate tone, and add a comment about it
-	--silver
-	ice_silver= { grey(.09), 0.1, std_spec  },
-	cream_white= { vector3(.4,.38,.34), 0.1, vector3(0.01,0,0.35)  },
-	-- grey
-	bianco_grey = { grey(0.2), 0.1, std_spec2},
-	marrone_grey = { grey(0.1), 0.1, std_spec},
-	carbon_gray = { grey(0.04), 0.1, std_spec},
-	-- blacks
-	midnight_black = { grey(0.015), 0.1, std_spec},
-	-- reds
-	velvet_red = { vector3(0.13,0.036,0.028), 0.15, std_spec},
-	cold_red = { vector3(0.1,0.025,0.021), 0.2, std_spec},
-	rosso_red = { vector3(0.19,0.026,0.011), 0.2, std_spec},
-	-- orange 
-	arancio_orange = { vector3(0.8,.17,0.03), 0.1, std_spec},
-	-- yellow
-	giallo_yellow = { vector3(0.45,0.3,0.04), 0.0, std_spec},
-	-- green 
-	ithaca_green = { vector3(0.18,0.6,0.0), 0.2, vector3(0.5,0,0.7)},
-	-- blue
-	crystal_blue = { vector3(0.051, 0.072,0.12), 0.1, std_spec},
-	caelum_blue = { vector3(0.06,0.083,0.13), 0.1, std_spec},
-	fontus_blue = { vector3(0.045,0.045, 0.14), 0.15, std_spec2},
+    --silver
+    ice_silver= { grey(.09), 0.1, std_spec  },
+    cream_white= { vector3(.4,.38,.34), 0.1, vector3(0.01,0,0.35)  },
+    -- grey
+    bianco_grey = { grey(0.2), 0.1, std_spec2},
+    marrone_grey = { grey(0.1), 0.1, std_spec},
+    carbon_gray = { grey(0.04), 0.1, std_spec},
+    -- blacks
+    midnight_black = { grey(0.015), 0.1, std_spec},
+    -- reds
+    velvet_red = { vector3(0.13,0.036,0.028), 0.15, std_spec},
+    cold_red = { vector3(0.1,0.025,0.021), 0.2, std_spec},
+    rosso_red = { vector3(0.19,0.026,0.011), 0.2, std_spec},
+    -- orange 
+    arancio_orange = { vector3(0.8,.17,0.03), 0.1, std_spec},
+    -- yellow
+    giallo_yellow = { vector3(0.45,0.3,0.04), 0.0, std_spec},
+    -- green 
+    ithaca_green = { vector3(0.18,0.6,0.0), 0.2, vector3(0.5,0,0.7)},
+    -- blue
+    crystal_blue = { vector3(0.051, 0.072,0.12), 0.1, std_spec},
+    caelum_blue = { vector3(0.06,0.083,0.13), 0.1, std_spec},
+    fontus_blue = { vector3(0.045,0.045, 0.14), 0.15, std_spec2},
 
 
     white = { {1,1,1} },

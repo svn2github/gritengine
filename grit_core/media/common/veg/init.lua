@@ -18,7 +18,7 @@ class "YellowFlowers" (BaseClass) { castShadows=true, renderingDistance=35, plac
 class "PinkFlowers" (BaseClass) { castShadows=true, renderingDistance=35, placementRandomRotation=true }
 
 material "Tree_aelmTrunk" {
-	vertexDiffuse = true,
+    vertexDiffuse = true,
     diffuseMap = "textures/tree_aelm.dds",
     normalMap = "textures/tree_aelm_N.dds",
     gloss = 0,
@@ -26,7 +26,7 @@ material "Tree_aelmTrunk" {
 }
 
 material "Tree_aelmLev" {
-	vertexDiffuse = false,
+    vertexDiffuse = false,
     diffuseMap = "textures/tree_aelm.dds",
     clamp = true,
     alphaReject = 0.5,
@@ -43,7 +43,7 @@ class "Tree_aelm" (ColClass) { castShadows=true, renderingDistance=100, lod=`Tre
 --paroxum's tree, hes mad
 
 material "generic_bark" {
-	vertexDiffuse = true,
+    vertexDiffuse = true,
     diffuseMap = "textures/generic_bark.tga",
     normalMap = "textures/generic_bark_nrm.tga",
     gloss = 0,
@@ -51,13 +51,13 @@ material "generic_bark" {
 }
 
 material "flowerbed_dif" {
-	backfaces=true,
-	vertexDiffuse = false,
+    backfaces=true,
+    vertexDiffuse = false,
     diffuseMap = "textures/flowerbed_dif.tga",
     normalMap = "textures/flowerbed_nrm.tga",
-	shadowAlphaReject = true,
+    shadowAlphaReject = true,
     shadowReceive = false,
-	clamp = true,
+    clamp = true,
     alphaReject = 0.5,
     diffuseColour = { 1.3, 1.3, 1.3 },
     ambientColour = 5,
@@ -82,7 +82,7 @@ material "GrassTuft1" {
 material "grasstuft2" {
     backfaces=true,
     diffuseMap = "textures/GrassTuft2_D.dds",
-	normalMap = "textures/GrassTuft2_N.dds",
+    normalMap = "textures/GrassTuft2_N.dds",
     clamp = true,
     alphaReject = 0.33,
     grassLighting = true,

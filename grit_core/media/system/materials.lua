@@ -4,11 +4,11 @@ local noise_tex = `HiFreqNoiseGauss.64.png`
 
 local emissive_bias1, emissive_bias2
 if gfx_d3d9() then
-	emissive_bias1 = 1
-	emissive_bias2 = 1
+    emissive_bias1 = 1
+    emissive_bias2 = 1
 else
-	emissive_bias1 = 1
-	emissive_bias2 = 1
+    emissive_bias1 = 1
+    emissive_bias2 = 1
 end
 
 
