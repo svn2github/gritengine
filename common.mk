@@ -21,8 +21,6 @@
 CXX ?= g++ 
 CC ?= gcc
 
-BOOST_ARCHIVE ?= /usr/lib/libboost_thread-mt.a /usr/lib/libboost_system-mt.a
-
 #override to change general optimisation flags
 GRIT_OPTIMISE          ?= -DNDEBUG -O3
 #override to dbg to use unoptimised build of ogre
@@ -101,7 +99,6 @@ OGRE_DEPLDLIBS   ?= $(FREEIMAGE_LDLIBS) \
                     -pthread \
                     -ldl \
                     -lCg \
-                    $(BOOST_ARCHIVE) \
 
 OGRE_LDLIBS   ?= $(OGRE_ARCHIVE) $(OGRE_DEPLDLIBS)
 
