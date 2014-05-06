@@ -11,13 +11,13 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories>$(BOOST_ROOT);$(DXSDK_DIR)Include\;$(SolutionDir)\dependencies\util;$(SolutionDir)\dependencies\grit_ogre_dependencies\include;$(SolutionDir)\dependencies\squish-1.11;$(SolutionDir)\dependencies\icu\include;$(SolutionDir)dependencies\openal\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(BOOST_ROOT);$(DXSDK_DIR)Include\;$(SolutionDir)dependencies\util;$(SolutionDir)dependencies\grit_ogre_dependencies\include;$(SolutionDir)dependencies\squish-1.11;$(SolutionDir)dependencies\icu\include;$(SolutionDir)dependencies\openal\include;$(SolutionDir)dependencies\FreeImage\Source;$(SolutionDir)dependencies\FreeImage\Source\DeprecationManager;$(SolutionDir)dependencies\FreeImage\Source\OpenEXR;$(SolutionDir)dependencies\FreeImage\Source\OpenEXR\Half;$(SolutionDir)dependencies\FreeImage\Source\OpenEXR\Iex;$(SolutionDir)dependencies\FreeImage\Source\OpenEXR\IlmImf;$(SolutionDir)dependencies\FreeImage\Source\OpenEXR\Imath;$(SolutionDir)dependencies\FreeImage\Source\OpenEXR\IlmThread;$(SolutionDir)dependencies\FreeImage\Source\LibJXR\jxrgluelib;$(SolutionDir)dependencies\FreeImage\Source\LibJXR\image\sys;$(SolutionDir)dependencies\FreeImage\Source\ZLib;$(SolutionDir)dependencies\FreeImage\Source\LibRawLite</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup>
     <ClCompile>
       <CompileAsManaged>false</CompileAsManaged>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;NOMINMAX;WIN32_LEAN_AND_MEAN;FREEIMAGE_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;NOMINMAX;WIN32_LEAN_AND_MEAN;LIBRAW_NODLL;FREEIMAGE_LIB;OPJ_STATIC;DISABLE_PERF_MEASUREMENT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <DisableLanguageExtensions>false</DisableLanguageExtensions>
       <ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>

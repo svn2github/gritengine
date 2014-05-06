@@ -20,3 +20,5 @@
 #else
     #define OGRE_GUI_GLX
 #endif
+
+#define OGRE_NO_ZIP_ARCHIVE 1

@@ -819,9 +819,6 @@
     <ClCompile Include="grit_ogre\OgreMain\src\OgreWorkQueue.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="grit_ogre\OgreMain\src\OgreZip.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="grit_ogre\RenderSystems\GL\src\nvparse\ps1.0_program.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -876,5 +873,736 @@
     <ClCompile Include="grit_ogre\OgreMain\src\OgreHardwareUniformBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="grit_ogre\OgreMain\include\asm_math.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\Ogre.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreAlignedAllocator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreAnimable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreAnimation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreAnimationState.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreAnimationTrack.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreAny.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreArchive.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreArchiveFactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreArchiveManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreAtomicWrappers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreAutoParamDataSource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreAxisAlignedBox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreBillboard.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreBillboardChain.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreBillboardParticleRenderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreBillboardSet.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreBitwise.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreBlendMode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreBone.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreCamera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreCodec.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreColourValue.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreCommon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreCompositionPass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreCompositionTargetPass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreCompositionTechnique.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreCompositor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreCompositorChain.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreCompositorInstance.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreCompositorLogic.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreCompositorManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreConfig.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreConfigDialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreConfigFile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreConfigOptionMap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreController.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreControllerManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreConvexBody.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreCustomCompositionPass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreDataStream.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreDDSCodec.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreDefaultHardwareBufferManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreDeflate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreDepthBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreDistanceLodStrategy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreDualQuaternion.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreDynLib.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreDynLibManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreEdgeListBuilder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreEntity.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreErrorDialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreETC1Codec.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreException.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreExternalTextureSource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreExternalTextureSourceManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreFactoryObj.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreFileSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreFileSystemLayer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreFrameListener.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreFreeImageCodec.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreFrustum.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreGpuProgram.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreGpuProgramManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreGpuProgramParams.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreGpuProgramUsage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreHardwareBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreHardwareBufferManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreHardwareCounterBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreHardwareIndexBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreHardwareOcclusionQuery.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreHardwarePixelBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreHardwareUniformBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreHardwareVertexBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreHeaderPrefix.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreHeaderSuffix.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreHighLevelGpuProgram.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreHighLevelGpuProgramManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreImage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreImageCodec.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreInstanceBatch.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreInstanceBatchHW.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreInstanceBatchHW_VTF.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreInstanceBatchShader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreInstanceBatchVTF.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreInstancedEntity.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreInstancedGeometry.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreInstanceManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreIteratorRange.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreIteratorWrapper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreIteratorWrappers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreKeyFrame.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreLight.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreLodConfig.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreLodListener.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreLodStrategy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreLodStrategyManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreLog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreLogManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreManualObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreMaterial.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreMaterialManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreMaterialSerializer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreMath.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreMatrix3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreMatrix4.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreMemoryAllocatedObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreMemoryAllocatorConfig.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreMemoryNedAlloc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreMemoryNedPooling.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreMemoryStdAlloc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreMemorySTLAllocator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreMemoryTracker.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreMesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreMeshFileFormat.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreMeshManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreMeshSerializer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreMeshSerializerImpl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreMovableObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreMovablePlane.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreNode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreNumerics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreOptimisedUtil.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreParticle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreParticleAffector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreParticleAffectorFactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreParticleEmitter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreParticleEmitterCommands.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreParticleEmitterFactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreParticleIterator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreParticleScriptCompiler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreParticleSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreParticleSystemManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreParticleSystemRenderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgrePass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgrePatchMesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgrePatchSurface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgrePixelCountLodStrategy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgrePixelFormat.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgrePlane.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgrePlaneBoundedVolume.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgrePlatform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgrePlatformInformation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgrePlugin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgrePolygon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgrePose.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgrePredefinedControllers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgrePrefabFactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgrePrerequisites.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreProfiler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreProgressiveMeshGenerator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgrePVRTCCodec.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreQuaternion.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreQueuedProgressiveMeshGenerator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreRadixSort.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreRay.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreRectangle2D.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreRenderable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreRenderObjectListener.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreRenderOperation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreRenderQueue.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreRenderQueueInvocation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreRenderQueueListener.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreRenderQueueSortingGrouping.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreRenderSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreRenderSystemCapabilities.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreRenderSystemCapabilitiesManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreRenderSystemCapabilitiesSerializer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreRenderTarget.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreRenderTargetListener.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreRenderTexture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreRenderToVertexBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreRenderWindow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreResource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreResourceBackgroundQueue.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreResourceGroupManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreResourceManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreRibbonTrail.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreRoot.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreRotationalSpline.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreSceneManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreSceneManagerEnumerator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreSceneNode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreSceneQuery.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreScriptCompiler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreScriptLexer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreScriptLoader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreScriptParser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreScriptTranslator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreSearchOps.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreSerializer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreShadowCameraSetup.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreShadowCameraSetupFocused.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreShadowCameraSetupLiSPSM.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreShadowCameraSetupPlaneOptimal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreShadowCameraSetupPSSM.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreShadowCaster.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreShadowTextureManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreShadowVolumeExtrudeProgram.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreSharedPtr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreSimpleRenderable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreSimpleSpline.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreSingleton.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreSkeleton.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreSkeletonFileFormat.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreSkeletonInstance.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreSkeletonManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreSkeletonSerializer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreSmallVector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreSphere.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreSpotShadowFadePng.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreStableHeaders.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreStaticFaceGroup.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreStaticGeometry.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreStdHeaders.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreStreamSerialiser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreString.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreStringConverter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreStringInterface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreStringVector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreSubEntity.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreSubMesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreTagPoint.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreTangentSpaceCalc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreTechnique.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreTexture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreTextureManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreTextureUnitState.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreTimer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreUnifiedHighLevelGpuProgram.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreUserObjectBindings.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreUTFString.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreVector2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreVector3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreVector4.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreVertexBoneAssignment.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreVertexIndexData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreViewport.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreWindowEventUtilities.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreWireBoundingBox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreWorkQueue.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grit_ogre\OgreMain\include\OgreZip.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
