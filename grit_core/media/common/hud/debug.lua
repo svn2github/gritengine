@@ -56,6 +56,17 @@ hud_class `DebugLayer` {
         console.enabled = v == true and self.enabled
     end;
 
+    hidePane = function (self, pane)
+        for name, desc in ipairs(self.buttonDescs) do
+            if desc.panel == pane then
+                self:selectPane(nil)
+            end
+        end
+        if pane == console then
+            self:selectConsole(false)
+        end
+    end;
+
     selectPane = function (self, id)
         self.selectedPane = id
         for i, desc in ipairs(self.buttonDescs) do
