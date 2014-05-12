@@ -46,4 +46,13 @@ hud_bottom_right = hud_bottom_right or gfx_hud_object_add(`Positioner`, { factor
 hud_top_left = hud_top_left or gfx_hud_object_add(`Positioner`, { factor = vec(0.0, 1.0) })
 hud_top_right = hud_top_right or gfx_hud_object_add(`Positioner`, { factor = vec(1.0, 1.0) })
 
-
+hud_focus = hud_focus or nil
+function hud_focus_grab(v)
+    if hud_focus ~= nil and not hud_focus.destroyed then
+        hud_focus:setFocus(false)
+    end
+    hud_focus = v
+    if hud_focus ~= nil then
+        hud_focus:setFocus(true)
+    end
+end

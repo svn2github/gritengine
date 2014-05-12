@@ -82,11 +82,12 @@ hud_class `DebugLayer` {
     end;
 
     onKeyPressed = function (self)
-        local shift = input_filter_pressed("Shift")
-        if shift then
+        local ctrl = input_filter_pressed("Ctrl")
+        if ctrl then
             self.enabled = true
             self:selectPane(self.selectedPane)
             self:selectConsole(true)
+            hud_focus_grab(console)
         else
             local v = not self.enabled
             self.enabled = v

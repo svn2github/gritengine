@@ -33,7 +33,9 @@ ticker = gfx_hud_object_add(`console/Ticker`, {buffer=buffer, timeBuffer=other_b
 ticker.enabled = false
 
 -- Console
+local console_focused = true
 if console ~= nil then
+    console_focused = hud_focus == console
     buffer = console.buffer
     other_buffer = console.cmdBuffer
     safe_destroy(console)
@@ -47,6 +49,9 @@ console_frame = gfx_hud_object_add(`Stretcher`, {
         return 40, psize.y * 0.6, psize.x, psize.y
     end;
 })
+if console_focused then
+    hud_focus_grab(console)
+end
 
 -- Menu
 if menu ~= nil then

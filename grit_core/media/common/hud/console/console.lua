@@ -71,9 +71,12 @@ hud_class `Console` {
         self:execute(cmd)
     end;
 
-    setEnabled = function (v)
+    setEnabled = function (self, v)
         self.enabled = v
         ticker.enabled = not v
+    end;
+
+    setFocus = function (self, v)
     end;
 
     destroy = function (self)
@@ -90,8 +93,12 @@ hud_class `Console` {
 
     frameCallback = function (self, elapsed)
         -- blinking cursor
-        local state = (seconds() % 0.5) / 0.5
-        self.cursor.enabled = state < 0.66
+        if hud_focus ~= self then
+            self.cursor.enabled = false
+        else
+            local state = (seconds() % 0.5) / 0.5
+            self.cursor.enabled = state < 0.66
+        end
 
         self:poll()
     end;
@@ -144,6 +151,16 @@ hud_class `Console` {
     buttonCallback = function (self, ev)
 
         local ev2 = (ev:sub(1,1) == '+' or ev:sub(1,1)=='=') and ev:sub(2) or nil
+
+        if ev2 == "left" then
+            if self.inside then  
+                hud_focus_grab(self)
+            end
+        end
+
+        if hud_focus ~= self then
+            return
+        end
 
         local reset_completions = true
 

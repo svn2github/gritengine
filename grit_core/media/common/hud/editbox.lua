@@ -58,7 +58,7 @@ hud_class `EditBox` {
 
         self.inside = false
         self:setGreyed(not not self.greyed)
-        self:setEditting(false, true)
+        self.caret.enabled = false
 
         self:setValue(self.value)
     end;
@@ -90,20 +90,22 @@ hud_class `EditBox` {
     end;
     
     setEditting = function (self, editting, no_callback)
-        if self.editting == editting then return end
+        local currently_editting = hud_focus == self
+        if currently_editting == editting then return end
         if self.greyed then return end
-        self.editting = editting
+        hud_focus_grab(editting and self or nil)
+        self:onEditting(editting)
+    end;
+
+    setFocus = function (self, editting)
         self.caret.enabled = editting
         self.needsFrameCallbacks = editting
-        if not no_callback then
-            self:onEditting(editting)
-        end
     end;
 
     buttonCallback = function (self, ev)
         if self.greyed then return end
         if ev == "+left" then
-            if self.inside == false then
+            if not self.inside then
                 self:setEditting(false)
             else
                 self:setEditting(true)
@@ -113,7 +115,7 @@ hud_class `EditBox` {
                 self.after = txt:sub(pos+1)
                 self:updateText()
             end
-        elseif self.editting then
+        elseif hud_focus == self then
             if ev == "+Return" then
                 self:setEditting(false)
             elseif ev == "+BackSpace" or ev == "=BackSpace" then
@@ -175,7 +177,7 @@ hud_class `EditBox` {
     end;
     
     onChange = function (self)
-        print("No onChange: "..tostring(self.value))
+        -- By default, do nothing, since often people will only care when enter is pressed.
     end;
     
     setValue = function (self, value)
