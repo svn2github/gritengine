@@ -1,0 +1,20 @@
+float aspect = su_viewportSize.x / su_viewportSize.y;
+float fov_x = aspect * su_fovY;
+
+// The world matrix encodes only sky orientation data (i.e. due to the rotation of the earth).
+out_POSITION = mul(su_worldViewProj, float4(in_POSITION.xyz,0));
+
+// hack our way to maximum depth
+out_POSITION.z = out_POSITION.w;
+out_POSITION.z *= (1-1.0/65536); // avoid 'black lightning' artifacts
+
+float4 sunlight_dir_ss_ = mul(su_viewProj, float4(-su_sunDirection,1));
+
+// for interpolators
+float2 uv = in_TEXCOORD0.xy;
+float3 sunlight_dir_ss = sunlight_dir_ss_.xyz/sunlight_dir_ss_.w;
+float2 fov = float2(fov_x, su_fovY);
+float2 sun_pos_ss_polar;
+sun_pos_ss_polar.x = mod(atan2(-su_sunDirection.x, -su_sunDirection.y)/PI/2 + 1, 1) * 360;
+sun_pos_ss_polar.y = atan(-su_sunDirection.z / sqrt(dot(su_sunDirection.xy, su_sunDirection.xy))) / PI * 180;
+
