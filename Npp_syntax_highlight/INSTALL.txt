@@ -1,0 +1,3 @@
+- Open Notepad++ and go to Language->Define your Language..->Import and select the .xml file from the donwloaded .zip depending on what theme you use, dark or light
+
+- Restart notepad++ and open a gcol or lua file and select Language->GritLua or Language->GritGCOL, and that's it!
