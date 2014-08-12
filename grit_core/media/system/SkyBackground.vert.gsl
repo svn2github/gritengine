@@ -1,21 +1,19 @@
-float aspect = g.viewportSize.x / g.viewportSize.y;
-float fov_x = aspect * g.fovY;
+val aspect = g.viewportSize.x / g.viewportSize.y;
+val fov_x = aspect * g.fovY;
 
 // The world matrix encodes only sky orientation data (i.e. due to the rotation of the earth).
 out.position = mul(g.worldViewProj, float4(in.position.xyz, 0));
 
 // hack our way to maximum depth
-out.position.z = out.position.w;
-out.position.z *= (1-1.0/65536); // avoid 'black lightning' artifacts
+out.position.z = out.position.w * (1-1.0/65536); // avoid 'black lightning' artifacts
 
 
-float4 sunlight_dir_ss_ = mul(g.viewProj, float4(-g.sunDirection,1));
+val sunlight_dir_ss_ = mul(g.viewProj, float4(-g.sunDirection,1));
 
 // for interpolators
-float2 uv = in.coord0.xy;
-float3 pos_ws = mul(g.world, float4(in.position.xyz,0)).xyz;
-float3 sunlight_dir_ss = sunlight_dir_ss_.xyz/sunlight_dir_ss_.w;
-float2 fov = float2(fov_x, g.fovY);
-float2 sun_pos_ss_polar;
-sun_pos_ss_polar.x = mod(atan2(-g.sunDirection.x, -g.sunDirection.y)/PI/2 + 1, 1) * 360;
-sun_pos_ss_polar.y = atan(-g.sunDirection.z / sqrt(dot(g.sunDirection.xy, g.sunDirection.xy))) / PI * 180;
+val uv = in.coord0.xy;
+val pos_ws = mul(g.world, float4(in.position.xyz,0)).xyz;
+val sunlight_dir_ss = sunlight_dir_ss_.xyz/sunlight_dir_ss_.w;
+val fov = float2(fov_x, g.fovY);
+val sun_pos_ss_polar_x = mod(atan2(-g.sunDirection.x, -g.sunDirection.y)/PI/2 + 1, 1) * 360;
+val sun_pos_ss_polar_y = atan(-g.sunDirection.z / sqrt(dot(g.sunDirection.xy, g.sunDirection.xy))) / PI * 180;

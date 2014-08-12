@@ -62,7 +62,7 @@ class ExceptionStream {
         (*this)<<"Internal error at: ("<<file<<":"<<line<<"): ";
     }
 
-    ExceptionStream ()
+    ExceptionStream (void)
     {
     }
 
