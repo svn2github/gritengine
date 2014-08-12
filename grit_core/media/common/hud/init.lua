@@ -14,6 +14,7 @@ include `controls/init.lua`
 include `console/init.lua`
 include `menu/init.lua`
 
+include `LensFlare/init.lua`
 include `Compass/init.lua`
 include `speedo.lua`
 include `clock.lua`
@@ -167,5 +168,8 @@ if env_cycle_editor ~= nil and not env_cycle_editor.destroyed then
 end
 env_cycle_editor = gfx_hud_object_add(`EnvCycleEditor`, { } )
 env_cycle_editor.position = env_cycle_editor.size/2 + vec(50, 10)
+
+safe_destroy(lens_flare)
+lens_flare = gfx_hud_object_add(`LensFlare`)
 
 include `debug.lua`
