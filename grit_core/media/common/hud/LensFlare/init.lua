@@ -20,19 +20,19 @@ hud_class `.` {
         self.flare[1] = gfx_hud_object_add("/common/hud/Rect", {texture="Flare1.png", needsAlpha = true, size=vec(2048, 256)})
         self.flare[1].parent = self		
 
-        self.flare[2] = gfx_hud_object_add("/common/hud/Rect", {texture="Flare2.png"})
+        self.flare[2] = gfx_hud_object_add("/common/hud/Rect", {texture="Flare2.png", size=vec(512, 512)})
         self.flare[2].parent = self
 
-        self.flare[3] = gfx_hud_object_add("/common/hud/Rect", {texture="Flare3.png"})
+        self.flare[3] = gfx_hud_object_add("/common/hud/Rect", {texture="Flare3.png", size=vec(512, 512)})
         self.flare[3].parent = self
 
-        self.flare[4] = gfx_hud_object_add("/common/hud/Rect", {texture="Flare4.png"})
+        self.flare[4] = gfx_hud_object_add("/common/hud/Rect", {texture="Flare4.png", size=vec(512, 512)})
         self.flare[4].parent = self
 
         self.flare[5] = gfx_hud_object_add("/common/hud/Rect", {texture="Flare5.png", size=self.size2})
         self.flare[5].parent = self
 		
-		self.flare[6] = gfx_hud_object_add("/common/hud/Rect", {texture="Flare6.png", size=vec(512, 512)})
+		self.flare[6] = gfx_hud_object_add("/common/hud/Rect", {texture="Flare6.png", size=vec(256, 256)})
         self.flare[6].parent = self	
     end;
     destroy = function (self)
@@ -46,8 +46,9 @@ hud_class `.` {
         -- sun_direction is the direction of the rays of light, so invert to point towards the sun
         --
 		local sun_pos = player_ctrl.camPos + (gfx_sun_falloff_distance() * gfx_sun_direction() * -1)	
-            
-        local screen_pos = gfx_world_to_screen(player_ctrl.camPos, player_ctrl.camDir, sun_pos)
+         
+		local win_size = gfx_window_size()
+        local screen_pos = gfx_world_to_screen(player_ctrl.camPos, player_ctrl.camDir, sun_pos) - vector3(win_size.x/2, win_size.y/2, 0)
 
 		--local sunPos = vector3(-1600, 1000, 2000)
 		
