@@ -35,5 +35,5 @@ if (sun_cloud_dome_pos.z<0) sun_cloud_dome_pos.z = sun_cloud_dome_pos.z * -1;
 val cloud_dome_pos = float3(perlin_uv, 0.3);
 val cloud_sun_dir = normalize(sun_cloud_dome_pos - cloud_dome_pos);
 val emboss = lerp(dot(cloud_n, cloud_sun_dir), 1, 0.5);
-out.color.rgb = emboss * g.skyCloudColour * cloud_atten * cloud;
-out.color.a = cloud_atten * cloud;
+frag.color.rgb = emboss * g.skyCloudColour * cloud_atten * cloud;
+frag.color.a = cloud_atten * cloud;

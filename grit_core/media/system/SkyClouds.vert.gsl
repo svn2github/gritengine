@@ -2,15 +2,15 @@ val aspect = g.viewportSize.x / g.viewportSize.y;
 val fov_x = aspect * g.fovY;
 
 // The world matrix encodes only sky orientation data (i.e. due to the rotation of the earth).
-out.position = mul(g.worldViewProj, float4(in.position.xyz,0));
+frag.position = mul(g.worldViewProj, float4(vert.position.xyz,0));
 
 // hack our way to maximum depth
-out.position.z = out.position.w * (1 - 1.0/65536); // avoid 'black lightning' artifacts
+frag.position.z = frag.position.w * (1 - 1.0/65536); // avoid 'black lightning' artifacts
 
 val sunlight_dir_ss_ = mul(g.viewProj, float4(-g.sunDirection, 1));
 
 // for interpolators
-val uv = in.texcoord0.xy;
+val uv = vert.texcoord0.xy;
 val sunlight_dir_ss = sunlight_dir_ss_.xyz/sunlight_dir_ss_.w;
 val fov = float2(fov_x, su_fovY);
 val sun_pos_ss_polar_x = mod(atan2(-su_sunDirection.x, -su_sunDirection.y)/PI/2 + 1, 1) * 360;

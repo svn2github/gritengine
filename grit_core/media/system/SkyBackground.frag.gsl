@@ -5,7 +5,7 @@ val el = polar_rad_y / PI * 180;
 val polar_ = float2(az,el);
 
 if (el <= 0.0) {
-    out.color.rgb = g.hellColour;
+    frag.color.rgb = g.hellColour;
     return;
 }
 
@@ -26,11 +26,11 @@ if (rel_polar.x > 180) rel_polar.x = rel_polar.x - 360;
 if (rel_polar.x < -180) rel_polar.x = rel_polar.x + 360;
 
 // debug crosshairs for polar coords
-//if (abs(rel_polar.x) < 3) out.color.rgb = float3(1,1,0);
-//if (abs(rel_polar.y) < 3) out.color.rgb = float3(1,0,0);
+//if (abs(rel_polar.x) < 3) frag.color.rgb = float3(1,1,0);
+//if (abs(rel_polar.y) < 3) frag.color.rgb = float3(1,0,0);
 
 // debug for drawing sun location
-//if (dot(rel_polar, rel_polar) < 10*10) out.color.rgb *= float3(1,1,0);
+//if (dot(rel_polar, rel_polar) < 10*10) frag.color.rgb *= float3(1,1,0);
 
 // sunnyness is the amount this sky pixel is affected by the sun
 var sunnyness = 0.0;
@@ -41,7 +41,7 @@ var sunnyness = 0.0;
 }
 
 {
-    val r = pow(dot(rel_polar/g.skyGlareSunDistance, rel_polar/g.skyGlareSunDistance), 0.1);
+    var r = pow(dot(rel_polar/g.skyGlareSunDistance, rel_polar/g.skyGlareSunDistance), 0.1);
     r = min(r,2);
     sunnyness = clamp(sunnyness + (cos(r*PI/2)+1)/2, 0, 1);
 }
@@ -49,7 +49,7 @@ var sunnyness = 0.0;
 // STARFIELD
 val tex_coord_ddx = ddx(uv);
 val tex_coord_ddy = ddy(uv);
-out.color.rgb = mat.starfieldMask * gamma_decode(sample2D(mat.starfieldMap, uv, tex_coord_ddx, tex_coord_ddy).rgb);
+frag.color.rgb = mat.starfieldMask * gamma_decode(sample2D(mat.starfieldMap, uv, tex_coord_ddx, tex_coord_ddy).rgb);
 
 // SKY GRADIENT
 var sky = float3(0,0,0);
@@ -73,7 +73,7 @@ if (el < g.skyDivider1) {
     sky = float3(1,1,1);
     ssky = float3(1,1,1);
 }
-out.color.rgb = out.color.rgb + lerp(sky, ssky, sunnyness);
+frag.color.rgb = frag.color.rgb + lerp(sky, ssky, sunnyness);
 
 
 
@@ -86,13 +86,13 @@ if (sunlight_dir_ss.z < 1) {
         sun_uv.y = sky_uv.y + (0.3-el)/5;
     }
 
-    val sun_qty = 1;
-    val dist_to_sun = dot(sun_uv,sun_uv);
+    var sun_qty = 1;
+    var dist_to_sun = dot(sun_uv,sun_uv);
     if (dist_to_sun>=1) {
         dist_to_sun = dist_to_sun / g.sunFalloffDistance;
         dist_to_sun = dist_to_sun + 0.8; // magic number, allows big sun + small fade to look different to small sun + big fade
         sun_qty = clamp(1/dist_to_sun/dist_to_sun, 0.0, 1.0);
     }
-    out.color.rgb = lerp(out.color.rgb, g.sunColour, g.sunAlpha * sun_qty);
+    frag.color.rgb = lerp(frag.color.rgb, g.sunColour, g.sunAlpha * sun_qty);
 }
 
