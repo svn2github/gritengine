@@ -2,6 +2,8 @@
 
 include `base.lua`
 
+include `line.lua`
+
 include `stack.lua`
 
 include `Button/init.lua`
