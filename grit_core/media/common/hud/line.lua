@@ -1,14 +1,13 @@
-local Line = {
+-- (c) Alexey "Razzeeyy" Shmakov 2014, licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
+
+hud_class `HorizontalLine` {
     init = function (self)
         self.needsParentResizedCallbacks = true;
-        --self.size = vec(0, 2);
         self:setThickness(2);
     end;
     
     parentResizedCallback = function (self, psize)
-        --we use biggest screen side as a line length, to prevent VerticalLine shrinking
-        --(self.size.x is actually a heigh of the vertical line so sometimes the line doesn't stroke thru all screen)
-        self.size = vec(psize.x > psize.y and psize.x or psize.y, self.size.y);
+        self.size = vec(psize.x, self.size.y);
     end;
     
     setThickness = function (self, width)
@@ -20,11 +19,21 @@ local Line = {
     end;
 }
 
-hud_class `HorizontalLine` (Line);
-
-hud_class `VerticalLine` (extends(Line){
+hud_class `VerticalLine` {
     init = function (self)
-        Line.init(self);
-        self.orientation = 90;
+        self.needsParentResizedCallbacks = true;
+        self:setThickness(2);
     end;
-});
+    
+    parentResizedCallback = function (self, psize)
+        self.size = vec(self.size.x, psize.y);
+    end;
+    
+    setThickness = function (self, width)
+        self.size = vec(width, self.size.y);
+    end;
+    
+    getThickness = function (self)
+        return self.size.x;
+    end;
+}
