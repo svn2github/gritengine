@@ -19,10 +19,10 @@ hud_class `.` {
 		self.flare = {}
 
 		self.flare[0] = gfx_hud_object_add("/common/hud/Rect", {texture="Flare6.png", size=vec(16, 16), parent = self})
-		self.flare[0].colour = vector3(0.085, 0.7, 1)	
+		self.flare[0].colour = vector3(0.085, 1, 0.15)
 		
 		self.flare[1] = gfx_hud_object_add("/common/hud/Rect", {texture="Flare6.png", size=vec(40, 40), parent = self})
-		self.flare[1].colour = vector3(0.085, 1, 0.15)
+		self.flare[1].colour = vector3(0.085, 0.7, 1)
 		
         self.flare[2] = gfx_hud_object_add("/common/hud/Rect", {texture="Flare5.png", size=self.size2, parent = self})
 		
@@ -77,8 +77,8 @@ hud_class `.` {
 			end
 			
 			-- positions
-			self.flare[0].position =  s_pos  * vec2(0.17, 0.17)			
-			self.flare[1].position =  s_pos  * vec2(0.3, 0.3)			
+			self.flare[0].position =  s_pos  * vec2(0.3, 0.3)
+			self.flare[1].position =  s_pos  * vec2(0.2, 0.2)
 			self.flare[2].position =  s_pos  * vec2(0.4, 0.4)			
 			self.flare[3].position =  s_pos  * vec2(0.6, 0.6)			
 			self.flare[4].position =  s_pos  * vec2(0.8, 0.8)
