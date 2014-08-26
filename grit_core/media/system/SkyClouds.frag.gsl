@@ -1,5 +1,5 @@
 // need to do these in fragment shader, to stop the sun vanishing at the corners of the screen
-val pos_ss_ = in_WPOS.xy/g.viewportSize.xy*2-1;
+val pos_ss_ = frag.position.xy/global.viewportSize.xy*2-1;
 
 // TODO: figure out this d3d9 business
 //pos_ss_.y *= -d3d9();
@@ -8,17 +8,17 @@ val pos_ss_ = in_WPOS.xy/g.viewportSize.xy*2-1;
 val perlin_uv = 5*uv;
 val cloud_dist = sqrt(dot(perlin_uv,perlin_uv)) / 4.5;
 
-val cloud_anim = float4(0.01, 0.01, 0.02, 0.02);
-val clouduv1 = (g.time * cloud_anim.xy + perlin_uv.xy)/5;
-val clouduv2 = (g.time * cloud_anim.zw + perlin_uv.yx)/5;
-val clouduv3 = (g.time * cloud_anim.xy + perlin_uv.xy)*5;
+val cloud_anim = Float4(0.01, 0.01, 0.02, 0.02);
+val clouduv1 = (global.time * cloud_anim.xy + perlin_uv.xy)/5;
+val clouduv2 = (global.time * cloud_anim.zw + perlin_uv.yx)/5;
+val clouduv3 = (global.time * cloud_anim.xy + perlin_uv.xy)*5;
 
 val cloud_atten = clamp(1-cloud_dist*cloud_dist, 0, 1);
 val cloud_tex1 = sample2D(mat.perlin, clouduv1).r;
 val cloud_tex2 = sample2D(mat.perlin, clouduv2).r;
 val cloud_tex3 = sample2D(mat.perlin, clouduv3).r;
 
-val cloud = clamp(((0.48*cloud_tex1 + 0.48*cloud_tex2 + 0.04*cloud_tex3) - (1-g.skyCloudCoverage)) / g.skyCloudCoverage, 0, 1);
+val cloud = clamp(((0.48*cloud_tex1 + 0.48*cloud_tex2 + 0.04*cloud_tex3) - (1-global.skyCloudCoverage)) / global.skyCloudCoverage, 0, 1);
 val murkyness = clamp(cloud*2.0 - 0.2, 0, 1) * 0.6;
 
 val cloud_ntex1 = sample2D(mat.perlinN, clouduv1).rgb*2 - 1;
@@ -26,14 +26,14 @@ val cloud_ntex2 = sample2D(mat.perlinN, clouduv2).grb*2 - 1;
 val cloud_ntex3 = sample2D(mat.perlinN, clouduv3).rgb*2 - 1;
 val cloud_n = normalize(0.48*cloud_ntex1 + 0.48*cloud_ntex2 + 0.04*cloud_ntex3);
 
-val sun_uv = float2(pos_ss_ - sunlight_dir_ss.xy);
+val sun_uv = Float2(pos_ss_ - sunlight_dir_ss.xy);
 val sun_distance = sqrt(dot(sun_uv,sun_uv)) * (fov.x+fov.y)/2;
-val sun_cloud_dome_pos = float3(
-    4.51*cos(sun_pos_ss_polar_y/180*PI) * float2(sin(sun_pos_ss_polar_x/180*PI), cos(sun_pos_ss_polar_x/180*PI)),
+val sun_cloud_dome_pos = Float3(
+    4.51*cos(sun_pos_ss_polar_y/180*PI) * Float2(sin(sun_pos_ss_polar_x/180*PI), cos(sun_pos_ss_polar_x/180*PI)),
     4.51*sin(sun_pos_ss_polar_y/180*PI));
 if (sun_cloud_dome_pos.z<0) sun_cloud_dome_pos.z = sun_cloud_dome_pos.z * -1;
-val cloud_dome_pos = float3(perlin_uv, 0.3);
+val cloud_dome_pos = Float3(perlin_uv, 0.3);
 val cloud_sun_dir = normalize(sun_cloud_dome_pos - cloud_dome_pos);
 val emboss = lerp(dot(cloud_n, cloud_sun_dir), 1, 0.5);
-frag.color.rgb = emboss * g.skyCloudColour * cloud_atten * cloud;
+frag.color.rgb = emboss * global.skyCloudColour * cloud_atten * cloud;
 frag.color.a = cloud_atten * cloud;

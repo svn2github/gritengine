@@ -2,10 +2,10 @@ val polar_rad_x = mod(atan2(pos_ws.x, pos_ws.y) + 2*PI, 2*PI);
 val polar_rad_y = atan(pos_ws.z / sqrt(dot(pos_ws.xy, pos_ws.xy)));
 val az = polar_rad_x / PI * 180;
 val el = polar_rad_y / PI * 180;
-val polar_ = float2(az,el);
+val polar_ = Float2(az,el);
 
 if (el <= 0.0) {
-    frag.color.rgb = g.hellColour;
+    frag.color.rgb = global.hellColour;
     return;
 }
 
@@ -26,11 +26,11 @@ if (rel_polar.x > 180) rel_polar.x = rel_polar.x - 360;
 if (rel_polar.x < -180) rel_polar.x = rel_polar.x + 360;
 
 // debug crosshairs for polar coords
-//if (abs(rel_polar.x) < 3) frag.color.rgb = float3(1,1,0);
-//if (abs(rel_polar.y) < 3) frag.color.rgb = float3(1,0,0);
+//if (abs(rel_polar.x) < 3) frag.color.rgb = Float3(1,1,0);
+//if (abs(rel_polar.y) < 3) frag.color.rgb = Float3(1,0,0);
 
 // debug for drawing sun location
-//if (dot(rel_polar, rel_polar) < 10*10) frag.color.rgb *= float3(1,1,0);
+//if (dot(rel_polar, rel_polar) < 10*10) frag.color.rgb *= Float3(1,1,0);
 
 // sunnyness is the amount this sky pixel is affected by the sun
 var sunnyness = 0.0;
@@ -52,8 +52,8 @@ val tex_coord_ddy = ddy(uv);
 frag.color.rgb = mat.starfieldMask * gamma_decode(sample2D(mat.starfieldMap, uv, tex_coord_ddx, tex_coord_ddy).rgb);
 
 // SKY GRADIENT
-var sky = float3(0,0,0);
-var ssky = float3(0,0,0);
+var sky = Float3(0, 0. 0);
+var ssky = Float3(0, 0, 0);
 if (el < g.skyDivider1) {
     sky  = lerp(g.skyColour0,  g.skyColour1,  (el-0)/(g.skyDivider1-0));
     ssky = lerp(g.skySunColour0, g.skySunColour1, (el-0)/(g.skyDivider1-0));
@@ -70,8 +70,8 @@ if (el < g.skyDivider1) {
     sky  = lerp(g.skyColour4,  g.skyColour5,  (el-g.skyDivider4)/(90-g.skyDivider4));
     ssky  = lerp(g.skySunColour4, g.skyColour5, (el-g.skyDivider4)/(90-g.skyDivider4));
 } else {
-    sky = float3(1,1,1);
-    ssky = float3(1,1,1);
+    sky = Float3(1,1,1);
+    ssky = Float3(1,1,1);
 }
 frag.color.rgb = frag.color.rgb + lerp(sky, ssky, sunnyness);
 
@@ -80,7 +80,7 @@ frag.color.rgb = frag.color.rgb + lerp(sky, ssky, sunnyness);
 
 // SUN
 if (sunlight_dir_ss.z < 1) {
-    val sun_uv = float2(pos_ss_ - sunlight_dir_ss.xy)/g.sunSize*fov;
+    val sun_uv = Float2(pos_ss_ - sunlight_dir_ss.xy)/g.sunSize*fov;
     if (el < 0.3 && sun_uv.y < 0 && sun_uv.y > -1) {
         //sun_uv.x *= (el+100)/101;
         sun_uv.y = sky_uv.y + (0.3-el)/5;
