@@ -3,7 +3,6 @@
 hud_class `.` {
     alpha = 0;
 	size = vec(1500, 1024);
-	size2 = vec(2048, 2048);
 	alp = 1;
     zOrder = 0;
 	
@@ -18,21 +17,19 @@ hud_class `.` {
 
 		self.flare = {}
 
-		self.flare[0] = gfx_hud_object_add("/common/hud/Rect", {texture="Flare6.png", size=vec(16, 16), parent = self})
-		self.flare[0].colour = vector3(0.085, 1, 0.15)
+		self.flare[0] = gfx_hud_object_add("/common/hud/Rect", {texture="Flare6.png", size=vec(16, 16), parent = self, colour = vector3(0.085, 1, 0.15)})
 		
-		self.flare[1] = gfx_hud_object_add("/common/hud/Rect", {texture="Flare6.png", size=vec(40, 40), parent = self})
-		self.flare[1].colour = vector3(0.085, 0.7, 1)
+		self.flare[1] = gfx_hud_object_add("/common/hud/Rect", {texture="Flare6.png", size=vec(40, 40), parent = self, colour = vector3(0.085, 0.7, 1)})
 		
-        self.flare[2] = gfx_hud_object_add("/common/hud/Rect", {texture="Flare5.png", size=self.size2, parent = self})
+        self.flare[2] = gfx_hud_object_add("/common/hud/Rect", {texture="Flare5.png", size=vec(2048, 2048), parent = self})
 		
 		self.flare[3] = gfx_hud_object_add("/common/hud/Rect", {texture="Flare4.png", size=vec(400, 400), parent = self})
 		
-		self.flare[4] = gfx_hud_object_add("/common/hud/Rect", {texture="Flare3.png", size=vec(300, 300), parent = self})
+		self.flare[4] = gfx_hud_object_add("/common/hud/Rect", {texture="Flare3.png", size=vec(300, 300), parent = self, colour = vector3(0, 0.75, 0.65)})
 		
-		self.flare[5] = gfx_hud_object_add("/common/hud/Rect", {texture="Flare2.png", size=vec(230, 230), parent = self})
+		self.flare[5] = gfx_hud_object_add("/common/hud/Rect", {texture="Flare2.png", size=vec(230, 230), parent = self, colour = vector3(1, 0, 0.85)})
 		
-		self.flare[6] = gfx_hud_object_add("/common/hud/Rect", {texture="Flare2.png", size=vec(200, 200), parent = self})
+		self.flare[6] = gfx_hud_object_add("/common/hud/Rect", {texture="Flare2.png", size=vec(200, 200), parent = self, colour = vector3(1, 0, 0.85)})
 
         self.flare[7] = gfx_hud_object_add("/common/hud/Rect", {texture="Flare1.png", needsAlpha = true, size=vec(2048, 256), parent = self})	
 		
@@ -76,6 +73,10 @@ hud_class `.` {
 				self.alp = math.min(math.sqrt((0 - s_pos.x) ^ 2 + (0 - s_pos.y) ^ 2) * -0.0002  + 1, 1)
 			end
 			
+			-- colours
+			self.flare[8].colour = gfx_sun_colour()
+			self.flare[7].colour = gfx_sun_colour()
+			
 			-- positions
 			self.flare[0].position =  s_pos  * vec2(0.3, 0.3)
 			self.flare[1].position =  s_pos  * vec2(0.2, 0.2)
@@ -110,7 +111,6 @@ hud_class `.` {
     end;
 	
 	parentResizedCallback = function (self, psize)
-		-- only when resize window updates
 		self.win_size = gfx_window_size()
     end;
 }
