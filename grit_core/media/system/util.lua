@@ -312,6 +312,8 @@ function table.keys(tab, limit)
                         if max_key_len < #tostring(k) then
                                 max_key_len = #tostring(k)
                         end
+                else
+                    return keys, counter, max_key_len
                 end
                 counter = counter + 1
         end
