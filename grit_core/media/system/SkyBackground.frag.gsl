@@ -5,7 +5,7 @@ val el = polar_rad_y / PI * 180;
 val polar_ = Float2(az,el);
 
 if (el <= 0.0) {
-    frag.color.rgb = global.hellColour;
+    frag.colour.rgb = global.hellColour;
     return;
 }
 
@@ -14,34 +14,34 @@ if (el <= 0.0) {
 
 // need to do these in fragment shader, to stop the sun vanishing at the corners of the
 // screen
-val pos_ss_ = in_WPOS.xy/g.viewportSize.xy*2-1;
+val pos_ss_ = frag.position.xy/global.viewportSize.xy*2-1;
 // TODO: figure out this d3d9 business
 //pos_ss_.y *= -d3d9();
 
 // SUN GLARE
-val rel_polar = sun_pos_ss_polar.xy - polar_.xy;
+var rel_polar = sun_pos_ss_polar.xy - polar_.xy;
 
 // ensure range is within -180 and 180
 if (rel_polar.x > 180) rel_polar.x = rel_polar.x - 360;
 if (rel_polar.x < -180) rel_polar.x = rel_polar.x + 360;
 
 // debug crosshairs for polar coords
-//if (abs(rel_polar.x) < 3) frag.color.rgb = Float3(1,1,0);
-//if (abs(rel_polar.y) < 3) frag.color.rgb = Float3(1,0,0);
+//if (abs(rel_polar.x) < 3) frag.colour.rgb = Float3(1,1,0);
+//if (abs(rel_polar.y) < 3) frag.colour.rgb = Float3(1,0,0);
 
 // debug for drawing sun location
-//if (dot(rel_polar, rel_polar) < 10*10) frag.color.rgb *= Float3(1,1,0);
+//if (dot(rel_polar, rel_polar) < 10*10) frag.colour.rgb *= Float3(1,1,0);
 
 // sunnyness is the amount this sky pixel is affected by the sun
 var sunnyness = 0.0;
 {
     // needs max to avoid a big reflection on far side of the skysphere
-    val qty = max(0, - (rel_polar.x-90)/90 * (rel_polar.x+90)/90 - el / g.skyGlareHorizonElevation);
+    val qty = max(0, - (rel_polar.x-90)/90 * (rel_polar.x+90)/90 - el / global.skyGlareHorizonElevation);
     sunnyness = min(qty*qty, 1);
 }
 
 {
-    var r = pow(dot(rel_polar/g.skyGlareSunDistance, rel_polar/g.skyGlareSunDistance), 0.1);
+    var r = pow(dot(rel_polar/global.skyGlareSunDistance, rel_polar/global.skyGlareSunDistance), 0.1);
     r = min(r,2);
     sunnyness = clamp(sunnyness + (cos(r*PI/2)+1)/2, 0, 1);
 }
@@ -49,50 +49,50 @@ var sunnyness = 0.0;
 // STARFIELD
 val tex_coord_ddx = ddx(uv);
 val tex_coord_ddy = ddy(uv);
-frag.color.rgb = mat.starfieldMask * gamma_decode(sample2D(mat.starfieldMap, uv, tex_coord_ddx, tex_coord_ddy).rgb);
+frag.colour.rgb = mat.starfieldMask * gamma_decode(sample2D(mat.starfieldMap, uv, tex_coord_ddx, tex_coord_ddy).rgb);
 
 // SKY GRADIENT
-var sky = Float3(0, 0. 0);
+var sky = Float3(0, 0, 0);
 var ssky = Float3(0, 0, 0);
-if (el < g.skyDivider1) {
-    sky  = lerp(g.skyColour0,  g.skyColour1,  (el-0)/(g.skyDivider1-0));
-    ssky = lerp(g.skySunColour0, g.skySunColour1, (el-0)/(g.skyDivider1-0));
-} else if (el < g.skyDivider2) {
-    sky  = lerp(g.skyColour1,  g.skyColour2, (el-g.skyDivider1)/(g.skyDivider2-g.skyDivider1));
-    ssky = lerp(g.skySunColour1, g.skySunColour2, (el-g.skyDivider1)/(g.skyDivider2-g.skyDivider1));
-} else if (el < g.skyDivider3) {
-    sky  = lerp(g.skyColour2,  g.skyColour3, (el-g.skyDivider2)/(g.skyDivider3-g.skyDivider2));
-    ssky = lerp(g.skySunColour2, g.skySunColour3, (el-g.skyDivider2)/(g.skyDivider3-g.skyDivider2));
-} else if (el < g.skyDivider4) {
-    sky  = lerp(g.skyColour3,  g.skyColour4, (el-g.skyDivider3)/(g.skyDivider4-g.skyDivider3));
-    ssky = lerp(g.skySunColour3, g.skySunColour4, (el-g.skyDivider3)/(g.skyDivider4-g.skyDivider3));
+if (el < global.skyDivider1) {
+    sky  = lerp(global.skyColour0,  global.skyColour1,  (el-0)/(global.skyDivider1-0));
+    ssky = lerp(global.skySunColour0, global.skySunColour1, (el-0)/(global.skyDivider1-0));
+} else if (el < global.skyDivider2) {
+    sky  = lerp(global.skyColour1,  global.skyColour2, (el-global.skyDivider1)/(global.skyDivider2-global.skyDivider1));
+    ssky = lerp(global.skySunColour1, global.skySunColour2, (el-global.skyDivider1)/(global.skyDivider2-global.skyDivider1));
+} else if (el < global.skyDivider3) {
+    sky  = lerp(global.skyColour2,  global.skyColour3, (el-global.skyDivider2)/(global.skyDivider3-global.skyDivider2));
+    ssky = lerp(global.skySunColour2, global.skySunColour3, (el-global.skyDivider2)/(global.skyDivider3-global.skyDivider2));
+} else if (el < global.skyDivider4) {
+    sky  = lerp(global.skyColour3,  global.skyColour4, (el-global.skyDivider3)/(global.skyDivider4-global.skyDivider3));
+    ssky = lerp(global.skySunColour3, global.skySunColour4, (el-global.skyDivider3)/(global.skyDivider4-global.skyDivider3));
 } else if (el <= 90) {
-    sky  = lerp(g.skyColour4,  g.skyColour5,  (el-g.skyDivider4)/(90-g.skyDivider4));
-    ssky  = lerp(g.skySunColour4, g.skyColour5, (el-g.skyDivider4)/(90-g.skyDivider4));
+    sky  = lerp(global.skyColour4,  global.skyColour5,  (el-global.skyDivider4)/(90-global.skyDivider4));
+    ssky  = lerp(global.skySunColour4, global.skyColour5, (el-global.skyDivider4)/(90-global.skyDivider4));
 } else {
     sky = Float3(1,1,1);
     ssky = Float3(1,1,1);
 }
-frag.color.rgb = frag.color.rgb + lerp(sky, ssky, sunnyness);
+frag.colour.rgb = frag.colour.rgb + lerp(sky, ssky, sunnyness);
 
 
 
 
 // SUN
 if (sunlight_dir_ss.z < 1) {
-    val sun_uv = Float2(pos_ss_ - sunlight_dir_ss.xy)/g.sunSize*fov;
+    var sun_uv = Float2(pos_ss_ - sunlight_dir_ss.xy)/global.sunSize*fov;
     if (el < 0.3 && sun_uv.y < 0 && sun_uv.y > -1) {
         //sun_uv.x *= (el+100)/101;
-        sun_uv.y = sky_uv.y + (0.3-el)/5;
+        sun_uv.y = sun_uv.y + (0.3-el)/5;
     }
 
     var sun_qty = 1;
     var dist_to_sun = dot(sun_uv,sun_uv);
     if (dist_to_sun>=1) {
-        dist_to_sun = dist_to_sun / g.sunFalloffDistance;
+        dist_to_sun = dist_to_sun / global.sunFalloffDistance;
         dist_to_sun = dist_to_sun + 0.8; // magic number, allows big sun + small fade to look different to small sun + big fade
         sun_qty = clamp(1/dist_to_sun/dist_to_sun, 0.0, 1.0);
     }
-    frag.color.rgb = lerp(frag.color.rgb, g.sunColour, g.sunAlpha * sun_qty);
+    frag.colour.rgb = lerp(frag.colour.rgb, global.sunColour, global.sunAlpha * sun_qty);
 }
 

@@ -17,5 +17,7 @@ val uv = vert.coord0.xy;
 val pos_ws = mul(global.world, Float4(vert.position.xyz,0)).xyz;
 val sunlight_dir_ss = sunlight_dir_ss_.xyz/sunlight_dir_ss_.w;
 val fov = Float2(fov_x, global.fovY);
-val sun_pos_ss_polar_x = mod(atan2(-global.sunDirection.x, -global.sunDirection.y)/PI/2 + 1, 1) * 360;
-val sun_pos_ss_polar_y = atan(-global.sunDirection.z / sqrt(dot(global.sunDirection.xy, global.sunDirection.xy))) / PI * 180;
+val sun_pos_ss_polar = Float2(
+    mod(atan2(-global.sunDirection.x, -global.sunDirection.y)/PI/2 + 1, 1) * 360,
+    tan(-global.sunDirection.z / sqrt(dot(global.sunDirection.xy, global.sunDirection.xy))) / PI * 180
+);

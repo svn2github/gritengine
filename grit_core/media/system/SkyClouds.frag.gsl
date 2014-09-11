@@ -28,12 +28,12 @@ val cloud_n = normalize(0.48*cloud_ntex1 + 0.48*cloud_ntex2 + 0.04*cloud_ntex3);
 
 val sun_uv = Float2(pos_ss_ - sunlight_dir_ss.xy);
 val sun_distance = sqrt(dot(sun_uv,sun_uv)) * (fov.x+fov.y)/2;
-val sun_cloud_dome_pos = Float3(
+var sun_cloud_dome_pos = Float3(
     4.51*cos(sun_pos_ss_polar_y/180*PI) * Float2(sin(sun_pos_ss_polar_x/180*PI), cos(sun_pos_ss_polar_x/180*PI)),
     4.51*sin(sun_pos_ss_polar_y/180*PI));
 if (sun_cloud_dome_pos.z<0) sun_cloud_dome_pos.z = sun_cloud_dome_pos.z * -1;
 val cloud_dome_pos = Float3(perlin_uv, 0.3);
 val cloud_sun_dir = normalize(sun_cloud_dome_pos - cloud_dome_pos);
 val emboss = lerp(dot(cloud_n, cloud_sun_dir), 1, 0.5);
-frag.color.rgb = emboss * global.skyCloudColour * cloud_atten * cloud;
-frag.color.a = cloud_atten * cloud;
+frag.colour.rgb = emboss * global.skyCloudColour * cloud_atten * cloud;
+frag.colour.a = cloud_atten * cloud;
