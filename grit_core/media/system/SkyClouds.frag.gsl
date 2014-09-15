@@ -1,5 +1,5 @@
 // need to do these in fragment shader, to stop the sun vanishing at the corners of the screen
-val pos_ss_ = frag.position.xy/global.viewportSize.xy*2-1;
+val pos_ss_ = frag.screen.xy/global.viewportSize.xy*2-1;
 
 // TODO: figure out this d3d9 business
 //pos_ss_.y *= -d3d9();

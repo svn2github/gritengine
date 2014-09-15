@@ -1,4 +1,4 @@
-frag.position.z = mul(global.worldViewProj, Float4(vert.position.xyz, 1));
+frag.position = mul(global.worldViewProj, Float4(vert.position.xyz, 1));
 // hack our way to maximum depth
 // for both d3d9 and gl, 1 is the clipspace depth of the backplane
 frag.position.z = frag.position.w * (1-1.0/65536); // avoid 'black lightning' artifacts
