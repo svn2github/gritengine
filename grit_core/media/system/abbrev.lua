@@ -161,7 +161,7 @@ local function sky_material2(tab)
                     tab2[k] = v
                 end
         end
-        register_sky_material(name,tab2)
+        gfx_register_sky_material(name,tab2)
 end
 function sky_material(name)
         curried_name = r(name, 2)
@@ -171,7 +171,7 @@ end
 local function sky_shader2(tab)
         local name = curried_name
         tab = tab or {}
-        register_sky_shader(name, tab)
+        gfx_register_sky_shader(name, tab)
 end
 function sky_shader(name)
         curried_name = r(name, 2)

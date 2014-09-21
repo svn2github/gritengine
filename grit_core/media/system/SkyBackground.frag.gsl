@@ -55,20 +55,25 @@ frag.colour.rgb = mat.starfieldMask * gamma_decode(sample2D(mat.starfieldMap, uv
 var sky = Float3(0, 0, 0);
 var ssky = Float3(0, 0, 0);
 if (el < global.skyDivider1) {
-    sky  = lerp(global.skyColour0,  global.skyColour1,  (el-0)/(global.skyDivider1-0));
-    ssky = lerp(global.skySunColour0, global.skySunColour1, (el-0)/(global.skyDivider1-0));
+    val alpha = (el-0) / (global.skyDivider1-0);
+    sky  = lerp(global.skyColour0,  global.skyColour1, alpha);
+    ssky = lerp(global.skySunColour0, global.skySunColour1, alpha);
 } else if (el < global.skyDivider2) {
-    sky  = lerp(global.skyColour1,  global.skyColour2, (el-global.skyDivider1)/(global.skyDivider2-global.skyDivider1));
-    ssky = lerp(global.skySunColour1, global.skySunColour2, (el-global.skyDivider1)/(global.skyDivider2-global.skyDivider1));
+    val alpha = (el-global.skyDivider1) / (global.skyDivider2-global.skyDivider1);
+    sky  = lerp(global.skyColour1,  global.skyColour2, alpha);
+    ssky = lerp(global.skySunColour1, global.skySunColour2, alpha);
 } else if (el < global.skyDivider3) {
-    sky  = lerp(global.skyColour2,  global.skyColour3, (el-global.skyDivider2)/(global.skyDivider3-global.skyDivider2));
-    ssky = lerp(global.skySunColour2, global.skySunColour3, (el-global.skyDivider2)/(global.skyDivider3-global.skyDivider2));
+    val alpha = (el-global.skyDivider2)/(global.skyDivider3-global.skyDivider2);
+    sky  = lerp(global.skyColour2,  global.skyColour3, alpha);
+    ssky = lerp(global.skySunColour2, global.skySunColour3, alpha);
 } else if (el < global.skyDivider4) {
-    sky  = lerp(global.skyColour3,  global.skyColour4, (el-global.skyDivider3)/(global.skyDivider4-global.skyDivider3));
-    ssky = lerp(global.skySunColour3, global.skySunColour4, (el-global.skyDivider3)/(global.skyDivider4-global.skyDivider3));
+    val alpha = (el-global.skyDivider3)/(global.skyDivider4-global.skyDivider3);
+    sky  = lerp(global.skyColour3,  global.skyColour4, alpha);
+    ssky = lerp(global.skySunColour3, global.skySunColour4, alpha);
 } else if (el <= 90) {
-    sky  = lerp(global.skyColour4,  global.skyColour5,  (el-global.skyDivider4)/(90-global.skyDivider4));
-    ssky  = lerp(global.skySunColour4, global.skyColour5, (el-global.skyDivider4)/(90-global.skyDivider4));
+    val alpha = (el-global.skyDivider4)/(90-global.skyDivider4);
+    sky  = lerp(global.skyColour4,  global.skyColour5,  alpha);
+    ssky  = lerp(global.skySunColour4, global.skyColour5, alpha);
 } else {
     sky = Float3(1,1,1);
     ssky = Float3(1,1,1);
@@ -90,7 +95,9 @@ if (sunlight_dir_ss.z < 1) {
     var dist_to_sun = dot(sun_uv,sun_uv);
     if (dist_to_sun>=1) {
         dist_to_sun = dist_to_sun / global.sunFalloffDistance;
-        dist_to_sun = dist_to_sun + 0.8; // magic number, allows big sun + small fade to look different to small sun + big fade
+        // magic number:
+        // allows big sun + small fade to look different to small sun + big fade
+        dist_to_sun = dist_to_sun + 0.8; 
         sun_qty = clamp(1/dist_to_sun/dist_to_sun, 0.0, 1.0);
     }
     frag.colour.rgb = lerp(frag.colour.rgb, global.sunColour, global.sunAlpha * sun_qty);
