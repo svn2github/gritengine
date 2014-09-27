@@ -37,7 +37,7 @@ GRIT_EXEC_SUFFIX       ?= linux.$(shell uname -p)
 GRIT_C_CONFORMANCE ?= -std=c99 -Wall -Wextra -Wno-deprecated
 GRIT_CXX_CONFORMANCE ?= -std=c++0x -Wall -Wextra -Wno-deprecated
 GRIT_CXX_CODEGEN ?= -g -ffast-math $(GRIT_ARCH) $(GRIT_OPTIMISE) 
-GRIT_BASE_CXXFLAGS ?= $(GRIT_CXX_CONFORMANCE) $(GRIT_CXX_CODEGEN) -I $(ROOT)/grit_core/src -I $(ROOT)/dependencies/util
+GRIT_BASE_CXXFLAGS ?= $(GRIT_CXX_CONFORMANCE) $(GRIT_CXX_CODEGEN) -I $(ROOT)/dependencies/util
 GRIT_BASE_LDFLAGS  ?=
 GRIT_BASE_LDLIBS   ?= -lrt
 
