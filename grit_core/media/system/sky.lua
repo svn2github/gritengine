@@ -226,7 +226,7 @@ sky_shader `SkyBackground` { -- {{{
         val sunlight_dir_ss = sunlight_dir_ss_.xyz/sunlight_dir_ss_.w;
         val fov = Float2(fov_x, global.fovY);
         val sun_pos_ss_polar = Float2(
-            mod(atan2(-global.sunDirection.x, -global.sunDirection.y)/PI/2 + 1, 1) * 360,
+            mod(atan2(-global.sunDirection.x, -global.sunDirection.y)/PI/2 + 1, 1.0) * 360,
             tan(-global.sunDirection.z / length(global.sunDirection.xy)) / PI * 180
         );
     ]];
@@ -271,16 +271,16 @@ sky_shader `SkyBackground` { -- {{{
         var sunnyness = 0.0;
         {
             // needs max to avoid a big reflection on far side of the skysphere
-            val qty = max(0, - (rel_polar.x-90)/90 * (rel_polar.x+90)/90
-                             - el / global.skyGlareHorizonElevation);
-            sunnyness = min(qty*qty, 1);
+            val qty = max(0.0, - (rel_polar.x-90)/90 * (rel_polar.x+90)/90
+                               - el / global.skyGlareHorizonElevation);
+            sunnyness = min(qty*qty, 1.0);
         }
 
         {
             val tmp = rel_polar/global.skyGlareSunDistance;
             var r = pow(dot(tmp, tmp), 0.1);
-            r = min(r,2);
-            sunnyness = clamp(sunnyness + (cos(r*PI/2)+1)/2, 0, 1);
+            r = min(r, 2.0);
+            sunnyness = clamp(sunnyness + (cos(r*PI/2)+1)/2, 0.0, 1.0);
         }
 
         // STARFIELD
@@ -476,7 +476,7 @@ sky_shader `SkyClouds` { -- {{{
         val sunlight_dir_ss = sunlight_dir_ss_.xyz/sunlight_dir_ss_.w;
         val fov = Float2(fov_x, global.fovY);
         val sun_pos_ss_polar_x = mod(atan2(-global.sunDirection.x, -global.sunDirection.y)/PI/2 + 1,
-                                     1) * 360;
+                                     1.0) * 360;
         val sun_pos_ss_polar_y = atan(-global.sunDirection.z / length(global.sunDirection.xy))
                                  / PI * 180;
     ]];
@@ -499,15 +499,15 @@ sky_shader `SkyClouds` { -- {{{
         val clouduv2 = (global.time * cloud_anim.zw + perlin_uv.yx)/5;
         val clouduv3 = (global.time * cloud_anim.xy + perlin_uv.xy)*5;
 
-        val cloud_atten = clamp(1-cloud_dist*cloud_dist, 0, 1);
+        val cloud_atten = clamp(1-cloud_dist*cloud_dist, 0.0, 1.0);
         val cloud_tex1 = sample2D(mat.perlin, clouduv1).r;
         val cloud_tex2 = sample2D(mat.perlin, clouduv2).r;
         val cloud_tex3 = sample2D(mat.perlin, clouduv3).r;
 
         val cloud_blend = 0.48*cloud_tex1 + 0.48*cloud_tex2 + 0.04*cloud_tex3;
         val cloud = clamp((cloud_blend - (1-global.skyCloudCoverage)) / global.skyCloudCoverage,
-                          0, 1);
-        val murkyness = clamp(cloud*2.0 - 0.2, 0, 1) * 0.6;
+                          0.0, 1.0);
+        val murkyness = clamp(cloud*2.0 - 0.2, 0.0, 1.0) * 0.6;
 
         val cloud_ntex1 = sample2D(mat.perlinN, clouduv1).rgb*2 - 1;
         val cloud_ntex2 = sample2D(mat.perlinN, clouduv2).grb*2 - 1;
@@ -523,7 +523,7 @@ sky_shader `SkyClouds` { -- {{{
         if (sun_cloud_dome_pos.z<0) sun_cloud_dome_pos.z = sun_cloud_dome_pos.z * -1;
         val cloud_dome_pos = Float3(perlin_uv, 0.3);
         val cloud_sun_dir = normalize(sun_cloud_dome_pos - cloud_dome_pos);
-        val emboss = lerp(dot(cloud_n, cloud_sun_dir), 1, 0.5);
+        val emboss = lerp(dot(cloud_n, cloud_sun_dir), 1.0, 0.5);
         frag.colour.rgb = emboss * global.skyCloudColour * cloud_atten * cloud;
         frag.colour.a = cloud_atten * cloud;
 ]];
