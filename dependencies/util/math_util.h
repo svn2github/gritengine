@@ -598,4 +598,104 @@ struct Vector2 {
 // }}}
 
 
+// {{{ Vector4
+
+struct Vector4 {
+    float x, y, z, w;
+
+    Vector4 (void) { }
+    Vector4 (float x, float y, float z, float w) : x(x), y(y), z(z), w(w) { }
+
+    Vector4 &operator = (const Vector4 &o)
+    {
+        x = o.x; y = o.y; z = o.z; w = o.w;
+        return *this;
+    }
+
+    friend bool operator == (const Vector4 &a, const Vector4& b)
+    { return a.x==b.x && a.y==b.y && a.z==b.z && a.w==b.w; }
+    friend bool operator != (const Vector4 &a, const Vector4& b)
+    { return ! (a==b); }
+    friend bool operator < (const Vector4 &a, const Vector4& b)
+    { return a.x<b.x && a.y<b.y && a.z<b.z && a.w<b.w; }
+    friend bool operator > (const Vector4 &a, const Vector4& b)
+    { return a.x>b.x && a.y>b.y && a.z>b.z && a.w>b.w; }
+    friend bool operator <= (const Vector4 &a, const Vector4& b)
+    { return a.x<=b.x && a.y<=b.y && a.z<=b.z && a.w<=b.w; }
+    friend bool operator >= (const Vector4 &a, const Vector4& b)
+    { return a.x>=b.x && a.y>=b.y && a.z>=b.z && a.w>=b.w; }
+
+    friend Vector4 operator + (const Vector4 &a, const Vector4& b)
+    { return Vector4(a.x+b.x, a.y+b.y, a.z+b.z, a.w+b.w); }
+    friend Vector4 operator - (const Vector4 &a, const Vector4& b)
+    { return Vector4(a.x-b.x, a.y-b.y, a.z-b.z, a.w-b.w); }
+    friend Vector4 operator * (const Vector4 &a, const Vector4& b)
+    { return Vector4(a.x*b.x, a.y*b.y, a.z*b.z, a.w*b.w); }
+    friend Vector4 operator / (const Vector4 &a, const Vector4& b)
+    { return Vector4(a.x/b.x, a.y/b.y, a.z/b.z, a.w/b.w); }
+
+    friend Vector4 operator * (const float a, const Vector4& b)
+    { return Vector4(a*b.x, a*b.y, a*b.z, a*b.w); }
+    friend Vector4 operator * (const Vector4 &b, const float a)
+    { return Vector4(a*b.x, a*b.y, a*b.z, a*b.w); }
+
+    friend Vector4 operator / (const float a, const Vector4& b)
+    { return Vector4(a/b.x, a/b.y, a/b.z, a/b.w); }
+    friend Vector4 operator / (const Vector4 &a, const float b)
+    { return a * (1/b); }
+
+    friend const Vector4 &operator + (const Vector4& a)
+    { return a; }
+    friend Vector4 operator - (const Vector4& a)
+    { return Vector4(-a.x, -a.y, -a.z, -a.w); }
+
+    friend Vector4 &operator += (Vector4 &a, const Vector4& b)
+    { a.x+=b.x, a.y+=b.y; a.z+=b.z; a.w+=b.w; return a; }
+    friend Vector4 &operator += (Vector4 &a, const float b)
+    { a.x+=b, a.y+=b; a.z+=b; a.w+=b; return a; }
+    friend Vector4 &operator -= (Vector4 &a, const Vector4& b)
+    { a.x-=b.x, a.y-=b.y; a.z-=b.z; a.w-=b.w; return a; }
+    friend Vector4 &operator -= (Vector4 &a, const float b)
+    { a.x-=b, a.y-=b; a.z-=b; a.w-=b; return a; }
+    friend Vector4 &operator *= (Vector4 &a, const Vector4& b)
+    { a.x*=b.x, a.y*=b.y; a.z*=b.z; a.w*=b.w; return a; }
+    friend Vector4 &operator *= (Vector4 &a, const float b)
+    { a.x*=b, a.y*=b; a.z*=b; a.w*=b; return a; }
+    friend Vector4 &operator /= (Vector4 &a, const Vector4& b)
+    { a.x/=b.x, a.y/=b.y; a.z/=b.z; a.w/=b.w; return a; }
+    friend Vector4 &operator /= (Vector4 &a, const float b)
+    { a.x/=b, a.y/=b; a.z/=b; a.w/=b;return a; }
+
+    float length2 (void) const { return this->dot(*this); }
+    float length (void) const { return ::sqrtf(length2()); }
+
+    float distance (const Vector4& o) const
+    { return (*this - o).length(); }
+    float distance2 (const Vector4& o) const
+    { return (*this - o).length2(); }
+
+    float dot (const Vector4& o) const { return x*o.x + y*o.y + z*o.z + w*o.w; }
+
+    float normalise (void) { float l=length(); *this /= l; return l; }
+
+    Vector4 midPoint (const Vector4& o) const
+    { return (*this+o)/2; }
+
+    Vector4 normalisedCopy (void) const
+    { return *this / this->length(); }
+
+    /// Check whether this vector contains valid values
+    bool isNaN (void) const
+    { return my_isnan(x) || my_isnan(y) || my_isnan(z) || my_isnan(w); }
+
+    friend std::ostream& operator<< (std::ostream& o, const Vector4& v)
+    {
+        o << "Vector4(" << v.x << ", " << v.y << ", " << v.z << ", " << v.w << ")";
+        return o;
+    }
+};
+
+// }}}
+
+
 #endif
