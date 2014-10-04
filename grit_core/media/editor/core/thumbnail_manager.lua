@@ -1,0 +1,1 @@
+-- Contains all functions relative to the content browser thumbnails generation
