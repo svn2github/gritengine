@@ -14,9 +14,9 @@ if (el <= 0.0) {
 
 // need to do these in fragment shader, to stop the sun vanishing at the corners of the
 // screen
-val pos_ss_ = frag.screen.xy/global.viewportSize.xy*2-1;
+var pos_ss_ = frag.screen.xy/global.viewportSize.xy*2-1;
 // TODO: figure out this d3d9 business
-//pos_ss_.y *= -d3d9();
+pos_ss_.y = -pos_ss_.y;
 
 // SUN GLARE
 var rel_polar = sun_pos_ss_polar.xy - polar_.xy;
