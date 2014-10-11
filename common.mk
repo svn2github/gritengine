@@ -30,7 +30,7 @@ GRIT_GOOGLE_PERF_TOOLS ?= false
 #override to build for a different architecture
 GRIT_ARCH              ?= -march=native -mtune=native
 #override to distinguish executables
-GRIT_EXEC_SUFFIX       ?= linux.$(shell uname -p)
+GRIT_EXEC_SUFFIX       ?= linux.$(shell uname -m)
 
 
 #override for fine-grained control of the top-level (i.e. non-dependency related) compiler args
