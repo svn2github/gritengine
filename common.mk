@@ -150,13 +150,13 @@ SQUISH_LDLIBS     ?= $(SQUISH_ARCHIVES)
 # ICU
 ################################################################################
 
-ICU_ARCHIVES ?= $(ROOT)/dependencies/icu/source/lib/libsicuuc.a \
-                $(ROOT)/dependencies/icu/source/lib/libsicudata.a \
-                $(ROOT)/dependencies/icu/source/lib/libsicui18n.a \
+ICU_ARCHIVES ?= /usr/lib/x86_64-linux-gnu/libicui18n.a \
+		/usr/lib/x86_64-linux-gnu/libicuuc.a \
+		/usr/lib/x86_64-linux-gnu/libicudata.a \
 
-ICU_CXXFLAGS ?= -isystem $(ROOT)/dependencies/icu/source/common -isystem $(ROOT)/dependencies/icu/source/i18n
+ICU_CXXFLAGS ?=
 
-ICU_LDFLAGS  ?=
+ICU_LDFLAGS  ?= -ldl
 
 ICU_LDLIBS   ?= $(ICU_ARCHIVES)
 
