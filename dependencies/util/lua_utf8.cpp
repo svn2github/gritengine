@@ -405,14 +405,23 @@ static int lua_utf8_match (lua_State *L)
 
 #define REGEX_MATCHER_TAG "Grit/RegexMatcher"
 
-TOSTRING_ADDR_MACRO(regex_matcher,RegexMatcher,REGEX_MATCHER_TAG)
+struct RegexWrapper {
+        UErrorCode status;
+        RegexMatcher matcher;
+        UnicodeString text;
+        RegexWrapper (const UnicodeString &regex, const UnicodeString &text)
+              : status(U_ZERO_ERROR), matcher(regex, 0, status), text(text)
+        { }
+};
+
+TOSTRING_ADDR_MACRO(regex_matcher,RegexWrapper,REGEX_MATCHER_TAG)
 
 static int regex_matcher_gc (lua_State *L)
 {
         check_args(L,1);
-        GET_UD_MACRO_OFFSET(RegexMatcher,self,1,REGEX_MATCHER_TAG,0);
+        GET_UD_MACRO_OFFSET(RegexWrapper,self,1,REGEX_MATCHER_TAG,0);
         if (self==NULL) return 0;
-        delete &self->input();
+        
         delete self;
         return 0;
 }
@@ -421,19 +430,19 @@ static int regex_matcher_gc (lua_State *L)
 static int regex_matcher_index(lua_State *L)
 {
         check_args(L,2);
-        GET_UD_MACRO(RegexMatcher,self,1,REGEX_MATCHER_TAG);
+        GET_UD_MACRO(RegexWrapper,self,1,REGEX_MATCHER_TAG);
         std::string key  = check_string(L,2);
         if (key=="input") {
-                pushustring(L,self.input());
+                pushustring(L,self.matcher.input());
         } else if (key=="pattern") {
-                pushustring(L,self.pattern().pattern());
+                pushustring(L,self.matcher.pattern().pattern());
         } else {
                 my_lua_error(L, "Not a readable RegexMatcher member: "+key);
         }
         return 1;
 }
 
-EQ_PTR_MACRO(RegexMatcher,regex_matcher,REGEX_MATCHER_TAG)
+EQ_PTR_MACRO(RegexWrapper,regex_matcher,REGEX_MATCHER_TAG)
 
 MT_MACRO(regex_matcher);
 
@@ -441,8 +450,8 @@ MT_MACRO(regex_matcher);
 static int lua_utf8_gmatch_iter (lua_State *L)
 {
         // ignore all args as they are just the previous matches
-        GET_UD_MACRO(RegexMatcher,self,lua_upvalueindex(1),REGEX_MATCHER_TAG);
-        return aux_match(L, self);
+        GET_UD_MACRO(RegexWrapper,self,lua_upvalueindex(1),REGEX_MATCHER_TAG);
+        return aux_match(L, self.matcher);
 }
         
 /*     string.gmatch (s, pattern)
@@ -471,22 +480,21 @@ static int lua_utf8_gmatch_iter (lua_State *L)
  */
 static int lua_utf8_gmatch (lua_State *L)
 {
-        check_args(L,2);
-        UnicodeString haystack = checkustring(L,1);
-        UnicodeString needle = checkustring(L,2);
+        check_args(L, 2);
+        UnicodeString haystack = checkustring(L, 1);
+        UnicodeString needle = checkustring(L, 2);
 
-        UErrorCode status = U_ZERO_ERROR;
-
-        RegexMatcher *matcher = new RegexMatcher(needle, 0, status);
+        RegexWrapper *matcher = new RegexWrapper(needle, haystack);
+        UErrorCode status = matcher->status;
         if (U_FAILURE(status)) {
                 delete matcher;
                 my_lua_error(L, "Syntax error in regex: \""+needle+"\": "+u_errorName(status));
                 return 0; //silence compiler
         }
 
-        matcher->reset(*new UnicodeString(haystack));
+        matcher->matcher.reset(matcher->text);
 
-        push(L,matcher,REGEX_MATCHER_TAG);
+        push(L, matcher, REGEX_MATCHER_TAG);
         lua_pushcclosure(L, lua_utf8_gmatch_iter, 1);
         return 1;
 }
