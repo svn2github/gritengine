@@ -7,9 +7,7 @@
 -- track: 1.67
 -- weight distribution is allegedly 55:45 or there about...
 
-local mu_front = 1.6
-local mu_rear_side = 1.4
-local mu_rear_drive = 1.6
+local mu = 1.2
 
 -- Wheel, Suspension
 local len = 0.14 --amount wheel can go up an down
@@ -25,29 +23,52 @@ class `.` (Vehicle) {
         gfxMesh = `Body.mesh`,
         colMesh = `Body.gcol`,
         placementZOffset=1.4,
-        powerPlots = {
-                [-1] = { [0] = -6000; [10] = -6000; [25] = -4000; [40] = 0; },
-                [0] = {}, --neutral
-                [1] = { [0] = 8000; [10] = 8000; [20] = 7000; [100] = 7000; },
+        engineInfo = {
+            sound={
+                [1] = `engine1.wav`,
+                [2] = `engine2.wav`,
+                [3] = `engine3.wav`
+            },
+            wheelRadius=rad,
+            transEff=0.8,
+            torqueCurve = {
+                [1000] = 250,
+                [2000] = 300,
+                [3000] = 350,
+                [4000] = 380,
+                [5000] = 350,
+                [6000] = 200,
+            },
+            gearRatios = {
+                [-1] = -2.32, -- reverse
+                [0] = 0, -- neutral
+                [1] = 2.84,
+                [2] = 1.55,
+                [3] = 1,
+                [4] = 0.7,
+            },
+            finalDrive=2.73,
+            shiftDownRPM=2800,
+            shiftUpRPM=5400,
         },
         meshWheelInfo = {
                 front_left = {
-                  steer=1; castRadius=0.05; rad=rad; mu=mu_front; sport=1.1; massShare = 1.1;
+                  steer=1; castRadius=0.05; rad=rad; mu=mu; massShare = 1.1;
                   left=true; attachPos=vec(-wheelX,wheelY,wheelZ); len=len; mesh=`Wheel.mesh`;
                 },
 
                 front_right = {
-                  steer=1; castRadius=0.05; rad=rad; mu=mu_front; sport=1.1; massShare = 1.1;
+                  steer=1; castRadius=0.05; rad=rad; mu=mu; massShare = 1.1;
                   left=false; attachPos=vec(wheelX,wheelY,wheelZ); len=len; mesh=`Wheel.mesh`;
                 },
 
                 rear_left = {
-                  rad=rad; drive=1; castRadius=0.05; handbrake=true; driveMu = mu_rear_drive; sideMu = mu_rear_side; sport = 1.1; massShare = 0.9;
+                  rad=rad; drive=1; castRadius=0.05; handbrake=true; mu=mu; massShare = 0.9;
                   left=true; attachPos=vec(-wheelX,wheelY2,wheelZ); len=len; mesh=`Wheel.mesh`;
                 },
 
                 rear_right = {
-                  rad=rad; drive=1; castRadius=0.05; handbrake=true; driveMu = mu_rear_drive; sideMu = mu_rear_side; sport = 1.1; massShare = 0.9;
+                  rad=rad; drive=1; castRadius=0.05; handbrake=true; mu=mu; massShare = 0.9;
                   left=false; attachPos=vec(wheelX,wheelY2,wheelZ); len=len; mesh=`Wheel.mesh`;
                 },
         },

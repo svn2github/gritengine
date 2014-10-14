@@ -9,10 +9,38 @@ class `.` (Vehicle) {
         gfxMesh = `Body.mesh`,
         colMesh = `Body.gcol`,
         placementZOffset=0.4,
-        powerPlots = {
-                [-1] = { [0] = -6000; [10] = -6000; [25] = -4000; [40] = 0; },
-                [0] = {}, --neutral
-                [1] = { [0] = 8000; [10] = 8000; [20] = 7000; [100] = 7000; },
+        engineInfo = {
+            sound= {
+                [1] = `engine1.wav`,
+                [2] = `engine2.wav`,
+                [3] = `engine3.wav`
+            },
+            wheelRadius=rad,
+            transEff=0.8,
+            torqueCurve = {
+                [1000] = 200,
+                [2000] = 300,
+                [4000] = 400,
+                [5000] = 500,
+                [6500] = 540,
+                [8500] = 300,
+            },
+            gearRatios = {
+                [-1] = -2.32, -- reverse
+                [0] = 0, -- neutral
+                [1] = 3.31,
+                [2] = 2.05,
+                [3] = 1.46,
+                [4] = 1.14,
+                [5] = 0.94,
+                [6] = 0.78,
+            },
+            finalDrive=2.73,
+            idle=2000,
+            shiftDownRpm=4000,
+            shiftUpRpm=7000,
+            maxRpm=8500,
+
         },
         meshWheelInfo = {
                 front_left = {

@@ -1,4 +1,5 @@
 -- (c) David Cunningham 2013, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
+dbg_val = nil
 
 hud_class `Speedo` {
     --metricUnits = false; --uses user_cfg value for convinience
@@ -12,6 +13,9 @@ hud_class `Speedo` {
             padding = -1,
             gfx_hud_object_add(`Label`, {font = `/common/fonts/TinyFont`, size=vec(width, 10), colour=vec(0,0,0) }),
             gfx_hud_object_add(`Label`, {font = `/common/fonts/misc.fixed`, size=vec(width, 15), colour=vec(0,0,0) }),
+			gfx_hud_object_add(`Label`, {font = `/common/fonts/misc.fixed`, size=vec(width, 15), colour=vec(0,0,0) }),
+			gfx_hud_object_add(`Label`, {font = `/common/fonts/misc.fixed`, size=vec(width, 15), colour=vec(0,0,0) }),
+			gfx_hud_object_add(`Label`, {font = `/common/fonts/misc.fixed`, size=vec(width, 15), colour=vec(0,0,0), text="" }),
         })
         self.size = self.labels.size
     end;
@@ -38,6 +42,25 @@ hud_class `Speedo` {
             end       
             self.labels.contents[2].text.text = string.format("%d %s", speed_amount, speed_units)
         end
+		
+		if player_ctrl and player_ctrl.controlObj and player_ctrl.controlObj.instance.engine then
+			local rpm =	player_ctrl.controlObj.instance.engine:getRpm()
+			local gear = player_ctrl.controlObj.instance.engine:getGear()
+			self.labels.contents[3].enabled = true
+			self.labels.contents[4].enabled = true
+			self.labels.contents[3].text.text = string.format("%d RPM", rpm or 0)
+			self.labels.contents[4].text.text = string.format("%d Gear", gear)
+		else
+			self.labels.contents[3].enabled = false
+			self.labels.contents[4].enabled = false
+		end
+        if dbg_val ~= nil then
+            self.labels.contents[5].enabled = true
+            self.labels.contents[5].text.text = tostring(dbg_val)
+        else
+            self.labels.contents[5].enabled = false
+        end
+		
     end;
 
     mouseMoveCallback = function (self, local_pos, screen_pos, inside)

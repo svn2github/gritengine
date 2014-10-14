@@ -1,7 +1,7 @@
 TCOL1.0
 
 attributes {
-    mass 2500.0;
+    mass 1337.0;
     linear_damping 0.1899999976158142;
     angular_damping 0.20000000298023224;
     linear_sleep_threshold 0.0;

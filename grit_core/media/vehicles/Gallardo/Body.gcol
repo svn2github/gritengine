@@ -1,7 +1,7 @@
 TCOL1.0
 
 attributes {
-    mass 1300.0;
+    mass 1430.0;
     linear_damping 0.2;
 }
 

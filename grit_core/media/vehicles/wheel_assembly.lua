@@ -16,6 +16,7 @@ function WheelAssembly:constructorUtil (name, obj, load, info)
         self.travel = 0 -- gets converted to rotation
         self.steer = 0
         self.wheelAngularVelocity = 0
+        self.wheelAngularVelocityIgnoringSkid = 0
         self.torque = 0
         self.tractionControl = info.tractionControl or 0
         self.temperature = 0
@@ -211,24 +212,8 @@ function WheelAssembly:setSteer(amount)
 
 end
 
-function WheelAssembly:applyTorque(torque, interval)
+function WheelAssembly:setTorque(torque)
         self.torque = torque
-        local inertia = self.wheelRadius * self.wheelRadius * self.wheelMass / 2
-        if torque == 0 then
-                self.wheelAngularVelocity = self.wheelAngularVelocity * math.pow(0.5,interval)
-        else
-                self.wheelAngularVelocity = self.wheelAngularVelocity + (torque * interval / inertia )
-        end
-        self.wheelAngularVelocity = clamp(self.wheelAngularVelocity, -1000, 1000) -- about 10k rpm
-        if sign(torque) < 0 and sign(self.wheelAngularVelocity) > 0 then
-                self.wheelAngularVelocity = 0
-        end
-        if sign(torque) > 0 and sign(self.wheelAngularVelocity) < 0 then
-                self.wheelAngularVelocity = 0
-        end
-        if self.locked then
-                self.wheelAngularVelocity = 0
-        end
 end
 
 -- called from update callback, NOT step callback
@@ -272,10 +257,30 @@ function WheelAssembly:process (interval)
 
         local vehicle = self.obj
         local body = vehicle.instance.body
+        local torque = self.torque
+
+        -- set angular velocity, will overwrite if we are in contact with the ground
+        local inertia = self.wheelRadius * self.wheelRadius * self.wheelMass / 2
+        if torque == 0 then
+                self.wheelAngularVelocity = self.wheelAngularVelocity * math.pow(0.5,interval)
+        else
+                self.wheelAngularVelocity = self.wheelAngularVelocity + (torque * interval / inertia )
+        end
+        self.wheelAngularVelocity = clamp(self.wheelAngularVelocity, -1000, 1000) -- about 10k rpm
+        if sign(torque) < 0 and sign(self.wheelAngularVelocity) > 0 then
+                self.wheelAngularVelocity = 0
+        end
+        if sign(torque) > 0 and sign(self.wheelAngularVelocity) < 0 then
+                self.wheelAngularVelocity = 0
+        end
+        if self.locked then
+                self.wheelAngularVelocity = 0
+        end
+        self.wheelAngularVelocityIgnoringSkid = self.wheelAngularVelocity
+
 
         -- _ws means world space
 
-        -- ALLOCATION ALLOCATION
         local ray_start = body:localToWorld(self.rayPosOS)
         local ray_length = self.suspensionLength + self.wheelRadius + self.slack - self.castRadius
         local ray_dir = body.worldOrientation * self.rayDirOS
@@ -285,7 +290,6 @@ function WheelAssembly:process (interval)
                 self.onGround = false
                 ray_reach = 1
                 ray_reach = self.suspensionLength + self.wheelRadius + self.slack
-
         else
                 self.onGround = true
                 ray_reach = ray_reach * ray_length + self.castRadius
@@ -371,27 +375,29 @@ function WheelAssembly:process (interval)
                 longitudinal_force = -forward_speed * load / interval  / 2-- speed/interval*load is the momentum
 
                 -- use a circle
-                local max_force = 0.5*(self.driveMu + self.sideMu)*surface_friction_factor*surface_force_mag;
+                local max_force = 0.5 * (self.driveMu + self.sideMu) * surface_friction_factor * surface_force_mag
 
         else
+                self.wheelAngularVelocityIgnoringSkid = forward_speed / self.wheelRadius
 
                 lateral_force  = friction_model_lateral(self.sideP, self.sideA, self.sideB*surface_friction_factor,
                                                         forward_speed, right_speed, surface_force_mag)
-                longitudinal_force = self.torque / self.wheelRadius
+                longitudinal_force = torque / self.wheelRadius
 
-                local spilt_force = math.abs(longitudinal_force)-max_longitudinal_force
+                local spilt_force = math.abs(longitudinal_force) - max_longitudinal_force
                 if spilt_force > self.tractionControl then
                         longitudinal_force = sign(longitudinal_force) * (max_longitudinal_force + spilt_force - self.tractionControl)
                 elseif spilt_force > 0 then
                         longitudinal_force = sign(longitudinal_force) * max_longitudinal_force
-                        self.wheelAngularVelocity = forward_speed / self.wheelRadius
+                        self.wheelAngularVelocity = self.wheelAngularVelocityIgnoringSkid
                 else
-                        self.wheelAngularVelocity = forward_speed / self.wheelRadius
+                        self.wheelAngularVelocity = self.wheelAngularVelocityIgnoringSkid
                 end
 
                 --print(string.format("%10s % 5.0f % 5.0f % 5.0f % 5.0f", self.name, math.max(0,spilt_force), attempted_longitudinal_force, longitudinal_force, surface_force_mag))
 
-        end     
+        end
+
 
         local stuck = false
         -- old contact point

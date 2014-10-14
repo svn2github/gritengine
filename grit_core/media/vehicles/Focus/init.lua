@@ -6,11 +6,32 @@ class `.` (Vehicle) {
         gfxMesh=`Body.mesh`,
         colMesh=`Body.gcol`,
         placementZOffset=0.4,
-        powerPlots = {
-                [-1] = { [0] = -7000; [15] = -7000; [30] = -5000; [40] = 0; },
-                [0] = {}, --neutral
-                [1] = { [0] = 8000; [10] = 8000; [20] = 8000; [70] = 8000; },
-        },       
+        engineInfo = {
+            sound={`engine1.wav`, `engine2.wav`, `engine3.wav`}, 
+            --sound=`EngineLoop1.wav`,
+            wheelRadius=rad,
+            transEff=0.7,
+            torqueCurve = { 
+                [1000] = 225,
+                [2250] = 437,
+                [4500] = 437,
+                [6000] = 350,
+                [7000] = 275,
+            },
+            gearRatios = {
+                [-1] = -4.84, -- reverse
+                [0] = 0, -- neutral
+                [1] = 3.46,
+                [2] = 2.08,
+                [3] = 1.40,
+                [4] = 1.05,
+                [5] = 0.605,
+            },
+            finalDrive=5,
+            shiftDownRpm=2000,
+            shiftUpRpm=5000,
+        },
+        drag = 0.31 * vec(6,2,8);
         bonedWheelInfo = {
                 { steer=1; drive=1; rad=rad; castRadius=0.1; mu = mu_front;
                   steerBone="steer_f_l", axleBone="axle_f_l", wheelBone="wheel_f_l",

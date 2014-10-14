@@ -44,13 +44,11 @@ local tab = {
     ["y"] = `props/race_track/Tyre`;
     ["u"] = `props/junk/PizzaBox`;
     ["i"] = `props/furniture/WorkBench`;
-    ["o"] = `/vehicles/Evo`;
+    ["o"] = `/vehicles/Taxi`;
     ["p"] = `/vehicles/Scarman`;
-    ["["] = `/vehicles/Focus`;
-    ["]"] = `/vehicles/Nova`;
-    ["\\"]= `/vehicles/Komar`;
+    ["["] = `/vehicles/Gallardo`;
+    ["]"] = `/vehicles/Focus`;
     ["m"] = `/vehicles/Bonanza`;
-    ["\'"] = `/vehicles/Gallardo`;
     ["g"] = `props/industry/OilBarrel`;
     ["b"] = `props/street/RoadBarrel`;
 }
