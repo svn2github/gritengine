@@ -7,7 +7,7 @@
 -- track: 1.67
 -- weight distribution is allegedly 55:45 or there about...
 
-local mu = 1.2
+local mu = 1.4
 
 -- Wheel, Suspension
 local len = 0.14 --amount wheel can go up an down
@@ -22,7 +22,7 @@ local rlightX, rlightY, rlightZ = 0.782, -2.70, 0.214 -- Reverse light
 class `.` (Vehicle) {
         gfxMesh = `Body.mesh`,
         colMesh = `Body.gcol`,
-        placementZOffset=1.4,
+        placementZOffset=0.59,
         engineInfo = {
             sound={
                 [1] = `engine1.wav`,

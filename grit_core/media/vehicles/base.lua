@@ -409,6 +409,12 @@ function Vehicle.stepCallback (persistent, elapsed)
         wheel.locked = instance.parked
     end
 
+    for _, wheel in ipairs(instance.handbrakeWheels) do
+        if instance.handbrake then
+            wheel.locked = true
+        end
+    end
+
     -- CAR ENGINE UPDATE
     if instance.engine then
         -- RPM of engine is average of all wheels on the ground
@@ -447,12 +453,6 @@ function Vehicle.stepCallback (persistent, elapsed)
         end
     end
 
-    for _, wheel in ipairs(instance.handbrakeWheels) do
-        if instance.handbrake then
-            wheel.locked = true
-        end
-    end
-    
     for k, wheel in pairs(instance.wheels) do
         if instance.brake then
             if instance.handbrake then

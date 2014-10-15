@@ -1,4 +1,3 @@
-local front_mu = 3.2
 local mu = 3.5
 local len = 0.096 --suspension
 local rad = 0.35 -- wheel radius
@@ -8,7 +7,7 @@ local slack = 0.263
 class `.` (Vehicle) {
         gfxMesh = `Body.mesh`,
         colMesh = `Body.gcol`,
-        placementZOffset=0.4,
+        placementZOffset=0.30,
         engineInfo = {
             sound= {
                 [1] = `engine1.wav`,
@@ -18,48 +17,50 @@ class `.` (Vehicle) {
             wheelRadius=rad,
             transEff=0.8,
             torqueCurve = {
-                [1000] = 200,
-                [2000] = 300,
-                [4000] = 400,
-                [5000] = 500,
-                [6500] = 540,
-                [8500] = 300,
+                [1000] = 205,
+                [2000] = 358,
+                [4000] = 409,
+                [5000] = 460,
+                [7000] = 358,
+                [8000] = 207,
             },
             gearRatios = {
-                [-1] = -2.32, -- reverse
+                [-1] = -4.84, -- reverse
                 [0] = 0, -- neutral
-                [1] = 3.31,
-                [2] = 2.05,
-                [3] = 1.46,
-                [4] = 1.14,
+                [1] = 2.56,
+                [2] = 1.85,
+                [3] = 1.42,
+                [4] = 1.114,
                 [5] = 0.94,
-                [6] = 0.78,
+                [6] = 0.81,
             },
-            finalDrive=2.73,
-            idle=2000,
-            shiftDownRpm=4000,
-            shiftUpRpm=7000,
+            finalDrive=3.42,
+            idleRpm=1000,
+            shiftDownRpm=4800,
+            shiftUpRpm=7100,
             maxRpm=8500,
-
+            drag=1e-06,
+            wheelDrag=2e-06,
         },
+        drag = 0.4 * vec(3, 1, 8),
         meshWheelInfo = {
                 front_left = {
-                  steer=1; castRadius=0.05; rad=rad; mu=front_mu; sport=1.1;
+                  steer=1; castRadius=0.05; rad=rad; mu=mu;
                   left=true; attachPos=vec(-wx,wf,wz); len=len; slack=slack; mesh=`Wheel.mesh`; brakeMesh=`BrakePad.mesh`
                 },
 
                 front_right = {
-                  steer=1; castRadius=0.05; rad=rad; mu=front_mu; sport=1.1;
+                  steer=1; castRadius=0.05; rad=rad; mu=mu;
                   left=false; attachPos=vec(wx,wf,wz); len=len; slack=slack; mesh=`Wheel.mesh`; brakeMesh=`BrakePad.mesh`
                 },
 
                 rear_left = {
-                  rad=rad; drive=1; castRadius=0.05; handbrake=true; mu=mu; sport = 1.3;
+                  rad=rad; drive=1; castRadius=0.05; handbrake=true; mu=mu;
                   left=true; attachPos=vec(-wx,wb,wz); len=len; slack=slack; mesh=`Wheel.mesh`; brakeMesh=`BrakePad.mesh`
                 },
 
                 rear_right = {
-                  rad=rad; drive=1; castRadius=0.05; handbrake=true; mu=mu; sport = 1.3;
+                  rad=rad; drive=1; castRadius=0.05; handbrake=true; mu=mu;
                   left=false; attachPos=vec(wx,wb,wz); len=len; slack=slack; mesh=`Wheel.mesh`; brakeMesh=`BrakePad.mesh`
                 },
         },

@@ -29,7 +29,7 @@ local slack = 0.0 -- dunno
 class `.` (Vehicle) {
         gfxMesh = `Body.mesh`,
         colMesh = `Body.gcol`,
-        placementZOffset=1.4,
+        placementZOffset=0.62,
         engineInfo = {
             sound={
                 [1] = `engine1.wav`,

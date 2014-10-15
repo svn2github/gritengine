@@ -15,11 +15,10 @@ function Engine.new(info)
     self.transEff = info.transEff or 0.7
     self.shiftDownRpm = info.shiftDownRpm or 2000
     self.shiftUpRpm = info.shiftUpRpm or 4500
-    self.clutchRpm = info.clutchRpm or 700
     self.idleRpm = info.idleRpm or 1000
     self.maxRpm = info.maxRpm or 7000
-    self.drag = info.drag or 0.000015
-    self.wheelDrag = info.wheelDrag or 0.0015
+    self.drag = info.drag or 3e-06
+    self.wheelDrag = info.wheelDrag or 5e-06
 
     -- State variables
     self.gear = 0
@@ -104,56 +103,57 @@ end
 
 function Engine:update(pos, push, forward_speed, wheel_rpm, elapsed)
     
-    local torque = 0
+    dbg_val = ("%d %d %d"):format(push, forward_speed, wheel_rpm or -1)
 
     if self.on then
+
+        local torque = 0
+
         local gear_ratio = self.gearRatios[self.gear] * self.finalDrive
 
         -- rpm calculation
-        local target_engine_rpm = self.rpm
         if wheel_rpm == nil then
             -- Model inertia of engine itself, according to 'push'
-            if push == sign(forward_speed)  then
-                target_engine_rpm = target_engine_rpm * 2 ^ elapsed
+            if push == 1 then
+                self.rpm = self.rpm + 10000 * elapsed
+            elseif self.rpm > self.idleRpm then
+                self.rpm = self.rpm - self.drag * (self.rpm * self.rpm)
             end
-            target_engine_rpm = target_engine_rpm - self.drag * (target_engine_rpm * target_engine_rpm)
             -- Do not bother switching gears, just max out
         else
             -- Engine Rpm is set by wheel Rpm, except when going very slowly.
-            target_engine_rpm = wheel_rpm * gear_ratio
+            self.rpm = wheel_rpm * gear_ratio
         end
 
         local engaged = true
-        if target_engine_rpm < self.clutchRpm then
+        if self.rpm < self.idleRpm then
              engaged = false
             -- This also covers the negative case, i.e. motion is opposite to chosen gear
-            target_engine_rpm = self.idleRpm
+            self.rpm = self.idleRpm
         end
-        if target_engine_rpm > self.maxRpm then
-            target_engine_rpm = self.maxRpm
+        if self.rpm > self.maxRpm then
+            self.rpm = self.maxRpm
         end
 
         if wheel_rpm ~= nil then
             -- set gear for next iteration
-            self:updateSimpleAutomaticGearbox(push, forward_speed, target_engine_rpm)
+            self:updateSimpleAutomaticGearbox(push, forward_speed, self.rpm)
             
             if push ~= 0 then
                 -- If we are braking instead, this torque value is not used, so always assume we are
                 -- driving in that direction
-                torque = self.torqueCurve[target_engine_rpm] * gear_ratio * self.transEff
+                torque = self.torqueCurve[self.rpm] * gear_ratio * self.transEff
+                if self.rpm >= self.maxRpm then torque = 0 end
             else
                 -- Engine braking
                 if engaged then 
-                    torque = torque - self.drag * (target_engine_rpm * target_engine_rpm) * gear_ratio * self.transEff
+                    torque = torque - self.drag * (self.rpm * self.rpm) * gear_ratio * self.transEff
                 else
                     torque = torque - sign(wheel_rpm) * self.wheelDrag * (wheel_rpm * wheel_rpm) 
                 end
             end
 
         end
-
-        -- TODO: ramp this properly
-        self.rpm = target_engine_rpm
 
         -- update audio
         if self.sound ~= nil then
@@ -178,6 +178,8 @@ function Engine:update(pos, push, forward_speed, wheel_rpm, elapsed)
             end
         end
 
+        return torque
+
     else
 
         if self.sound ~= nil then
@@ -190,11 +192,9 @@ function Engine:update(pos, push, forward_speed, wheel_rpm, elapsed)
             end
         end
 
-        torque = 0
+        return 0
 
     end
-
-    return torque
 
 end
 
