@@ -5,6 +5,7 @@
 include "placement_editor.lua"
 include "GritLevel/init.lua"
 include "thumbnail_manager.lua"
+include "arrows/init.lua"
 
 function select_obj ()
 	if editor.selected.instance ~= nil then
@@ -26,9 +27,6 @@ function unselect_obj ()
 		editor_interface.statusbar.selected.text = "Selected: none"
 	end
 end
-
-widget = {}
-widget.mode = 1 -- 0 select, 1 translate, 2 rotate, 3 scale
 
 -- NOT TESTED W.I.P.
 -- Update Object Properties window when another object in viewport is selected
@@ -67,9 +65,49 @@ function return_editor()
 	player_ctrl.camDir = editor_camera.rot.Dir
 end
 
+function mouse_pick_object()
+	local ms = vec2((select(3, get_mouse_events()) ), (select(4, get_mouse_events())))
+	local selected = gfx_mouse_pick(ms.x, ms.y, player_ctrl.camPos, player_ctrl.camDir)
+	if selected ~= nil then
+		if selected.arrow ~= nil then
+			if selected.name == "arrow_x" then
+				editor.selection.dragging = "x"
+			elseif selected.name == "arrow_y" then
+				editor.selection.dragging = "y"
+			elseif selected.name == "arrow_z" then
+				editor.selection.dragging = "z"
+			elseif selected.name == "dummy_xy" then
+				editor.selection.dragging = "xy"
+			elseif selected.name == "arrow_xz" then
+				editor.selection.dragging = "xz"
+			elseif selected.name == "arrow_yz" then
+				editor.selection.dragging = "yz"
+			else
+				print(RED.."something strange is happening..")
+			end
+		else
+			gizmo.node:activate()
+			
+			-- deactivate object physics when selected
+			if selected.instance.body ~= nil then
+				editor.selected.mass = selected.instance.body.mass
+				selected.instance.body.mass = 0
+			end
+			selected.instance.gfx.parent = gizmo.node
+			
+			editor.selected = selected
+		end
+	else
+		editor.selection.dragging = nil
+		if selected.instance.body ~= nil then
+			selected.instance.body.mass = editor.selected.mass
+			editor.selected.mass = nil
+		end
+		editor.selected = nil
+	end
+end
+
 function set_editor_bindings()
-	--common_binds:bind("left", function() select_obj() end)
-	--common_binds:bind("right", function() set_camera_move() end)
 	menu_binds:bind("Escape", function() do_nothing() end)
 	common_binds:bind("i", function() end)
 	common_binds:bind("k", function() end)
@@ -82,6 +120,9 @@ function set_editor_bindings()
 	debug_binds:bind("A+g", function() editor_play()end)
 	
 	menu_binds:bind("Tab", function() debug_layer:selectConsole(not console.enabled) end)
+	
+	-- PROBLEM: how we can disable object selection when left mouse click is under a HUD object?
+	--debug_binds:bind("left", function() mouse_pick_object()end, function() editor.selection.dragging = nil end)
 	
 	debug_binds:bind("right", function() debug_binds.modal = not debug_binds.modal
 		debug_layer:selectConsole()
@@ -180,12 +221,15 @@ function save_current_level()
 	end
 end
 
-function save_current_level_as()
+function save_current_level_as(name)
 	if gfx_option("FULLSCREEN") == true then
 		gfx_option("FULLSCREEN", false)
 	end
-
-	CurrentLevel.file_name = save_file_dialog("Save Level", "Grit Level (*.lvl)\0*.lvl\0\0", "lvl")
+	if name ~= nil then
+		CurrentLevel.file_name = save_file_dialog("Save Level", "Grit Level (*.lvl)\0*.lvl\0\0", "lvl")
+	else
+		CurrentLevel.file_name = name
+	end
 	if CurrentLevel.file_name ~= nil then
 		CurrentLevel:save()
 	end

@@ -7,9 +7,13 @@ in_editor = true
 CurrentLevel = {}
 default_game_mode = "detached_game"
 
--- maybe use this later
 editor = {}
+-- selected object
 editor.selected = {}
+-- selection mode
+editor.selection = {}
+editor.selection.mode = 0 -- 0 select, 1 translate, 2 rotate, 3 scale
+editor.selection.dragging = nil
 
 -- holds editor camera position and rotation to get back when stop playing
 editor_camera = {}

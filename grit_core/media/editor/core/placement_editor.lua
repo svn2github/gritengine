@@ -36,52 +36,52 @@ local function callback()
     elseif input_filter_pressed("-") then
         placement_editor.stepValue = math.max(0.01, step - 0.01)
     elseif input_filter_pressed("Up") then
-        if widget.mode == 1 then
+        if editor.selection.mode == 1 then
             move(0,step,0)
             directionString = "+Y"
-        elseif widget.mode == 2 then
+        elseif editor.selection.mode == 2 then
             rotate(0,-1,0)
         end
     elseif input_filter_pressed("Down") then
-        if widget.mode == 1 then
+        if editor.selection.mode == 1 then
             move(0,-step,0)
             directionString = "-Y"
-        elseif widget.mode == 2 then
+        elseif editor.selection.mode == 2 then
             rotate(0,1,0)
         end 
     elseif input_filter_pressed("Left") then
-        if widget.mode == 1 then
+        if editor.selection.mode == 1 then
             move(-step,0,0)
             directionString = "-X"
-        elseif widget.mode == 2 then
+        elseif editor.selection.mode == 2 then
             rotate(0,0,1)
         end
     elseif input_filter_pressed("Right") then
-        if widget.mode == 1 then
+        if editor.selection.mode == 1 then
             move(step,0,0)
             directionString = "+X"
-        elseif widget.mode == 2 then
+        elseif editor.selection.mode == 2 then
             rotate(0,0,-1)
         end
     elseif input_filter_pressed("i") then
-        if widget.mode == 1 then
+        if editor.selection.mode == 1 then
             move(0,0,step)
             directionString = "Z"
-        elseif widget.mode == 2 then
+        elseif editor.selection.mode == 2 then
             rotate(1,0,0)
         end
     elseif input_filter_pressed("k") then
-        if widget.mode == 1 then
+        if editor.selection.mode == 1 then
             move(0,0,-step)
             directionString = "-Z"
-        elseif widget.mode == 2 then
+        elseif editor.selection.mode == 2 then
             rotate(-1,0,0)
         end
     end
     
-    if widget.mode == 1 then
+    if editor.selection.mode == 1 then
         modeString = "MOVE"
-    elseif widget.mode == 2 then
+    elseif editor.selection.mode == 2 then
         modeString = "ROTATE"
     end
 	
@@ -92,6 +92,8 @@ function placement_editor:manip (obj)
     if obj == nil or self.handledObj ~= nil then
 		unselect_obj ()
         self.handledObj = nil
+		gizmo.node.parent = nil
+		gizmo_fade(0)
         main.frameCallbacks:removeByName("placement_editor")
 		--print(BLUE..'Stop Edit')
         return
@@ -101,6 +103,19 @@ function placement_editor:manip (obj)
 
    -- print(BLUE..'Edit')
 	select_obj()
+	gizmo_resize()
+	local mode = nil
+	
+	if editor.selection.mode == 0 or editor.selection.mode == 1 then
+		mode = "translate"
+	elseif editor.selection.mode == 2 then
+		mode = "rotate"
+	elseif editor.selection.mode == 3 then
+	mode = "scale"
+	end
+	
+	gizmo.node.parent = obj.instance.gfx
+	gizmo_fade(1)
     main.frameCallbacks:insert("placement_editor", callback)
     callback(nil)
 end
