@@ -12,7 +12,7 @@ editor = {}
 editor.selected = {}
 -- selection mode
 editor.selection = {}
-editor.selection.mode = 0 -- 0 select, 1 translate, 2 rotate, 3 scale
+editor.selection.mode = 1 -- 0 select, 1 translate, 2 rotate, 3 scale
 editor.selection.dragging = nil
 
 -- holds editor camera position and rotation to get back when stop playing

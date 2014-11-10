@@ -48,8 +48,18 @@ end
 
 -- mode = translate, rotate, scale
 create_gizmo = function(mode)
-	if gizmo.node ~= nil then
+	if gizmo.node ~= nil or gizmo.node.activated ~= true then
 		gizmo.node = gfx_body_make()
+	end
+	
+	if type(mode) ~= "string" then
+		if mode == 0 or mode == 1 then
+			mode = "translate"
+		elseif mode == 2 then
+			mode = "rotate"
+		elseif mode == 3 then
+			mode = "scale"
+		end
 	end
 	
 	destroy_gizmo()
@@ -61,12 +71,14 @@ create_gizmo = function(mode)
 		gizmo.x_a.instance.gfx:setMaterial("/editor/core/arrows/arrow", "/editor/core/arrows/red")
 		gizmo.x_a.instance.gfx:setMaterial("/editor/core/arrows/line", "/editor/core/arrows/red")
 		gizmo.x_a.instance.gfx.parent=gizmo.node
+		gizmo.x_a.editor_object = true
 		
 		gizmo.y_a = object ("/editor/core/arrows/arrow_"..mode) (0, 0, 0) {}
 		gizmo.y_a:activate()
 		gizmo.y_a.instance.gfx:setMaterial("/editor/core/arrows/arrow", "/editor/core/arrows/green")
 		gizmo.y_a.instance.gfx:setMaterial("/editor/core/arrows/line", "/editor/core/arrows/green")
 		gizmo.y_a.instance.gfx.parent=gizmo.node
+		gizmo.y_a.editor_object = true
 		
 		gizmo.z_a = object ("/editor/core/arrows/arrow_"..mode) (0, 0, 0) {}
 		gizmo.z_a:activate()
@@ -74,11 +86,13 @@ create_gizmo = function(mode)
 		gizmo.z_a.instance.gfx:setMaterial("/editor/core/arrows/arrow", "/editor/core/arrows/blue")
 		gizmo.z_a.instance.gfx:setMaterial("/editor/core/arrows/line", "/editor/core/arrows/blue")
 		gizmo.z_a.instance.gfx.parent=gizmo.node
+		gizmo.z_a.editor_object = true
 		
 		if mode == "translate" or mode == "scale" then
 			gizmo.dummy_xy = object "/editor/core/arrows/dummy_plane" (0, 0, 0) {}
 			gizmo.dummy_xy:activate()
 			gizmo.dummy_xy.instance.gfx.parent=gizmo.node
+			gizmo.dummy_xy.editor_object = true
 			
 			gizmo.dummy_xz = object "/editor/core/arrows/dummy_plane" (0, 0, 0) {}
 			gizmo.dummy_xz:activate()
@@ -86,6 +100,7 @@ create_gizmo = function(mode)
 			gizmo.dummy_xz.instance.gfx:setMaterial("/editor/core/arrows/line_1", "/editor/core/arrows/red")
 			gizmo.dummy_xz.instance.gfx:setMaterial("/editor/core/arrows/line_2", "/editor/core/arrows/blue")
 			gizmo.dummy_xz.instance.gfx.parent=gizmo.node
+			gizmo.dummy_xz.editor_object = true
 			
 			gizmo.dummy_yz = object "/editor/core/arrows/dummy_plane" (0, 0, 0) {}
 			gizmo.dummy_yz:activate()
@@ -93,6 +108,7 @@ create_gizmo = function(mode)
 			gizmo.dummy_yz.instance.gfx:setMaterial("/editor/core/arrows/line_1", "/editor/core/arrows/blue")
 			gizmo.dummy_yz.instance.gfx:setMaterial("/editor/core/arrows/line_2", "/editor/core/arrows/green")
 			gizmo.dummy_yz.instance.gfx.parent=gizmo.node
+			gizmo.dummy_yz.editor_object = true
 		end
 	else
 		print(RED.."This selection mode doesn't exist!")
@@ -100,7 +116,7 @@ create_gizmo = function(mode)
 end
 
 function gizmo_fade(vl)
-	if gizmo.x_a ~= nil then
+	if gizmo.x_a ~= nil and gizmo.x_a.instance ~= nil then
 		gizmo.x_a.instance.gfx.fade = vl
 		gizmo.y_a.instance.gfx.fade = vl
 		gizmo.z_a.instance.gfx.fade = vl

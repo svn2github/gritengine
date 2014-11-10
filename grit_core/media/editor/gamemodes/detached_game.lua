@@ -18,6 +18,10 @@ game.play = function()
 	game.player = object "/detached/characters/robot_med" (CurrentLevel.spawn_pos or vector3(0, 0, 0)) {rot=quat(0.9962251, 0, 0, 0.086808), name="player" }
 	game.player:activate()
 	player_ctrl:beginControlObj(game.player)
+	
+	-- is doesn't saved with level objects
+	player.editor_object = true
+	
 	detached_binds:unbind("A+-")
 	common_binds:bind("left", function () fire_rocket() end )
 end;

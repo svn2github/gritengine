@@ -101,19 +101,22 @@ level.name = ']]..self.name..
 		-- to save deactivated objects too
 		self.objects[i]:activate()
 		
-		-- reset class name for objects using LOD
-		local class_name = self.objects[i].className:gsub("_LOD", "", 1)
-		
-		file:write("\n")
-		-- objects with collision
-		if self.objects[i].instance.body ~= nil then
-			file:write("object \""..class_name.."\" ("..self.objects[i].instance.body.worldPosition..") {".."rot="..self.objects[i].instance.body.worldOrientation..", name=\""..self.objects[i].name.."\" }")
-		-- objects without collision
-		elseif self.objects[i].instance.gfx ~= nil then
-			file:write("object \""..class_name.."\" ("..self.objects[i].instance.gfx.localPosition..") {".."rot="..self.objects[i].instance.gfx.localOrientation..", name=\""..self.objects[i].name.."\" }")
-		-- sounds
-		else
-			file:write("object \""..class_name.."\" ("..self.objects[i].pos..") {".."orientation="..self.objects[i].orientation..", name=\""..self.objects[i].name.."\" }")
+		if self.objects[i].editor_object == nil then
+			-- reset class name for objects using LOD
+			local class_name = self.objects[i].className:gsub("_LOD", "", 1)
+			
+			file:write("\n")
+			-- dump_object_line() not used only because LOD object fix
+			-- objects with collision
+			if self.objects[i].instance.body ~= nil then
+				file:write("object \""..class_name.."\" ("..self.objects[i].instance.body.worldPosition..") {".."rot="..self.objects[i].instance.body.worldOrientation..", name=\""..self.objects[i].name.."\" }")
+			-- objects without collision
+			elseif self.objects[i].instance.gfx ~= nil then
+				file:write("object \""..class_name.."\" ("..self.objects[i].instance.gfx.localPosition..") {".."rot="..self.objects[i].instance.gfx.localOrientation..", name=\""..self.objects[i].name.."\" }")
+			-- sounds
+			else
+				file:write("object \""..class_name.."\" ("..self.objects[i].pos..") {".."orientation="..self.objects[i].orientation..", name=\""..self.objects[i].name.."\" }")
+			end
 		end
 	end
 	

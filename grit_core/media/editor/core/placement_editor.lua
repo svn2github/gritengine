@@ -24,11 +24,16 @@ local function callback()
     local modeString
     
     local function move(x,y,z)
-       body.worldPosition = vector3(body.worldPosition.x+x, body.worldPosition.y+y, body.worldPosition.z+z) 
-    end
+		body.worldPosition = vector3(body.worldPosition.x+x, body.worldPosition.y+y, body.worldPosition.z+z)
+		placement_editor.handledObj.spawnPos = vector3(body.worldPosition.x+x, body.worldPosition.y+y, body.worldPosition.z+z)
+		-- needs to set lod spawnPos, but how?
+		-- if placement_editor.handledObj.lod ~= nil then
+			
+		-- end
+	end
     
-    local function rotate(x,y,z)
-        body.worldOrientation = body.worldOrientation * quat(step, vector3(x,y,z))
+	local function rotate(x,y,z)
+		body.worldOrientation = body.worldOrientation * quat(step, vector3(x,y,z))
     end
 
     if input_filter_pressed("=") then
@@ -111,7 +116,11 @@ function placement_editor:manip (obj)
 	elseif editor.selection.mode == 2 then
 		mode = "rotate"
 	elseif editor.selection.mode == 3 then
-	mode = "scale"
+		mode = "scale"
+	end
+	
+	if gizmo.x_a == nil or gizmo.x_a.activated ~= true then
+		create_gizmo(editor.selection.mode)
 	end
 	
 	gizmo.node.parent = obj.instance.gfx

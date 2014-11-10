@@ -8,7 +8,7 @@ include "thumbnail_manager.lua"
 include "arrows/init.lua"
 
 function select_obj ()
-	if editor.selected.instance ~= nil then
+	if editor.selected.instance ~= nil and editor.selected.instance.gfx ~= nil  then
 		editor.selected.instance.gfx.wireframe = false
 	end
 	editor.selected = pick_obj()
@@ -178,6 +178,8 @@ end;
 
 function new_level()
 	unselect_obj ()
+	create_gizmo(editor.selection.mode)
+	gizmo_fade(0)
 	if next(CurrentLevel) ~= nil then
 		object_all_del()
 		-- CurrentLevel = nil
@@ -194,6 +196,9 @@ function open_level(level_file)
 	end
 	
 	unselect_obj ()
+	create_gizmo(editor.selection.mode)
+	gizmo_fade(0)
+	
 	if level_file == nil then
 		local file = open_file_dialog("Open Level", "Grit Level (*.lvl)\0*.lvl\0Grit Lua (*.lua)\0*.lua\0\0")
 		if file == nil then
@@ -225,7 +230,7 @@ function save_current_level_as(name)
 	if gfx_option("FULLSCREEN") == true then
 		gfx_option("FULLSCREEN", false)
 	end
-	if name ~= nil then
+	if name == nil then
 		CurrentLevel.file_name = save_file_dialog("Save Level", "Grit Level (*.lvl)\0*.lvl\0\0", "lvl")
 	else
 		CurrentLevel.file_name = name
