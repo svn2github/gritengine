@@ -20,7 +20,7 @@ game.play = function()
 	player_ctrl:beginControlObj(game.player)
 	
 	-- is doesn't saved with level objects
-	player.editor_object = true
+	game.player.editor_object = true
 	
 	detached_binds:unbind("A+-")
 	common_binds:bind("left", function () fire_rocket() end )
