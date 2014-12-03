@@ -36,7 +36,7 @@
 #define ASSERT(x) do { if (!(x)) { EXCEPTEX << "Assertion failed: " << #x << std::endl; } } while (0)
 
 #define HANDLE_BEGIN try {
-#define HANDLE_END } catch (Exception &e) { my_lua_error(L, "Exception: "+e.msg); }
+#define HANDLE_END } catch (const Exception &e) { my_lua_error(L, e.msg); }
 
 /** Simple exception object encapsulates a string. */
 struct Exception {
