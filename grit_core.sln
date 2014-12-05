@@ -22,6 +22,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "grit_col_conv", "grit_core\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "luaimg", "luaimg\luaimg.vcxproj", "{9D0D6A82-0D4F-40E8-B2EB-A0BD5C418C44}"
 	ProjectSection(ProjectDependencies) = postProject
+		{193EAE32-2E81-4D8B-A9BB-B6BE9A1721B0} = {193EAE32-2E81-4D8B-A9BB-B6BE9A1721B0}
 		{3C0ADE66-31CB-42D5-8727-B1B792E19B42} = {3C0ADE66-31CB-42D5-8727-B1B792E19B42}
 		{9E219DF2-315D-478E-8A07-8960C377CE1E} = {9E219DF2-315D-478E-8A07-8960C377CE1E}
 		{32295FF9-FA94-4E03-957B-48AE90E50541} = {32295FF9-FA94-4E03-957B-48AE90E50541}
@@ -50,6 +51,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpenEXR", "dependencies\FreeImage\Source\OpenEXR\OpenEXR.2008.vcxproj", "{17A4874B-0606-4687-90B6-F91F8CB3B8AF}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ZLib", "dependencies\FreeImage\Source\ZLib\ZLib.2008.vcxproj", "{33134F61-C1AD-4B6F-9CEA-503A9F140C52}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "giflib", "dependencies\giflib.vcxproj", "{193EAE32-2E81-4D8B-A9BB-B6BE9A1721B0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -135,6 +138,10 @@ Global
 		{33134F61-C1AD-4B6F-9CEA-503A9F140C52}.Debug|Win32.Build.0 = Debug|Win32
 		{33134F61-C1AD-4B6F-9CEA-503A9F140C52}.Normal|Win32.ActiveCfg = Normal|Win32
 		{33134F61-C1AD-4B6F-9CEA-503A9F140C52}.Normal|Win32.Build.0 = Normal|Win32
+		{193EAE32-2E81-4D8B-A9BB-B6BE9A1721B0}.Debug|Win32.ActiveCfg = Debug|Win32
+		{193EAE32-2E81-4D8B-A9BB-B6BE9A1721B0}.Debug|Win32.Build.0 = Debug|Win32
+		{193EAE32-2E81-4D8B-A9BB-B6BE9A1721B0}.Normal|Win32.ActiveCfg = Normal|Win32
+		{193EAE32-2E81-4D8B-A9BB-B6BE9A1721B0}.Normal|Win32.Build.0 = Normal|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
