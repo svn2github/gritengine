@@ -9,7 +9,6 @@ local playlist = {
 
 for i,v in ipairs(playlist) do
         playlist[i] = v
-        disk_resource_add(v)
 end
 
 hud_class `.` {
@@ -27,10 +26,6 @@ hud_class `.` {
         self.trackname.colour = vec(0, 0, 0)
         self.trackname.text = playlist[self.trackID]
         -- TODO: maybe load should be a no-op?  or add ensure_loaded?
-        disk_resource_acquire(playlist[self.trackID])
-        if not disk_resource_loaded(playlist[self.trackID]) then
-            disk_resource_load(playlist[self.trackID])
-        end
         self.audiosource = audio_body_make_ambient(playlist[self.trackID]);
         self.texture = `body.png`
         
@@ -74,17 +69,9 @@ hud_class `.` {
         })
         self.prevSongButton.position = vec(-52, -90)
         self.prevSongButton.pressedCallback = function(this)
-            if self.audiosource.playing then
-                self.audiosource:stop()
-                self.audiosource:destroy()
-            end
-            disk_resource_release(playlist[self.trackID])
+            self.audiosource:destroy()
             self.trackID = (self.trackID - 1 < 1) and #playlist or self.trackID - 1
             self.trackname.text = playlist[self.trackID]
-            disk_resource_acquire(playlist[self.trackID])
-            if not disk_resource_loaded(playlist[self.trackID]) then
-                disk_resource_load(playlist[self.trackID])
-            end
             self.audiosource = audio_body_make_ambient(playlist[self.trackID]);
             if self.isplaying then
                 self.audiosource:play()
@@ -99,17 +86,9 @@ hud_class `.` {
         })
         self.nextSongButton.position = vec(52, -90)
         self.nextSongButton.pressedCallback = function(this)
-            if self.audiosource.playing then
-                self.audiosource:stop()
-                self.audiosource:destroy()
-            end
-            disk_resource_release(playlist[self.trackID])
+            self.audiosource:destroy()
             self.trackID = (self.trackID + 1 > #playlist) and 1 or self.trackID + 1
             self.trackname.text = playlist[self.trackID]
-            disk_resource_acquire(playlist[self.trackID])
-            if not disk_resource_loaded(playlist[self.trackID]) then
-                disk_resource_load(playlist[self.trackID])
-            end
             self.audiosource = audio_body_make_ambient(playlist[self.trackID]);
             if self.isplaying then
                 self.audiosource:play()
@@ -118,7 +97,6 @@ hud_class `.` {
     end;
     destroy = function(self)
         if self.audiosource then
-            self.audiosource:stop()
             self.audiosource:destroy()
             self.audiosource = nil
         end

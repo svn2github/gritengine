@@ -38,6 +38,8 @@
 #define HANDLE_BEGIN try {
 #define HANDLE_END } catch (const Exception &e) { my_lua_error(L, e.msg); }
 
+#define THROW_DEAD(name) do { EXCEPT << "Must not be destroyed: " << name << ENDL; } while (0)
+
 /** Simple exception object encapsulates a string. */
 struct Exception {
     const std::string msg;

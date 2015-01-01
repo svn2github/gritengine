@@ -6,18 +6,18 @@ function light_from_table (l, tab)
         if tab.pos then l.localPosition = tab.pos end
         local sz
         if tab.diff then
-                sz = math.max(math.max(math.max(1, tab.diff.x), tab.diff.y), tab.diff.z)
-                l.diffuseColour = tab.diff
+            sz = math.max(math.max(math.max(1, tab.diff.x), tab.diff.y), tab.diff.z)
+            l.diffuseColour = tab.diff
         end
         if tab.spec then l.specularColour = tab.spec end
         if tab.diff and not tab.spec then
-                l.specularColour = tab.diff
+            l.specularColour = tab.diff
         end
         local csz
         if sz then csz = sz / 16 end
         if tab.range then
-                l.range = tab.range
-                if csz then csz = csz * tab.range end
+            l.range = tab.range
+            if csz then csz = csz * tab.range end
         end
         if tab.iangle then l.innerAngle = tab.iangle end
         if tab.oangle then l.outerAngle = tab.oangle end
@@ -26,11 +26,11 @@ function light_from_table (l, tab)
         if tab.aim then l.localOrientation = tab.aim end
         if tab.coronaSize or csz then l.coronaSize = tab.coronaSize or csz end
         if tab.coronaColour then
-                l.coronaColour = tab.coronaColour
+            l.coronaColour = tab.coronaColour
         else
-                if sz then
-                        l.coronaColour = tab.diff / sz 
-                end
+            if sz then
+                l.coronaColour = tab.diff / sz 
+            end
         end
         l.coronaLocalPosition = tab.coronaPos or vec(0,0,0)
         return l
@@ -39,218 +39,218 @@ end
 BaseClass = {
         renderingDistance=400;
         init = function (persistent)
-                local class_name = persistent.className
-                local gfxMesh = persistent.gfxMesh or class_name..".mesh"
-                ensure_absolute_path(persistent, gfxMesh)
-                persistent:addDiskResource(gfxMesh)
-                if persistent.extraResources == nil then return end
-                for _,v in ipairs(persistent.extraResources) do
-                        ensure_absolute_path(persistent, v)
-                        persistent:addDiskResource(v)
-                end
+            local class_name = persistent.className
+            local gfxMesh = persistent.gfxMesh or class_name..".mesh"
+            ensure_absolute_path(persistent, gfxMesh)
+            persistent:addDiskResource(gfxMesh)
+            if persistent.extraResources == nil then return end
+            for _,v in ipairs(persistent.extraResources) do
+                ensure_absolute_path(persistent, v)
+                persistent:addDiskResource(v)
+            end
         end;
         activate=function (persistent, instance)
-                if persistent.skipNextActivation then
-                        persistent.skipNextActivation = nil
-                        instance.activationSkipped = true
-                        return true
+            if persistent.skipNextActivation then
+                persistent.skipNextActivation = nil
+                instance.activationSkipped = true
+                return true
+            end
+            --print("Activating: "..persistent.name.." ("..persistent.className..")")
+            local gfxMesh = persistent.gfxMesh or persistent.className..".mesh"
+            local mm
+            if persistent.materialMap then
+                mm = mm or {}
+                for k,v in pairs(persistent.materialMap) do
+                    mm[k] = v
                 end
-                --print("Activating: "..persistent.name.." ("..persistent.className..")")
-                local gfxMesh = persistent.gfxMesh or persistent.className..".mesh"
-                local mm
-                if persistent.materialMap then
-                        mm = mm or {}
-                        for k,v in pairs(persistent.materialMap) do
-                                mm[k] = v
+            end
+            if instance.materialMap then -- allows subclasses to add to the material map
+                mm = mm or {}
+                for k,v in pairs(instance.materialMap) do
+                    mm[k] = v
+                end
+            end
+            instance.gfx = gfx_body_make(gfxMesh, mm)
+            instance.gfx.castShadows = not persistent.castShadows == false
+            if instance.gfx.numBones > 0 and instance.gfx:getAllAnimations() == nil then instance.gfx:setAllBonesManuallyControlled(true) end
+            instance.gfx.localPosition = persistent.spawnPos
+            instance.gfx.localOrientation = persistent.rot or quat(1,0,0,0)
+            
+            local lights = persistent.lights
+            if lights then
+                instance.lights = {}
+                instance.lightCallbacks = {}
+                instance.lightFlickedOff = {}
+                instance.lightTimeOff = {}
+                for k,tab in ipairs(lights) do
+                    local l = light_from_table(gfx_light_make(), tab)
+                    instance.lights[k] = l
+                    l.parent = instance.gfx
+                    if tab.flickering then
+                        -- simulate a broken flourescent tube
+                        future_event(0, function()
+                            if l.destroyed then return end
+                            local off = math.random() < 0.33
+                            instance.lightFlickedOff[k] = off
+                            l.enabled = not instance.lightFlickedOff[k] and not instance.lightTimeOff[k]
+                            none_one_or_all(tab.emissiveMaterials, function(x)
+                                instance.gfx:setEmissiveEnabled(x, l.enabled)
+                            end)
+                            return math.random() * 0.2
+                        end)
+                    end
+                    if tab.onTime and tab.offTime then
+                        local on_time = parse_time(tab.onTime)
+                        local off_time = parse_time(tab.offTime)
+                        local on_during_night = on_time > off_time
+                        local first_time = on_during_night and off_time or on_time
+                        local last_time = on_during_night and on_time or off_time
+                        if tab.timeOnOffRandomness then
+                            local random_secs = parse_time(tab.timeOnOffRandomness)
+                            first_time = first_time + math.random()*random_secs
+                            last_time = last_time + math.random()*random_secs
                         end
-                end
-                if instance.materialMap then -- allows subclasses to add to the material map
-                        mm = mm or {}
-                        for k,v in pairs(instance.materialMap) do
-                                mm[k] = v
+                        local cb = function()
+                            local off
+                            if env.secondsSinceMidnight < first_time then
+                                off = not on_during_night
+                            elseif env.secondsSinceMidnight < last_time then
+                                off = on_during_night
+                            else
+                                off = not on_during_night
+                            end
+                            instance.lightTimeOff[k] = off
+                            l.enabled = not instance.lightFlickedOff[k] and not instance.lightTimeOff[k]
+                            none_one_or_all(tab.emissiveMaterials, function(x)
+                                instance.gfx:setEmissiveEnabled(x, l.enabled)
+                            end)
                         end
+                        instance.lightCallbacks[k] = cb
+                        --env:addClockCallback(cb)
+                        env.tickCallbacks:insert(("lights_callback_"..k), cb)
+                        cb(env.secondsSinceMidnight)
+                    end
                 end
-                instance.gfx = gfx_body_make(gfxMesh, mm)
-                instance.gfx.castShadows = not persistent.castShadows == false
-                if instance.gfx.numBones > 0 and instance.gfx:getAllAnimations() == nil then instance.gfx:setAllBonesManuallyControlled(true) end
-                instance.gfx.localPosition = persistent.spawnPos
-                instance.gfx.localOrientation = persistent.rot or quat(1,0,0,0)
-                
-                local lights = persistent.lights
-                if lights then
-                        instance.lights = {}
-                        instance.lightCallbacks = {}
-                        instance.lightFlickedOff = {}
-                        instance.lightTimeOff = {}
-                        for k,tab in ipairs(lights) do
-                                local l = light_from_table(gfx_light_make(), tab)
-                                instance.lights[k] = l
-                                l.parent = instance.gfx
-                                if tab.flickering then
-                                        -- simulate a broken flourescent tube
-                                        future_event(0, function()
-                                                if l.destroyed then return end
-                                                local off = math.random() < 0.33
-                                                instance.lightFlickedOff[k] = off
-                                                l.enabled = not instance.lightFlickedOff[k] and not instance.lightTimeOff[k]
-                                                none_one_or_all(tab.emissiveMaterials, function(x)
-                                                        instance.gfx:setEmissiveEnabled(x, l.enabled)
-                                                end)
-                                                return math.random() * 0.2
-                                        end)
-                                end
-                                if tab.onTime and tab.offTime then
-                                        local on_time = parse_time(tab.onTime)
-                                        local off_time = parse_time(tab.offTime)
-                                        local on_during_night = on_time > off_time
-                                        local first_time = on_during_night and off_time or on_time
-                                        local last_time = on_during_night and on_time or off_time
-                                        if tab.timeOnOffRandomness then
-                                                local random_secs = parse_time(tab.timeOnOffRandomness)
-                                                first_time = first_time + math.random()*random_secs
-                                                last_time = last_time + math.random()*random_secs
-                                        end
-                                        local cb = function()
-                                                local off
-                                                if env.secondsSinceMidnight < first_time then
-                                                        off = not on_during_night
-                                                elseif env.secondsSinceMidnight < last_time then
-                                                        off = on_during_night
-                                                else
-                                                        off = not on_during_night
-                                                end
-                                                instance.lightTimeOff[k] = off
-                                                l.enabled = not instance.lightFlickedOff[k] and not instance.lightTimeOff[k]
-                                                none_one_or_all(tab.emissiveMaterials, function(x)
-                                                        instance.gfx:setEmissiveEnabled(x, l.enabled)
-                                                end)
-                                        end
-                                        instance.lightCallbacks[k] = cb
-                                        --env:addClockCallback(cb)
-                                        env.tickCallbacks:insert(("lights_callback_"..k), cb)
-                                        cb(env.secondsSinceMidnight)
-                                end
-                        end
-                end
+            end
 
-                if persistent.colourSpec then
-                        persistent:setRandomColour()
-                end
+            if persistent.colourSpec then
+                persistent:setRandomColour()
+            end
         end;
         setRandomColour=function(persistent)
-                if not persistent.activated then error("not activated") end
-                local cs = persistent.colourSpec
-                local prob_total = 0
-                for k,v in ipairs(cs) do
-                        prob_total = prob_total + (v.probability or 1)
+            if not persistent.activated then error("not activated") end
+            local cs = persistent.colourSpec
+            local prob_total = 0
+            for k,v in ipairs(cs) do
+                prob_total = prob_total + (v.probability or 1)
+            end
+            local r = math.random() * prob_total
+            prob_total = 0
+            for k,v in ipairs(cs) do
+                prob_total = prob_total + (v.probability or 1)
+                if r < prob_total then
+                    persistent:setRandomColourFromSet(v)
+                    return
                 end
-                local r = math.random() * prob_total
-                prob_total = 0
-                for k,v in ipairs(cs) do
-                        prob_total = prob_total + (v.probability or 1)
-                        if r < prob_total then
-                                persistent:setRandomColourFromSet(v)
-                                return
-                        end
-                end
+            end
         end;
         setRandomColourFromSet=function(persistent, colset, indexes)
-                if not persistent.activated then error("not activated") end
-                local cs = persistent.colourSpec
-                if type(colset) == "number" then
-                        colset = cs[colset]
-                end
-                local cols = {}
-                for i=1,4 do -- 4 colours to choose
-                        if colset[i] == nil or #colset[i] == 0 then
-                                cols[i] = "white"
-                        else
-                                local set = {}
-                                local function incorporate_all (tab)
-                                        for _,v in ipairs(tab) do
-                                                if type(v) == "string" and v:sub(1,1) == "*" then
-                                                        incorporate_all(carcol_groups[v:sub(2)])
-                                                else
-                                                        set[#set+1] = v
-                                                end
-                                        end
-                                end
-                                incorporate_all(colset[i])
-                                cols[i] = set[indexes and indexes[i] or math.random(#set)]
+            if not persistent.activated then error("not activated") end
+            local cs = persistent.colourSpec
+            if type(colset) == "number" then
+                    colset = cs[colset]
+            end
+            local cols = {}
+            for i=1,4 do -- 4 colours to choose
+                if colset[i] == nil or #colset[i] == 0 then
+                    cols[i] = "white"
+                else
+                    local set = {}
+                    local function incorporate_all (tab)
+                        for _,v in ipairs(tab) do
+                            if type(v) == "string" and v:sub(1,1) == "*" then
+                                incorporate_all(carcol_groups[v:sub(2)])
+                            else
+                                set[#set+1] = v
+                            end
                         end
+                    end
+                    incorporate_all(colset[i])
+                    cols[i] = set[indexes and indexes[i] or math.random(#set)]
                 end
-                persistent:setColour(cols)
+            end
+            persistent:setColour(cols)
         end;
         setColour=function(persistent, cols)
-                if not persistent.activated then error("not activated") end
-                assert(type(cols)=="table")
-                for i=1,4 do -- 4 colours to choose
-                        local col = cols[i]
-                        if col ~= nil then
-                                if type(col) ~= "table" and type(col) ~= "string" then
-                                        error("Expecting table or string for coloured part "..i..", class \""..persistent.className.."\"")
-                                end
-                                while type(col) == "string" do
-                                        local col2 = carcols[col]
-                                        if col2==nil then
-                                                error("Class \""..persistent.className.."\" could not find colour \""..col.."\"")
-                                        end
-                                        if type(col2) ~= "table" and type(col2) ~= "string" then
-                                                error("Expecting table or string looking up car colour table with name\""..col.."\"")
-                                        end
-                                        col = col2
-                                end
-                                local diff = colour_ensure_vector3(col[1])
-                                local met = col[2] or 0.5
-                                local spec = colour_ensure_vector3(col[3]) or vector3(1,1,1)
-                                persistent.instance.gfx:setPaintColour(i-1, diff, met, spec)
+            if not persistent.activated then error("not activated") end
+            assert(type(cols)=="table")
+            for i=1,4 do -- 4 colours to choose
+                local col = cols[i]
+                if col ~= nil then
+                    if type(col) ~= "table" and type(col) ~= "string" then
+                        error("Expecting table or string for coloured part "..i..", class \""..persistent.className.."\"")
+                    end
+                    while type(col) == "string" do
+                        local col2 = carcols[col]
+                        if col2==nil then
+                            error("Class \""..persistent.className.."\" could not find colour \""..col.."\"")
                         end
+                        if type(col2) ~= "table" and type(col2) ~= "string" then
+                            error("Expecting table or string looking up car colour table with name\""..col.."\"")
+                        end
+                        col = col2
+                    end
+                    local diff = colour_ensure_vector3(col[1])
+                    local met = col[2] or 0.5
+                    local spec = colour_ensure_vector3(col[3]) or vector3(1,1,1)
+                    persistent.instance.gfx:setPaintColour(i-1, diff, met, spec)
                 end
+            end
         end;
         setFade=function(persistent, fade)
-                local instance = persistent.instance
-                if instance.gfx then
-                        instance.gfx.fade = fade
+            local instance = persistent.instance
+            if instance.gfx then
+                    instance.gfx.fade = fade
+            end
+            if instance.lights then
+                for k,v in pairs(instance.lights) do
+                    v.fade = fade
                 end
-                if instance.lights then
-                        for k,v in pairs(instance.lights) do
-                                v.fade = fade
-                        end
-                end
+            end
         end;
         deactivate=function(persistent)
-                local instance = persistent.instance
-                --print("Deactivating: "..persistent.name.." ("..persistent.className..")")
-                persistent.pos = persistent.spawnPos
-                instance.gfx = safe_destroy(instance.gfx)
-                if instance.lights then
-                        for k,v in pairs(instance.lights) do
-                                instance.lights[k] = safe_destroy(v)
-                                if instance.lightCallbacks[k] then
-                                        --env:removeClockCallback(instance.lightCallbacks[k])
-                                        env.tickCallbacks:removeByName(("lights_callback_"..k))
-                                        instance.lightCallbacks[k] = nil
-                                end
-                        end
+            local instance = persistent.instance
+            --print("Deactivating: "..persistent.name.." ("..persistent.className..")")
+            persistent.pos = persistent.spawnPos
+            instance.gfx = safe_destroy(instance.gfx)
+            if instance.lights then
+                for k,v in pairs(instance.lights) do
+                    instance.lights[k] = safe_destroy(v)
+                    if instance.lightCallbacks[k] then
+                        --env:removeClockCallback(instance.lightCallbacks[k])
+                        env.tickCallbacks:removeByName(("lights_callback_"..k))
+                        instance.lightCallbacks[k] = nil
+                    end
                 end
+            end
         end;
         reload=function(persistent)
-                persistent:reloadDiskResources();
+            persistent:reloadDiskResources();
         end;
         ignite=function() end;
 
         getStatistics = function (persistent)
-                local instance = persistent.instance
-                local gfx = instance.gfx
-    
-                local tot_triangles, tot_batches = gfx.triangles, gfx.batches
+            local instance = persistent.instance
+            local gfx = instance.gfx
 
-                print("Mesh: "..gfx.meshName)
+            local tot_triangles, tot_batches = gfx.triangles, gfx.batches
 
-                print(" Triangles: "..gfx.triangles)
-                print(" Batches: "..gfx.batches)
+            print("Mesh: "..gfx.meshName)
 
-                return tot_triangles, tot_batches
+            print(" Triangles: "..gfx.triangles)
+            print(" Batches: "..gfx.batches)
+
+            return tot_triangles, tot_batches
         end;
 
 }
@@ -368,337 +368,337 @@ end
 
 ColClass = extends (BaseClass) {
         receiveImpulse = function (persistent, impulse, wpos)
-                if persistent.health and persistent.impulseDamageThreshold then
-                        --if impulse > 0 then
-                        --        --print(persistent.name, impulse, pos, poso)
-                        --        if (not other.owner.destroyed) and other.owner.className == "/vehicles/Evo" then
-                        --                --print("BOUNCE!", impulse, norm, poso)
-                        --                --other:impulse(-impulse * norm, pos)
-                        --                persistent:receiveDamage(20000)
-                        --        end
-                        --end
-                        local damage = #impulse
-                        if damage > persistent.impulseDamageThreshold then
-                                local volume = damage / persistent.impulseDamageThreshold - 1
-                                audio_play("/common/sounds/collision.wav", volume, 1+math.random()*0.3, wpos, 3, 1)
-                                persistent:receiveDamage(damage)
-                        end
+            if persistent.health and persistent.impulseDamageThreshold then
+                --if impulse > 0 then
+                --        --print(persistent.name, impulse, pos, poso)
+                --        if (not other.owner.destroyed) and other.owner.className == "/vehicles/Evo" then
+                --                --print("BOUNCE!", impulse, norm, poso)
+                --                --other:impulse(-impulse * norm, pos)
+                --                persistent:receiveDamage(20000)
+                --        end
+                --end
+                local damage = #impulse
+                if damage > persistent.impulseDamageThreshold then
+                    local volume = damage / persistent.impulseDamageThreshold - 1
+                    audio_play("/common/sounds/collision.wav", volume, 1+math.random()*0.3, wpos, 3, 1)
+                    persistent:receiveDamage(damage)
                 end
+            end
         end;
         init = function (persistent)
-                local class_name = persistent.className
-                local colMesh = persistent.colMesh or class_name..".gcol"
-                ensure_absolute_path(persistent, colMesh)
-                persistent:addDiskResource(colMesh)
-                BaseClass.init(persistent)
+            local class_name = persistent.className
+            local colMesh = persistent.colMesh or class_name..".gcol"
+            ensure_absolute_path(persistent, colMesh)
+            persistent:addDiskResource(colMesh)
+            BaseClass.init(persistent)
         end;
         activate=function (persistent,instance)
                 if BaseClass.activate(persistent,instance) then
-                        return true
+                    return true
                 end
                 local colMesh = persistent.colMesh or persistent.className..".gcol"
                 --print("adding: "..tostring(persistent).." with "..colMesh)
                 local body = physics_body_make(
-                        colMesh,
-                        persistent.spawnPos,
-                        persistent.rot or quat(1,0,0,0)
+                    colMesh,
+                    persistent.spawnPos,
+                    persistent.rot or quat(1,0,0,0)
                 )
                 body.owner = persistent;
                 instance.body = body
                 if persistent.floating then
-                        instance.body:deactivate()
+                    instance.body:deactivate()
                 end
                 instance.camAttachPos = vector3(0,0,0)
                 -- this causes an alloc so do them here where the code is cold
                 instance.body.updateCallback = function (p,q)
-                        instance.camAttachPos = p
-                        instance.gfx.localPosition = p
-                        instance.gfx.localOrientation = q
-                        persistent.pos = p
+                    instance.camAttachPos = p
+                    instance.gfx.localPosition = p
+                    instance.gfx.localOrientation = q
+                    persistent.pos = p
                 end
                 persistent.instance.health = persistent.health
                 --persistent.health = persistent.health or 10000000000
                 --persistent.impulseDamageThreshold = persistent.impulseDamageThreshold or 10000
                 if persistent.instance.health and persistent.impulseDamageThreshold then
-                        body.collisionCallback = function (life, impulse, other, m, mo,
-                                                           pen, pos, poso, norm)
-                                persistent:receiveImpulse(impulse * norm, pos)
-                        end
+                    body.collisionCallback = function (life, impulse, other, m, mo,
+                                                       pen, pos, poso, norm)
+                        persistent:receiveImpulse(impulse * norm, pos)
+                    end
                 end
                 local pobjs = nil -- will hold the procedural objects (if any)
                 local pobjs_counter = 1
                 for _,pmatname in ipairs(body.procObjMaterials) do
-                        local pmat = physics:getMaterial(pmatname)
-                        if pmat ~= nil and pmat.proceduralObjects ~= nil then
-                                for _, proc_obj_name in ipairs(pmat.proceduralObjects) do
-                                        local proc_obj = physics:getProceduralObjectClass(proc_obj_name)
-                                        if proc_obj == nil then
-                                                error ("Physical material \""..pmatname.."\" references unknown procedural object \""..proc_obj_name.."\"")
-                                        end
-                                        local t = body:scatter(
-                                                pmatname,
-                                                proc_obj.density,
-                                                proc_obj.minSlope,
-                                                proc_obj.maxSlope,
-                                                proc_obj.minElevation,
-                                                proc_obj.maxElevation,
-                                                proc_obj.noZ,
-                                                proc_obj.rotate,
-                                                proc_obj.alignSlope,
-                                                proc_obj.seed or math.random(100000)
-                                        )
-                                        local n = #t
-                                        if n > 0 then pobjs = pobjs or { } end -- create a table only if we have to
-                                        local ocl = class_get(proc_obj.class)
-                                        local zoff = ocl.placementZOffset or 0
-                                        for k=0,(n/7-1) do    
-                                                local x,y,z       = t[k*7+1], t[k*7+2], t[k*7+3]
-                                                local qw,qx,qy,qz = t[k*7+4], t[k*7+5], t[k*7+6], t[k*7+7]
-                                                pobjs[pobjs_counter] = object (proc_obj.class) (x,y,z+zoff) { rot=quat(qw,qx,qy,qz) }
-                                                pobjs_counter = pobjs_counter + 1
-                                        end
-                                end
+                    local pmat = physics:getMaterial(pmatname)
+                    if pmat ~= nil and pmat.proceduralObjects ~= nil then
+                        for _, proc_obj_name in ipairs(pmat.proceduralObjects) do
+                            local proc_obj = physics:getProceduralObjectClass(proc_obj_name)
+                            if proc_obj == nil then
+                                    error ("Physical material \""..pmatname.."\" references unknown procedural object \""..proc_obj_name.."\"")
+                            end
+                            local t = body:scatter(
+                                pmatname,
+                                proc_obj.density,
+                                proc_obj.minSlope,
+                                proc_obj.maxSlope,
+                                proc_obj.minElevation,
+                                proc_obj.maxElevation,
+                                proc_obj.noZ,
+                                proc_obj.rotate,
+                                proc_obj.alignSlope,
+                                proc_obj.seed or math.random(100000)
+                            )
+                            local n = #t
+                            if n > 0 then pobjs = pobjs or { } end -- create a table only if we have to
+                            local ocl = class_get(proc_obj.class)
+                            local zoff = ocl.placementZOffset or 0
+                            for k=0,(n/7-1) do    
+                                local x,y,z       = t[k*7+1], t[k*7+2], t[k*7+3]
+                                local qw,qx,qy,qz = t[k*7+4], t[k*7+5], t[k*7+6], t[k*7+7]
+                                pobjs[pobjs_counter] = object (proc_obj.class) (x,y,z+zoff) { rot=quat(qw,qx,qy,qz) }
+                                pobjs_counter = pobjs_counter + 1
+                            end
                         end
+                    end
                 end
                 instance.pobjs = pobjs
                 local pbats = nil -- will hold the procedural objects (if any)
                 local pbats_counter = 1
                 for _,pmatname in ipairs(body.procObjMaterials) do
-                        local pmat = physics:getMaterial(pmatname)
-                        if pmat == nil then
-                            error("Could not find physical material: \""..pmatname.."\"")
+                    local pmat = physics:getMaterial(pmatname)
+                    if pmat == nil then
+                        error("Could not find physical material: \""..pmatname.."\"")
+                    end
+                    if pmat.proceduralBatches ~= nil then
+                        for i, proc_bat_name in ipairs(pmat.proceduralBatches) do
+                            pbats = pbats or { } -- create a table only if we have to
+                            local pbat = pbats[proc_bat_name]
+                            local proc_bat = physics:getProceduralBatchClass(proc_bat_name)
+                            if pbat == nil then
+                                pbat = gfx_ranged_instances_make(proc_bat.mesh)
+                                pbat.castShadows = proc_bat.castShadows
+                                pbats[proc_bat_name] = pbat
+                            end
+                            body:rangedScatter(
+                                pmatname,
+                                pbat,
+                                proc_bat.density,
+                                proc_bat.minSlope,
+                                proc_bat.maxSlope,
+                                proc_bat.minElevation,
+                                proc_bat.maxElevation,
+                                proc_bat.noZ,
+                                proc_bat.rotate,
+                                proc_bat.alignSlope,
+                                proc_bat.seed or math.random(100000)
+                            )
                         end
-                        if pmat.proceduralBatches ~= nil then
-                                for i, proc_bat_name in ipairs(pmat.proceduralBatches) do
-                                        pbats = pbats or { } -- create a table only if we have to
-                                        local pbat = pbats[proc_bat_name]
-                                        local proc_bat = physics:getProceduralBatchClass(proc_bat_name)
-                                        if pbat == nil then
-                                            pbat = gfx_ranged_instances_make(proc_bat.mesh)
-                                            pbat.castShadows = proc_bat.castShadows
-                                            pbats[proc_bat_name] = pbat
-                                        end
-                                        body:rangedScatter(
-                                                pmatname,
-                                                pbat,
-                                                proc_bat.density,
-                                                proc_bat.minSlope,
-                                                proc_bat.maxSlope,
-                                                proc_bat.minElevation,
-                                                proc_bat.maxElevation,
-                                                proc_bat.noZ,
-                                                proc_bat.rotate,
-                                                proc_bat.alignSlope,
-                                                proc_bat.seed or math.random(100000)
-                                        )
-                                end
-                        end
+                    end
                 end
                 instance.pbats = pbats
         end;
         deactivate=function(persistent)
-                local instance = persistent.instance
-                if instance.body then
-                        if instance.body.mass > 0 and #(persistent.spawnPos - player_ctrl.camFocus) < persistent.renderingDistance then
-                                -- avoid it respawning directly in front of the camera
-                                persistent.skipNextActivation = true
-                        end
+            local instance = persistent.instance
+            if instance.body then
+                if instance.body.mass > 0 and #(persistent.spawnPos - player_ctrl.camFocus) < persistent.renderingDistance then
+                    -- avoid it respawning directly in front of the camera
+                    persistent.skipNextActivation = true
                 end
-                                
-                instance.body = safe_destroy(instance.body)
-                local pobjs = instance.pobjs
-                if pobjs ~= nil then
-                        for _,v in ipairs(pobjs) do
-                                if not v.destroyed then v:destroy() end
-                        end
+            end
+                            
+            instance.body = safe_destroy(instance.body)
+            local pobjs = instance.pobjs
+            if pobjs ~= nil then
+                for _,v in ipairs(pobjs) do
+                    if not v.destroyed then v:destroy() end
                 end
-                instance.pobjs = nil
-                local pbats = instance.pbats
-                if pbats ~= nil then
-                        for _,v in ipairs(pbats) do
-                                safe_destroy(v)
-                        end
+            end
+            instance.pobjs = nil
+            local pbats = instance.pbats
+            if pbats ~= nil then
+                for _,v in ipairs(pbats) do
+                    safe_destroy(v)
                 end
-                instance.pbats = nil
-                BaseClass.deactivate(persistent, instance)
-                return persistent.temporary -- don't respawn if it was from a pile
+            end
+            instance.pbats = nil
+            BaseClass.deactivate(persistent, instance)
+            return persistent.temporary -- don't respawn if it was from a pile
         end;
 
         getStatistics = function (persistent)
-                local tot_triangles, tot_batches = BaseClass.getStatistics(persistent)
-                
-                local instance = persistent.instance
-                local body = instance.body
+            local tot_triangles, tot_batches = BaseClass.getStatistics(persistent)
+            
+            local instance = persistent.instance
+            local body = instance.body
 
-                if instance.pbats then
-                    for proc_bat_name, pbat in pairs(instance.pbats) do
-                            print("  Procedural batch: "..proc_bat_name)
-                            print("    Instances: "..pbat.instances)
-                            print("    Triangles: "..pbat.triangles)
-                            print("    Batches: "..pbat.batches)
-                            tot_triangles = tot_triangles + pbat.triangles
-                            tot_batches = tot_batches + pbat.batches
-                    end
+            if instance.pbats then
+                for proc_bat_name, pbat in pairs(instance.pbats) do
+                    print("  Procedural batch: "..proc_bat_name)
+                    print("    Instances: "..pbat.instances)
+                    print("    Triangles: "..pbat.triangles)
+                    print("    Batches: "..pbat.batches)
+                    tot_triangles = tot_triangles + pbat.triangles
+                    tot_batches = tot_batches + pbat.batches
                 end
+            end
 
-                return tot_triangles, tot_batches
+            return tot_triangles, tot_batches
         end;
 
         getSpeed = function (persistent)
-                if not persistent.activated then error("Not activated: "..persistent.persistent.name) end
-                local rb = persistent.instance.body
-                return #rb.linearVelocity
+            if not persistent.activated then error("Not activated: "..persistent.persistent.name) end
+            local rb = persistent.instance.body
+            return #rb.linearVelocity
         end;
         flip = function (persistent)
-                if not persistent.activated then error("Not activated: "..persistent.name) end
-                local rb = persistent.instance.body
-                if rb.mass == 0 then return end
-                rb.worldOrientation = quat(V_NORTH, rb.worldOrientation * V_FORWARDS * vector3(1,1,0)) * quat(0,0,1,0);
-                rb.worldPosition = rb.worldPosition + vector3(0,0,1)
-                rb:activate() 
+            if not persistent.activated then error("Not activated: "..persistent.name) end
+            local rb = persistent.instance.body
+            if rb.mass == 0 then return end
+            rb.worldOrientation = quat(V_NORTH, rb.worldOrientation * V_FORWARDS * vector3(1,1,0)) * quat(0,0,1,0);
+            rb.worldPosition = rb.worldPosition + vector3(0,0,1)
+            rb:activate() 
         end;
         toggleProceduralBatches = function (persistent)
-                if not persistent.activated then error("Not activated: "..persistent.name) end
-                local pbats = persistent.instance.pbats
-                if pbats == nil then return end
-                print("Procedural batches of \""..tostring(persistent).."\" toggled ")
-                for k,pbat in pairs(pbats) do
-                        pbat.enabled = v
-                end
+            if not persistent.activated then error("Not activated: "..persistent.name) end
+            local pbats = persistent.instance.pbats
+            if pbats == nil then return end
+            print("Procedural batches of \""..tostring(persistent).."\" toggled ")
+            for k,pbat in pairs(pbats) do
+                pbat.enabled = v
+            end
         end;
         realign = function (persistent)
-                if not persistent.activated then error("Not activated: "..persistent.name) end
-                local rb = persistent.instance.body
-                rb.worldOrientation = quat(V_NORTH, rb.worldOrientation * V_FORWARDS * vector3(1,1,0))
-                rb.worldPosition = rb.worldPosition + vector3(0,0,3);
-                rb.angularVelocity = V_ZERO
-                rb.linearVelocity = V_ZERO
-                rb:activate() 
+            if not persistent.activated then error("Not activated: "..persistent.name) end
+            local rb = persistent.instance.body
+            rb.worldOrientation = quat(V_NORTH, rb.worldOrientation * V_FORWARDS * vector3(1,1,0))
+            rb.worldPosition = rb.worldPosition + vector3(0,0,3);
+            rb.angularVelocity = V_ZERO
+            rb.linearVelocity = V_ZERO
+            rb:activate() 
         end;
         special=function(persistent)
-                if not persistent.activated then error("Not activated: "..persistent.name) end
-                local rb = persistent.instance.body
-                rb.worldOrientation = quat(V_NORTH, rb.worldOrientation * V_FORWARDS * vector3(1,1,0));
-                rb.worldPosition = rb.worldPosition - vector3(0,0,3);
-                rb.angularVelocity = V_ZERO
-                rb.linearVelocity = V_ZERO
-                rb:activate() 
+            if not persistent.activated then error("Not activated: "..persistent.name) end
+            local rb = persistent.instance.body
+            rb.worldOrientation = quat(V_NORTH, rb.worldOrientation * V_FORWARDS * vector3(1,1,0));
+            rb.worldPosition = rb.worldPosition - vector3(0,0,3);
+            rb.angularVelocity = V_ZERO
+            rb.linearVelocity = V_ZERO
+            rb:activate() 
         end;
         beingFired=function(persistent)
         end;
         receiveDamage=function(persistent, damage)
-                local new_health = persistent.instance.health - damage
-                if persistent.instance.health <= 0 then return end
-                if verbose_receive_damage then
-                        print(persistent.name.." says OW! "..damage.." ["..new_health.." / "..persistent.health.." = "..math.floor(100*new_health/persistent.health).."%]")
-                end
-                persistent.instance.health = new_health
-                if persistent.instance.health <= 0 then
-                        persistent:noHealthLeft()
-                end
+            local new_health = persistent.instance.health - damage
+            if persistent.instance.health <= 0 then return end
+            if verbose_receive_damage then
+                print(persistent.name.." says OW! "..damage.." ["..new_health.." / "..persistent.health.." = "..math.floor(100*new_health/persistent.health).."%]")
+            end
+            persistent.instance.health = new_health
+            if persistent.instance.health <= 0 then
+                persistent:noHealthLeft()
+            end
         end;
         receiveBlast = function (persistent, impulse, wpos, damage_impulse)
-                --print(persistent.name.." caught in explosion", impulse, wpos)
-                damage_impulse = damage_impulse or impulse
-                persistent.instance.body:impulse(impulse, wpos)
-                persistent:receiveImpulse(damage_impulse, wpos)
+            --print(persistent.name.." caught in explosion", impulse, wpos)
+            damage_impulse = damage_impulse or impulse
+            persistent.instance.body:impulse(impulse, wpos)
+            persistent:receiveImpulse(damage_impulse, wpos)
         end;
         receiveHeat = function (persistent, wpos, amount)
         end;
         onExplode = function (persistent)
-                local xi = persistent.explodeInfo
-                if xi and xi.deactivate then persistent:deactivate() end
+            local xi = persistent.explodeInfo
+            if xi and xi.deactivate then persistent:deactivate() end
         end;
         explode = function (persistent)
-                local instance = persistent.instance
-                if instance.exploded then return end
-                local xi = persistent.explodeInfo
-                if xi then
-                        instance.exploded = true
-                        if instance.health and instance.health > 0 then instance.health = 0 end
-                        explosion(persistent.pos + (xi.offset or vector3(0,0,0)), xi.radius or 4, xi.force)
-                        persistent:onExplode()
-                end
+            local instance = persistent.instance
+            if instance.exploded then return end
+            local xi = persistent.explodeInfo
+            if xi then
+                instance.exploded = true
+                if instance.health and instance.health > 0 then instance.health = 0 end
+                explosion(persistent.pos + (xi.offset or vector3(0,0,0)), xi.radius or 4, xi.force)
+                persistent:onExplode()
+            end
         end;
         noHealthLeft = function(persistent)
-                if persistent.explodeInfo then persistent:explode() end
+            if persistent.explodeInfo then persistent:explode() end
         end;
         ignite=function(persistent, pname, pos, mat, fertile_life)
-                --print("igniting: "..tostring(persistent))
-                if persistent.instance.body.mass==0 then
-                        flame_ignite(pname, pos, mat, fertile_life)
-                end
+            --print("igniting: "..tostring(persistent))
+            if persistent.instance.body.mass==0 then
+                flame_ignite(pname, pos, mat, fertile_life)
+            end
         end;
 }
 
 PileClass = {
-        renderingDistance=400;
-        init = function (persistent)
-                -- iterate over the guys i will spawn to see what their "advance prepares" should be
-                --print("Initialising: "..persistent.name.." ("..persistent.className..")")
-        end;
-        activate=function (persistent, instance)
-                --print("Activating: "..persistent.name.." ("..persistent.className..")")
-                instance.children = {}
-                for k,v in ipairs(persistent.class.dump) do
-                        local oclass, opos, otab = unpack(v)
-                        if persistent.rot then
-                                opos = persistent.rot * opos
-                                otab.rot = persistent.rot * (otab.rot or Q_ID)
-                        end
-                        otab.temporary = true
-                        opos = persistent.spawnPos + opos
-                        instance.children[k] = object_add(oclass,opos,otab)
-                end
-        end;
-        deactivate=function(persistent)
-                --print("Deactivating: "..persistent.name.." ("..persistent.className..")")
-                -- nothing to do i think
-                local instance = persistent.instance
-                for k,v in ipairs(instance.children) do
-                        if not v.activated then
-                                v:destroy()
-                        end
-                end
-        end;
+    renderingDistance=400;
+    init = function (persistent)
+        -- iterate over the guys i will spawn to see what their "advance prepares" should be
+        --print("Initialising: "..persistent.name.." ("..persistent.className..")")
+    end;
+    activate=function (persistent, instance)
+        --print("Activating: "..persistent.name.." ("..persistent.className..")")
+        instance.children = {}
+        for k,v in ipairs(persistent.class.dump) do
+            local oclass, opos, otab = unpack(v)
+            if persistent.rot then
+                opos = persistent.rot * opos
+                otab.rot = persistent.rot * (otab.rot or Q_ID)
+            end
+            otab.temporary = true
+            opos = persistent.spawnPos + opos
+            instance.children[k] = object_add(oclass,opos,otab)
+        end
+    end;
+    deactivate=function(persistent)
+        --print("Deactivating: "..persistent.name.." ("..persistent.className..")")
+        -- nothing to do i think
+        local instance = persistent.instance
+        for k,v in ipairs(instance.children) do
+            if not v.activated then
+                v:destroy()
+            end
+        end
+    end;
 }
 
 ProcPileClass = {
-        renderingDistance=400;
-        init = function (persistent)
-                -- iterate over the guys i will spawn to see what their "advance prepares" should be
-                --print("Initialising: "..persistent.name.." ("..persistent.className..")")
-        end;
-        spawnObjects = function() end;
-        activate=function (persistent, instance)
-                --print("Activating: "..persistent.name.." ("..persistent.className..")")
-                instance.children = {}
-                local counter = 1
-                persistent:spawnObjects(function(oclass,opos,otab)
-                        if persistent.rot then
-                                opos = persistent.rot * opos
-                                otab.rot = persistent.rot * (otab.rot or Q_ID)
-                        end
-                        otab.temporary = true
-                        opos = persistent.spawnPos + opos
-                        instance.children[counter] = object_add(oclass,opos,otab)
-                        counter = counter + 1
-                end)
-        end;
-        deactivate=function(persistent)
-                --print("Deactivating: "..persistent.name.." ("..persistent.className..")")
-                -- nothing to do i think
-                local instance = persistent.instance
-                for k,v in ipairs(instance.children) do
-                        if not v.activated then
-                                v:destroy()
-                        end
-                end
-        end;
+    renderingDistance=400;
+    init = function (persistent)
+        -- iterate over the guys i will spawn to see what their "advance prepares" should be
+        --print("Initialising: "..persistent.name.." ("..persistent.className..")")
+    end;
+    spawnObjects = function() end;
+    activate=function (persistent, instance)
+        --print("Activating: "..persistent.name.." ("..persistent.className..")")
+        instance.children = {}
+        local counter = 1
+        persistent:spawnObjects(function(oclass,opos,otab)
+            if persistent.rot then
+                opos = persistent.rot * opos
+                otab.rot = persistent.rot * (otab.rot or Q_ID)
+            end
+            otab.temporary = true
+            opos = persistent.spawnPos + opos
+            instance.children[counter] = object_add(oclass,opos,otab)
+            counter = counter + 1
+        end)
+    end;
+    deactivate=function(persistent)
+        --print("Deactivating: "..persistent.name.." ("..persistent.className..")")
+        -- nothing to do i think
+        local instance = persistent.instance
+        for k,v in ipairs(instance.children) do
+            if not v.activated then
+                v:destroy()
+            end
+        end
+    end;
 }
 
 function dump_object_line(persistent)
-        local x,y,z = unpack(persistent.spawnPos)
-        return ("object \"%s\" (%f,%f,%f) {name=\"%s\", rot=%s}"):format(persistent.className, x,y,z, persistent.name, tostring(persistent.rot))
+    local x,y,z = unpack(persistent.spawnPos)
+    return ("object \"%s\" (%f,%f,%f) {name=\"%s\", rot=%s}"):format(persistent.className, x,y,z, persistent.name, tostring(persistent.rot))
 end
 

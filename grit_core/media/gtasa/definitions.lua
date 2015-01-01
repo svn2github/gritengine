@@ -58,7 +58,7 @@ function load_all_cols()
         foreach(class_all(), function(c)
                 if c.colMesh ~= nil then
                         if c.colMesh:sub(1,8) == "gta3.img" then
-                                disk_resource_load("gtasa/"..c.colMesh)
+                                disk_resource_ensure_loaded("gtasa/"..c.colMesh)
                         end
                 end
         end)

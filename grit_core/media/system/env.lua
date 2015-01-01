@@ -236,11 +236,8 @@ else
 
 end
 
-disk_resource_load_indefinitely(`SkyCube.mesh`)
 sky_ent = gfx_sky_body_make(`SkyCube.mesh`, 180)
-disk_resource_load_indefinitely(`SkyMoon.mesh`)
 moon_ent = gfx_sky_body_make(`SkyMoon.mesh`, 120)
-disk_resource_load_indefinitely(`SkyClouds.mesh`)
 clouds_ent = gfx_sky_body_make(`SkyClouds.mesh`, 60)
 
 function env:shutdown()

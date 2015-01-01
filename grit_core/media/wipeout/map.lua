@@ -146,8 +146,7 @@ for i,obj in ipairs(objs) do
     add("speedpad", obj)
 end
 
-local sky_mesh = "/wipeout/SkyBox.mesh"
-disk_resource_add(sky_mesh)
-disk_resource_load_indefinitely(sky_mesh)
 sky_ent:destroy()
-sky_ent = gfx_sky_body_make(sky_mesh, 255)
+sky_ent = gfx_sky_body_make(`SkyBox.mesh`, 255)
+moon_ent.enabled = false
+clouds_ent.enabled = false

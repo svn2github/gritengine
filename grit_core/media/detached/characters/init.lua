@@ -41,8 +41,6 @@ local function cast_cylinder_with_deflection (body, radius, height, pos, movemen
     
 end 
 
-disk_resource_load_indefinitely("/detached/weapons/rocket_launcher/rocket_launcher.mesh")
-
 
 -- extend ColClass so we have a physics representation that can receive rays, etc
 DetachedCharacterClass = extends (ColClass) {
