@@ -136,7 +136,7 @@ stats = gfx_hud_object_add(`Stats`, {
             return string.format("Deff Tris / Bats: %d / %d", gfx.left.deferred[2], gfx.left.gbuffer[1])
         end;
         total = function()
-            local shadow_tris, shadow_bats = gfx:allShadowStats()
+            local shadow_bats, shadow_tris = gfx:allShadowStats()
             local total_tris = shadow_tris + gfx.left.gbuffer[2] + gfx.left.deferred[2] + gfx.right.gbuffer[2] + gfx.right.deferred[2]
             local total_bats = shadow_bats + gfx.left.gbuffer[1] + gfx.left.deferred[1] + gfx.right.gbuffer[1] + gfx.right.deferred[1]
             return string.format("Total Tris / Bats: %d / %d", total_tris, total_bats)
