@@ -4,15 +4,10 @@ print("Loading audio.lua")
 
 audio = audio or { }
 
-if not audio.collision then
-    audio.collision = true
-    disk_resource_acquire("/common/sounds/collision.wav") -- prevent it from being unloaded by anyone until we release it
-end
+ -- prevent it from being unloaded by anyone until we release it
+audio.collision = disk_resource_hold_make(`/common/sounds/collision.wav`)
+ -- force load it (in rendering thread)
+disk_resource_ensure_loaded(audio.collision.name)
 
-if not audio.explosion then
-    audio.explosion = true
-    disk_resource_acquire("/common/sounds/explosion.wav") -- prevent it from being unloaded by anyone until we release it
-end
-
-disk_resource_ensure_loaded("/common/sounds/collision.wav") -- force load it (in rendering thread)
-disk_resource_ensure_loaded("/common/sounds/explosion.wav") -- force load it (in rendering thread)
+audio.explosion = disk_resource_hold_make(`/common/sounds/explosion.wav`)
+disk_resource_ensure_loaded(audio.explosion.name)

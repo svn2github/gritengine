@@ -13,7 +13,9 @@
     grep -v 'gtasa\/phys_mats[.]lua' |
     grep -v 'gtasa\/vehicles[.]lua' |
     grep -v 'gtasa\/all_vehicles[.]lua' |
-    grep -v 'gtasa\/non_cars[.]lua'
+    grep -v 'gtasa\/non_cars[.]lua' |
+    grep -v 'solemn\/newworld\/classes[.]lua' |
+    grep -v 'solemn\/newworld\/map[.]lua'
 
     find exporters \( -name '*.ms' \)
 
