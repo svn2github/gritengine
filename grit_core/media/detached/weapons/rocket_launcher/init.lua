@@ -1,13 +1,13 @@
 -- Code (c) David Cunningham 2013, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 -- Art (c) Vincent Mayeur 2013, Licenced under Creative Commons License BY-NC-SA: http://creativecommons.org/licenses/by-nc-sa/3.0/
 
-material "rocket_launcher" { 
+material `rocket_launcher` { 
 	filterMip = "NONE",filterMag="NONE";
 	shadowBias = 0.1;
-	diffuseMap="../../textures/rocket_launcher.tga";
+	diffuseMap=`../../textures/rocket_launcher.tga`;
 }
 
-class "Rocket" (BaseClass) {
+class `Rocket` (BaseClass) {
     gfxMesh = `rocket.mesh`;
 
     renderingDistance = 100.0;
@@ -68,13 +68,13 @@ function fire_rocket (pos)
 
     pos = pos or player_ctrl.camFocus+player_ctrl.camDir * V_FORWARDS
 
-    object "Rocket" (pos) { rot=player_ctrl.camDir }
+    object `Rocket` (pos) { rot=player_ctrl.camDir }
 
 end
 
 detached_binds:bind("A+-", function () fire_rocket() end )
 
-class "RocketLauncher" (BaseClass) {
+class `RocketLauncher` (BaseClass) {
     gfxMesh = `rocket_launcher.mesh`;
     
 }

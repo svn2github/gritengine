@@ -75,8 +75,8 @@ particle_convection_curve = PlotV3 {
 }
 
 
-particle "DebugMarker" {
-    map = "GenericParticleSheet.dds"; alphaBlend = true; emissive = true;
+particle `DebugMarker` {
+    map = `GenericParticleSheet.dds`; alphaBlend = true; emissive = true;
     frames = { 960,960, 64, 64, }; frame = 0;
     behaviour = function(particle, elapsed)
         particle.age = particle.age + elapsed
@@ -92,7 +92,7 @@ function emit_debug_marker (pos, colour, life, size)
     colour = colour or vector3(1,0,0)
     life = life or 10
     size = size or 1
-    gfx_particle_emit("/common/particles/DebugMarker", pos, {
+    gfx_particle_emit(`DebugMarker`, pos, {
         life = life;
         colour = colour;
         age = 0;
@@ -117,8 +117,8 @@ function particle_behaviour_standard (tab, elapsed)
     if tab.frameRate then tab.frame = tab.frame + tab.frameRate * elapsed end
 end
 
-particle "Explosion3" {
-    map = "GenericParticleSheet.dds"; emissive = true; blending = "ALPHA";
+particle `Explosion3` {
+    map = `GenericParticleSheet.dds`; emissive = true; blending = "ALPHA";
     frames = {
                   0,384,   128, 128,
                 128,384,   128, 128,
@@ -144,7 +144,7 @@ particle "Explosion3" {
     behaviour = particle_behaviour_standard;
 }   
 
-particle "Explosion4" {
+particle `Explosion4` {
     map = "GenericParticleSheet.dds";
     blending = "ADD";
     frames = {

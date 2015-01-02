@@ -1,67 +1,67 @@
 -- (c) Acisclo Murillo (JostVice), Vincent Mayeur - 2012, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 --Main
 --object "VCtest" (0.0, 0.0, 5) {name="VCtest"}
-object "terrain" (0.0, 0.0, 0.0) {name="terrain"}
-object "road" (0.0, 0.0, 0.0) {name="road"}
-object "Road2" (139.893, 148.147, 30.0509) {name="Road2"}
-object "airport_base" (309.284, -262.455, 49.0702) {name="airport_base"}
-object "Waterfall" (48.5709, -21.3451, 3.31331) {name="Waterfall"}
-object "WaterfallBase" (51.1065, -20.4605, 4.95492) {name="WaterfallBase"}
-object "canal" (60.6987, -20.1724, -3.03287) {name="canal"}
-object "tunnel" (60.7518, 4.90147, 16.5493) {name="tunnel"}
-object "buildings/hangar" (-45.1306, 0.0, 0.0) {name="hangar"}
-object "ocean_plane" (-2000,0,-5.0) {name="ocean_plane1"}
-object "ocean_plane" (-7000,0,-5.0) {name="ocean_plane2"}
-object "ocean_plane" (-2000,-5000,-5.0) {name="ocean_plane3"}
-object "ocean_plane" (-7000,-5000,-5.0) {name="ocean_plane4"}
-object "ocean_plane" (-2000,5000,-5.0) {name="ocean_plane5"}
-object "ocean_plane" (-7000,5000,-5.0) {name="ocean_plane6"}
+object `terrain` (0.0, 0.0, 0.0) {name="terrain"}
+object `road` (0.0, 0.0, 0.0) {name="road"}
+object `Road2` (139.893, 148.147, 30.0509) {name="Road2"}
+object `airport_base` (309.284, -262.455, 49.0702) {name="airport_base"}
+object `Waterfall` (48.5709, -21.3451, 3.31331) {name="Waterfall"}
+object `WaterfallBase` (51.1065, -20.4605, 4.95492) {name="WaterfallBase"}
+object `canal` (60.6987, -20.1724, -3.03287) {name="canal"}
+object `tunnel` (60.7518, 4.90147, 16.5493) {name="tunnel"}
+object `buildings/hangar` (-45.1306, 0.0, 0.0) {name="hangar"}
+object `ocean_plane` (-2000,0,-5.0) {name="ocean_plane1"}
+object `ocean_plane` (-7000,0,-5.0) {name="ocean_plane2"}
+object `ocean_plane` (-2000,-5000,-5.0) {name="ocean_plane3"}
+object `ocean_plane` (-7000,-5000,-5.0) {name="ocean_plane4"}
+object `ocean_plane` (-2000,5000,-5.0) {name="ocean_plane5"}
+object `ocean_plane` (-7000,5000,-5.0) {name="ocean_plane6"}
 
 
 -- ------> Props <------ 
-object "/common/props/street/floodlight" (41.1105, 9.20863, 0.408907) {rot=euler(0.0,0.0,120.0)}
+object `/common/props/street/floodlight` (41.1105, 9.20863, 0.408907) {rot=euler(0.0,0.0,120.0)}
 
 --Ramps
-object "/common/ramps/HalfPipeLarge" (33.3063, -7.64539, 0.0) {rot=euler(0.0,0.0,180.0)}
-object "/common/ramps/HalfPipeLarge" (37.8877, -7.64539, 0.0) {rot=euler(0.0,0.0,180.0)}
-object "/common/ramps/HalfPipeLarge" (37.8877, 11.3093, 0.0) {rot=euler(0.0,0.0,0.0)}
-object "/common/ramps/HalfPipeLarge" (33.3063, 11.3093, 0.0) {rot=euler(0.0,0.0,0.0)}
-object "/common/ramps/HalfPipeSmall" (24.1434, 11.3093, 0.0) {rot=euler(0.0,0.0,0.0)}
-object "/common/ramps/HalfPipeSmall" (28.7248, 11.3093, 0.0) {rot=euler(0.0,0.0,0.0)}
-object "/common/ramps/HalfPipeSmall" (19.5619, 11.3093, 0.0) {rot=euler(0.0,0.0,0.0)}
-object "/common/ramps/HalfPipeSmall" (28.7248, -7.64537, 0.0) {rot=euler(0.0,0.0,180.0)}
-object "/common/ramps/HalfPipeSmall" (24.1434, -7.64537, 0.0) {rot=euler(0.0,0.0,180.0)}
-object "/common/ramps/HalfPipeSmall" (19.5619, -7.64537, 0.0) {rot=euler(0.0,0.0,180.0)}
-object "/common/ramps/Large" (14.9805, -7.74201, 0.0) {rot=euler(0.0,0.0,180.0)}
-object "/common/ramps/Large" (10.399, -7.74201, 0.0) {rot=euler(0.0,0.0,180.0)}
-object "/common/ramps/Large" (14.9805, 11.2127, 0.0) {rot=euler(0.0,0.0,0.0)}
-object "/common/ramps/Large" (10.399, 11.2127, 0.0) {rot=euler(0.0,0.0,0.0)}
-object "/common/ramps/Small" (5.81756, 11.2127, 0.0) {rot=euler(0.0,0.0,0.0)}
-object "/common/ramps/HalfPipeSmall" (-25.6595, -14.5249, 0.0) {rot=euler(0.0,0.0,90.0)}
+object `/common/ramps/HalfPipeLarge` (33.3063, -7.64539, 0.0) {rot=euler(0.0,0.0,180.0)}
+object `/common/ramps/HalfPipeLarge` (37.8877, -7.64539, 0.0) {rot=euler(0.0,0.0,180.0)}
+object `/common/ramps/HalfPipeLarge` (37.8877, 11.3093, 0.0) {rot=euler(0.0,0.0,0.0)}
+object `/common/ramps/HalfPipeLarge` (33.3063, 11.3093, 0.0) {rot=euler(0.0,0.0,0.0)}
+object `/common/ramps/HalfPipeSmall` (24.1434, 11.3093, 0.0) {rot=euler(0.0,0.0,0.0)}
+object `/common/ramps/HalfPipeSmall` (28.7248, 11.3093, 0.0) {rot=euler(0.0,0.0,0.0)}
+object `/common/ramps/HalfPipeSmall` (19.5619, 11.3093, 0.0) {rot=euler(0.0,0.0,0.0)}
+object `/common/ramps/HalfPipeSmall` (28.7248, -7.64537, 0.0) {rot=euler(0.0,0.0,180.0)}
+object `/common/ramps/HalfPipeSmall` (24.1434, -7.64537, 0.0) {rot=euler(0.0,0.0,180.0)}
+object `/common/ramps/HalfPipeSmall` (19.5619, -7.64537, 0.0) {rot=euler(0.0,0.0,180.0)}
+object `/common/ramps/Large` (14.9805, -7.74201, 0.0) {rot=euler(0.0,0.0,180.0)}
+object `/common/ramps/Large` (10.399, -7.74201, 0.0) {rot=euler(0.0,0.0,180.0)}
+object `/common/ramps/Large` (14.9805, 11.2127, 0.0) {rot=euler(0.0,0.0,0.0)}
+object `/common/ramps/Large` (10.399, 11.2127, 0.0) {rot=euler(0.0,0.0,0.0)}
+object `/common/ramps/Small` (5.81756, 11.2127, 0.0) {rot=euler(0.0,0.0,0.0)}
+object `/common/ramps/HalfPipeSmall` (-25.6595, -14.5249, 0.0) {rot=euler(0.0,0.0,90.0)}
 
 --Vegetation
-object "/common/veg/TropPlant1" (1.0197, 11.685, 0.104414) {rot=euler(-4.38321,5.94474,-0.454836)}
-object "/common/veg/TropPlant1" (1.79874, 13.2445, 0.0154112) {rot=euler(0.0,0.0,0.0)}
-object "/common/veg/TropPlant1" (-22.0106, 9.64457, -0.113637) {rot=euler(0.0,2.70216,0.0)}
-object "/common/veg/TropPlant1" (4.59304, 30.1532, 3.90443) {rot=euler(0.0,-7.00829,0.0)}
-object "/common/veg/TropPlant1" (54.6683, 5.98451, 12.1356) {rot=euler(-20.8564,0.0,0.0)}
-object "/common/veg/TropPlant1" (8.14645, -10.464, 0.0434957) {rot=euler(4.33144,-3.15298,-0.238702)}
-object "/common/veg/TropPlant1" (53.7386, 4.27333, 12.1356) {rot=euler(-20.8564,2.56132e-006,51.9048)}
+object `/common/veg/TropPlant1` (1.0197, 11.685, 0.104414) {rot=euler(-4.38321,5.94474,-0.454836)}
+object `/common/veg/TropPlant1` (1.79874, 13.2445, 0.0154112) {rot=euler(0.0,0.0,0.0)}
+object `/common/veg/TropPlant1` (-22.0106, 9.64457, -0.113637) {rot=euler(0.0,2.70216,0.0)}
+object `/common/veg/TropPlant1` (4.59304, 30.1532, 3.90443) {rot=euler(0.0,-7.00829,0.0)}
+object `/common/veg/TropPlant1` (54.6683, 5.98451, 12.1356) {rot=euler(-20.8564,0.0,0.0)}
+object `/common/veg/TropPlant1` (8.14645, -10.464, 0.0434957) {rot=euler(4.33144,-3.15298,-0.238702)}
+object `/common/veg/TropPlant1` (53.7386, 4.27333, 12.1356) {rot=euler(-20.8564,2.56132e-006,51.9048)}
 
 --Remove when the rock have a hull collision
---object "/common/props/nature/rock" (201.792, 111.86, 47.7788) {rot=quat(-0.0448367,0.00557437,0.0119691,0.998907)}
---object "/common/props/nature/rock" (201.235, 113.569, 47.6139) {rot=quat(0.196156,0.626603,0.752438,0.0522359)}
---object "/common/props/nature/rock" (202.251, 113.726, 47.6822) {rot=quat(0.606543,-0.051537,-0.0575356,0.79129)}
---object "/common/props/nature/rock" (203.894, 114.6, 47.7888) {rot=quat(0.978176,-0.0486812,-0.0992718,0.175917)}
+--object `/common/props/nature/rock` (201.792, 111.86, 47.7788) {rot=quat(-0.0448367,0.00557437,0.0119691,0.998907)}
+--object `/common/props/nature/rock` (201.235, 113.569, 47.6139) {rot=quat(0.196156,0.626603,0.752438,0.0522359)}
+--object `/common/props/nature/rock` (202.251, 113.726, 47.6822) {rot=quat(0.606543,-0.051537,-0.0575356,0.79129)}
+--object `/common/props/nature/rock` (203.894, 114.6, 47.7888) {rot=quat(0.978176,-0.0486812,-0.0992718,0.175917)}
 
-object "/common/veg/prxtree" (-4.22736, 81.035, 14.8055) {}
+object `/common/veg/prxtree` (-4.22736, 81.035, 14.8055) {}
 
 
 local function place_lamp(pos, rot)
-    local class_name = "/common/props/street/Lamp"
+    local class_name = `/common/props/street/Lamp`
     if math.random() < 0.05 then
         -- use this one instead
-        class_name = "/common/props/street/LampFlickering"
+        class_name = `/common/props/street/LampFlickering`
     end
     pos = pos + vector3(0,0,2.95) -- model has changed since these positions were made ... :)
     object (class_name) (pos) {rot=rot}
@@ -134,4 +134,4 @@ place_lamp(vector3(273.4811, 204.8993, 42.69725), quat(0.04396804, 0, 0, -0.9990
 place_lamp(vector3(207.8398, 201.5062, 42.37194), quat(0.7573371, 0, 0, -0.6530241))
 place_lamp(vector3(196.1923, 201.2398, 42.00002), quat(-0.7698452, 0, 0, -0.6382306))
 
-object "/common/sounds/waterfall" (47.64812, -18.55664, 1.653778) { orientation=euler(0,0,-90) }
+object `/common/sounds/waterfall` (47.64812, -18.55664, 1.653778) { orientation=euler(0,0,-90) }

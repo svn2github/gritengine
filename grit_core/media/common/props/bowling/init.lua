@@ -1,11 +1,12 @@
 -- (c) David Cunningham 2009, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
-include "classes.lua"
+include `classes.lua`
 
-material "Pin" { diffuseMap="Pin.dds", specular=.25, gloss=.5 }
-material "Ball" { diffuseMap="Ball.dds", specular=.25, gloss=.75 }
+material `Pin` { diffuseMap=`Pin.dds`, specular=.25, gloss=.5 }
+material `Ball` { diffuseMap=`Ball.dds`, specular=.25, gloss=.75 }
 
-class "Deck" (extends(ProcPileClass) {
+-- TODO: This should be cleaned up, I think there is no need for extends() in this case.
+class `Deck` (extends(ProcPileClass) {
     spawnObjects = function(persistent, spawn)
         local rows = persistent.rows
         local space = persistent.space
@@ -19,7 +20,7 @@ class "Deck" (extends(ProcPileClass) {
     end;
 }) {
     renderingDistance=100;
-    pinClass = "Pin";
+    pinClass = `Pin`;
     rows = 4;
     space = .3;
 }

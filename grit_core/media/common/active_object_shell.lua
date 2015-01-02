@@ -122,31 +122,31 @@ ActiveObjectShell = extends (ColClass) {
 
 }
 
-class "TestObjectShell1" (ActiveObjectShell) {
-    gfxMesh="/common/props/junk/Brick.mesh";
-    colMesh="/common/props/junk/Brick.gcol";
+class `TestObjectShell1` (ActiveObjectShell) {
+    gfxMesh=`/common/props/junk/Brick.mesh`;
+    colMesh=`/common/props/junk/Brick.gcol`;
 }
 
-class "TestObjectShell2" (ActiveObjectShell) {
-    gfxMesh="/common/props/junk/Brick.mesh";
-    colMesh="/common/props/junk/Brick.gcol";
+class `TestObjectShell2` (ActiveObjectShell) {
+    gfxMesh=`/common/props/junk/Brick.mesh`;
+    colMesh=`/common/props/junk/Brick.gcol`;
     additionalState = "TestObjectShell2 state";
 }
 
-object "TestObjectShell1" (1,0,1) {
+object `TestObjectShell1` (1,0,1) {
     name="Shell1:obj1";
 }
 
-object "TestObjectShell1" (2,0,1) {
+object `TestObjectShell1` (2,0,1) {
     name="Shell1:obj2";
     additionalState = "Object state overridden";
 }
 
-object "TestObjectShell2" (3,0,1) {
+object `TestObjectShell2` (3,0,1) {
     name="Shell2:obj1";
 }
 
-object "TestObjectShell2" (4,0,1) {
+object `TestObjectShell2` (4,0,1) {
     name="Shell2:obj2";
     additionalState = "Object state overridden again";
 }

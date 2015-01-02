@@ -9,21 +9,21 @@ hud_class `.` {
         self.needsFrameCallbacks = true
 
         --pointer is the notch at the top of the compass that marks where you're looking
-        self.pointer = gfx_hud_object_add("/common/hud/Rect", {texture="Pointer.png", zOrder=7})
+        self.pointer = gfx_hud_object_add(`/common/hud/Rect`, {texture=`Pointer.png`, zOrder=7})
         self.pointer.parent = self
         self.pointer.position = vec(0, self.size.y/2 - 24)
 
         -- compass orientation (what makes N point towards north) 
-        self.ring = gfx_hud_object_add("/common/hud/Rect", {texture="Body.png", size=self.size})
+        self.ring = gfx_hud_object_add(`/common/hud/Rect`, {texture=`Body.png`, size=self.size})
         self.ring.parent = self
 
         --player denotes the player model direction (if any)
-        self.player = gfx_hud_object_add("/common/hud/Rect", {texture="Needle.png"})
+        self.player = gfx_hud_object_add(`/common/hud/Rect`, {texture=`Needle.png`})
         self.player.parent = self.ring
 
 
         --bearing displayed in degrees
-        self.text = gfx_hud_text_add("/common/fonts/TinyFont")
+        self.text = gfx_hud_text_add(`/common/fonts/TinyFont`)
         self.text.text = "XXX"
         self.text.parent = self
         self.text.position = vec(48, -50)
@@ -32,7 +32,7 @@ hud_class `.` {
         local inner_sz = self.size - vec(20, 20)
 
         --the cardinal directions
-        local cardinalLettersFont = "/common/fonts/misc.fixed"
+        local cardinalLettersFont = `/common/fonts/misc.fixed`
         self.N = gfx_hud_text_add(cardinalLettersFont)
         self.N.text = "N"
         self.N.parent = self.ring

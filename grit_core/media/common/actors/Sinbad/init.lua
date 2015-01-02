@@ -1,6 +1,6 @@
 -- (c) Dave Cunningham 2013, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
-class "../Sinbad2" (BaseClass) {
+class `../Sinbad2` (BaseClass) {
 
     renderingDistance = 100;
 
@@ -41,7 +41,7 @@ class "../Sinbad2" (BaseClass) {
     end;
 }   
 
-class "." {} {
+class `.` {} {
 
     renderingDistance = 100;
 
@@ -50,7 +50,7 @@ class "." {} {
     placementZOffset = 5;
 
     init = function (persistent)
-        persistent:addDiskResource("Body.mesh")
+        persistent:addDiskResource(`Body.mesh`)
     end;
             
     activate = function (persistent,instance)
@@ -61,7 +61,7 @@ class "." {} {
         instance.pivot.localPosition = persistent.spawnPos
         instance.pivot.localOrientation = quat(1,1,0,0)
 
-        instance.gfx = instance.pivot:makeChild("Body.mesh")
+        instance.gfx = instance.pivot:makeChild(`Body.mesh`)
         for _,v in ipairs({instance.gfx:getAllAnimations()}) do
             instance[v.."Len"] = instance.gfx:getAnimationLength(v)
             instance[v.."Rate"] = 1
@@ -90,12 +90,12 @@ class "." {} {
     end;
 }   
 
-material "Body" { blendedBones=4, diffuseMap="Body.tga", shadowBias=0.15 }
-material "Gold" { blendedBones=3, diffuseMap="Clothes.tga", shadowBias=0.05 }
-material "Sheaths" { blendedBones=1, diffuseMap="Sword.tga", shadowBias=0.05 }
-material "Clothes" { blendedBones=4, diffuseMap="Clothes.tga", shadowBias=0.05 }
-material "Teeth" { blendedBones=3, diffuseMap="Body.tga", shadowBias=0.05 }
-material "Eyes" { blendedBones=1, diffuseMap="Body.tga", shadowBias=0.05 }
-material "Spikes" { blendedBones=1, diffuseMap="Clothes.tga", shadowBias=0.05 }
+material `Body` { blendedBones=4, diffuseMap=`Body.tga`, shadowBias=0.15 }
+material `Gold` { blendedBones=3, diffuseMap=`Clothes.tga`, shadowBias=0.05 }
+material `Sheaths` { blendedBones=1, diffuseMap=`Sword.tga`, shadowBias=0.05 }
+material `Clothes` { blendedBones=4, diffuseMap=`Clothes.tga`, shadowBias=0.05 }
+material `Teeth` { blendedBones=3, diffuseMap=`Body.tga`, shadowBias=0.05 }
+material `Eyes` { blendedBones=1, diffuseMap=`Body.tga`, shadowBias=0.05 }
+material `Spikes` { blendedBones=1, diffuseMap=`Clothes.tga`, shadowBias=0.05 }
 
 env.clockRate = 1

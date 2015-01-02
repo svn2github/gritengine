@@ -1,14 +1,14 @@
 -- (c) David Cunningham 2009, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
-include "classes.lua"
+include `classes.lua`
 
-material "Small" { diffuseMap = "side.dds" }
+material `Small` { diffuseMap = `side.dds` }
 
-material "Big" { diffuseMap = "red_side.dds", normalMap = "red_side_N.dds" }
+material `Big` { diffuseMap = `red_side.dds`, normalMap = `red_side_N.dds` }
 
-material "Long" { diffuseMap = "Panel.dds", normalMap = "PanelN.dds", emissiveMap = "PanelE.dds", emissiveColour={6,6,6} }
+material `Long` { diffuseMap = `Panel.dds`, normalMap = `PanelN.dds`, emissiveMap = `PanelE.dds`, emissiveColour={6,6,6} }
 
-class "Wall" (ProcPileClass) {
+class `Wall` (ProcPileClass) {
     spawnObjects = function(persistent, spawn)
         local x_min = persistent.xMin
         local x_max = persistent.xMax
@@ -28,10 +28,10 @@ class "Wall" (ProcPileClass) {
     xMin = -8;
     xMax = 8;
     height = 15;
-    brickClass = "/common/props/debug/crates/Long"
+    brickClass = `Long`
 }
 
-class "Stack" (ProcPileClass) {
+class `Stack` (ProcPileClass) {
     spawnObjects = function(persistent, spawn)
         local height = persistent.height
         local dim = 2 * class_get(persistent.brickClass).placementZOffset
@@ -42,6 +42,6 @@ class "Stack" (ProcPileClass) {
     end;
     renderingDistance=110;
     height = 15;
-    brickClass = "/common/props/debug/crates/Small"
+    brickClass = `Small`
 }
 

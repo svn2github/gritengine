@@ -1,27 +1,27 @@
 --test vehicle
 
-material "greybox" { diffuseColour= {.4,.4,.4}, vertexDiffuse=true }
+material `greybox` { diffuseColour= {.4,.4,.4}, vertexDiffuse=true }
 
-material "car_generic_a" {
+material `car_generic_a` {
     filterMip = "NONE",
     filterMag = "POINT",
 
-    diffuseMap = "../textures/car_generic_a.tga",
-    glossMap = "../textures/car_generic_a_spec.tga",
+    diffuseMap = `../textures/car_generic_a.tga`,
+    glossMap = `../textures/car_generic_a_spec.tga`,
 
     paintByDiffuseAlpha = true,
     paintColour = 1,
 
-    emissiveMap="../textures/car_generic_a_em.tga",
+    emissiveMap=`../textures/car_generic_a_em.tga`,
     emissiveColour = {4,4,4},
 
     shadowBias = 0.1,
     vertexDiffuse = true
 }
 
-material "car_generic_glass" {
+material `car_generic_glass` {
     diffuseColour = {0.01,0.01,0.01};
-	glossMap = "../textures/car_generic_glass_spec.dds";
+	glossMap = `../textures/car_generic_glass_spec.dds`;
     alpha = 0.8;
     shadowBias =0.1;
 }
@@ -320,7 +320,7 @@ FlyingCar = extends (ColClass) {
 
 }
 
-class "." (FlyingCar) {
+class `.` (FlyingCar) {
     gfxMesh=`comet.mesh`;
     colMesh=`comet.gcol`;
     placementZOffset = 0.35;

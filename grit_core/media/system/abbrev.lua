@@ -15,22 +15,19 @@ local function class2 (ext)
         return class3
 end
 function class (name)
-        curried_name = r(name, 2)
+        curried_name = name
         return class2
 end
         
 local function hud_class2 (tab)
         local tab2 = { }
         for k, v in pairs(tab) do
-            if k == "texture" then
-                v = r(v, 2)
-            end
             tab2[k] = v
         end
         return gfx_hud_class_add(curried_name, tab2)
 end
 function hud_class (name)
-        curried_name = r(name, 2)
+        curried_name = name
         return hud_class2
 end
         
@@ -83,7 +80,7 @@ local function object2 (x,y,z)
         return object3
 end
 function object (class)
-        curried_name = r(class, 2)
+        curried_name = class
         return object2
 end
 function offset_exec (off, f, ...)
@@ -95,76 +92,39 @@ function offset_include (x,y,z, str) offset_exec(vec(x,y,z),include,str) end
         
 local function physical_material2 (tab) 
         local mat = { }
-        for k,v in pairs(tab) do
-                if k == "proceduralObjects" then
-                        local t = { }
-                        for k2,v2 in ipairs(v) do
-                                t[k2] = r(v2, 2)
-                        end
-                        mat[k] = t
-                elseif k == "proceduralBatches" then
-                        local t = { }
-                        for k2,v2 in ipairs(v) do
-                                t[k2] = r(v2, 2)
-                        end
-                        mat[k] = t
-                else
-                        mat[k] = v
-                end
-        end
-        return physics:setMaterial(curried_name,mat)
+        return physics:setMaterial(curried_name, tab)
 end
 function physical_material (name)
-        curried_name = r(name, 2)
+        curried_name = name
         return physical_material2
 end
 
 local function procedural_batch2 (tab) 
         local tab2 = { }
         for k,v in pairs(tab) do
-                if k == "mesh" then
-                        tab2[k] = r(v, 2)
-                else
-                        tab2[k] = v
-                end
+                tab2[k] = v
         end
         return physics:setProceduralBatchClass(curried_name, tab2)
 end
 function procedural_batch (name)
-        curried_name = r(name, 2)
+        curried_name = name
         return procedural_batch2
 end
 
 local function procedural_object2 (tab) 
-        local tab2 = { }
-        for k,v in pairs(tab) do
-                if k == "mesh" then
-                        tab2[k] = r(v, 2)
-                else
-                        tab2[k] = v
-                end
-        end
-        return physics:setProceduralObjectClass(curried_name, tab2)
+        return physics:setProceduralObjectClass(curried_name, tab)
 end
 function procedural_object (name)
-        curried_name = r(name, 2)
+        curried_name = name
         return procedural_object2
 end
 
 local function sky_material2(tab)
         local name = curried_name
-        local tab2 = {}
-        for k, v in pairs(tab) do
-                if k == "shader" then
-                    tab2[k] = r(v,2)
-                else
-                    tab2[k] = v
-                end
-        end
-        gfx_register_sky_material(name,tab2)
+        gfx_register_sky_material(name,tab)
 end
 function sky_material(name)
-        curried_name = r(name, 2)
+        curried_name = name
         return sky_material2
 end
 
@@ -174,7 +134,7 @@ local function sky_shader2(tab)
         gfx_register_sky_shader(name, tab)
 end
 function sky_shader(name)
-        curried_name = r(name, 2)
+        curried_name = name
         return sky_shader2
 end
 
@@ -183,7 +143,7 @@ function uniform_texture(tab)
         tab2.uniformKind = "TEXTURE2D";
         for k, v in pairs(tab) do
             if k == "name" then
-                tab2[k] = r(v, 2)
+                tab2[k] = v
             end
         end
         return tab2
@@ -199,26 +159,12 @@ end
 local function material2(tab)
         local name = curried_name
         tab = tab or {}
-        local function qualify(t)
-                for _,k in ipairs{"diffuseMap", "normalMap", "glossMap", "translucencyMap", "emissiveMap", "paintColour"} do
-                        if type(t[k])=="string" then
-                                t[k] = r(t[k], 3)
-                        end
-                end
-        end
-        qualify(tab)
-        if tab.blend then
-                for _,v in ipairs(tab.blend) do
-                        qualify(v)
-                end
-        end
-
         -- paint colour
         do_create_material(name, tab)
         register_material(name,tab)
 end
 function material(name)
-        curried_name = r(name, 2)
+        curried_name = name
         return material2
 end
 
@@ -226,16 +172,12 @@ local function particle2(tab)
         local name = curried_name
         local tab2 = {}
         for k,v in pairs(tab) do
-                if k == "map" then
-                        tab2[k] = r(v, 2)
-                else
-                        tab2[k] = v
-                end
+                tab2[k] = v
         end
         gfx_particle_define(name,tab2)
 end
 function particle(name)
-        curried_name = r(name, 2)
+        curried_name = name
         return particle2
 end
 

@@ -1,8 +1,8 @@
 -- (c) David Cunningham 2009, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
 do
-    particle "Smoke" {
-        map = "GenericParticleSheet.dds"; alphaBlend = true;
+    particle `Smoke` {
+        map = `GenericParticleSheet.dds`; alphaBlend = true;
         frames = { 640,512, 128, 128, };  frame = 0;
         initialVolume = 10; maxVolume = 200; life = 2;
         behaviour = particle_behaviour_alpha_gas_ball;
@@ -10,8 +10,8 @@ do
         convectionCurve = particle_convection_curve;
     }
 
-    particle "TexturedSmoke" {
-        map = "GenericParticleSheet.dds"; alphaBlend = true;
+    particle `TexturedSmoke` {
+        map = `GenericParticleSheet.dds`; alphaBlend = true;
         frames = { 896,640, 128, 128, };  frame = 0;
         initialVolume = 10; maxVolume = 200; life = 2;
         behaviour = particle_behaviour_alpha_gas_ball;
@@ -28,7 +28,7 @@ function emit_smoke (pos, vel, start_size, end_size, colour, life)
     life = life or 3
     local r1 = start_size/2
     local r2 = end_size/2
-    gfx_particle_emit("/common/particles/Smoke", pos, {
+    gfx_particle_emit(`Smoke`, pos, {
         angle = 360*math.random();
         velocity = vel;
         initialVolume = 4/3 * math.pi * r1*r1*r1; -- volume of sphere
@@ -46,7 +46,7 @@ function emit_textured_smoke (pos, vel, start_size, end_size, colour, life)
     life = life or 3
     local r1 = start_size/2
     local r2 = end_size/2
-    gfx_particle_emit("/common/particles/TexturedSmoke", pos, {
+    gfx_particle_emit(`TexturedSmoke`, pos, {
         angle = 360*math.random();
         velocity = vel;
         initialVolume = 4/3 * math.pi * r1*r1*r1; -- volume of sphere
@@ -90,8 +90,8 @@ end
 
 
 
-particle "EngineSmoke" {
-    map = "GenericParticleSheet.dds"; alphaBlend = true;
+particle `EngineSmoke` {
+    map = `GenericParticleSheet.dds`; alphaBlend = true;
     frames = { 640,512, 128, 128, };  frame = 0;
     behaviour = function (tab, elapsed)
 
@@ -127,7 +127,7 @@ local engine_smoke_colour = Plot {
 function emit_engine_smoke (damage, pos)
     local off = vector3(math.random(-80,80)/1000, math.random(-80,80)/1000, 0)
     local vel = (damage * 3*off + vector3(0,0,1*damage)) + vector3(0, 0, 2.0)
-    gfx_particle_emit("/common/particles/EngineSmoke", pos + off, {
+    gfx_particle_emit(`EngineSmoke`, pos + off, {
                       velocity = vel,
                       initialVolume = (math.random()*0.03 + 0.03) * clamp(damage, 0.1, 1),
                       endVolume = (math.random()*0.3 + 0.3) * clamp(damage, 0.1, 1),
@@ -147,8 +147,8 @@ local exhaust_smoke_alpha = Plot{
     [30] = 0;
 }
 
-particle "ExhaustSmoke" {
-    map = "GenericParticleSheet.dds"; alphaBlend = true;
+particle `ExhaustSmoke` {
+    map = `GenericParticleSheet.dds`; alphaBlend = true;
     frames = {
                 640,512, 128, 128,
                 640,640, 128, 128,
@@ -193,7 +193,7 @@ local exhaust_smoke_color = Plot{
 
 function emit_exhaust_smoke (speed, pos, vel)
     if speed > 10 then return end
-    gfx_particle_emit("/common/particles/ExhaustSmoke", pos, {
+    gfx_particle_emit(`ExhaustSmoke`, pos, {
                       velocity = vel,
                       initialColour = exhaust_smoke_color[speed] * vector3(1,1,1);
                       life = exhaust_smoke_life[speed];
@@ -203,8 +203,8 @@ function emit_exhaust_smoke (speed, pos, vel)
                      })
 end
 
-particle "RocketExhaustSmoke" {
-    map = "GenericParticleSheet.dds"; alphaBlend = true;
+particle `RocketExhaustSmoke` {
+    map = `GenericParticleSheet.dds`; alphaBlend = true;
     frames = {
                 640,512, 128, 128,
                 640,640, 128, 128,
@@ -228,7 +228,7 @@ particle "RocketExhaustSmoke" {
 }
 
 function emit_rocket_smoke(pos, vel, width)
-       gfx_particle_emit("/common/particles/RocketExhaustSmoke", pos, {
+       gfx_particle_emit(`RocketExhaustSmoke`, pos, {
                       velocity = vel,
                       --startWidth = width;
                       colour = vector3(1,0,0);

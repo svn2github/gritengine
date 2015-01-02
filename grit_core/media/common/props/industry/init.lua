@@ -1,8 +1,8 @@
 -- (c) David Cunningham 2011, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
-material "BoringBarrel" { diffuseMap="BoringBarrel.dds", paintColour=1, paintByDiffuseAlpha=true, specularMap="BoringBarrel_s.dds", normalMap="BoringBarrel_n.png", shadowBias=0.1 }
+material `BoringBarrel` { diffuseMap=`BoringBarrel.dds`, paintColour=1, paintByDiffuseAlpha=true, specularMap=`BoringBarrel_s.dds`, normalMap=`BoringBarrel_n.png`, shadowBias=0.1 }
 
-class "BoringBarrel" (ColClass) {
+class `BoringBarrel` (ColClass) {
     renderingDistance=60;
     castShadows=true;
     placementZOffset=0.4255;
@@ -18,9 +18,9 @@ class "BoringBarrel" (ColClass) {
     }
 }
 
-material "RedBarrel" { diffuseMap="OilBarrel.dds", specularMap="OilBarrel_s.dds", normalMap="OilBarrel_n.png", shadowBias=0.1 }
+material `RedBarrel` { diffuseMap=`OilBarrel.dds`, specularMap=`OilBarrel_s.dds`, normalMap=`OilBarrel_n.png`, shadowBias=0.1 }
 
-class "OilBarrel" (ColClass) {
+class `OilBarrel` (ColClass) {
     renderingDistance=60;
     castShadows=true;
     placementZOffset=0.4255;

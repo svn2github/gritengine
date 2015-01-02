@@ -58,20 +58,20 @@ ClockHandsClass = {
     end;
 }   
 
-class "ClockHands" (ClockHandsClass)
+class `ClockHands` (ClockHandsClass)
 {
-    secondHandMesh = "ClockHand.mesh",
-    minuteHandMesh = "ClockHand.mesh",
-    hourHandMesh = "ClockHand.mesh",
+    secondHandMesh = `ClockHand.mesh`,
+    minuteHandMesh = `ClockHand.mesh`,
+    hourHandMesh = `ClockHand.mesh`,
 
     hourHandScale = vector3(1,1,0.55),
     minuteHandScale = vector3(0.95,0.95,0.95),
     secondHandScale = vector3(0.5,0.5,1),
 }   
 
-object "ClockHands" (0, 5, 12.5) {name="ClockNorth"}
-object "ClockHands" (-5, 0, 12.5) {name="ClockWest",rot=quat(90,V_UP)}
-object "ClockHands" (0, -5, 12.5) {name="ClockSouth",rot=quat(180,V_UP)}
-object "ClockHands" (5, 0, 12.5) {name="ClockEast",rot=quat(270,V_UP)}
+object `ClockHands` (0, 5, 12.5) {name="ClockNorth"}
+object `ClockHands` (-5, 0, 12.5) {name="ClockWest",rot=quat(90,V_UP)}
+object `ClockHands` (0, -5, 12.5) {name="ClockSouth",rot=quat(180,V_UP)}
+object `ClockHands` (5, 0, 12.5) {name="ClockEast",rot=quat(270,V_UP)}
 
 env.clockRate = 1

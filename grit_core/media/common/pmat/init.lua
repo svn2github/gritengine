@@ -40,8 +40,8 @@ physics_set_interaction_groups(friction, restitution)
 
 
 -- The user can add more of these if they want
-procedural_batch "PinkFlowers" {
-    mesh = "../veg/PinkFlowers.mesh",
+procedural_batch `PinkFlowers` {
+    mesh = `../veg/PinkFlowers.mesh`,
     density = 0.01,
     minSlope = 0, maxSlope = 20,
     rotate = true,
@@ -51,8 +51,8 @@ procedural_batch "PinkFlowers" {
     castShadows = true,
 }
 
-procedural_batch "YellowFlowers" {
-    mesh = "../veg/YellowFlowers.mesh",
+procedural_batch `YellowFlowers` {
+    mesh = `../veg/YellowFlowers.mesh`,
     density = 0.01,
     minSlope = 0, maxSlope = 20,
     rotate = true,
@@ -62,8 +62,8 @@ procedural_batch "YellowFlowers" {
     castShadows = true,
 }
 
-procedural_batch "GrassMesh" {
-    mesh = "../veg/grass_patch_small.mesh",
+procedural_batch `GrassMesh` {
+    mesh = `../veg/grass_patch_small.mesh`,
     density = .1,
     minSlope = 0, maxSlope = 50,
     rotate = true,
@@ -74,8 +74,8 @@ procedural_batch "GrassMesh" {
     triangles = 15000,
 }
 
-procedural_batch "TropPlant1" {
-    mesh = "../veg/TropPlant1.mesh",
+procedural_batch `TropPlant1` {
+    mesh = `../veg/TropPlant1.mesh`,
     density = 0.01,
     minSlope = 0, maxSlope = 20,
     rotate = true,
@@ -85,8 +85,8 @@ procedural_batch "TropPlant1" {
     castShadows = true,
     triangles = 20000,
 }
-procedural_batch "TinyPalmT" {
-    mesh = "../veg/TinyPalmT.mesh",
+procedural_batch `TinyPalmT` {
+    mesh = `../veg/TinyPalmT.mesh`,
     density = 0.01,
     minSlope = 0, maxSlope = 20,
     rotate = true,
@@ -106,7 +106,7 @@ physics:setDefaultMaterial {
 }
 
 -- The user can add more of these if they want
-physical_material "Frictionless" {
+physical_material `Frictionless` {
 }
 
 
@@ -175,7 +175,7 @@ end
 local brown_dust = dust(vector3(102,74,47)/255)
 local grey_dust = dust(vector3(75,75,75)/255)
 
-physical_material "Rubber" {
+physical_material `Rubber` {
     interactionGroup = StickyGroup,
     roadTyreFriction = 1,
     offRoadTyreFriction = 0.8,
@@ -183,7 +183,7 @@ physical_material "Rubber" {
     flammable = 1,
 }
 
-physical_material "Metal" {
+physical_material `Metal` {
     interactionGroup = SmoothSoftGroup,
     roadTyreFriction = 0.8,
     offRoadTyreFriction = 0.6,
@@ -191,7 +191,7 @@ physical_material "Metal" {
     flammable = 0.25,
 }
 
-physical_material "Plastic" {
+physical_material `Plastic` {
     interactionGroup = StickyGroup,
     roadTyreFriction = 0.7,
     offRoadTyreFriction = 0.6,
@@ -199,7 +199,7 @@ physical_material "Plastic" {
     flammable = 1,
 }
 
-physical_material "PolishedWood" {
+physical_material `PolishedWood` {
     interactionGroup = SmoothHardGroup,
     roadTyreFriction = 0.6,
     offRoadTyreFriction = 0.6,
@@ -207,7 +207,7 @@ physical_material "PolishedWood" {
     flammable = 1,
 }
 
-physical_material "PolishedStone" {
+physical_material `PolishedStone` {
     interactionGroup = SmoothHardGroup,
     roadTyreFriction = 0.8,
     offRoadTyreFriction = 0.6,
@@ -215,14 +215,14 @@ physical_material "PolishedStone" {
     flammable = 0.25,
 }
 
-physical_material "Wood" {
+physical_material `Wood` {
     interactionGroup = RoughGroup,
     roadTyreFriction = 0.7,
     offRoadTyreFriction = 0.8,
     flammable = 1,
 }
 
-physical_material "Stone" {
+physical_material `Stone` {
     interactionGroup = RoughGroup,
     roadTyreFriction = 1.0,
     offRoadTyreFriction = 0.8,
@@ -230,7 +230,7 @@ physical_material "Stone" {
     flammable = 0.5,
 }
 
-physical_material "Mud" {
+physical_material `Mud` {
     interactionGroup = DeformGroup,
     roadTyreFriction = 0.3333,
     offRoadTyreFriction = 1,
@@ -239,7 +239,7 @@ physical_material "Mud" {
     flammable = 1,
 }
 
-physical_material "Gravel" {
+physical_material `Gravel` {
     interactionGroup = DeformGroup,
     roadTyreFriction = 0.5,
     offRoadTyreFriction = 1,
@@ -247,7 +247,7 @@ physical_material "Gravel" {
     flammable = 0.5,
 }
 
-physical_material "Sand" {
+physical_material `Sand` {
     interactionGroup = DeformGroup,
     roadTyreFriction = 0.3333,
     offRoadTyreFriction = 1,
@@ -255,7 +255,7 @@ physical_material "Sand" {
     flammable = 0.5,
 }
 
-physical_material "GrassPlain" {
+physical_material `GrassPlain` {
     interactionGroup = DeformGroup,
     roadTyreFriction = 0.5,
     offRoadTyreFriction = 1,
@@ -263,26 +263,26 @@ physical_material "GrassPlain" {
     flammable = 1,
 }
 
-physical_material "Grass" {
+physical_material `Grass` {
     interactionGroup = DeformGroup,
     roadTyreFriction = 0.5,
     offRoadTyreFriction = 1,
-    proceduralBatches = { "GrassMesh",  "TinyPalmT", "PinkFlowers", "YellowFlowers" },
+    proceduralBatches = { `GrassMesh`,  `TinyPalmT`, `PinkFlowers`, `YellowFlowers` },
     tyreSmoke = kicked_up_mud,
     tyreDust = kicked_up_mud,
     flammable = 1,
 }
 
-physical_material "Grassbush" {
+physical_material `Grassbush` {
     interactionGroup = DeformGroup,
     roadTyreFriction = 0.5,
     offRoadTyreFriction = 0.9,
-    proceduralBatches = { "GrassMesh",  "TinyPalmT", "TropPlant1", "PinkFlowers", "YellowFlowers" },
+    proceduralBatches = { `GrassMesh`,  `TinyPalmT`, `TropPlant1`, `PinkFlowers`, `YellowFlowers` },
     tyreSmoke = kicked_up_mud,
     flammable = 1,
 }
 
-physical_material "StoneTest" {
+physical_material `StoneTest` {
     interactionGroup = RoughGroup,
     roadTyreFriction = 1,
     offRoadTyreFriction = 0.8,
@@ -290,7 +290,7 @@ physical_material "StoneTest" {
     flammable = 0.5,
 }
 
-physical_material "Asphalt" {
+physical_material `Asphalt` {
     interactionGroup = RoughGroup,
     roadTyreFriction = 1,
     offRoadTyreFriction = 0.8,

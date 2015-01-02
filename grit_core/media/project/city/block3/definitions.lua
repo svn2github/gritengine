@@ -2,4 +2,4 @@
 --Materials
 
 --Classes
-class "meshes/block3" (ColClass) {renderingDistance=1200}
+class `meshes/block3` (ColClass) {renderingDistance=1200}

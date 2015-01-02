@@ -5,4 +5,4 @@
 ---- Watermark logo ----
 ------------------------
 
-watermark = gfx_hud_object_add("/common/hud/Rect", {parent=hud_top_left, position=vector2(128,-32), texture="textures/logo_detached_prealpha.png"})
+watermark = gfx_hud_object_add(`/common/hud/Rect`, {parent=hud_top_left, position=vector2(128,-32), texture=`textures/logo_detached_prealpha.png`})

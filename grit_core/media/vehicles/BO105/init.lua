@@ -5,7 +5,7 @@ local rad = 0.20 -- wheels
 local cy=0.5
 local cz=0.15
 
-class "." (Plane) {
+class `.` (Plane) {
     gfxMesh=`chassis.mesh`,
     colMesh=`chassis.gcol`,
     placementZOffset=0.4,
@@ -62,11 +62,11 @@ class "." (Plane) {
 
 }
 
-material "Material__2"    { diffuseColour = {0.000000, 0.000000, 0.000000, 1.000000}; }
-material "Material__3"    { diffuseMap = "105.JPG"; }
-material "Material__4"    { diffuseColour = {0.059608, 0.062745, 0.047059, 1.000000}; }
-material "Material__6"    { diffuseColour = {0.100392, 0.116078, 0.125490, 1.000000}; }
-material "Material__7"    { diffuseColour = {0.116078, 0.116078, 0.116078, 1.000000}; }
-material "Glass"    { diffuseColour = {0.097255, 0.112941, 0.116078, 0.210000}; }
-material "DullCamo"    { diffuseColour = {0.232157, 0.250980, 0.219608, 1.000000}; }
-material "GlossBlack"    { diffuseColour = {0.000000, 0.000000, 0.000000, 1.000000}; }
+material `Material__2`    { diffuseColour = {0.000000, 0.000000, 0.000000, 1.000000}; }
+material `Material__3`    { diffuseMap = `105.JPG`; }
+material `Material__4`    { diffuseColour = {0.059608, 0.062745, 0.047059, 1.000000}; }
+material `Material__6`    { diffuseColour = {0.100392, 0.116078, 0.125490, 1.000000}; }
+material `Material__7`    { diffuseColour = {0.116078, 0.116078, 0.116078, 1.000000}; }
+material `Glass`    { diffuseColour = {0.097255, 0.112941, 0.116078, 0.210000}; }
+material `DullCamo`    { diffuseColour = {0.232157, 0.250980, 0.219608, 1.000000}; }
+material `GlossBlack`    { diffuseColour = {0.000000, 0.000000, 0.000000, 1.000000}; }

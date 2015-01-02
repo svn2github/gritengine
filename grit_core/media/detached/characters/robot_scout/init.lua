@@ -1,19 +1,19 @@
 -- Code (c) David Cunningham 2013, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 -- Art (c) Vincent Mayeur 2013, Licenced under Creative Commons License BY-NC-SA: http://creativecommons.org/licenses/by-nc-sa/3.0/
 
-material "robot_scout" { 
+material `robot_scout` { 
 	filterMip = "NONE",filterMag="NONE";
-	diffuseMap="../../textures/robot_scout.tga";
+	diffuseMap=`../../textures/robot_scout.tga`;
 	diffuseColour= {1,1,1};
-	emissiveMap="../../textures/robot_scout_em.tga";
+	emissiveMap=`../../textures/robot_scout_em.tga`;
 	emissiveColour = {1.0,2.5,4};
-	glossMap= "../../textures/robot_scout_spec.tga";
+	glossMap= `../../textures/robot_scout_spec.tga`;
 	shadowBias = 0.1;
     blendedBones = 3;
 }
 
 
-class "." (DetachedCharacterClass) {
+class `.` (DetachedCharacterClass) {
 
 	gfxMesh = `robot_scout.mesh`;
 	colMesh = `robot_scout.gcol`;

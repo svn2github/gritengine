@@ -1,11 +1,11 @@
 -- (c) David Cunningham 2009, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
-include "gas.lua"
-include "debris.lua"
+include `gas.lua`
+include `debris.lua`
 
-include "fire.lua"
-include "explosion.lua"
-include "smoke.lua"
+include `fire.lua`
+include `explosion.lua`
+include `smoke.lua`
 
 function pick_explosion(sz)
     local pos = pick_pos(0.5, true)

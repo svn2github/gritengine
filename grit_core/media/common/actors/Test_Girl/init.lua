@@ -1,15 +1,15 @@
-material "lambert2" {
+material `lambert2` {
     diffuseColour={.25, .1, .05};
     specular = .02;
     blendedBones = 2;
 }
 
-class "TestGirl" {} {
+class `TestGirl` {} {
 
     renderingDistance = 400;
 
     init = function (persistent)
-        persistent:addDiskResource("test_girl_walk_baked.mesh")
+        persistent:addDiskResource(`test_girl_walk_baked.mesh`)
     end;
 
     activate = function (persistent,instance)
@@ -21,7 +21,7 @@ class "TestGirl" {} {
         instance.pivot.localPosition = persistent.spawnPos
         instance.pivot.localOrientation = (persistent.rot or Q_ID) * quat(0,0,0,1) * quat(90,vector3(1,0,0))
 
-        instance.gfx = instance.pivot:makeChild("test_girl_walk_baked.mesh")
+        instance.gfx = instance.pivot:makeChild(`test_girl_walk_baked.mesh`)
         instance.gfx:setAnimationMask("walk",1)
         instance.danceLen = instance.gfx:getAnimationLength("walk")
         instance.dancePos = 0

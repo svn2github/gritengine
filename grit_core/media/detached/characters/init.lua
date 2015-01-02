@@ -86,7 +86,7 @@ DetachedCharacterClass = extends (ColClass) {
         ColClass.activate(self, instance)
 
         instance.weapons = { }
-        instance.weapons[1] = instance.gfx:makeChild("/detached/weapons/rocket_launcher/rocket_launcher.mesh")
+        instance.weapons[1] = instance.gfx:makeChild(`/detached/weapons/rocket_launcher/rocket_launcher.mesh`)
         instance.weapons[1].parentBone = "R_Hand"
         instance.weapons[1].localOrientation = euler(172,172,90)
 
@@ -555,7 +555,7 @@ DetachedCharacterClass = extends (ColClass) {
 
 }
 
-include "robot_heavy/init.lua"
-include "robot_med/init.lua"
-include "robot_scout/init.lua"
+include `robot_heavy/init.lua`
+include `robot_med/init.lua`
+include `robot_scout/init.lua`
 

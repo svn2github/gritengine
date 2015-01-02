@@ -8,19 +8,19 @@ if vince_ati_bug == true then
     filter_mip = "NONE"
 end
 
-material "robot_heavy" { 
+material `robot_heavy` { 
 	filterMip = filter_mip;
 	filterMag=filter_mag;
-	diffuseMap="../../textures/robot_heavy.tga";
+	diffuseMap=`../../textures/robot_heavy.tga`;
 	diffuseColour= {1,1,1};
-	emissiveMap="../../textures/robot_heavy_em.tga";
+	emissiveMap=`../../textures/robot_heavy_em.tga`;
 	emissiveColour = {1.0,2.5,4};
-	glossMap= "../../textures/robot_heavy_spec.tga";
+	glossMap= `../../textures/robot_heavy_spec.tga`;
 	shadowBias = 0.1;
 	blendedBones = 3;
 }
 
-class "." (DetachedCharacterClass) {
+class `.` (DetachedCharacterClass) {
 
 	gfxMesh = `robot_heavy.mesh`;
 	colMesh = `robot_heavy.gcol`;

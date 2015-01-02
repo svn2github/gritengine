@@ -1,10 +1,10 @@
 -- (c) David Cunningham 2009, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
-include "simple/init.lua"
-include "Robot/init.lua"
-include "Sinbad/init.lua"
+include `simple/init.lua`
+include `Robot/init.lua`
+include `Sinbad/init.lua`
 
-include "classes.lua"
+include `classes.lua`
 
 local function actor_cast (pos, ray, radius, height, body)
         --return physics_sweep_sphere(radius, pos, ray, true, 0, body)
@@ -41,7 +41,7 @@ local function cast_cylinder_with_deflection (body, radius, height, pos, movemen
     
 end 
 
-class "Character" (ColClass) {
+class `Character` (ColClass) {
 
     controllable = "ACTOR";
     boomLengthMin = 3;

@@ -4,6 +4,6 @@
 ---- CHARACTERS ----
 --------------------
 
---include "characters/robot_heavy/init.lua"
---include "characters/robot_med/init.lua"
---include "characters/robot_scout/init.lua"
+--include `characters/robot_heavy/init.lua`
+--include `characters/robot_med/init.lua`
+--include `characters/robot_scout/init.lua`

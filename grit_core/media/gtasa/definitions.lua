@@ -1,23 +1,23 @@
 local t
 
 function mats()
-        t = time(function() include "materials.lua" end)
+        t = time(function() include `materials.lua` end)
         --read_matbin("gtasa/san_andreas.matbin",matbin_reader)
         print("materials.lua: "..t.." seconds")
 end
 
 mats()
 
-include "phys_mats.lua"
+include `phys_mats.lua`
 
-t = time(function() include "classes.lua" end)
+t = time(function() include `classes.lua` end)
 print("classes.lua: "..t.." seconds")
 
-include "carcols.lua"
+include `carcols.lua`
 
-include "vehicles.lua"
+include `vehicles.lua`
 
-include "all_streetlamps.lua"
+include `all_streetlamps.lua`
 
 common_binds:bind("b",function()fire("/gtasa/"..all_vehicles[math.random(#all_vehicles)])end)
 

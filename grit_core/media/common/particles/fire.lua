@@ -2,8 +2,8 @@
 -- must have particle definition check material exists
 -- OR do not use regular materials for particles
 
-particle "EngineFire" {
-    map = "GenericParticleSheet.dds"; alphaBlend = true; emissive = true;
+particle `EngineFire` {
+    map = `GenericParticleSheet.dds`; alphaBlend = true; emissive = true;
     frames = {
                   0,640,   128, 128,
                 128,640,   128, 128,
@@ -62,7 +62,7 @@ function emit_engine_fire (pos)
     end
 
     local size = 0.1 + math.random()*0.1
-    gfx_particle_emit("/common/particles/EngineFire", pos + off, {
+    gfx_particle_emit(`EngineFire`, pos + off, {
                       velocity = vel;
                       light = l;
                       frame = math.random(5)-1,
@@ -180,8 +180,8 @@ local function flame_behaviour (particle, elapsed)
 
 end
 
-particle "Flame" {
-    map = "flames_anim.png"; emissive = true; alphaBlend = true;
+particle `Flame` {
+    map = `flames_anim.png`; emissive = true; alphaBlend = true;
     frames = particle_grid_frames(146,146, 0,0, 6,6) ; frame = 0;
     behaviour = flame_behaviour;
     life = 3;
@@ -191,7 +191,7 @@ particle "Flame" {
 }
 
 function cast_flame (pname)
-    pname = pname or "/common/particles/Flame"
+    pname = pname or `Flame`
     local size = 0.2 + 0.3 * math.random()
     local width = size
     local height = size * 1.5
@@ -229,9 +229,9 @@ function create_flame_raw (pos, width, height, pname, fertile_life)
 
 end
 
-if resource_exists("/common/particles/gta4_flames.png") then
-    particle "Flame2" {
-        map = "gta4_flames.png"; emissive = true; alphaBlend = true;
+if resource_exists(`gta4_flames.png`) then
+    particle `Flame2` {
+        map = `gta4_flames.png`; emissive = true; alphaBlend = true;
         frames = particle_grid_frames(73,73, 0,0, 6,6) ; frame = 0;
         behaviour = flame_behaviour;
         life = 3;
@@ -240,9 +240,7 @@ if resource_exists("/common/particles/gta4_flames.png") then
         spreadDist = 1;
     }
     function cast_flame2 ()
-        cast_flame("/common/particles/Flame2")
-    
+        cast_flame(`Flame2`)
     end
-
 end
 

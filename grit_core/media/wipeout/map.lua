@@ -32,7 +32,7 @@ objs = {
 }
 
 for i,obj in ipairs(objs) do
-    add(('barrier%02d'):format(i), obj)
+    add(`barrier`..('%02d'):format(i), obj)
 end
 
 objs = {
@@ -59,7 +59,7 @@ objs = {
 }
 
 for i,obj in ipairs(objs) do
-    add(('wipeo_%02d'):format(i), obj)
+    add(`wipeo_`..('%02d'):format(i), obj)
 end
 
 objs = {
@@ -87,7 +87,7 @@ objs = {
 }                                                                                                                
 
 for i,obj in ipairs(objs) do
-    add("weaponpad", obj)
+    add(`weaponpad`, obj)
 end
 
 objs = {
@@ -98,7 +98,7 @@ objs = {
 }
 
 for i,obj in ipairs(objs) do
-    add("wo_tunnel", obj, {spinSpeed = math.random(5,10)})
+    add(`wo_tunnel`, obj, {spinSpeed = math.random(5,10)})
 end
 
     
@@ -109,7 +109,7 @@ objs = {
 }
 
 for i,obj in ipairs(objs) do
-    add("wo_tunnel", obj, {spinSpeed = math.random(10,20)})
+    add(`wo_tunnel`, obj, {spinSpeed = math.random(10,20)})
 end
 
 objs = {
@@ -143,7 +143,7 @@ objs = {
 }
 
 for i,obj in ipairs(objs) do
-    add("speedpad", obj)
+    add(`speedpad`, obj)
 end
 
 sky_ent:destroy()

@@ -15,8 +15,8 @@ do
         [0.5] = 0.2;
         [1] = 0;
     }
-    particle "Explosion" {
-        map = "GenericParticleSheet.dds"; emissive = true; alphaBlend = true;
+    particle `Explosion` {
+        map = `GenericParticleSheet.dds`; emissive = true; alphaBlend = true;
         frames = particle_grid_frames(256,256); frame = 0;
         initialVolume = 10; maxVolume = 200; life = 1.2;
         behaviour = particle_behaviour_alpha_gas_ball;
@@ -72,7 +72,7 @@ function explosion (pos, radius, force, num_flames)
         local offset = random_vector3_plane_z()
         local position = pos + offset
         local velocity = radius*(1*offset + vector3(0,0,1.5));
-        gfx_particle_emit("/common/particles/Explosion", position, {
+        gfx_particle_emit(`Explosion`, position, {
             velocity = velocity,
             light = l,
             angle = (i+math.random())/num_sprites1*360,
@@ -84,7 +84,7 @@ function explosion (pos, radius, force, num_flames)
     
     local pitch = 5/radius
     local volume = radius / 5
-    audio_play("/common/sounds/explosion.wav", volume, pitch, pos, radius*3, 0.75)
+    audio_play(`/common/sounds/explosion.wav`, volume, pitch, pos, radius*3, 0.75)
 
     
     for i=1,num_debris do
@@ -133,7 +133,7 @@ function explosion (pos, radius, force, num_flames)
         if dist ~= nil then
             local hit_pos = pos + dist * (radius/5 * dir)
             victim = victim.owner -- from rbody to object
-            victim:ignite("/common/particles/Flame", hit_pos, physmat, 30)
+            victim:ignite(`Flame`, hit_pos, physmat, 30)
         end
     end
 

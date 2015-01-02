@@ -1,21 +1,21 @@
 -- (c) David Cunningham 2009, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
-include "classes.lua"
+include `classes.lua`
 
-material "Cone" { gloss=5, diffuseMap="TrafficCone.dds" }
+material `Cone` { gloss=5, diffuseMap=`TrafficCone.dds` }
 
-material "barrier3" { gloss=5, diffuseMap="barrier3.jpg" }
-material "barrierS" { gloss=5, diffuseMap="barrierS.jpg" }
+material `barrier3` { gloss=5, diffuseMap=`barrier3.jpg` }
+material `barrierS` { gloss=5, diffuseMap=`barrierS.jpg` }
 
-material "RoadBarrel" { diffuseMap="RoadBarrel.png", glossFromSpecularAlpha=true; gloss=30 }
+material `RoadBarrel` { diffuseMap=`RoadBarrel.png`, glossFromSpecularAlpha=true; gloss=30 }
 
-class "Barrier1" (ColClass) {renderingDistance=100,castShadows=true,placementZOffset=0.5}
+class `Barrier1` (ColClass) {renderingDistance=100,castShadows=true,placementZOffset=0.5}
 
 
 -- jost, fix your shit!
-material "DEFAULT" { }
+material `DEFAULT` { }
 
-class "floodlight" (ColClass) {
+class `floodlight` (ColClass) {
     renderingDistance=250;
     lights={
         {
@@ -26,10 +26,10 @@ class "floodlight" (ColClass) {
 }
 
 local streetlamp_light_colour=vector3(1,0.81,0.45)
-material "Lamp" { diffuseMap="Lamp.dds" }
-material "LampBulb" {
-    diffuseMap="Lamp.dds",
-    emissiveMap="Lamp.dds",
+material `Lamp` { diffuseMap=`Lamp.dds` }
+material `LampBulb` {
+    diffuseMap=`Lamp.dds`,
+    emissiveMap=`Lamp.dds`,
     emissiveColour=10*streetlamp_light_colour
 }
 
@@ -43,14 +43,14 @@ local lamp_light =  {
     ciangle=50; coangle=90;
     onTime="19:01:00"; offTime="07:01:00"; timeOnOffRandomness="00:01:00";
 }
-class "Lamp" (ColClass) {
+class `Lamp` (ColClass) {
     castShadows=true; renderingDistance=200; placementZOffset=3;
     health=10000; impulseDamageThreshold=10000;
     lights={ lamp_light };
 }
 
 local flickering_lamp_light = extends (lamp_light) { flickering=true; }
-class "LampFlickering" (ColClass) {
+class `LampFlickering` (ColClass) {
     gfxMesh=`Lamp.mesh`; colMesh=`Lamp.gcol`;
     castShadows=true; renderingDistance=200; placementZOffset=3;
     health=10000; impulseDamageThreshold=10000;
@@ -59,7 +59,7 @@ class "LampFlickering" (ColClass) {
 
 function reset_street_lamps()
     foreach(object_all_activated(), function(o)
-        if o.className == "/common/props/street/Lamp" or o.className == "/common/props/street/LampFlickering" then
+        if o.className == `/common/props/street/Lamp` or o.className == `/common/props/street/LampFlickering` then
             local l = o.instance.lights[1];
             light_from_table(o.instance.lights[1], lamp_light)
         end
@@ -67,4 +67,4 @@ function reset_street_lamps()
 end
 
 
-class "RoadBarrel" (ColClass) { castShadows=true, renderingDistance=150, placementZOffset=0.38, placementRandomRotation=true }
+class `RoadBarrel` (ColClass) { castShadows=true, renderingDistance=150, placementZOffset=0.38, placementRandomRotation=true }
