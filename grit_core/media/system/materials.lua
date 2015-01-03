@@ -261,60 +261,6 @@ local function material_emissive (name, original, world, tab)
 end
 
 
-local function material_ff_internal (name, original, shadow_mat, tab)
-
-        local mat = get_material(name)
-        if mat==nil then
-                mat = Material(name)
-        else
-                mat:removeAllTechniques()
-                mat:createTechnique()
-                mat:createPass(0)
-        end
-
-        mat:setDiffuseVertex(0,0,true)
-
-        if tab.backfaces then
-                mat:setCull(0,0,"CULL_NONE")
-                mat:setManualCull(0,0,false)
-        end     
-
-        local tex_index = 0
-
-        -- diffuse map
-        if tab.blend[1].diffuseMap then
-                mat:createTextureUnitState(0,0)
-                mat:setTextureName(0,0,tex_index, process_tex_name(original, tab.blend[1].diffuseMap))
-                set_texture_filtering_tab(mat, tex_index, tab)
-                tex_index = tex_index + 1
-        end
-
-        -- diffuse colour
-        local r,g,b = get_colour(tab.diffuseColour)
-        mat:setDiffuse(0,0, r,g,b, (tab.alpha or 1))
-
-        r,g,b = get_colour(tab.emissiveColour)
-        mat:setEmissive(0,0, r,g,b)
-
-        mat:setSpecular(0,0, tab.specular,0,0,1,tab.gloss)
-
-        if tab.alphaReject then
-                mat:setAlphaRejection(0,0, ">", math.floor(255*tab.alphaReject))
-                mat:setAlphaToCoverage(0,0, tab.alphaToCoverage)
-        end
-
-        -- alpha stuff
-        if tab.alpha then
-                mat:setSceneBlending(0,0,"SRC_ALPHA","ONE_MINUS_SRC_ALPHA")
-        end
-
-        mat:setDepthWriteEnabled(0,0,tab.depthWrite)
-        mat:setTransparentSortingForced(0,0,tab.depthSort)
-
-        return mat
-end
-
-
 local function material_internal (name, original, shadow_mat, fade, world, tab)
 
         local forward_only = tab.alpha == false
@@ -571,7 +517,7 @@ end
 
 
 -- curry to avoid parentheses
-function do_create_material(name,tab)
+function do_create_material(name, tab)
 
         local emissive_needed = false
         if tab.emissiveMap then emissive_needed = true end
@@ -617,21 +563,17 @@ function do_create_material(name,tab)
         local caster  = custom_caster_needed and material_caster(name.."!", name, false, tab) or get_material(def_caster)
         local wcaster = custom_caster_needed and material_caster(name.."!&", name, true,  tab) or get_material(def_wcaster)
 
-        if debug_cfg.fixedFunction then
-                material_ff_internal(name, name, caster, tab)
-        else
-                if not tab.stipple then
-                        material_internal(name.."'", name, caster, true, false, tab)
-                end
-                if emissive_needed then
-                        material_emissive(name.."^", name, false, tab)
-                        material_emissive(name.."^&", name, true, tab)
-                end
-                material_internal(name,      name,  caster, false, false, tab)
-                material_internal(name.."&", name, wcaster, false, true,  tab)
-                material_wireframe(name.."|", name, false, tab)
-                material_wireframe(name.."|&", name, true, tab)
+        if not tab.stipple then
+                material_internal(name.."'", name, caster, true, false, tab)
         end
+        if emissive_needed then
+                material_emissive(name.."^", name, false, tab)
+                material_emissive(name.."^&", name, true, tab)
+        end
+        material_internal(name,      name,  caster, false, false, tab)
+        material_internal(name.."&", name, wcaster, false, true,  tab)
+        material_wireframe(name.."|", name, false, tab)
+        material_wireframe(name.."|&", name, true, tab)
 
         -- no prefix: ordinary material, stipple
         -- & base (world)

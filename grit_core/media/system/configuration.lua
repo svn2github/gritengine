@@ -160,7 +160,6 @@ local debug_cfg_default = {
     colourMaps = true;
     vertexDiffuse = true;
     fog = true;
-    fixedFunction = false;
     FOV = 55;
     farClip = 800;
     polygonMode = "SOLID";
@@ -186,7 +185,6 @@ local debug_cfg_doc = {
     colourMaps = "whether to use colour maps";
     vertexDiffuse = "whether to use the diffuse channel in the meshes";
     fog = "enable distance fog";
-    fixedFunction = "use the classic fixed function pipeline";
     FOV = "field of view in degrees";
     farClip = "how far away is maximum depth";
     polygonMode = "wireframe, etc";
@@ -213,7 +211,6 @@ local debug_cfg_spec = {
     colourMaps = { "one of", false, true };
     vertexDiffuse = { "one of", false, true };
     fog = { "one of", false, true };
-    fixedFunction = { "one of", false, true };
     FOV = { "range", 0, 120 };
     farClip = { "range", 1, 10000 };
     physicsWireFrame = { "one of", false, true };
@@ -629,8 +626,6 @@ local function commit(c, p, flush, partial)
                 -- nothing to do, next screenshot will pick this up
             elseif k == "shadingModel" then
                 reset_shaders = true
-            elseif k == "fixedFunction" then
-                reset_materials = true
             elseif k == "anaglyph" then
                 gfx_option("ANAGLYPH",v)
             elseif k == "crossEye" then
