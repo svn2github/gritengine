@@ -1,7 +1,7 @@
-val PI = 3.1415926535897932385;
+var PI = 3.1415926535897932385;
 
-val aspect = global.viewportSize.x / global.viewportSize.y;
-val fov_x = aspect * global.fovY;
+var aspect = global.viewportSize.x / global.viewportSize.y;
+var fov_x = aspect * global.fovY;
 
 // The world matrix encodes only sky orientation data (i.e. due to the rotation
 // of the earth).
@@ -11,14 +11,14 @@ frag.position = mul(global.worldViewProj, Float4(vert.position.xyz, 0));
 frag.position.z = frag.position.w * (1-1.0/65536); // avoid 'black lightning' artifacts
 
 
-val sunlight_dir_ss_ = mul(global.viewProj, Float4(-global.sunDirection,1));
+var sunlight_dir_ss_ = mul(global.viewProj, Float4(-global.sunDirection,1));
 
 // for interpolators
-val uv = vert.coord0.xy;
-val pos_ws = mul(global.world, Float4(vert.position.xyz,0)).xyz;
-val sunlight_dir_ss = sunlight_dir_ss_.xyz/sunlight_dir_ss_.w;
-val fov = Float2(fov_x, global.fovY);
-val sun_pos_ss_polar = Float2(
+var uv = vert.coord0.xy;
+var pos_ws = mul(global.world, Float4(vert.position.xyz,0)).xyz;
+var sunlight_dir_ss = sunlight_dir_ss_.xyz/sunlight_dir_ss_.w;
+var fov = Float2(fov_x, global.fovY);
+var sun_pos_ss_polar = Float2(
     mod(atan2(-global.sunDirection.x, -global.sunDirection.y)/PI/2 + 1, 1.0) * 360,
     tan(-global.sunDirection.z / length(global.sunDirection.xy)) / PI * 180
 );
