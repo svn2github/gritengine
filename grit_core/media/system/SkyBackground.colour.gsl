@@ -5,7 +5,8 @@ var el = polar_rad_y / PI * 180;
 var polar_ = Float2(az,el);
 
 if (el <= 0.0) {
-    frag.colour.rgb = global.hellColour;
+    out.colour = global.hellColour;
+    out.alpha = 1;
     return;
 }
 
@@ -50,7 +51,7 @@ var sunnyness = 0.0;
 }
 
 // STARFIELD
-frag.colour.rgb = mat.starfieldMask * gamma_decode(sample2D(mat.starfieldMap, uv).rgb);
+out.colour = mat.starfieldMask * gamma_decode(sample(mat.starfieldMap, uv).rgb);
 
 // SKY GRADIENT
 var sky = Float3(0, 0, 0);
@@ -80,7 +81,7 @@ if (el < global.skyDivider1) {
     sky = Float3(1,1,1);
     ssky = Float3(1,1,1);
 }
-frag.colour.rgb = frag.colour.rgb + lerp(sky, ssky, sunnyness);
+out.colour = out.colour + lerp(sky, ssky, sunnyness);
 
 
 // SUN
@@ -100,5 +101,7 @@ if (sunlight_dir_ss.z < 1) {
         dist_to_sun = dist_to_sun + 0.8;
         sun_qty = clamp(1/dist_to_sun/dist_to_sun, 0.0, 1.0);
     }
-    frag.colour.rgb = lerp(frag.colour.rgb, global.sunColour, global.sunAlpha * sun_qty);
+    out.colour = lerp(out.colour, global.sunColour, global.sunAlpha * sun_qty);
 }
+
+out.alpha = 1;

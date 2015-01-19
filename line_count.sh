@@ -1,7 +1,7 @@
 #!/bin/bash
 
 (
-    find high_freq_noise/ launcher/ starbox/ grit_core/src gtasa/src dependencies/util luaimg/  \( -name '*.cpp' -o -name '*.h' -o -name '*.c' \) |
+    find high_freq_noise/ launcher/ starbox/ grit_core/src gtasa/src grit_core/tests/ dependencies/util luaimg/  \( -name '*.cpp' -o -name '*.h' -o -name '*.c' \) |
     grep -v 'tex_dups.\(h\|cpp\)' |
     grep -v 'tcol_lexer.cpp' |
     grep -v 'tcol_lexer-core-engine.cpp'
@@ -16,6 +16,10 @@
     grep -v 'gtasa\/non_cars[.]lua' |
     grep -v 'solemn\/newworld\/classes[.]lua' |
     grep -v 'solemn\/newworld\/map[.]lua'
+
+    find grit_core/media \( -name '*.cg' -o -name '*.cgh' \)
+
+    find grit_core/media grit_core/tests  \( -name '*.gsl' \)
 
     find exporters \( -name '*.ms' \)
 

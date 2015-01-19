@@ -9,14 +9,14 @@ sky_material `Moon` {
 }
 
 
-sky_shader `SkyBackground` {
+shader `SkyBackground` {
     starfieldMask = uniform_float(1, 1, 1);
     starfieldMap = uniform_texture {
         defaultColour = vector3(0,0,0);
         defaultAlpha = 1;
     };
     vertexCode = import_str `SkyBackground.vert.gsl`;
-    fragmentCode = import_str `SkyBackground.frag.gsl`;
+    colourCode = import_str `SkyBackground.colour.gsl`;
 }
 
 sky_material `Sky` {
@@ -29,7 +29,7 @@ sky_material `Sky` {
 }
 
 
-sky_shader `Clouds` {
+shader `Clouds` {
     perlin = uniform_texture {
         defaultColour = vector3(0,0,0);
     };
@@ -37,7 +37,7 @@ sky_shader `Clouds` {
         defaultColour = vector3(0.5,0.5,1);
     };
     vertexCode = import_str `SkyClouds.vert.gsl`;
-    fragmentCode = import_str `SkyClouds.frag.gsl`;
+    colourCode = import_str `SkyClouds.colour.gsl`;
 }
 
 sky_material `Clouds` {

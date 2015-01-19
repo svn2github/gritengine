@@ -15,7 +15,8 @@ env_cube_noon = `env_cube_noon.envcube.tiff`
 env_cube_dusk = `env_cube_dusk.envcube.tiff`
 env_cube_dark = `env_cube_dark.envcube.tiff`
 
-gfx_env_cube(env_cube_noon)
+gfx_env_cube(0, env_cube_noon)
+gfx_env_cube(1, env_cube_noon)
 gfx_global_exposure(1)
 gfx_option("BLOOM_ITERATIONS",1)
 gfx_colour_grade(`standard.lut.png`)
@@ -25,15 +26,20 @@ function env_recompute()
     local secs = env.secondsSinceMidnight
     
     if secs < env_cube_dawn_begin_time then
-        gfx_env_cube(env_cube_dark)
+        gfx_env_cube(0, env_cube_dark)
+        gfx_env_cube(1, env_cube_dark)
     elseif secs < env_cube_noon_begin_time then
-        gfx_env_cube(env_cube_dawn)
+        gfx_env_cube(0, env_cube_dawn)
+        gfx_env_cube(1, env_cube_dawn)
     elseif secs < env_cube_dusk_begin_time then
-        gfx_env_cube(env_cube_noon)
+        gfx_env_cube(0, env_cube_noon)
+        gfx_env_cube(1, env_cube_noon)
     elseif secs < env_cube_dark_begin_time then
-        gfx_env_cube(env_cube_dusk)
+        gfx_env_cube(0, env_cube_dusk)
+        gfx_env_cube(1, env_cube_dusk)
     else
-        gfx_env_cube(env_cube_dark)
+        gfx_env_cube(0, env_cube_dark)
+        gfx_env_cube(1, env_cube_dark)
     end
     
     -- account for the fact that the sun is on the other side of the planet in summer

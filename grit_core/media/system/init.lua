@@ -120,6 +120,8 @@ include `gfx.lua`
 
 include `materials.lua` 
 
+include `default_shader.lua` 
+
 include `physics.lua` 
 include `physical_materials.lua` 
 include `procedural_objects.lua` 

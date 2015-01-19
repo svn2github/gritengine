@@ -1,2 +1,0 @@
-frag.position = mul(global.worldViewProj, Float4(vert.position.xyz, 1));
-frag.position.z = frag.position.w * (1 - 1.0/65536);

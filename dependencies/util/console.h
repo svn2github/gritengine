@@ -19,6 +19,16 @@
  * THE SOFTWARE.
  */
 
+#include <map>
+#include <ostream>
+#include <set>
+#include <string>
+#include <vector>
+
+
+#ifndef CONSOLE_H
+#define CONSOLE_H
+
 /** ANSI terminal colour codes, used by the grit console to distinguish colours. */
 
 /*
@@ -79,23 +89,69 @@ void assert_triggered (void);
 /** An assert macro that uses CERR and assert_triggered.
  */
 #define APP_ASSERT(cond) do { \
-        if (!(cond)) { \
-                CERR << "assertion failed: " << #cond << std::endl; \
-                assert_triggered(); \
-        } \
+    if (!(cond)) { \
+        CERR << "Assertion failed: " << #cond << std::endl; \
+        assert_triggered(); \
+    } \
 } while (0)
 
 /** An assert macro that uses CERR and assert_triggered and also prints the value of perror.
  */
 #define PERROR_ASSERT(cond) do { \
-        if (!(cond)) {\
-                CERR << "assertion failed: " << #cond << std::endl; \
-                perror("perror says"); \
-                assert_triggered(); \
-        } \
+    if (!(cond)) {\
+        CERR << "Assertion failed: " << #cond << std::endl; \
+        perror("perror says"); \
+        assert_triggered(); \
+    } \
 } while (0)
 
 
+template<class T>
+static inline std::ostream &operator<< (std::ostream &o, const std::vector<T> &s)
+{
+    if (s.empty()) {
+        o << "[ ]";
+    } else {
+        const char *prefix = "[";
+        for (const auto &str : s) {
+            o << prefix << str;
+            prefix = ", ";
+        }
+        o << "]";
+    }
+    return o;
+}
 
+template<class T>
+static inline std::ostream &operator<< (std::ostream &o, const std::set<T> &s)
+{
+    if (s.empty()) {
+        o << "{ }";
+    } else {
+        const char *prefix = "{";
+        for (const auto &str : s) {
+            o << prefix << str;
+            prefix = ", ";
+        }
+        o << "}";
+    }
+    return o;
+}
 
-// vim: shiftwidth=8:tabstop=8:expandtab
+template<class T>
+static inline std::ostream &operator<< (std::ostream &o, const std::map<std::string, T> &s)
+{
+    if (s.empty()) {
+        o << "{ }";
+    } else {
+        const char *prefix = "{";
+        for (const auto &pair : s) {
+            o << prefix << pair.first << ": " << pair.second;
+            prefix = ", ";
+        }
+        o << "}";
+    }
+    return o;
+}
+
+#endif

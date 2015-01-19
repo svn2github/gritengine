@@ -128,23 +128,21 @@ function sky_material(name)
         return sky_material2
 end
 
-local function sky_shader2(tab)
+local function shader2(tab)
         local name = curried_name
         tab = tab or {}
-        gfx_register_sky_shader(name, tab)
+        gfx_register_shader(name, tab)
 end
-function sky_shader(name)
+function shader(name)
         curried_name = name
-        return sky_shader2
+        return shader2
 end
 
 function uniform_texture(tab)
         local tab2 = { }
         tab2.uniformKind = "TEXTURE2D";
         for k, v in pairs(tab) do
-            if k == "name" then
                 tab2[k] = v
-            end
         end
         return tab2
 end

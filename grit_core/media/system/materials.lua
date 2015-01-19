@@ -341,7 +341,7 @@ local function material_internal (name, original, shadow_mat, fade, world, tab)
         end
         if not forward_only then
                 mat:createTextureUnitState(0,0)
-                mat:setTextureName(0,0,tex_index,gfx_env_cube():sub(2))
+                mat:setTextureName(0,0,tex_index,gfx_env_cube(0):sub(2))
                 mat:setTextureAddressingMode(0,0,tex_index,"WRAP","WRAP","WRAP")
                 mat:setTextureFiltering(0,0,tex_index,"ANISOTROPIC","ANISOTROPIC","LINEAR")
                 tex_index = tex_index + 1
