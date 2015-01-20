@@ -4,7 +4,7 @@ print("Loading default_shader.lua")
 
 shader `Default` {
 
-    diffuseMap = uniform_texture { defaultColour = vec(1, 0, 0); defaultAlpha = 1; };
+    diffuseMap = uniform_texture { defaultColour = vec(1, 1, 1); defaultAlpha = 1; };
     diffuseMask = uniform_float(1, 1, 1);
 
     alphaMask = uniform_float(1);

@@ -12,7 +12,7 @@ sky_material `Moon` {
 shader `SkyBackground` {
     starfieldMask = uniform_float(1, 1, 1);
     starfieldMap = uniform_texture {
-        defaultColour = vector3(0,0,0);
+        defaultColour = vector3(0, 0, 0);
         defaultAlpha = 1;
     };
     vertexCode = import_str `SkyBackground.vert.gsl`;
@@ -24,17 +24,17 @@ sky_material `Sky` {
         --addrMode = "CLAMP"; minFilter = "LINEAR"; magFilter = "LINEAR"; mipFilter = "ANISOTROPIC"; anisotropy = 16;
         name = `starfield.dds`;
     };
-    starfieldMask = uniform_float(0.2,0.2,0.2);
+    starfieldMask = uniform_float(0.2, 0.2, 0.2);
     shader = `SkyBackground`;
 }
 
 
 shader `Clouds` {
     perlin = uniform_texture {
-        defaultColour = vector3(0,0,0);
+        defaultColour = vector3(0, 0, 0);
     };
     perlinN = uniform_texture {
-        defaultColour = vector3(0.5,0.5,1);
+        defaultColour = vector3(0.5, 0.5, 1);
     };
     vertexCode = import_str `SkyClouds.vert.gsl`;
     colourCode = import_str `SkyClouds.colour.gsl`;
