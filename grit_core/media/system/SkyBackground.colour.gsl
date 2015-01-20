@@ -4,18 +4,13 @@ var az = polar_rad_x / PI * 180;
 var el = polar_rad_y / PI * 180;
 var polar_ = Float2(az,el);
 
-if (el <= 0.0) {
-    out.colour = global.hellColour;
-    out.alpha = 1;
-    return;
-}
 
 
 
 
 // need to do these in fragment shader, to stop the sun vanishing at the corners of the
 // screen
-var pos_ss_ = frag.screen.xy/global.viewportSize.xy*2-1;
+var pos_ss_ = frag.screen.xy / global.viewportSize.xy * 2 - 1;
 // TODO: figure out this d3d9 business
 pos_ss_.y = -pos_ss_.y;
 
@@ -32,7 +27,7 @@ if (rel_polar.x < -180) rel_polar.x = rel_polar.x + 360;
 //return;
 
 // debug for drawing sun location
-//if (dot(rel_polar, rel_polar) < 10*10) frag.colour.rgb *= Float3(1,1,0);
+//if (dot(rel_polar, rel_polar) < 10*10) frag.colour.rgb *= Float3(1, 1, 0);
 
 // sunnyness is the amount this sky pixel is affected by the sun
 var sunnyness = 0.0;
@@ -52,6 +47,12 @@ var sunnyness = 0.0;
 
 // STARFIELD
 out.colour = mat.starfieldMask * gamma_decode(sample(mat.starfieldMap, uv).rgb);
+
+if (el <= 0.0) {
+    out.colour = global.hellColour;
+    out.alpha = 1;
+    return;
+}
 
 // SKY GRADIENT
 var sky = Float3(0, 0, 0);
