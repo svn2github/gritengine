@@ -20,8 +20,6 @@ include `abbrev.lua`
 
 include `util.lua` 
 
-if audio_master_volume == nil then audio_master_volume = function() end end
-
 print("Starting game engine...")
 
 main = {
@@ -112,6 +110,9 @@ function main:run (...)
         
 end
 
+
+gfx_shadow_pcf_noise_map `HiFreqNoiseGauss.64.png`
+gfx_fade_dither_map `stipple.png`
 
 include `unicode_test_strings.lua` 
 

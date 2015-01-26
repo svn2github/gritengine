@@ -8,174 +8,184 @@ local pile_curried_name
 
 local class_ext
 local function class3 (tab)
-        return class_add(curried_name, class_ext,tab)
+    return class_add(curried_name, class_ext,tab)
 end
 local function class2 (ext)
-        class_ext = ext
-        return class3
+    class_ext = ext
+    return class3
 end
 function class (name)
-        curried_name = name
-        return class2
+    curried_name = name
+    return class2
 end
         
 local function hud_class2 (tab)
-        local tab2 = { }
-        for k, v in pairs(tab) do
-            tab2[k] = v
-        end
-        return gfx_hud_class_add(curried_name, tab2)
+    local tab2 = { }
+    for k, v in pairs(tab) do
+        tab2[k] = v
+    end
+    return gfx_hud_class_add(curried_name, tab2)
 end
 function hud_class (name)
-        curried_name = name
-        return hud_class2
+    curried_name = name
+    return hud_class2
 end
         
 local inside_pile = false
 local function pile2 (tab)
-        inside_pile = false
-        return class_add(pile_curried_name,PileClass,tab)
+    inside_pile = false
+    return class_add(pile_curried_name,PileClass,tab)
 end
 function pile (name)
-        pile_curried_name = name
-        inside_pile = true
-        return pile2
+    pile_curried_name = name
+    inside_pile = true
+    return pile2
 end
 
 local obj_off = vec(0, 0, 0)
 local obj_pos
 local function object3 (tab)
-        if not class_has(curried_name) then
-                error("Trying to create an object using non-existent class \""..curried_name.."\"",2)
+    if not class_has(curried_name) then
+        error("Trying to create an object using non-existent class \""..curried_name.."\"",2)
+    end
+    if inside_pile then
+        return { curried_name, obj_pos, tab }
+    end
+    local hid = object_add(curried_name, obj_pos, tab)
+    local lod = class_get(curried_name).lod
+    if lod == true then
+        if curried_name:find("/") then
+            lod = curried_name:reverse():gsub("/","_dol/",1):reverse()
+        else
+            lod = "lod_"..curried_name
         end
-        if inside_pile then
-                return { curried_name, obj_pos, tab }
+    end
+    if lod then
+        if class_get(lod) then
+            tab.near = hid
+            if tab.name then tab.name = tab.name.."_lod" end
+            object_add(lod, obj_pos, tab)
+        else
+            error("Class \""..curried_name.."\" referred to a lod class \""..lod.."\" that does not exist.")
         end
-        local hid = object_add(curried_name, obj_pos, tab)
-        local lod = class_get(curried_name).lod
-        if lod == true then
-                if curried_name:find("/") then
-                        lod = curried_name:reverse():gsub("/","_dol/",1):reverse()
-                else
-                        lod = "lod_"..curried_name
-                end
-        end
-        if lod then
-                if class_get(lod) then
-                        tab.near = hid
-                        if tab.name then tab.name = tab.name.."_lod" end
-                        object_add(lod, obj_pos, tab)
-                else
-                        error("Class \""..curried_name.."\" referred to a lod class \""..lod.."\" that does not exist.")
-                end
-        end
-        return hid
+    end
+    return hid
 end
 local function object2 (x,y,z)
-        if type(x) == "vector3" then
-                obj_pos = obj_off + x
-        else
-                obj_pos = obj_off + vector3(x,y,z)
-        end
-        return object3
+    if type(x) == "vector3" then
+        obj_pos = obj_off + x
+    else
+        obj_pos = obj_off + vector3(x,y,z)
+    end
+    return object3
 end
 function object (class)
-        curried_name = class
-        return object2
+    curried_name = class
+    return object2
 end
 function offset_exec (off, f, ...)
-        obj_off = obj_off + off
-        f(...)
-        obj_off = obj_off - off
+    obj_off = obj_off + off
+    f(...)
+    obj_off = obj_off - off
 end
 function offset_include (x,y,z, str) offset_exec(vec(x,y,z),include,str) end
         
 local function physical_material2 (tab) 
-        local mat = { }
-        return physics:setMaterial(curried_name, tab)
+    local mat = { }
+    return physics:setMaterial(curried_name, tab)
 end
 function physical_material (name)
-        curried_name = name
-        return physical_material2
+    curried_name = name
+    return physical_material2
 end
 
 local function procedural_batch2 (tab) 
-        local tab2 = { }
-        for k,v in pairs(tab) do
-                tab2[k] = v
-        end
-        return physics:setProceduralBatchClass(curried_name, tab2)
+    local tab2 = { }
+    for k,v in pairs(tab) do
+        tab2[k] = v
+    end
+    return physics:setProceduralBatchClass(curried_name, tab2)
 end
 function procedural_batch (name)
-        curried_name = name
-        return procedural_batch2
+    curried_name = name
+    return procedural_batch2
 end
 
 local function procedural_object2 (tab) 
         return physics:setProceduralObjectClass(curried_name, tab)
 end
 function procedural_object (name)
-        curried_name = name
-        return procedural_object2
+    curried_name = name
+    return procedural_object2
 end
 
 local function sky_material2(tab)
-        local name = curried_name
-        gfx_register_sky_material(name,tab)
+    local name = curried_name
+    gfx_register_sky_material(name,tab)
 end
 function sky_material(name)
-        curried_name = name
-        return sky_material2
+    curried_name = name
+    return sky_material2
 end
 
 local function shader2(tab)
-        local name = curried_name
-        tab = tab or {}
-        gfx_register_shader(name, tab)
+    local name = curried_name
+    tab = tab or {}
+    gfx_register_shader(name, tab)
 end
 function shader(name)
-        curried_name = name
-        return shader2
+    curried_name = name
+    return shader2
+end
+
+function uniform_texture_2d(r, g, b, a)
+    a = a or 1
+    local tab2 = {
+        uniformKind = "TEXTURE2D";
+        defaultColour = vec(r, g, b);
+        defaultAlpha = a;
+    }
+    return tab2
 end
 
 function uniform_texture(tab)
-        local tab2 = { }
-        tab2.uniformKind = "TEXTURE2D";
-        for k, v in pairs(tab) do
-                tab2[k] = v
-        end
-        return tab2
+    local tab2 = { }
+    tab2.uniformKind = "TEXTURE2D";
+    for k, v in pairs(tab) do
+        tab2[k] = v
+    end
+    return tab2
 end
 
 function uniform_float(...)
-        local tab = { ... }
-        tab.uniformKind = "PARAM"
-        tab.valueKind = "FLOAT"
-        return tab
+    local tab = { ... }
+    tab.uniformKind = "PARAM"
+    tab.valueKind = "FLOAT"
+    return tab
 end
 
 local function material2(tab)
-        local name = curried_name
-        tab = tab or {}
-        -- paint colour
-        do_create_material(name, tab)
-        register_material(name,tab)
+    local name = curried_name
+    tab = tab or {}
+    -- paint colour
+    do_create_material(name, tab)
+    register_material(name,tab)
 end
 function material(name)
-        curried_name = name
-        return material2
+    curried_name = name
+    return material2
 end
 
 local function particle2(tab)
-        local name = curried_name
-        local tab2 = {}
-        for k,v in pairs(tab) do
-                tab2[k] = v
-        end
-        gfx_particle_define(name,tab2)
+    local name = curried_name
+    local tab2 = {}
+    for k,v in pairs(tab) do
+        tab2[k] = v
+    end
+    gfx_particle_define(name,tab2)
 end
 function particle(name)
-        curried_name = name
-        return particle2
+    curried_name = name
+    return particle2
 end
 

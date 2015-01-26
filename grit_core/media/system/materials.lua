@@ -1,17 +1,5 @@
 include `/system/shaders.lua`
 
-local noise_tex = `HiFreqNoiseGauss.64.png`
-
-local emissive_bias1, emissive_bias2
-if gfx_d3d9() then
-    emissive_bias1 = 1
-    emissive_bias2 = 1
-else
-    emissive_bias1 = 1
-    emissive_bias2 = 1
-end
-
-
 local use_hw_gamma = false
 
 
@@ -187,7 +175,7 @@ local function material_wireframe (name, original, world, tab)
 
         mat:setEmissive(0,0, 1,1,1)
         mat:setPolygonMode(0,0,"WIREFRAME")
-        mat:setDepthBias(0,0,emissive_bias1,emissive_bias2)
+        mat:setDepthBias(0,0,1,1)
 
         mat:setDepthWriteEnabled(0,0,false)
 
@@ -251,7 +239,7 @@ local function material_emissive (name, original, world, tab)
 
         local r,g,b = get_colour(tab.emissiveColour)
         mat:setEmissive(0,0, r,g,b)
-        mat:setDepthBias(0,0,emissive_bias1,emissive_bias2)
+        mat:setDepthBias(0,0,1,1)
 
         mat:setSceneBlending(0,0,"ONE","ONE")
 
@@ -334,7 +322,7 @@ local function material_internal (name, original, shadow_mat, fade, world, tab)
                 end
                 if gfx_option("SHADOW_FILTER_DITHER_TEXTURE") then
                         mat:createTextureUnitState(0,0)
-                        mat:setTextureName(0,0,tex_index,noise_tex:sub(2))
+                        mat:setTextureName(0,0,tex_index,gfx_shadow_pcf_noise_map():sub(2))
                         mat:setTextureFiltering(0,0,tex_index,"POINT","POINT","NONE")
                         tex_index = tex_index + 1
                 end
@@ -350,7 +338,7 @@ local function material_internal (name, original, shadow_mat, fade, world, tab)
         -- stipple texture
         if tab.stipple then
                 mat:createTextureUnitState(0,0)
-                mat:setTextureName(0,0,tex_index, "system/stipple.png")
+                mat:setTextureName(0,0,tex_index, gfx_fade_dither_map():sub(2))
                 mat:setTextureFiltering(0,0,tex_index,"POINT","POINT","NONE")
                 tex_index = tex_index + 1
         end

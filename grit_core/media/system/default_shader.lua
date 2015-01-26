@@ -4,19 +4,19 @@ print("Loading default_shader.lua")
 
 shader `Default` {
 
-    diffuseMap = uniform_texture { defaultColour = vec(1, 1, 1); defaultAlpha = 1; };
+    diffuseMap = uniform_texture_2d(1, 1, 1);
     diffuseMask = uniform_float(1, 1, 1);
 
     alphaMask = uniform_float(1);
     alphaRejectThreshold = uniform_float(-1);
 
-    normalMap = uniform_texture { defaultColour = vec(0.5, 0.5, 1); defaultAlpha = 1; };
+    normalMap = uniform_texture_2d(0.5, 0.5, 1);
 
-    glossMap = uniform_texture { defaultColour = vec(1, 1, 1); defaultAlpha = 1; };
+    glossMap = uniform_texture_2d(1, 1, 1);
     glossMask = uniform_float(1);
     specularMask = uniform_float(1);
 
-    emissiveMap = uniform_texture { defaultColour = vec(1, 1, 1); defaultAlpha = 1; };
+    emissiveMap = uniform_texture_2d(1, 1, 1);
     emissiveMask = uniform_float(0, 0, 0);
 
     vertexCode = [[
