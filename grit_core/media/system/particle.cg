@@ -9,12 +9,13 @@ void vp_main (
 
     // from instance buffer
     in float3 part_basis_x : TEXCOORD0,
-    in float3 part_basis_y : TEXCOORD1,
+    in float part_half_depth : TEXCOORD1,
     in float3 part_basis_z : TEXCOORD2,
     in float3 part_pos : TEXCOORD3,
-    in float3 part_colour : TEXCOORD4,
+    in float3 part_diffuse : TEXCOORD4,
     in float part_alpha : TEXCOORD5,
-    in float4 part_uv : TEXCOORD6,
+    in float3 part_emissive : TEXCOORD6,
+    in float4 part_uv : TEXCOORD7,
 
     uniform float4x4 view_proj,
     uniform float3 particle_ambient,
@@ -39,16 +40,12 @@ void vp_main (
     deferred_uv = for_rasteriser.xyw;
     for_rasteriser.y *= render_target_flipping;
 
-    #if EMISSIVE==0
-    part_colour *= particle_ambient;
-    #endif
-
-    colour = part_colour;
+    colour = part_diffuse * particle_ambient + part_emissive;
     alpha = part_alpha;
-    uv = vert_pos.xz/float2(2,-2) + float2(0.5,0.5);
+    uv = vert_pos.xz / float2(2, -2) + float2(0.5, 0.5);
     uv = part_uv.xy + uv * (part_uv.zw - part_uv.xy);
     camera_to_fragment = pos_ws - camera_pos_ws;
-    half_depth = length(part_basis_y);
+    half_depth = part_half_depth;
 }
 
 
@@ -74,10 +71,10 @@ void fp_main (
     out float4 pixel : COLOR0
 
 ) {
-    float2 uv = deferred_uv.xy/deferred_uv.z;
-    uv = uv * float2(0.5,-0.5) + float2(0.5,0.5);
-    float3 ray = lerp(lerp(top_left_ray,top_right_ray, uv.x),
-                      lerp(bottom_left_ray,bottom_right_ray, uv.x),
+    float2 uv = deferred_uv.xy / deferred_uv.z;
+    uv = uv * float2(0.5, -0.5) + float2(0.5, 0.5);
+    float3 ray = lerp(lerp(top_left_ray, top_right_ray, uv.x),
+                      lerp(bottom_left_ray, bottom_right_ray, uv.x),
                       uv.y);
     // hack to stop it 'shimmering' in d3d9
     if (d3d9() > 0) uv += 0.5 * viewport_size.zw; // zw is 1/w 1/h
@@ -88,7 +85,7 @@ void fp_main (
     float surf_specular;
     float normalised_cam_dist;
     float gloss;
-    unpack_deferred(tex2D(gbuffer0, uv), float4(0,0,0,0), float4(0,0,0,0),
+    unpack_deferred(tex2D(gbuffer0, uv), float4(0, 0, 0, 0), float4(0, 0, 0, 0),
                     shadow_oblique_cutoff, surf_diff_colour, normal_ws, surf_specular, normalised_cam_dist, gloss);
 
     float scene_dist = length(normalised_cam_dist * ray);
@@ -104,8 +101,5 @@ void fp_main (
     pixel = texel;
     pixel.rgb *= colour;
 
-    #if ALPHA_BLEND == 0
-    pixel /= pixel.a;
-    #endif
     pixel *= part_exposed;
 }

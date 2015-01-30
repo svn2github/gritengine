@@ -52,7 +52,7 @@ function particle_behaviour_alpha_gas_ball (tab, elapsed)
     end
     if tab.colourCurve then
         local light_colour = tab.colourCurve[tab.age]
-        tab.colour = light_colour * alpha
+        tab.emissive = light_colour * alpha
 
         if tab.light then
             -- if the gas ball has a light attached to it then keep it in sync with the particle's emissive
@@ -61,8 +61,8 @@ function particle_behaviour_alpha_gas_ball (tab, elapsed)
         end
     else
         -- colour is constant, but attenuate it with alpha
-        tab.initialColour = tab.initialColour or tab.colour
-        tab.colour = tab.initialColour * alpha
+        tab.initialColour = tab.initialColour or tab.emissive
+        tab.emissive = tab.initialColour * alpha
     end
 
 
@@ -76,7 +76,7 @@ particle_convection_curve = PlotV3 {
 
 
 particle `DebugMarker` {
-    map = `GenericParticleSheet.dds`; alphaBlend = true; emissive = true;
+    map = `GenericParticleSheet.dds`;
     frames = { 960,960, 64, 64, }; frame = 0;
     behaviour = function(particle, elapsed)
         particle.age = particle.age + elapsed
@@ -94,7 +94,7 @@ function emit_debug_marker (pos, colour, life, size)
     size = size or 1
     gfx_particle_emit(`DebugMarker`, pos, {
         life = life;
-        colour = colour;
+        emissive = colour;
         age = 0;
         dimensions = size*vector3(1,1,1);
     })
@@ -118,7 +118,7 @@ function particle_behaviour_standard (tab, elapsed)
 end
 
 particle `Explosion3` {
-    map = `GenericParticleSheet.dds`; emissive = true; blending = "ALPHA";
+    map = `GenericParticleSheet.dds`; blending = "ALPHA";
     frames = {
                   0,384,   128, 128,
                 128,384,   128, 128,

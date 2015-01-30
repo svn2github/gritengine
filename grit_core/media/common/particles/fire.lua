@@ -3,7 +3,7 @@
 -- OR do not use regular materials for particles
 
 particle `EngineFire` {
-    map = `GenericParticleSheet.dds`; alphaBlend = true; emissive = true;
+    map = `GenericParticleSheet.dds`;
     frames = {
                   0,640,   128, 128,
                 128,640,   128, 128,
@@ -25,7 +25,7 @@ particle `EngineFire` {
         tab.position = tab.position + (tab.velocity + vector3(math.random(-100,100)/100,math.random(-100,100)/100,0)) * elapsed
 
         local c = tab.colourCurve[tab.age] 
-        tab.colour = c
+        tab.emissive = c
 
         if tab.light then
             tab.light.diffuseColour = c
@@ -163,7 +163,7 @@ local function flame_behaviour (particle, elapsed)
     if old_frame ~= new_frame then
         particle.frame = new_frame
         local col = vector3(1,1,1) - vector3(0, 0, math.random()*0.2)
-        particle.colour = 4*col
+        particle.emissive = 4*col
 
         if l then
             local light_col = 0.2 * col * col
@@ -181,7 +181,7 @@ local function flame_behaviour (particle, elapsed)
 end
 
 particle `Flame` {
-    map = `flames_anim.png`; emissive = true; alphaBlend = true;
+    map = `flames_anim.png`;
     frames = particle_grid_frames(146,146, 0,0, 6,6) ; frame = 0;
     behaviour = flame_behaviour;
     life = 3;
@@ -231,7 +231,7 @@ end
 
 if resource_exists(`gta4_flames.png`) then
     particle `Flame2` {
-        map = `gta4_flames.png`; emissive = true; alphaBlend = true;
+        map = `gta4_flames.png`;
         frames = particle_grid_frames(73,73, 0,0, 6,6) ; frame = 0;
         behaviour = flame_behaviour;
         life = 3;

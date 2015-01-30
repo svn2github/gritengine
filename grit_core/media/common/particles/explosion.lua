@@ -16,7 +16,7 @@ do
         [1] = 0;
     }
     particle `Explosion` {
-        map = `GenericParticleSheet.dds`; emissive = true; alphaBlend = true;
+        map = `GenericParticleSheet.dds`;
         frames = particle_grid_frames(256,256); frame = 0;
         initialVolume = 10; maxVolume = 200; life = 1.2;
         behaviour = particle_behaviour_alpha_gas_ball;
@@ -27,7 +27,7 @@ do
 
     --[[
     particle "Explosion2" {
-        map = "GenericParticleSheet.dds"; emissive = true; alphaBlend = true;
+        map = "GenericParticleSheet.dds";
         frames = particle_grid_frames(256,256); frame = 0;
         initialVolume = 10; maxVolume = 200; life = 2;
         behaviour = particle_behaviour_alpha_gas_ball;
@@ -37,7 +37,7 @@ do
     }
 
     particle "Explosion3" {
-        map = "GenericParticleSheet.dds"; emissive = true; alphaBlend = true;
+        map = "GenericParticleSheet.dds";
         frames = { 256,0, 256, 256 }; frame = 0;
         initialVolume = 10; maxVolume = 200; life = 2;
         behaviour = particle_behaviour_alpha_gas_ball;

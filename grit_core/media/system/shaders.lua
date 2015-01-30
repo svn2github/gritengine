@@ -1,7 +1,5 @@
 -- (c) David Cunningham 2011, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
---local gl_profile_frag = "glslf"
---local gl_profile_vert = "glslv"
 local gl_profile_frag = "gp4fp"
 local gl_profile_vert = "gpu_vp"
 
@@ -64,25 +62,10 @@ end
 
 -- {{{ PARTICLE SHADERS
 
-local function shader_particle_names (...)
-        local function shader_particle_names_aux (prefix, alpha_blend, emissive)
-                return string.format("%s:%s_%s",
-                        prefix,
-                        alpha_blend and "A" or "a",
-                        emissive and "E" or "e"
-                )
-        end
-        return shader_particle_names_aux("particle_f", ...), shader_particle_names_aux("particle_v", ...)
-end
-
-local function make_particle_program_cg (alpha_blend, emissive)
-        local fname, vname = shader_particle_names(alpha_blend, emissive)
+function do_reset_particle_shaders ()
+        local fname, vname = "particle_f", "particle_v"
         print ("Compiling shader: ", vname, fname)
         local defines = "-O3 "
-                     .. "-DALPHA_BLEND="..(alpha_blend and "1" or "0").." "
-                     .. "-DEMISSIVE="..(emissive and "1" or "0").." "
-                     .. "-DPARTICLE_USE_DEFERRED=1 "
-                     .. "-DPREMULTIPLIED_ALPHA=1 "
 
         local vp = prog(vname,"cg","VERTEX")
         vp.profiles = {"vs_3_0", gl_profile_vert}
@@ -90,15 +73,6 @@ local function make_particle_program_cg (alpha_blend, emissive)
         vp.compileArguments = defines
         vp.entryPoint = "vp_main"
         vp:reload()
---[[
-        vp:setAutoConstantInt("view_proj","VIEW_PROJ_MATRIX")
-        vp:setAutoConstantInt("proj","PROJECTION_MATRIX")
-        if not emissive then
-                vp:setAutoConstantInt("particle_ambient_colour","AMBIENT_LIGHT_COLOUR")
-        end
-        vp:setAutoConstantInt("the_fog_params", "FOG_PARAMS")
-        vp:setAutoConstantInt("the_fog_colour", "FOG_COLOUR")
-]]--
 
         local fp = prog(fname,"cg","FRAGMENT")
         fp.profiles = {"ps_3_0", gl_profile_frag}
@@ -106,24 +80,8 @@ local function make_particle_program_cg (alpha_blend, emissive)
         fp.compileArguments = defines
         fp.entryPoint = "fp_main"
         fp:reload()
---[[
-        fp:setConstantFloat("alpha_rej", 0)
-        fp:setAutoConstantInt("far_clip_distance","FAR_CLIP_DISTANCE")
-        if gfx_d3d9() then
-                fp:setAutoConstantInt("viewport_size","VIEWPORT_SIZE")
-        end
-        fp:setAutoConstantInt("render_target_flipping","RENDER_TARGET_FLIPPING")
-]]--
 
         return vp, fp
-end
-
-function do_reset_particle_shaders ()
-        for _,alpha_blend in ipairs{false, true} do
-                for _,emissive in ipairs{false, true} do
-                        make_particle_program_cg(alpha_blend, emissive)
-                end
-        end
 end
 
 -- }}}
