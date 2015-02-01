@@ -47,3 +47,53 @@ shader `Default` {
         out.colour = gamma_decode(c.rgb) * mat.emissiveMask;
     ]]
 }
+
+--[=[
+shader `Particle` {
+
+    gbuffer0 = uniform_texture_2d(1, 1, 1);
+    particleAtlas = uniform_texture_2d(0.5, 0.5, 1);
+
+    vertexCode = [[
+        var part_basis_x = vert.coord0.xyz;
+        var part_half_depth = vert.coord1.x;
+        var part_basis_z = vert.coord2.xyz;
+        var part_pos = vert.coord3.xyz;
+        var part_diffuse = vert.coord4.xyz;
+        var part_alpha = vert.coord5.x;
+        var part_emissive = vert.coord6.xyz;
+
+        var fragment_uv = lerp(vert.coord7.xy, vert.coord7.zw,
+                               vert.position.xz / Float2(2, -2) + Float2(0.5, 0.5));
+
+        var part_colour = global.particleAmbient * part_diffuse + part_emissive;
+
+        out.position = vert.position.x * part_basis_x
+                     + vert.position.z * part_basis_z
+                     + part_pos;
+
+        var camera_to_fragment = out.position - global.cameraPos;
+    ]],
+
+    colourCode = [[
+        var uv = frag.screen / global.viewportSize;
+        uv.y = 1 - uv.y;  // Textures addressed from top left, frag.screen is bottom left
+        var ray = lerp(lerp(global.rayBottomLeft, global.rayBottomRight, uv.x),
+                       lerp(global.rayTopLeft, global.rayTopRight, uv.x),
+                       uv.y);
+
+        var bytes = sample(mat.gbuffer0, uv).xyz;
+        var normalised_cam_dist = 255.0 * (256.0*256.0*bytes.x + 256.0*bytes.y + bytes.z)
+                                        / (256.0*256.0*256.0 - 1);
+
+        var scene_dist = length(normalised_cam_dist * ray);
+        var fragment_dist = length(camera_to_fragment);
+        var part_exposed = (scene_dist - fragment_dist + part_half_depth)
+                           / part_half_depth;
+        var texel = sample(mat.particleAtlas, fragment_uv);
+        out.colour = gamma_decode(texel.rgb) * part_colour;
+        out.alpha = texel.a * part_alpha * clamp(part_exposed, 0.0, 1.0);
+        out.colour = out.colour * out.alpha;
+    ]]
+}
+]=]

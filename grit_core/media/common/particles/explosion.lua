@@ -19,7 +19,8 @@ do
         map = `GenericParticleSheet.dds`;
         frames = particle_grid_frames(256,256); frame = 0;
         initialVolume = 10; maxVolume = 200; life = 1.2;
-        behaviour = particle_behaviour_alpha_gas_ball;
+        behaviour = particle_behaviour_alpha_gas_ball_emissive;
+        diffuse = vec(0, 0, 0);
         colourCurve = colour_curve;
         alphaCurve = alpha_curve;
         convectionCurve = particle_convection_curve;
@@ -30,7 +31,8 @@ do
         map = "GenericParticleSheet.dds";
         frames = particle_grid_frames(256,256); frame = 0;
         initialVolume = 10; maxVolume = 200; life = 2;
-        behaviour = particle_behaviour_alpha_gas_ball;
+        behaviour = particle_behaviour_alpha_gas_ball_emissive;
+        diffuse = vec(0, 0, 0);
         colourCurve = colour_curve;
         alphaCurve = alpha_curve;
         convectionCurve = particle_convection_curve;
@@ -40,7 +42,8 @@ do
         map = "GenericParticleSheet.dds";
         frames = { 256,0, 256, 256 }; frame = 0;
         initialVolume = 10; maxVolume = 200; life = 2;
-        behaviour = particle_behaviour_alpha_gas_ball;
+        behaviour = particle_behaviour_alpha_gas_ball_emissive;
+        diffuse = vec(0, 0, 0);
         colourCurve = colour_curve;
         alphaCurve = alpha_curve;
         convectionCurve = particle_convection_curve;

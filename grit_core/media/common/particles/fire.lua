@@ -39,6 +39,7 @@ particle `EngineFire` {
     age = 0;
     life = 1;
     angle = 0;
+    diffuse = vec(0, 0, 0);
     colourCurve = PlotV3 {
         [0.00] = vector3(0.40, 0.18, 0.14);
         [0.10] = vector3(1.00, 0.44, 0.26);
@@ -163,7 +164,7 @@ local function flame_behaviour (particle, elapsed)
     if old_frame ~= new_frame then
         particle.frame = new_frame
         local col = vector3(1,1,1) - vector3(0, 0, math.random()*0.2)
-        particle.emissive = 4*col
+        particle.emissive = 4*col * particle.alpha
 
         if l then
             local light_col = 0.2 * col * col

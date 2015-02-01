@@ -27,7 +27,7 @@ function particle_grid_frames (w, h, sx, sy, ex, ey)
 end
 
 
-function particle_behaviour_alpha_gas_ball (tab, elapsed)
+function particle_behaviour_alpha_gas_ball_emissive (tab, elapsed)
     tab.age = tab.age + elapsed/tab.life
     if tab.age > 1 then
         if tab.light then tab.light:destroy() end
@@ -45,7 +45,7 @@ function particle_behaviour_alpha_gas_ball (tab, elapsed)
     local radius = math.pow(tab.volume/math.pi*3/4, 1/3) -- sphere: V = 4/3πr³
     tab.dimensions = (2*radius) * vector3(1,1,0.5)
 
-    local alpha = tab.alpha
+    local alpha = tab.alpha or 1
     if tab.alphaCurve then
         alpha = tab.alphaCurve[tab.age]
         tab.alpha = alpha
@@ -61,11 +61,41 @@ function particle_behaviour_alpha_gas_ball (tab, elapsed)
         end
     else
         -- colour is constant, but attenuate it with alpha
-        tab.initialColour = tab.initialColour or tab.emissive
-        tab.emissive = tab.initialColour * alpha
+        tab.initialEmissive = tab.initialEmissive or tab.emissive
+        tab.emissive = tab.initialEmissive * alpha
+    end
+end
+
+function particle_behaviour_alpha_gas_ball_diffuse (tab, elapsed)
+    tab.age = tab.age + elapsed/tab.life
+    if tab.age > 1 then
+        return false
+    end
+    if tab.frameRate then tab.frame = tab.frame + tab.frameRate * elapsed end
+    if tab.velocity then
+        local vel = tab.velocity
+        if tab.convectionCurve then vel = vel + tab.convectionCurve[tab.age] end
+        tab.position = tab.position + vel * elapsed
+        tab.velocity = math.pow(0.01, elapsed) * tab.velocity
     end
 
+    tab.volume = lerp(tab.initialVolume, tab.maxVolume, tab.age)
+    local radius = math.pow(tab.volume/math.pi*3/4, 1/3) -- sphere: V = 4/3πr³
+    tab.dimensions = (2*radius) * vector3(1,1,0.5)
 
+    local alpha = tab.alpha or 1
+    if tab.alphaCurve then
+        alpha = tab.alphaCurve[tab.age]
+        tab.alpha = alpha
+    end
+    if tab.colourCurve then
+        local light_colour = tab.colourCurve[tab.age]
+        tab.diffuse = light_colour * alpha
+    else
+        -- colour is constant, but attenuate it with alpha
+        tab.initialDiffuse = tab.initialDiffuse or tab.diffuse
+        tab.diffuse = tab.initialDiffuse * alpha
+    end
 end
 
 particle_convection_curve = PlotV3 {
@@ -95,6 +125,7 @@ function emit_debug_marker (pos, colour, life, size)
     gfx_particle_emit(`DebugMarker`, pos, {
         life = life;
         emissive = colour;
+        diffuse = vec(0, 0, 0);
         age = 0;
         dimensions = size*vector3(1,1,1);
     })

@@ -5,7 +5,7 @@ do
         map = `GenericParticleSheet.dds`;
         frames = { 640,512, 128, 128, };  frame = 0;
         initialVolume = 10; maxVolume = 200; life = 2;
-        behaviour = particle_behaviour_alpha_gas_ball;
+        behaviour = particle_behaviour_alpha_gas_ball_diffuse;
         alphaCurve = Plot{[0]=0.0,[0.2]=0.4,[1]=0};
         convectionCurve = particle_convection_curve;
     }
@@ -14,7 +14,7 @@ do
         map = `GenericParticleSheet.dds`;
         frames = { 896,640, 128, 128, };  frame = 0;
         initialVolume = 10; maxVolume = 200; life = 2;
-        behaviour = particle_behaviour_alpha_gas_ball;
+        behaviour = particle_behaviour_alpha_gas_ball_diffuse;
         alphaCurve = Plot{[0]=1,[0.2]=0.2,[1]=0};
         convectionCurve = particle_convection_curve;
     }
@@ -223,8 +223,8 @@ particle `RocketExhaustSmoke` {
         
         particle.width = particle.startWidth - math.pow(particle.life, 3)
         particle.height = particle.width
-        particle.colour = lerp(vector3(1,0,0),vector3(1,0.3,0), clamp(particle.width, 0, 0.75))
         particle.alpha = clamp(0.6 - 0.1/particle.life, 0,1)
+        particle.colour = lerp(vector3(1,0,0),vector3(1,0.3,0), clamp(particle.width, 0, 0.75)) * particle.alpha
     end;
 }
 

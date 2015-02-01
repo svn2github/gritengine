@@ -59,33 +59,6 @@ end
 
 
 
-
--- {{{ PARTICLE SHADERS
-
-function do_reset_particle_shaders ()
-        local fname, vname = "particle_f", "particle_v"
-        print ("Compiling shader: ", vname, fname)
-        local defines = "-O3 "
-
-        local vp = prog(vname,"cg","VERTEX")
-        vp.profiles = {"vs_3_0", gl_profile_vert}
-        vp.sourceFile = "system/particle.cg"
-        vp.compileArguments = defines
-        vp.entryPoint = "vp_main"
-        vp:reload()
-
-        local fp = prog(fname,"cg","FRAGMENT")
-        fp.profiles = {"ps_3_0", gl_profile_frag}
-        fp.sourceFile = "system/particle.cg"
-        fp.compileArguments = defines
-        fp.entryPoint = "fp_main"
-        fp:reload()
-
-        return vp, fp
-end
-
--- }}}
-
 -- {{{ EMISSIVE SHADERS
 
 
@@ -865,7 +838,6 @@ function do_reset_shaders ()
         do_reset_emissive_shaders()
         do_reset_wireframe_shaders()
         do_reset_caster_shaders()
-        do_reset_particle_shaders()
         do_reset_receiver_shaders()
 end
 
