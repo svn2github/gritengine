@@ -7,19 +7,11 @@ Vector3 get_mouse_world_dir(Ogre::Vector2 mouse_pos, Ogre::Vector3 cam_pos, Ogre
 	frustum.setFarClipDistance(gfx_option(GFX_FAR_CLIP));
 	Ogre::Matrix4 proj = frustum.getProjectionMatrix();
 
-	Ogre::Matrix4 inverseVP = (proj
-		* Ogre::Math::makeViewMatrix(cam_pos,
+    Ogre::Matrix4 view = Ogre::Math::makeViewMatrix(
+        cam_pos,
 		cam_dir * Ogre::Quaternion(Ogre::Degree(90), Ogre::Vector3(1, 0, 0)),
-		nullptr)).inverse();
-
-#if OGRE_NO_VIEWPORT_ORIENTATIONMODE == 0
-	// We need to convert screen point to our oriented viewport (temp solution)
-	Ogre::Real tX = mouse_pos.x;
-	Ogre::Real a = frustum.getOrientationMode() * Ogre::Math::HALF_PI;
-	mouse_pos.x = Ogre::Math::Cos(a) * (tX - 0.5f) + Ogre::Math::Sin(a) * (mouse_pos.y - 0.5f) + 0.5f;
-	mouse_pos.y = Ogre::Math::Sin(a) * (tX - 0.5f) + Ogre::Math::Cos(a) * (mouse_pos.y - 0.5f) + 0.5f;
-	//if ((int)frustum.getOrientationMode() & 1) mouse_pos.y = 1.f - mouse_pos.y;
-#endif
+		nullptr)
+	Ogre::Matrix4 inverseVP = (view * proj).inverse();
 
 	Ogre::Real nx = (2.0f * mouse_pos.x) - 1.0f;
 	Ogre::Real ny = 1.0f - (2.0f * mouse_pos.y);

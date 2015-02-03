@@ -31,6 +31,9 @@ function quit()
         main.shouldQuit = true
 end
 
+mouse_pos_rel = V_ZERO
+mouse_pos_abs = V_ZERO
+
 function main:run (...)
 
         -- execute cmdline arguments on console
@@ -56,9 +59,11 @@ function main:run (...)
 
                 local presses = get_keyb_presses()
                 local moved,buttons,x,y,rel_x,rel_y = get_mouse_events()
+                mouse_pos_abs = vec(x, y)
+                mouse_pos_rel = vec(rel_x, rel_y)
 
                 if moved then
-                    input_filter_trickle_mouse_move(vec(rel_x, rel_y), vec(x, y))
+                    input_filter_trickle_mouse_move(mouse_pos_rel, mouse_pos_abs)
                 end
 
                 for _,key in ipairs(presses) do
