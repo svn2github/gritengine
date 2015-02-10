@@ -1,1 +1,0 @@
-This directory contains all thumbnail images and a init.lua file that contains all thumbnails records.

@@ -1,1 +1,0 @@
-This is a sample game that runs the Grit Editor levels (TODO)

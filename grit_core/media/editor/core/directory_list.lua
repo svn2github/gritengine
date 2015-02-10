@@ -1,32 +1,57 @@
--- (c) Augusto P. Moura 2014, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
-
 -- list files and folders in a given directory
-function get_dir_list(directory)
-    local i, folders, popen = 0, {}, io.popen
-	-- get folders
-	if os.getenv("OS") ~= nil then
-		-- Windows
+
+-- Windows
+if os.getenv("OS") ~= nil then
+	function get_dir_list(directory)
+	    local i, folders, popen = 0, {}, io.popen
+		-- get folders
 		for filename in popen('dir "'..directory..'" /b /ad'):lines() do
 			i = i + 1
 			folders[i] = filename
 		end
-	else
-		-- Linux (TODO)
-	end
-	i = 0
-	-- get files
-	local files = {}
-	if os.getenv("OS") ~= nil then
-		-- Windows
+
+		i = 0
+		
+		-- get files
+		local files = {}
+
 		for filename in popen('dir "'..directory..'"/b /a-d'):lines() do
 			i = i + 1
 			files[i] = filename
 		end
-	else
-		-- Linux (TODO)
+
+	    return files, folders
 	end
-	local ff = {}
-	ff.folders = folders
-	ff.files = files
-    return ff
+
+-- Linux
+else
+	function get_dir_list(directory)
+		local mtmpname = os.tmpname()
+		os.execute("ls -p "..directory .. " >"..mtmpname)
+		local fg = io.open(mtmpname,"r")
+		local rv = fg:read("*all")
+		fg:close()
+		os.remove(mtmpname)
+
+		local res = {}
+		local from  = 1
+		local delim_from, delim_to = string.find(rv, "\n", from  )
+		while delim_from do
+		        table.insert( res, string.sub(rv, from , delim_from-1 ))
+		        from  = delim_to + 1
+		        delim_from, delim_to = string.find( rv, "\n", from)
+		end
+
+		local files, folders = {}, {}
+		
+		for i = 1, #res do
+			if res[i]:sub(-1) == "/" then
+				folders[#folders+1] = res[i]:reverse():sub(2):reverse()
+			else
+				files[#files+1] = res[i]
+			end
+		end
+		
+		return files, folders
+	end
 end

@@ -1,1 +1,1 @@
-include "core/init.lua"
+include `core/init.lua`

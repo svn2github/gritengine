@@ -1,1 +1,0 @@
-This folder contains "Level Event Editor" code snippets
