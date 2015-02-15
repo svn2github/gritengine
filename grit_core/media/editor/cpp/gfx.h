@@ -1,1 +1,0 @@
-Vector3 get_mouse_world_dir(Ogre::Vector2 mouse_pos, Ogre::Vector3 cam_pos, Ogre::Quaternion cam_dir);

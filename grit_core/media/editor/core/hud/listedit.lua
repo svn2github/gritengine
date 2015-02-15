@@ -1,22 +1,22 @@
 -- (c) Augusto Moura 2014, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
 -- NOT TESTED, W.I.P.
-hud_class 'listedit' {
+hud_class `listedit` {
 	alpha = 1;
 	size = vec(400, 30);
 	--zOrder = 0;
 
 	init = function (self)
 		self.needsFrameCallbacks = true;
-		self.base = gfx_hud_object_add('/common/hud/Border', { parent=self,  position=vec2(0, 0)})
+		self.base = gfx_hud_object_add(`/common/hud/Border`, { parent=self,  position=vec2(0, 0)})
 		self.items = {}
 		
-		self.itemPositioner = gfx_hud_object_add('/common/hud/Positioner', {
+		self.itemPositioner = gfx_hud_object_add(`/common/hud/Positioner`, {
 			parent = self;
 			offset = vec2(10, 0);
 			factor = vec2(-0.5, 0);
 		})
-		self.valuePositioner = gfx_hud_object_add('/common/hud/Positioner', {
+		self.valuePositioner = gfx_hud_object_add(`/common/hud/Positioner`, {
 			parent = self;
 			offset = vec2(-10, 0);
 			factor = vec2(0.5, 0);
@@ -37,7 +37,7 @@ hud_class 'listedit' {
 	
 	addItem = function(self, name, defaultvalue)
 		self.items[#self.items + 1] = {
-			title = gfx_hud_text_add("", { text = name, parent = itemPositioner, position = vec2(size.x / 2, position.y) });
+			title = gfx_hud_text_add(``, { text = name, parent = itemPositioner, position = vec2(size.x / 2, position.y) });
 			
 			value = gfx_hud_object_add(`/common/hud/EditBox`, {
 				value = defaultvalue;

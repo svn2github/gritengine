@@ -1,7 +1,7 @@
 -- (c) Augusto Moura 2014, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
 -- NOT TESTED W.I.P.
-hud_class 'radiobutton' {
+hud_class `radiobutton` {
 	alpha = 0;
 	size = vec(256, 256);
 	zOrder = 0;
@@ -9,8 +9,8 @@ hud_class 'radiobutton' {
 	init = function (self)
 		self.needsFrameCallbacks = true;
 		self.needsInputCallbacks = true;
-		self.icon = gfx_hud_object_add('/common/hud/Rect', { parent=self,  position=vec2(0, 0)})
-		self.text = gfx_hud_text_add("/common/fonts/Arial12")
+		self.icon = gfx_hud_object_add(`/common/hud/Rect`, { parent=self,  position=vec2(0, 0)})
+		self.text = gfx_hud_text_add(`/common/fonts/Arial12`)
 		self.text.parent = self
 		self.text = "Radiobutton"
 	end;

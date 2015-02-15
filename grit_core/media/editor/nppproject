@@ -1,0 +1,75 @@
+<NotepadPlus>
+    <Project name="Grit Editor">
+        <Folder name="config">
+            <File name="config\config.lua" />
+            <File name="config\interface.lua" />
+            <File name="config\recent.lua" />
+        </Folder>
+        <Folder name="core">
+            <Folder name="widget_manager">
+                <File name="core\widget_manager\arrow_rotate.gcol" />
+                <File name="core\widget_manager\arrow_scale.gcol" />
+                <File name="core\widget_manager\arrow_translate.gcol" />
+                <File name="core\widget_manager\definitions.lua" />
+                <File name="core\widget_manager\dummy_plane.gcol" />
+                <File name="core\widget_manager\init.lua" />
+                <File name="core\widget_manager\widget_manager.lua" />
+            </Folder>
+            <Folder name="assets">
+                <File name="core\assets\definitions.lua" />
+                <File name="core\assets\init.lua" />
+                <File name="core\assets\spawn_point.gcol" />
+            </Folder>
+            <Folder name="defaultconfig">
+                <File name="core\defaultconfig\config.lua" />
+                <File name="core\defaultconfig\interface.lua" />
+                <File name="core\defaultconfig\recent.lua" />
+            </Folder>
+            <Folder name="defaultmap">
+                <File name="core\defaultmap\classes.lua" />
+                <File name="core\defaultmap\Cube.gcol" />
+                <File name="core\defaultmap\default2.lvl" />
+                <File name="core\defaultmap\defaultmap.lvl" />
+                <File name="core\defaultmap\init.lua" />
+                <File name="core\defaultmap\mats.lua" />
+                <File name="core\defaultmap\Terrain.gcol" />
+            </Folder>
+            <Folder name="GritLevel">
+                <File name="core\GritLevel\GritLevelManager.lua" />
+                <File name="core\GritLevel\init.lua" />
+            </Folder>
+            <Folder name="hud">
+                <File name="core\hud\draggable.lua" />
+                <File name="core\hud\gui.lua" />
+                <File name="core\hud\imagebutton.lua" />
+                <File name="core\hud\init.lua" />
+                <File name="core\hud\listedit.lua" />
+                <File name="core\hud\menubar.lua" />
+                <File name="core\hud\rollbar.lua" />
+                <File name="core\hud\select.lua" />
+                <File name="core\hud\statusbar.lua" />
+                <File name="core\hud\toolbar.lua" />
+                <File name="core\hud\Window.lua" />
+            </Folder>
+            <Folder name="themes">
+                <File name="core\themes\init.lua" />
+            </Folder>
+            <Folder name="windows">
+                <File name="core\windows\content_browser.lua" />
+                <File name="core\windows\level_properties.lua" />
+                <File name="core\windows\open_save_level.lua" />
+            </Folder>
+            <File name="core\core.lua" />
+            <File name="core\directory_list.lua" />
+            <File name="core\edenv.lua" />
+            <File name="core\init.lua" />
+            <File name="core\init_editor_interface.lua" />
+            <File name="core\welcome_msg.lua" />
+        </Folder>
+        <Folder name="gamemodes">
+            <File name="gamemodes\detached_game.lua" />
+            <File name="gamemodes\racing_game.lua" />
+        </Folder>
+        <File name="init.lua" />
+    </Project>
+</NotepadPlus>

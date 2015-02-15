@@ -38,6 +38,8 @@ game = {
 		common_binds:bind("left", function() fire_rocket() end)
 		common_binds:bind("right", function() gfx_option("FOV", 40) end, function() gfx_option("FOV", 55) end)
 		
+		debug_binds.modal = false
+		
 		-- if current_level.events['BEGIN'] ~= nil then
 			-- current_level.events['BEGIN']:start()
 		-- end

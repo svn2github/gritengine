@@ -4,6 +4,7 @@ hud_class `StatusBar` {
     colour = vec(0.3, 0.3, 0.3);
 	alpha=0.8;
 	size = vec2(0, 25);
+	texture=`../icons/softdeg.png`;
 	
     init = function (self)
         self.needsParentResizedCallbacks = true
@@ -46,8 +47,9 @@ hud_class `StatusBar` {
     end;
 
     destroy = function (self)
-		self.needsParentResizedCallbacks = false
 		self.needsFrameCallbacks = false
+		self.needsParentResizedCallbacks = false
+
 		self:destroy()
     end;
 

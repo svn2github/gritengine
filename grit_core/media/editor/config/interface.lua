@@ -5,18 +5,18 @@
 editor_interface_cfg = {
   content_browser   =   {
     opened   = false;
-    position = { -100, -100 };
+    position = { 22, 10 };
     size     = { 640, 365 };
   };
   event_editor      =   {
     opened   = false;
-    position = { -312, -233 };
+    position = { -136, -231 };
     size     = { 608, 200 };
   };
   level_properties  =   {
     opened   = false;
-    position = { 277.5, -256 };
-    size     = { 449, 180 };
+    position = { 236.5, -240 };
+    size     = { 449, 225 };
   };
   material_editor   =   {
     opened   = false;
@@ -30,7 +30,7 @@ editor_interface_cfg = {
   };
   object_properties =   {
     opened   = false;
-    position = { -438.5, 109 };
+    position = { -158.5, -99 };
     size     = { 353, 426 };
   };
   outliner          =   {

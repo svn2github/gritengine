@@ -23,6 +23,8 @@ game = {
 		game.player:activate()
 		player_ctrl:beginControlObj(game.player)
 		
+		debug_binds.modal = false
+		
 		local ddir = norm(game.player.instance.body.worldPosition - player_ctrl.camPos)
 		player_ctrl.camYaw = ddir.x
 		player_ctrl.camPitch = ddir.y
@@ -46,7 +48,7 @@ game = {
 		
 		if current_level.env_cube ~= nil and current_level.env_cube ~= "" then
 			env_cube_dawn = current_level.env_cube_dawn
-			gfx_env_cube(current_level.env_cube)
+			gfx_env_cube(0, current_level.env_cube)
 			env_cube_noon = current_level.env_cube_noon
 			env_cube_dusk = current_level.env_cube_dusk
 			env_cube_dark = current_level.env_cube_dark
