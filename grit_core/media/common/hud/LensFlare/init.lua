@@ -1,4 +1,4 @@
--- (c) Augusto Moura 2014, licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
+-- (c) Augusto P. Moura 2014, licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
 hud_class `.` {
     alpha = 0;
@@ -34,6 +34,10 @@ hud_class `.` {
         self.flare[7] = gfx_hud_object_add(`/common/hud/Rect`, {texture=`Flare1.png`, needsAlpha = true, size=vec(2048, 256), parent = self})	
 		
         self.flare[8] = gfx_hud_object_add(`/common/hud/Rect`, {texture=`Flare0.png`, size=self.size, parent = self})
+		self.flare[2].enabled =false
+		self.flare[4].enabled =false
+		self.flare[5].enabled =false
+		self.flare[6].enabled =false
     end;
     destroy = function (self)
 		self.needsFrameCallbacks = false
@@ -78,10 +82,10 @@ hud_class `.` {
 			self.flare[7].colour = gfx_sun_colour()
 			
 			-- positions
-			self.flare[0].position =  s_pos  * vec2(0.3, 0.3)
-			self.flare[1].position =  s_pos  * vec2(0.2, 0.2)
+			self.flare[0].position =  s_pos  * vec2(0.5, 0.5)
+			self.flare[1].position =  s_pos  * vec2(0.4, 0.4)
 			self.flare[2].position =  s_pos  * vec2(0.4, 0.4)			
-			self.flare[3].position =  s_pos  * vec2(0.6, 0.6)			
+			self.flare[3].position =  s_pos  * vec2(0.3, 0.3)			
 			self.flare[4].position =  s_pos  * vec2(0.8, 0.8)
 			self.flare[5].position =  s_pos  / vec2(0.98, 0.98)
 			self.flare[6].position =  s_pos  / vec2(0.95, 0.95)
@@ -89,10 +93,13 @@ hud_class `.` {
 			self.flare[8].position = s_pos
 
 			-- increase size with distance
-			local dsize = math.min(math.sqrt((self.flare[0].position.x - s_pos.x) ^ 2 + (self.flare[0].position.y - s_pos.y) ^ 2) * 0.07, 32)			
+			local dsize = math.min(math.sqrt((self.flare[0].position.x - s_pos.x) ^ 2 + (self.flare[0].position.y - s_pos.y) ^ 2) * 0.07, 16)			
 			self.flare[0].size = vec2(dsize*0.85, dsize)			
-			dsize = math.min(math.sqrt((self.flare[1].position.x - s_pos.x) ^ 2 + (self.flare[1].position.y - s_pos.y) ^ 2) * 0.2, 100)			
+			dsize = math.min(math.sqrt((self.flare[1].position.x - s_pos.x) ^ 2 + (self.flare[1].position.y - s_pos.y) ^ 2) * 0.2, 200)			
 			self.flare[1].size = vec2(dsize*0.7, dsize)
+			
+			dsize = math.min(math.sqrt((self.flare[3].position.x - s_pos.x)*5 ^ 2 + (self.flare[3].position.y - s_pos.y) ^ 2)*5 * 0.2+50, 1024)
+			self.flare[3].size = vec2(dsize*3.5, dsize*3.5)
 			
 			-- rotates around sun position
 			for i = 0, 3 do
