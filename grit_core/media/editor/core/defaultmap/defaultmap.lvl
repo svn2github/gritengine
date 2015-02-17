@@ -308,9 +308,9 @@ env_cycle = { {
   time          = 22;
 } }
 
-level.map = [[
+level.map = function()
 object "/editor/core/defaultmap/Cube" (vector3(0, 0, -3.738553)) {rot=quat(1, 0, 0, 0), name="floor" }
-]]
+end;
 
 if in_editor ~= nil then
 	-- Editor level definitions:

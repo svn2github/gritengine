@@ -150,13 +150,8 @@ function GritLevel:open(levelfile)
 				safe_include(self.include[i])
 			end
 		end
-		
-		local loadmap
-		if(pcall(function()loadmap = loadstring(level.map) end) ~= true) then return false
-		end
-		
-		local lm, err = pcall(function() loadmap() end)
-		if(err ~= nil) then
+
+		if(pcall(level.map) ~= true) then
 			print(RED.."ERROR LOADING LEVEL"..err[2]:match(": .*"))
 			return false
 		end
@@ -253,7 +248,7 @@ level = {
 	file:write("\n\nenv_cycle = ")
 	file:write(dump(env_cycle, false))
 
-	file:write("\n\nlevel.map = [[")
+	file:write("\n\nlevel.map = function()")
 	
 	for i = 1, #self.objects do
 		-- to save deactivated objects too
@@ -278,7 +273,7 @@ level = {
 		end
 	end
 	
-	file:write("\n]]\n\n")
+	file:write("\nend;\n\n")
 	file:write([[
 if in_editor ~= nil then
 	-- Editor level definitions:]])

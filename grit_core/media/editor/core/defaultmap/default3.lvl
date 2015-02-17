@@ -22,7 +22,6 @@ level = {
 };
 
 level.include = {
-	'/mygame/init.lua';
 	'/editor/core/default_map/init.lua';
 };
 
@@ -308,7 +307,7 @@ env_cycle = { {
   time          = 22;
 } }
 
-level.map = [[
+level.map = function()
 object "/common/props/furniture/WorkBench" (vector3(-121.23, -67.79268, -0.7180306)) {rot=quat(0.976354, 0, 0, -0.2161779), name="Unnamed:/common/props/furniture/WorkBench:121" }
 
 object "/common/props/street/Barrier1" (vector3(102.8253, -72.04561, -0.868031)) {rot=quat(1, 0, 0, 0), name="Unnamed:/common/props/street/Barrier1:20" }
@@ -390,7 +389,7 @@ object "/common/veg/Tree_aelm" (vector3(10.52599, 131.9681, -1.368031)) {rot=qua
 object "/editor/core/defaultmap/Terrain" (vector3(31.03272, 6.944172, -1.368031)) {rot=quat(1, 0, 0, 0), name="Unnamed:/editor/core/defaultmap/Terrain:6" }
 object "/vehicles/Taxi" (vector3(45.12269, -75.97542, -0.7780641)) {rot=quat(1, 0, 0, 0), name="Unnamed:/vehicles/Taxi:10" }
 object "/editor/core/defaultmap/Cube" (vector3(0, 0, -4.999283)) {rot=quat(1, 0, 0, 0), name="floor" }
-]]
+end;
 
 if in_editor ~= nil then
 	-- Editor level definitions:
