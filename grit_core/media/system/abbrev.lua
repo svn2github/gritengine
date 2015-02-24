@@ -7,17 +7,37 @@ local curried_name
 local pile_curried_name
 
 local class_ext
-local function class3 (tab)
-    return class_add(curried_name, class_ext,tab)
+local function new_class3 (tab)
+    return class_add(curried_name, class_ext or {}, tab)
 end
-local function class2 (ext)
-    class_ext = ext
-    return class3
+local function new_class2 (ext)
+    if type(ext) == "table" then
+        return class_add(curried_name, {}, ext)
+    else
+        class_ext = ext
+        return new_class3
+    end
 end
-function class (name)
+function new_class (name)
     curried_name = name
-    return class2
+    return new_class2
 end
+        
+-- Deprecated
+local function old_class3 (tab)
+    return class_add(curried_name, class_ext or {}, tab)
+end
+local function old_class2 (ext)
+    class_ext = ext
+    return old_class3
+end
+function old_class (name)
+    curried_name = name
+    return old_class2
+end
+
+class = old_class
+
         
 local function hud_class2 (tab)
     local tab2 = { }
