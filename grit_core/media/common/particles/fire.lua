@@ -53,7 +53,7 @@ particle `EngineFire` {
 }
 
 engine_fire_counter = 0
-engine_fire_max = 30
+engine_fire_max = 5
 
 function emit_engine_fire (pos)
 
@@ -69,7 +69,7 @@ function emit_engine_fire (pos)
     end
 
     local size = 0.1 + math.random()*0.1
-	if engine_fire_counter < engine_fire_max then
+	if engine_fire_counter + 1 < engine_fire_max then
     gfx_particle_emit(`EngineFire`, pos + off, {
                       velocity = vel;
                       light = l;
@@ -78,6 +78,8 @@ function emit_engine_fire (pos)
                       dimensions = vector3(size,size,size)
                      })
 	engine_fire_counter = engine_fire_counter + 1
+	else
+		engine_fire_counter = engine_fire_counter - 0.1
 	end
 
 end
