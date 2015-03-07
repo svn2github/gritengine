@@ -88,7 +88,7 @@ hud_class `Main` {
             }),
 			newButton("Ghost Controls", {
                 pressedCallback = function()
-                    self:setContent(self.ghostControlsContent)
+                    self:setContent(self.ghostControlsContentPageOne)
                 end
             }),
 			newButton("Drive Controls", {
@@ -107,7 +107,9 @@ hud_class `Main` {
                 end
             }),
         })
-		
+		--------------------------------------------------------------------------------------------------------
+		----------                     Core Controls Listed In Settings Menu                      ----------
+		--------------------------------------------------------------------------------------------------------
 		self.coreControlsContentPageOne = newContent({ padding = self.padding,  --Make a loop in the future to list all of them automatically
 			newButton("Clear Placed: "..user_core_bindings.clearPlaced, {
                 pressedCallback = function()
@@ -222,7 +224,114 @@ hud_class `Main` {
             }),
         })
 		
-		self.ghostControlsContent = newContent({ padding = self.padding,
+		--------------------------------------------------------------------------------------------------------
+		----------                    Ghost Controls Listed In Settings Menu                     ----------
+		--------------------------------------------------------------------------------------------------------
+		self.ghostControlsContentPageOne = newContent({ padding = self.padding,  --Make a loop in the future to list all of them automatically
+			newButton("Ascend: "..user_ghost_bindings.ascend, {
+                pressedCallback = function()
+                    print("Controls coming soon!")
+                end
+            }),
+			newButton("Backwards: "..user_ghost_bindings.backwards, {
+                pressedCallback = function()
+                    print("Controls coming soon!")
+                end
+            }),
+			newButton("Board: "..user_ghost_bindings.board, {
+                pressedCallback = function()
+                    print("Controls coming soon!")
+                end
+            }),
+			newButton("Descend: "..user_ghost_bindings.descend, {
+                pressedCallback = function()
+                    print("Controls coming soon!")
+                end
+            }),
+			newButton("Fast: "..user_ghost_bindings.fast, {
+                pressedCallback = function()
+                    print("Controls coming soon!")
+                end
+            }),
+			newButton("Forwards: "..user_ghost_bindings.forwards, {
+                pressedCallback = function()
+                    print("Controls coming soon!")
+                end
+            }),
+			newButton("Next Page -->", {
+                pressedCallback = function()
+                    self:setContent(self.ghostControlsContentPageTwo)
+                end
+            }),
+            newButton("Go Back", {
+                pressedCallback = function()
+                    self:setContent(self.controlsContent)
+                end
+            }),
+        })
+		
+		self.ghostControlsContentPageTwo = newContent({ padding = self.padding,  --Make a loop in the future to list all of them automatically
+			newButton("Grab: "..user_ghost_bindings.grab, {
+                pressedCallback = function()
+                    print("Controls coming soon!")
+                end
+            }),
+			newButton("Placement Editor: "..user_ghost_bindings.placementEditor, {
+                pressedCallback = function()
+                    print("Controls coming soon!")
+                end
+            }),
+			newButton("Prod: "..user_ghost_bindings.prod, {
+                pressedCallback = function()
+                    print("Controls coming soon!")
+                end
+            }),
+			newButton("Simple Menu Show: "..user_ghost_bindings.simpleMenuShow, {
+                pressedCallback = function()
+                    print("Controls coming soon!")
+                end
+            }),
+			newButton("Strafe Left: "..user_ghost_bindings.strafeLeft, {
+                pressedCallback = function()
+                    print("Controls coming soon!")
+                end
+            }),
+			newButton("Strafe Right: "..user_ghost_bindings.strafeRight, {
+                pressedCallback = function()
+                    print("Controls coming soon!")
+                end
+            }),
+			newButton("Next Page -->", {
+                pressedCallback = function()
+                    self:setContent(self.ghostControlsContentPageThree)
+                end
+            }),
+            newButton("Go Back", {
+                pressedCallback = function()
+                    self:setContent(self.ghostControlsContentPageOne)
+                end
+            }),
+        })
+		
+		self.ghostControlsContentPageThree = newContent({ padding = self.padding,  --Make a loop in the future to list all of them automatically
+			newButton("Teleport Down: "..user_ghost_bindings.teleportDown, {
+                pressedCallback = function()
+                    print("Controls coming soon!")
+                end
+            }),
+			newButton("Teleport Up: "..user_ghost_bindings.teleportUp, {
+                pressedCallback = function()
+                    print("Controls coming soon!")
+                end
+            }),
+            newButton("Go Back", {
+                pressedCallback = function()
+                    self:setContent(self.ghostControlsContentPageTwo)
+                end
+            }),
+        })
+		
+		self.driveControlsContent = newContent({ padding = self.padding,
 			newButton("ToDo: Loop to list controls", {
                 pressedCallback = function()
                     print("Controls coming soon!")
@@ -235,23 +344,10 @@ hud_class `Main` {
             }),
         })
 		
-		self.driveControlsContent = newContent({ padding = self.padding,
-			newButton("ToDo: Loop to list controls", {
-                pressedCallback = function()
-                    print("Controls coming soon!")--self:setContent(self.mainContent)
-                end
-            }),
-            newButton("Go Back", {
-                pressedCallback = function()
-                    self:setContent(self.controlsContent)
-                end
-            }),
-        })
-		
 		self.footControlsContent = newContent({ padding = self.padding,
 			newButton("ToDo: Loop to list controls", {
                 pressedCallback = function()
-                    print("Controls coming soon!")--self:setContent(self.mainContent)
+                    print("Controls coming soon!")
                 end
             }),
             newButton("Go Back", {
