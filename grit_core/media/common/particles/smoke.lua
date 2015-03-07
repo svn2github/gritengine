@@ -39,6 +39,9 @@ function emit_smoke (pos, vel, start_size, end_size, colour, life)
     })
 end
 
+tire_smoke_counter = 0
+tire_smoke_max = 50
+
 function emit_textured_smoke (pos, vel, start_size, end_size, colour, life)
     start_size = start_size or 0.3
     end_size = end_size or 1
@@ -46,6 +49,7 @@ function emit_textured_smoke (pos, vel, start_size, end_size, colour, life)
     life = life or 3
     local r1 = start_size/2
     local r2 = end_size/2
+	if tire_smoke_counter + 1 < tire_smoke_max then
     gfx_particle_emit(`TexturedSmoke`, pos, {
         angle = 360*math.random();
         velocity = vel;
@@ -56,6 +60,10 @@ function emit_textured_smoke (pos, vel, start_size, end_size, colour, life)
         initialColour = colour;
         age = 0;
     })
+		tire_smoke_counter = tire_smoke_counter + 1
+	else
+		tire_smoke_counter = tire_smoke_counter - 0.1
+	end
 end
 
 
@@ -125,9 +133,14 @@ local engine_smoke_colour = Plot {
     [0.70] = 0.1;
     [1.00] = 0.0;
 };
+
+engine_smoke_counter = 0
+engine_smoke_max = 50
+
 function emit_engine_smoke (damage, pos)
     local off = vector3(math.random(-80,80)/1000, math.random(-80,80)/1000, 0)
     local vel = (damage * 3*off + vector3(0,0,1*damage)) + vector3(0, 0, 2.0)
+	if engine_smoke_counter + 1 < engine_smoke_max then
     gfx_particle_emit(`EngineSmoke`, pos + off, {
                       velocity = vel,
                       initialVolume = (math.random()*0.03 + 0.03) * clamp(damage, 0.1, 1),
@@ -135,6 +148,10 @@ function emit_engine_smoke (damage, pos)
                       initialColour = 0.05*clamp(engine_smoke_colour[damage] + math.random()*0.08, 0, 1) * vector3(1,1,1),
                       life = clamp(damage, 0.5, 1);
                      })
+		engine_smoke_counter = engine_smoke_counter + 1
+	else
+		engine_smoke_counter = engine_smoke_counter - 0.5
+	end
 end
 
 
