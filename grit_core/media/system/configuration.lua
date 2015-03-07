@@ -301,6 +301,7 @@ local core_binding_functions = {
         if menu.enabled then
             menu_binds.modal = false
             menu.enabled = false
+			menu:setContent(menu.mainContent)
         else
             menu_binds.modal = true
             menu.enabled = true

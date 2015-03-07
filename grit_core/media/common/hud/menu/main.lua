@@ -2,6 +2,7 @@ hud_class `Main` {
     colour = vec(1, 0.5, 0)*0.5;
     
     padding = 16;
+	
     
     init = function (self)
         self.needsParentResizedCallbacks = true
@@ -93,12 +94,12 @@ hud_class `Main` {
             }),
 			newButton("Drive Controls", {
                 pressedCallback = function()
-                    self:setContent(self.driveControlsContent)
+                    self:setContent(self.driveControlsContentPageOne)
                 end
             }),
 			newButton("Foot Controls", {
                 pressedCallback = function()
-                    self:setContent(self.footControlsContent)
+                    self:setContent(self.footControlsContentPageOne)
                 end
             }),
             newButton("Go Back", {
@@ -331,10 +332,43 @@ hud_class `Main` {
             }),
         })
 		
-		self.driveControlsContent = newContent({ padding = self.padding,
-			newButton("ToDo: Loop to list controls", {
+		--------------------------------------------------------------------------------------------------------
+		----------                    Drive Controls Listed In Settings Menu                     ----------
+		--------------------------------------------------------------------------------------------------------
+		self.driveControlsContentPageOne = newContent({ padding = self.padding,  --Make a loop in the future to list all of them automatically
+			newButton("Abandon: "..user_drive_bindings.abandon, {
                 pressedCallback = function()
                     print("Controls coming soon!")
+                end
+            }),
+			newButton("Alt Down: "..user_drive_bindings.altDown, {
+                pressedCallback = function()
+                    print("Controls coming soon!")
+                end
+            }),
+			newButton("Alt Left: "..user_drive_bindings.altLeft, {
+                pressedCallback = function()
+                    print("Controls coming soon!")
+                end
+            }),
+			newButton("Alt Right: "..user_drive_bindings.altRight, {
+                pressedCallback = function()
+                    print("Controls coming soon!")
+                end
+            }),
+			newButton("Alt Up: "..user_drive_bindings.altUp, {
+                pressedCallback = function()
+                    print("Controls coming soon!")
+                end
+            }),
+			newButton("Backwards: "..user_drive_bindings.backwards, {
+                pressedCallback = function()
+                    print("Controls coming soon!")
+                end
+            }),
+			newButton("Next Page -->", {
+                pressedCallback = function()
+                    self:setContent(self.driveControlsContentPageTwo)
                 end
             }),
             newButton("Go Back", {
@@ -344,15 +378,185 @@ hud_class `Main` {
             }),
         })
 		
-		self.footControlsContent = newContent({ padding = self.padding,
-			newButton("ToDo: Loop to list controls", {
+		self.driveControlsContentPageTwo = newContent({ padding = self.padding,  --Make a loop in the future to list all of them automatically
+			newButton("Boost: "..user_drive_bindings.boost, {
+                pressedCallback = function()
+                    print("Controls coming soon!")
+                end
+            }),
+			newButton("Camera: "..user_drive_bindings.camera, {
+                pressedCallback = function()
+                    print("Controls coming soon!")
+                end
+            }),
+			newButton("Forwards: "..user_drive_bindings.forwards, {
+                pressedCallback = function()
+                    print("Controls coming soon!")
+                end
+            }),
+			newButton("Handbrake: "..user_drive_bindings.handbrake, {
+                pressedCallback = function()
+                    print("Controls coming soon!")
+                end
+            }),
+			newButton("Lights: "..user_drive_bindings.lights, {
+                pressedCallback = function()
+                    print("Controls coming soon!")
+                end
+            }),
+			newButton("Realign: "..user_drive_bindings.realign, {
+                pressedCallback = function()
+                    print("Controls coming soon!")
+                end
+            }),
+			newButton("Next Page -->", {
+                pressedCallback = function()
+                    self:setContent(self.driveControlsContentPageThree)
+                end
+            }),
+            newButton("Go Back", {
+                pressedCallback = function()
+                   self:setContent(self.driveControlsContentPageOne)
+                end
+            }),
+        })
+		
+		self.driveControlsContentPageThree = newContent({ padding = self.padding,  --Make a loop in the future to list all of them automatically
+			newButton("Special Down: "..user_drive_bindings.specialDown, {
+                pressedCallback = function()
+                    print("Controls coming soon!")
+                end
+            }),
+			newButton("Special Left: "..user_drive_bindings.specialLeft, {
+                pressedCallback = function()
+                    print("Controls coming soon!")
+                end
+            }),
+			newButton("Special Right: "..user_drive_bindings.specialRight, {
+                pressedCallback = function()
+                    print("Controls coming soon!")
+                end
+            }),
+			newButton("Special Toggle: "..user_drive_bindings.specialToggle, {
+                pressedCallback = function()
+                    print("Controls coming soon!")
+                end
+            }),
+			newButton("Special Up: "..user_drive_bindings.specialUp, {
+                pressedCallback = function()
+                    print("Controls coming soon!")
+                end
+            }),
+			newButton("Steer Left: "..user_drive_bindings.steerLeft, {
+                pressedCallback = function()
+                    print("Controls coming soon!")
+                end
+            }),
+			newButton("Next Page -->", {
+                pressedCallback = function()
+                    self:setContent(self.driveControlsContentPageFour)
+                end
+            }),
+            newButton("Go Back", {
+                pressedCallback = function()
+                   self:setContent(self.driveControlsContentPageTwo)
+                end
+            }),
+        })
+		
+		self.driveControlsContentPageFour = newContent({ padding = self.padding,  --Make a loop in the future to list all of them automatically
+			newButton("Steer Right: "..user_drive_bindings.steerRight, {
+                pressedCallback = function()
+                    print("Controls coming soon!")
+                end
+            }),
+			newButton("Zoom In: Scroll In", {--Need better way to detect the table
+                pressedCallback = function()
+                    print("Controls coming soon!")
+                end
+            }),
+			newButton("Zoom Out: Scroll Out", { --Need better way to detect the table
                 pressedCallback = function()
                     print("Controls coming soon!")
                 end
             }),
             newButton("Go Back", {
                 pressedCallback = function()
+                   self:setContent(self.driveControlsContentPageThree)
+                end
+            }),
+        })
+		
+		--------------------------------------------------------------------------------------------------------
+		----------                    Foot Controls Listed In Settings Menu                     ----------
+		--------------------------------------------------------------------------------------------------------
+		self.footControlsContentPageOne = newContent({ padding = self.padding,  --Make a loop in the future to list all of them automatically
+			newButton("Abandon: "..user_foot_bindings.abandon, {
+                pressedCallback = function()
+                    print("Controls coming soon!")
+                end
+            }),
+			newButton("Backwards: "..user_foot_bindings.backwards, {
+                pressedCallback = function()
+                    print("Controls coming soon!")
+                end
+            }),
+			newButton("Crouch: "..user_foot_bindings.crouch, {
+                pressedCallback = function()
+                    print("Controls coming soon!")
+                end
+            }),
+			newButton("Forwards: "..user_foot_bindings.forwards, {
+                pressedCallback = function()
+                    print("Controls coming soon!")
+                end
+            }),
+			newButton("Jump: "..user_foot_bindings.jump, {
+                pressedCallback = function()
+                    print("Controls coming soon!")
+                end
+            }),
+			newButton("Run: "..user_foot_bindings.run, {
+                pressedCallback = function()
+                    print("Controls coming soon!")
+                end
+            }),
+			newButton("Next Page -->", {
+                pressedCallback = function()
+                    self:setContent(self.footControlsContentPageTwo)
+                end
+            }),
+            newButton("Go Back", {
+                pressedCallback = function()
                     self:setContent(self.controlsContent)
+                end
+            }),
+        })
+		
+		self.footControlsContentPageTwo = newContent({ padding = self.padding,  --Make a loop in the future to list all of them automatically
+			newButton("Strafe Left: "..user_foot_bindings.strafeLeft, {
+                pressedCallback = function()
+                    print("Controls coming soon!")
+                end
+            }),
+			newButton("Strafe Right: "..user_foot_bindings.strafeRight, {
+                pressedCallback = function()
+                    print("Controls coming soon!")
+                end
+            }),
+			newButton("Zoom In: Scroll In", {
+                pressedCallback = function()
+                    print("Controls coming soon!")
+                end
+            }),
+			newButton("Zoom Out: Scroll Out", {
+                pressedCallback = function()
+                    print("Controls coming soon!")
+                end
+            }),
+            newButton("Go Back", {
+                pressedCallback = function()
+                   self:setContent(self.footControlsContentPageOne)
                 end
             }),
         })
