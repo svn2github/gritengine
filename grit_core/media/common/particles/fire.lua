@@ -15,6 +15,9 @@ particle `EngineFire` {
     behaviour = function (tab, elapsed)
 
         -- age ranges from 0 (new) to 1 (dead)
+		if tab.life == 0 then
+			tab.life = 0.1
+		end
         tab.age = tab.age + elapsed / tab.life
         if tab.age > 1 then
             if tab.light then tab.light:destroy() end
@@ -49,6 +52,9 @@ particle `EngineFire` {
     }
 }
 
+engine_fire_counter = 0
+engine_fire_max = 30
+
 function emit_engine_fire (pos)
 
     local off = vector3(math.random(-80,80)/1000, math.random(-80,80)/1000, 0)
@@ -63,6 +69,7 @@ function emit_engine_fire (pos)
     end
 
     local size = 0.1 + math.random()*0.1
+	if engine_fire_counter < engine_fire_max then
     gfx_particle_emit(`EngineFire`, pos + off, {
                       velocity = vel;
                       light = l;
@@ -70,6 +77,8 @@ function emit_engine_fire (pos)
                       life = math.random() * 0.2,
                       dimensions = vector3(size,size,size)
                      })
+	engine_fire_counter = engine_fire_counter + 1
+	end
 
 end
 

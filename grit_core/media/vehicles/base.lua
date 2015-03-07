@@ -682,6 +682,7 @@ function Vehicle.removeWheel (persistent, name)
 end
 
 function Vehicle.onExplode (persistent)
+	engine_fire_counter = 0 --Temporary fix for max engine fire emission fix.
     local instance = persistent.instance
     if player_ctrl.controlObj == persistent then
         player_ctrl:abandonControlObj()
