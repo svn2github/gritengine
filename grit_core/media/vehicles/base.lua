@@ -214,6 +214,8 @@ function Vehicle.activate (persistent, instance)
     body.angularDamping = 0
 
     instance.handbrake = false
+    instance.lightsOverrideOn = false
+	instance.lightsEnabled = false
     instance.brake = false
     instance.push = 0
     instance.parked = persistent.parked or true
@@ -301,7 +303,12 @@ function Vehicle.activate (persistent, instance)
                 else
                     local night = time > persistent.lightsOnTime or time < persistent.lightsOffTime
                     local enabled = not instance.parked and night
-                    if instance.lightsOverride then enabled = true end
+                    if instance.lightsOverride and night == instance.lightsOverrideOn then
+						instance.lightsOverride = false
+					elseif instance.lightsOverride then
+						enabled = instance.lightsOverrideOn
+					end
+					instance.lightsEnabled = enabled
                     local dim = false
                     if tab.isBrake or v.isBrake then
                         if instance.brake and math.abs(speed) > 0.3 then
@@ -563,6 +570,23 @@ end
 function Vehicle.setHandbrake (persistent, v)
     if not persistent.activated then error("Not activated: "..persistent.name) end
     persistent.instance.handbrake = v
+end
+
+function Vehicle.setLights (persistent)
+    if not persistent.activated then error("Not activated: "..persistent.name) end
+    
+    if persistent.instance.lightsEnabled then
+    persistent.instance.lightsOverrideOn = false
+    else
+    persistent.instance.lightsOverrideOn = true
+    end
+	if (env.secondsSinceMidnight < persistent.lightsOnTime and env.secondsSinceMidnight > persistent.lightsOffTime) and persistent.instance.lightsOverrideOn == false then
+		persistent.instance.lightsOverride = false
+	elseif (env.secondsSinceMidnight > persistent.lightsOnTime or env.secondsSinceMidnight < persistent.lightsOffTime) and persistent.instance.lightsOverrideOn == true then
+		persistent.instance.lightsOverride = false
+	else
+		persistent.instance.lightsOverride = true
+	end
 end
 
 function Vehicle.setBoost (persistent, v)
