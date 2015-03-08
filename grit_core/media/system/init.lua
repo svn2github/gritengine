@@ -154,5 +154,3 @@ include `/vehicles/init.lua`
 safe_include `/user_script.lua` 
 
 include `welcome_msg.lua`
-
-include `../NewMenuGUI/init.lua`
