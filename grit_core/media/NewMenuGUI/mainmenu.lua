@@ -94,8 +94,9 @@ menueditorbutton = gfx_hud_object_add(`/common/hud/Button`, {
 		captionColourGreyed = vec(0.5, 0.5, 0.5);
 		parent = menubackground;
 		pressedCallback = function (self)
-			showguialert("Editor Button Coming Soon!")
-			print("Editor Button Coming Soon!")
+			menubackground.enabled = false
+			menubackground = nil
+			include `../editor/init.lua`
 		end;
     })  
 	
@@ -123,6 +124,6 @@ menusettingsbutton = gfx_hud_object_add(`/common/hud/Button`, {
 
 console.enabled = false
 debug_binds.modal = true
---showguialert("TEST")
+showguialert("Editor Button Now Works!")
 
 --include `NewMenuGUI/init.lua`
