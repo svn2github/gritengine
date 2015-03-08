@@ -298,6 +298,7 @@ local default_user_foot_bindings = {
 
 local core_binding_functions = {
     menu = function()
+	if menubackground == nil then
         if menu.enabled then
             menu_binds.modal = false
             menu.enabled = false
@@ -306,11 +307,14 @@ local core_binding_functions = {
             menu_binds.modal = true
             menu.enabled = true
         end
+	end
     end;
     console = function()
-        debug_layer:onKeyPressed()
-        debug_binds.modal = debug_layer.enabled
-        ticker.enabled = not debug_layer.enabled
+		if menubackground == nil then
+			debug_layer:onKeyPressed()
+			debug_binds.modal = debug_layer.enabled
+			ticker.enabled = not debug_layer.enabled
+		end
     end;
     record = function() capturer:toggle() end;
     screenShot = function() capturer:singleScreenShot() end;

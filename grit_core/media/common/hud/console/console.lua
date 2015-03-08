@@ -93,7 +93,7 @@ hud_class `Console` {
 
     frameCallback = function (self, elapsed)
         -- blinking cursor
-        if hud_focus ~= self then
+        if hud_focus ~= self and menubackground == nil then
             self.cursor.enabled = false
         else
             local state = (seconds() % 0.5) / 0.5
