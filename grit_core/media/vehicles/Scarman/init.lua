@@ -27,116 +27,111 @@ local engineX, engineY, engineZ = 0.0, 1.767, 0.093 -- Engine Smoke Pos
 local slack = 0.0 -- dunno
 
 class `.` (Vehicle) {
-        gfxMesh = `Body.mesh`,
-        colMesh = `Body.gcol`,
-        placementZOffset=0.62,
-        engineInfo = {
-            sound={
-                [1] = `engine1.wav`,
-                [2] = `engine2.wav`,
-                [3] = `engine3.wav`
-            },
-            wheelRadius=rad,
-            transEff=0.8,
-            torqueCurve = {
-                [1000] = 100,
-                [2000] = 150,
-                [3000] = 167,
-                [4000] = 167,
-                [5000] = 130,
-                [6000] = 80,
-            },
-            gearRatios = {
-                [-1] = -3.54, -- reverse
-                [0] = 0, -- neutral
-                [1] = 3.82,
-                [2] = 2.16,
-                [3] = 1.47,
-                [4] = 1.07,
-                [5] = 0.87,
-                [6] = 0.74,
-            },
-            finalDrive=3.94,
-            shiftDownRpm=2800,
-            shiftUpRpm=5400,
+    gfxMesh = `Body.mesh`,
+    colMesh = `Body.gcol`,
+    placementZOffset=0.62,
+    engineInfo = {
+        sound={
+            [1] = `engine1.wav`,
+            [2] = `engine2.wav`,
+            [3] = `engine3.wav`
         },
-        meshWheelInfo = {
-                front_left = {
-                  steer=1; drive=1; castRadius=0.05; rad=rad; mu=mu; massShare = 1.2;
-                  left=true; attachPos=vec(-wheelX,wheelY,wheelZ); len=len; slack=slack; mesh=`Wheel.mesh`; brakeMesh=`BrakePad.mesh`
-                },
-
-                front_right = {
-                  steer=1; drive=1; castRadius=0.05; rad=rad; mu=mu; massShare = 1.2;
-                  left=false; attachPos=vec(wheelX,wheelY,wheelZ); len=len; slack=slack; mesh=`Wheel.mesh`; brakeMesh=`BrakePad.mesh`
-                },
-
-                rear_left = {
-                  rad=rad; castRadius=0.05; handbrake=true; mu=mu; massShare = 0.8;
-                  left=true; attachPos=vec(-wheelX,wheelY2,wheelZ); len=len; slack=slack; mesh=`Wheel.mesh`; brakeMesh=`BrakePad.mesh`
-                },
-
-                rear_right = {
-                  rad=rad; castRadius=0.05; handbrake=true; mu=mu; sport = 1.1; massShare = 0.8;
-                  left=false; attachPos=vec(wheelX,wheelY2,wheelZ); len=len; slack=slack; mesh=`Wheel.mesh`; brakeMesh=`BrakePad.mesh`
-                },
+        wheelRadius=rad,
+        transEff=0.8,
+        torqueCurve = {
+            [1000] = 100,
+            [2000] = 150,
+            [3000] = 167,
+            [4000] = 167,
+            [5000] = 130,
+            [6000] = 80,
         },
-        steerMax = 45;
-        steerMaxFast = 25;
-        steerRate = 200;
-        steerRateFast = 30;
-        unsteerRate = 400;
-        unsteerRateFast = 400;
-
-
-        -- Lights - Headlight
-        lightHeadLeft = {
-                pos=vec(hlightX, hlightY, hlightZ),
-                pos=vec(hlight2X, hlight2Y, hlight2Z),
-        };
-        lightHeadRight = {
-                pos=vec(-hlightX, hlightY, hlightZ),
-                pos=vec(-hlight2X, hlight2Y, hlight2Z),
-        };
-        
-        --Brake lights
-        lightBrakeLeft = {
-                pos=vec(blightX, blightY, blightZ), coronaColour=vec(0.05, 0, 0), coronaSize = 1,
-                pos=vec(blight2X, blight2Y, blight2Z), coronaColour=vec(0.05, 0, 0), coronaSize = 1,
-        };
-        lightBrakeRight = {
-                pos=vec(-blightX, blightY, blightZ), coronaColour=vec(0.05, 0, 0), coronaSize = 1,
-                pos=vec(-blight2X, blight2Y, blight2Z), coronaColour=vec(0.05, 0, 0), coronaSize = 1,
-        };
-        
-        lightReverseLeft = {
-                pos=vec(rlightX, rlightY, rlightZ), coronaColour=vec(0.03, 0.03, 0.03), coronaSize = 0.7,
-        };
-        lightReverseRight = {
-                pos=vec(-rlightX, rlightY, rlightZ), coronaColour=vec(0.03, 0.03, 0.03), coronaSize = 0.7,
-        };
-        -- Colors
-        colourSpec = {
-                { probability=1, { "ice_silver",  },
-                },
-                { probability=1, { "velvet_red",  },
-                },
-                { probability=1, { "carbon_gray",  },
-                },
-                { probability=1, { "midnight_black",  },
-                },
-                { probability=1, { "cream_white",  },
-                },
-                { probability=1, { "crystal_blue",  },
-                },
+        gearRatios = {
+            [-1] = -3.54, -- reverse
+            [0] = 0, -- neutral
+            [1] = 3.82,
+            [2] = 2.16,
+            [3] = 1.47,
+            [4] = 1.07,
+            [5] = 0.87,
+            [6] = 0.74,
         },
-        engineSmokeVents = {
-                vec(engineX, engineY, engineZ);
-        };
-        exhaustSmokeVents = {
-                vec(exhaustX, exhaustY, exhaustZ);
-                vec(-exhaustX, exhaustY, exhaustZ);
-        };
+        finalDrive=3.94,
+        shiftDownRpm=2800,
+        shiftUpRpm=5400,
+    },
+    meshWheelInfo = {
+        front_left = {
+            steer=1; drive=1; castRadius=0.05; rad=rad; mu=mu; massShare = 1.2;
+            left=true; attachPos=vec(-wheelX,wheelY,wheelZ); len=len; slack=slack; mesh=`Wheel.mesh`; brakeMesh=`BrakePad.mesh`
+        },
+
+        front_right = {
+            steer=1; drive=1; castRadius=0.05; rad=rad; mu=mu; massShare = 1.2;
+            left=false; attachPos=vec(wheelX,wheelY,wheelZ); len=len; slack=slack; mesh=`Wheel.mesh`; brakeMesh=`BrakePad.mesh`
+        },
+
+        rear_left = {
+            rad=rad; castRadius=0.05; handbrake=true; mu=mu; massShare = 0.8;
+            left=true; attachPos=vec(-wheelX,wheelY2,wheelZ); len=len; slack=slack; mesh=`Wheel.mesh`; brakeMesh=`BrakePad.mesh`
+        },
+
+        rear_right = {
+            rad=rad; castRadius=0.05; handbrake=true; mu=mu; sport = 1.1; massShare = 0.8;
+            left=false; attachPos=vec(wheelX,wheelY2,wheelZ); len=len; slack=slack; mesh=`Wheel.mesh`; brakeMesh=`BrakePad.mesh`
+        },
+    },
+    steerMax = 45;
+    steerMaxFast = 25;
+    steerRate = 200;
+    steerRateFast = 30;
+    unsteerRate = 400;
+    unsteerRateFast = 400;
+
+    driverExitPos = vector3(-1.45, -0.24, 0.49);
+
+    -- Lights - Headlight
+    lightHeadLeft = {
+        pos=vec(hlightX, hlightY, hlightZ),
+        pos=vec(hlight2X, hlight2Y, hlight2Z),
+    };
+    lightHeadRight = {
+        pos=vec(-hlightX, hlightY, hlightZ),
+        pos=vec(-hlight2X, hlight2Y, hlight2Z),
+    };
+
+    --Brake lights
+    lightBrakeLeft = {
+        pos=vec(blightX, blightY, blightZ), coronaColour=vec(0.05, 0, 0), coronaSize = 1,
+        pos=vec(blight2X, blight2Y, blight2Z), coronaColour=vec(0.05, 0, 0), coronaSize = 1,
+    };
+    lightBrakeRight = {
+        pos=vec(-blightX, blightY, blightZ), coronaColour=vec(0.05, 0, 0), coronaSize = 1,
+        pos=vec(-blight2X, blight2Y, blight2Z), coronaColour=vec(0.05, 0, 0), coronaSize = 1,
+    };
+
+    lightReverseLeft = {
+        pos=vec(rlightX, rlightY, rlightZ), coronaColour=vec(0.03, 0.03, 0.03), coronaSize = 0.7,
+    };
+    lightReverseRight = {
+        pos=vec(-rlightX, rlightY, rlightZ), coronaColour=vec(0.03, 0.03, 0.03), coronaSize = 0.7,
+    };
+    -- Colors
+    colourSpec = {
+        { probability=1, { "ice_silver"  } },
+        { probability=1, { "velvet_red"  } },
+        { probability=1, { "carbon_gray"  } },
+        { probability=1, { "midnight_black"  } },
+        { probability=1, { "cream_white"  } },
+        { probability=1, { "crystal_blue"  } },
+    },
+    engineSmokeVents = {
+        vec(engineX, engineY, engineZ);
+    };
+    exhaustSmokeVents = {
+        vec(exhaustX, exhaustY, exhaustZ);
+        vec(-exhaustX, exhaustY, exhaustZ);
+    };
 }
 
 
