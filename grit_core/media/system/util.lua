@@ -774,7 +774,7 @@ local running_map = nil
 
 function map_ghost_spawn(pos, quat)
     if running_map ~= current_dir() then
-        player_ctrl:warp(pos, quat or Q_ID)
+        warp(pos, quat or Q_ID)
         running_map = current_dir()
         return true
     end

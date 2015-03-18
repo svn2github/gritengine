@@ -1,25 +1,21 @@
-in_editor = true
-if current_level == nil then
-	current_level = {}
-end
-level = nil
-default_game_mode = "detached_game"
 
-function vlen(v1, v2)
-    return math.sqrt(math.pow(v1.x-v2.x, 2)+math.pow(v1.y-v2.y, 2)+math.pow(v1.z-v2.z, 2))
-end
+-- This file is responsible for preloading all required assets and definitions for the editor.
+-- It also contains the logic for setting up / destroying the editor (which is represented as a
+-- 'game mode').
+
+
 
 -- loads all editor configurations, you can delete these files to reset default
 -- configurations
-if not pcall(function()include(`../config/config.lua`) end) then
-	include `defaultconfig/config.lua`
-end
-if not pcall(function() include(`../config/interface.lua`) end) then
-	include `defaultconfig/interface.lua`
-end
-if not pcall(function() include(`../config/recent.lua`) end) then
-	include `defaultconfig/recent.lua`
-end
+include `defaultconfig/config.lua`
+safe_include `../config/config.lua`
+include `../config/interface.lua`
+safe_include `defaultconfig/interface.lua`
+include `../config/recent.lua`
+safe_include `defaultconfig/recent.lua`
+
+-- [dcunnin] We should put all this stuff in /common, thereby building a reusable asset library.
+include `defaultmap/init.lua`
 
 include `widget_manager/init.lua`
 include `GritLevel/init.lua`
@@ -27,46 +23,90 @@ include `directory_list.lua`
 include `hud/init.lua`
 include `windows/open_save_level.lua`
 include `assets/init.lua`
-
-include `defaultmap/init.lua`
-
 include `core.lua`
 
-include `edenv.lua`
-env_recompute()
+current_level = nil
 
-gfx_option("BLOOM_ITERATIONS", 4)
-gfx_global_exposure(1.3)
-gfx_option("BLOOM_THRESHOLD", 5.7)
+editor = {
+    init = function (self)
+        -- [dcunnin] Ideally we would declare things earlier and only instantiate them at this
+        -- point.  However all the code is mixed up right now.
+        include `init_editor_interface.lua`
 
--- disable all Grit default HUD
-speedo.enabled = false
-clock.enabled = false
-compass.enabled = false
-stats.enabled = false
-ch.enabled = false
-debug_layer.colour = vec(0.3, 0.35, 0.4)
-debug_layer.texture = `icons/softdeg2.png`
+        editor_core_binds.enabled = true
+        editor_edit_binds.enabled = true
+        editor_debug_binds.enabled = true
 
-console.alpha = 0.6
-console.text.colour = vec(2, 2, 2)
 
-debug_layer:selectConsole(false)
+        -- disable all Grit default HUD
+        --speedo.enabled = false
+        clock.enabled = false
+        compass.enabled = false
+        stats.enabled = false
+        ch.enabled = false
 
--- Create editor interface
-include `init_editor_interface.lua`
+        editor_init_windows()
 
-GED:set_editor_bindings()
+        main.physicsEnabled = false
+        main.streamerCentre = vec(0, 0, 0)
+        main.camPos = vec(0, 0, 0)
+        main.camQuat = Q_ID
+        main.audioCentrePos = vec(0, 0, 0);
+        main.audioCentreVel = vec(0, 0, 0);
+        main.audioCentreQuat = quat(1, 0, 0, 0);
 
--- if doesn't have any object on scene, load default map
-if next(object_all()) == nil then
-	GED:open_level("/editor/core/defaultmap/default2.lvl")
-	current_level.file_name = ""
-elseif current_level == nil then
-	GED:new_level()
-end
+        GED:new_level()
 
-GED:set_widget_mode(1)
-widget_menu[1]:select(true)
+        GED:set_widget_mode(1)
+        widget_menu[1]:select(true)
 
-include`welcome_msg.lua`
+        print(BOLD..GREEN..[[
+            ╭────────────────────────────────────╮
+            │  Welcome to Grit Editor! (v0.001)  │
+            ╰────────────────────────────────────╯
+        ]])
+    end;
+
+    frameCallback = function (self, elapsed_secs)
+        GED:frameCallback(elapsed_secs)
+    end;
+
+    stepCallback = function (self, elapsed_secs)
+    end;
+
+    mouseMove = function (self, rel)
+    end;
+
+    destroy = function (self)
+        object_all_del()
+
+        GED:save_editor_interface()
+        -- current_level = nil
+        -- if level ~= nil then
+            -- level = nil
+        -- end
+        
+        editor_core_binds.enabled = false
+        editor_edit_binds.enabled = false
+        editor_debug_binds.enabled = false
+
+        editor_interface.menubar:destroy()
+        editor_interface.toolbar:destroy()
+        editor_interface.statusbar:destroy()
+        
+        destroy_all_editor_menus()		
+        destroy_all_editor_windows()
+        
+        safe_destroy(left_toolbar)
+        left_toolbar = nil
+        
+        -- gizmo_cb:stop()	
+        -- gizmo = nil
+        -- gizmo_resize = nil
+        -- destroy_gizmo = nil
+        -- create_gizmo = nil
+        -- gizmo_fade = nil
+    end;
+}
+    
+game_manager:define("Integrated Development Environment", editor)

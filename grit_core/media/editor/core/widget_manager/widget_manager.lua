@@ -7,6 +7,23 @@
 --  http://www.opensource.org/licenses/mit-license.php
 ------------------------------------------------------------------------------
 
+-- returns all objects from a physics_cast
+local function get_pc_ol(...)
+	local t = {...}
+	if t == nil then return nil end
+	local it = 2
+	local mobjs = {}
+	for i=1, #t/4 do
+		mobjs[#mobjs+1] = t[it].owner
+		it = it + 4
+	end
+	if(next(mobjs)) then
+		return mobjs
+	else
+		return nil
+	end
+end
+
 widget_manager = {
 	mode = 1;
 	selectedObj = nil;
@@ -17,18 +34,18 @@ widget_manager = {
 };
 
 function wm_callback()
-	local cray = 1000 * gfx_screen_to_world(player_ctrl.camPos, player_ctrl.camDir, mouse_pos_abs)
-	local _, b = physics_cast(player_ctrl.camPos, cray, true, 0)
+	local cray = 1000 * gfx_screen_to_world(main.camPos, main.camQuat, mouse_pos_abs)
+	local _, b = physics_cast(main.camPos, cray, true, 0)
 
 	-- mouse over
 	if b ~= nil then
 		if b.owner.wc ~= nil then
-			-- widget_manager.lastobj.instance.gfx:setMaterial(`/editor/core/arrows/line`, widget_manager.lastobj.instance.defmat)
+			-- widget_manager.lastobj.instance.gfx:setMaterial(`../arrows/line`, widget_manager.lastobj.instance.defmat)
 		end
 
 		widget_manager.lastobj = b.owner
 		if b.owner.wc ~= nil then
-			-- b.owner.instance.gfx:setMaterial(`/editor/core/arrows/line`, `/editor/core/arrows/line_dragging`)
+			-- b.owner.instance.gfx:setMaterial(`../arrows/line`, `../arrows/line_dragging`)
 		end
 	elseif widget_manager.lastobj ~= nil then
 		widget_manager.lastobj = nil
@@ -41,8 +58,8 @@ function wm_callback()
 	if widget_manager.msinitpos ~= nil and widget_manager.widget.instance ~= nil then
 		local diff = (mouse_pos_abs - widget_manager.msinitpos)
 
-		local objtocameradist = vlen(player_ctrl.camPos, widget_manager.widget.instance.pivot.localPosition)
-		local mk = player_ctrl.camPos + objtocameradist * gfx_screen_to_world(player_ctrl.camPos, player_ctrl.camDir, diff)
+		local objtocameradist = #(main.camPos - widget_manager.widget.instance.pivot.localPosition)
+		local mk = main.camPos + objtocameradist * gfx_screen_to_world(main.camPos, main.camQuat, diff)
 		
 		if widget_manager.widget.instance ~= nil and widget_manager.strdrag ~= nil then
 			if widget_manager.mode == 1 then
@@ -127,10 +144,10 @@ function widget_manager:select(mode)
 		self.objInitialOrientation = nil
 	else
 
-		local cray = 1000 * gfx_screen_to_world(player_ctrl.camPos, player_ctrl.camDir, mouse_pos_abs)
+		local cray = 1000 * gfx_screen_to_world(main.camPos, main.camQuat, mouse_pos_abs)
 		
 		if self.selectedObj == nil then
-			local _, b = physics_cast(player_ctrl.camPos, cray, true, 0)
+			local _, b = physics_cast(main.camPos, cray, true, 0)
 			if b ~= nil then
 				self.selectedObj = b.owner
 				editor_interface.statusbar.selected.text = self.selectedObj.name
@@ -140,7 +157,7 @@ function widget_manager:select(mode)
 
 			end
 		else
-			local objlst = get_pc_ol(physics_cast(player_ctrl.camPos, cray, false, 0))
+			local objlst = get_pc_ol(physics_cast(main.camPos, cray, false, 0))
 
 			if objlst ~= nil then
 				local wcc = nil
@@ -155,7 +172,7 @@ function widget_manager:select(mode)
 				if wcc ~= nil then
 					self.strdrag = wcc
 					if self.mode == 1 then
-						local gh = gfx_world_to_screen(player_ctrl.camPos, player_ctrl.camDir, self.widget.instance.pivot.localPosition)
+						local gh = gfx_world_to_screen(main.camPos, main.camQuat, self.widget.instance.pivot.localPosition)
 						self.msinitpos = mouse_pos_abs - vec2(gh.x, gh.y)
 					elseif self.mode == 2 then
 						self.msinitpos = mouse_pos_abs

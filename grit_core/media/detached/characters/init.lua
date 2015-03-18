@@ -141,8 +141,19 @@ DetachedCharacterClass = extends (ColClass) {
     end;
 
     deactivate = function (self)
+        local instance = self.instance
         self.needsStepCallbacks = false;
+        for k, v in ipairs(instance.weapons or {}) do
+            safe_destroy(v)
+        end
         ColClass.deactivate(self)
+    end;
+
+    setFade = function (self, v)
+        local instance = self.instance
+        for k, b in ipairs(instance.weapons or {}) do
+            b.fade = v
+        end
     end;
 
     stepCallback = function (self, elapsed)
@@ -286,7 +297,7 @@ DetachedCharacterClass = extends (ColClass) {
 
         -- LATERAL PERSONALLY DIRECTED MOVEMENT (walking, running, etc)
         if dist_try_to_move > 0 then
-            local walk_dir = quat(player_ctrl.camYaw, V_DOWN)
+            local walk_dir = quat(cam_yaw_angle(), V_DOWN)
             local walk_vect = dist_try_to_move * (walk_dir * norm(instance.keyboardMove))
             if dist_try_to_move > 0.00001 then
                 local walk_vect_norm = norm(walk_vect)
@@ -502,6 +513,32 @@ DetachedCharacterClass = extends (ColClass) {
             ins.keyboardMove = (vector3(ins.strafeRightState - ins.strafeLeftState, ins.pushState - ins.pullState, 0))
         end
     end;
+
+    enterVehicle = function(self)
+        self.driving = true
+        self.instance.gfx.enabled = false
+        for k, b in ipairs(self.instance.weapons or {}) do
+            b.enabled = false
+        end
+        self.needsStepCallbacks = false
+    end;
+
+    exitVehicle = function(self, pos, quat)
+        self.driving = false
+        self.instance.gfx.enabled = true
+        for k, b in ipairs(self.instance.weapons or {}) do
+            b.enabled = true
+        end
+        self.needsStepCallbacks = true
+        self.instance.body.worldPosition = pos
+        self.instance.bearing = yaw_angle(quat)
+        self.instance.bearingAim = self.instance.bearing
+    end;
+
+    updateDriven = function(self, pos, quat)
+        self.instance.body.worldPosition = pos
+        self.instance.body.worldOrientation = quat
+    end;
     
     getSpeed = function(self)
         return self.instance.speed
@@ -515,11 +552,11 @@ DetachedCharacterClass = extends (ColClass) {
         self.instance.pullState = v and 1 or 0
         self:updateMovementState()
     end;
-    setStrafeLeft=function(self, v)
+    setLeft=function(self, v)
         self.instance.strafeLeftState = v and 1 or 0
         self:updateMovementState()
     end;
-    setStrafeRight=function(self, v)
+    setRight=function(self, v)
         self.instance.strafeRightState = v and 1 or 0
         self:updateMovementState()
     end;

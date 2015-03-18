@@ -135,9 +135,9 @@ class `widget` {} {
 	-- local mfov = math.pi / 4
 	-- local cam_obj_dist = nil
 	-- if gizmo.node.parent ~= nil then
-		-- cam_obj_dist = vlen(player_ctrl.camPos, gizmo.node.parent.localPosition)
+		-- cam_obj_dist = #(player_ctrl.camPos - gizmo.node.parent.localPosition)
 	-- else
-		-- cam_obj_dist = vlen(player_ctrl.camPos, gizmo.node.localPosition)
+		-- cam_obj_dist = #(player_ctrl.camPos - gizmo.node.localPosition)
 	-- end
 	-- local wsize = (2 * math.tan(mfov / 2)) * cam_obj_dist
 	-- local gsize = 0.025 * wsize

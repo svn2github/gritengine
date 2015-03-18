@@ -21,9 +21,17 @@ hud_class `Main` {
         end
         
         self.mainContent = newContent({ padding = self.padding,
+            newButton("Playground", {pressedCallback = function() 
+                game_manager:enter("Playground")
+            end}),
+            newButton("Integrated Development Environment", {pressedCallback = function() 
+                game_manager:enter("Integrated Development Environment")
+            end}),
+            newButton("End Game", {pressedCallback = function() 
+                game_manager:exit("Integrated Development Environment")
+            end}),
             newButton("Resume", {pressedCallback = function() 
-                menu_binds.modal = false
-                menu.enabled = false
+                menu:setEnabled(false)
             end}),
             newButton("Settings", {pressedCallback = function() self:setContent(self.optionsContent) end}),
             newButton("Quit", {pressedCallback = quit}),     
@@ -111,6 +119,7 @@ hud_class `Main` {
 		--------------------------------------------------------------------------------------------------------
 		----------                     Core Controls Listed In Settings Menu                      ----------
 		--------------------------------------------------------------------------------------------------------
+--[[
 		self.coreControlsContentPageOne = newContent({ padding = self.padding,  --Make a loop in the future to list all of them automatically
 			newButton("Clear Placed: "..user_core_bindings.clearPlaced, {
                 pressedCallback = function()
@@ -331,37 +340,39 @@ hud_class `Main` {
                 end
             }),
         })
+]]
 		
 		--------------------------------------------------------------------------------------------------------
 		----------                    Drive Controls Listed In Settings Menu                     ----------
 		--------------------------------------------------------------------------------------------------------
 		self.driveControlsContentPageOne = newContent({ padding = self.padding,  --Make a loop in the future to list all of them automatically
-			newButton("Abandon: "..user_drive_bindings.abandon, {
+			newButton("Abandon: "..user_drive_bindings.driveAbandon, {
                 pressedCallback = function()
                     print("Controls coming soon!")
                 end
             }),
-			newButton("Alt Down: "..user_drive_bindings.altDown, {
+			newButton("Alt Down: "..user_drive_bindings.driveAltDown, {
                 pressedCallback = function()
                     print("Controls coming soon!")
                 end
             }),
-			newButton("Alt Left: "..user_drive_bindings.altLeft, {
+			newButton("Alt Left: "..user_drive_bindings.driveAltLeft, {
                 pressedCallback = function()
                     print("Controls coming soon!")
                 end
             }),
-			newButton("Alt Right: "..user_drive_bindings.altRight, {
+			newButton("Alt Right: "..user_drive_bindings.driveAltRight, {
                 pressedCallback = function()
                     print("Controls coming soon!")
                 end
             }),
-			newButton("Alt Up: "..user_drive_bindings.altUp, {
+--[[
+			newButton("Alt Up: "..user_drive_bindings.AltUp, {
                 pressedCallback = function()
                     print("Controls coming soon!")
                 end
             }),
-			newButton("Backwards: "..user_drive_bindings.backwards, {
+			newButton("Backwards: "..user_drive_bindings.Backwards, {
                 pressedCallback = function()
                     print("Controls coming soon!")
                 end
@@ -376,14 +387,11 @@ hud_class `Main` {
                     self:setContent(self.controlsContent)
                 end
             }),
+]]
         })
 		
+--[[
 		self.driveControlsContentPageTwo = newContent({ padding = self.padding,  --Make a loop in the future to list all of them automatically
-			newButton("Boost: "..user_drive_bindings.boost, {
-                pressedCallback = function()
-                    print("Controls coming soon!")
-                end
-            }),
 			newButton("Camera: "..user_drive_bindings.camera, {
                 pressedCallback = function()
                     print("Controls coming soon!")
@@ -400,11 +408,6 @@ hud_class `Main` {
                 end
             }),
 			newButton("Lights: "..user_drive_bindings.lights, {
-                pressedCallback = function()
-                    print("Controls coming soon!")
-                end
-            }),
-			newButton("Realign: "..user_drive_bindings.realign, {
                 pressedCallback = function()
                     print("Controls coming soon!")
                 end
@@ -447,7 +450,7 @@ hud_class `Main` {
                     print("Controls coming soon!")
                 end
             }),
-			newButton("Steer Left: "..user_drive_bindings.steerLeft, {
+			newButton("Steer Left: "..user_drive_bindings.left, {
                 pressedCallback = function()
                     print("Controls coming soon!")
                 end
@@ -465,7 +468,7 @@ hud_class `Main` {
         })
 		
 		self.driveControlsContentPageFour = newContent({ padding = self.padding,  --Make a loop in the future to list all of them automatically
-			newButton("Steer Right: "..user_drive_bindings.steerRight, {
+			newButton("Steer Right: "..user_drive_bindings.right, {
                 pressedCallback = function()
                     print("Controls coming soon!")
                 end
@@ -491,7 +494,7 @@ hud_class `Main` {
 		----------                    Foot Controls Listed In Settings Menu                     ----------
 		--------------------------------------------------------------------------------------------------------
 		self.footControlsContentPageOne = newContent({ padding = self.padding,  --Make a loop in the future to list all of them automatically
-			newButton("Abandon: "..user_foot_bindings.abandon, {
+			newButton("Board: "..user_foot_bindings.board, {
                 pressedCallback = function()
                     print("Controls coming soon!")
                 end
@@ -534,12 +537,12 @@ hud_class `Main` {
         })
 		
 		self.footControlsContentPageTwo = newContent({ padding = self.padding,  --Make a loop in the future to list all of them automatically
-			newButton("Strafe Left: "..user_foot_bindings.strafeLeft, {
+			newButton("Strafe Left: "..user_foot_bindings.left, {
                 pressedCallback = function()
                     print("Controls coming soon!")
                 end
             }),
-			newButton("Strafe Right: "..user_foot_bindings.strafeRight, {
+			newButton("Strafe Right: "..user_foot_bindings.right, {
                 pressedCallback = function()
                     print("Controls coming soon!")
                 end
@@ -560,6 +563,7 @@ hud_class `Main` {
                 end
             }),
         })
+]]
         
         self:setContent(self.mainContent)
     end;
@@ -578,5 +582,14 @@ hud_class `Main` {
     parentResizedCallback = function (self, psize)
         self.position = vec(psize.x/2, psize.y/2)
         self.size = psize
+    end;
+
+    setEnabled = function(self, v)
+        self.enabled = v
+        menu_binds.modal = v
+        menu:setContent(menu.mainContent)
+    end;
+
+    escape = function(self)
     end;
 }

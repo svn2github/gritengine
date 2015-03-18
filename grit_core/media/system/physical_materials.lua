@@ -4,6 +4,8 @@ print "Loading physical_materials.lua"
 
 PhysicalMaterials = PhysicalMaterials or {}
 
+physics = physics or { }
+
 physics.defaultMaterial = {}
 
 function physics:setDefaultMaterial(tab)

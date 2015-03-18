@@ -1,5 +1,8 @@
 -- list files and folders in a given directory
 
+
+-- [dcunnin] There should be C++ support for this.
+
 -- Windows
 if os.getenv("OS") ~= nil then
 	function get_dir_list(directory)

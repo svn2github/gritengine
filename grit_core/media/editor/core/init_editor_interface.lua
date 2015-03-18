@@ -64,14 +64,8 @@ editor_interface.menus.fileMenu = gfx_hud_object_add(`hud/menu`, {
 		},
 		{}, -- adds a separator
 		{
-			callback = function() GED:close_level() end;
-			name = "Close";
-			tip = "Close the current level";
-			icon=`icons/x.png`;
-		},
-		{}, -- adds a separator
-		{
 			callback = function()
+                -- TODO: prompt if user want to save his work
 				exit_editor()
 			end;
 			name = "Exit";
@@ -118,7 +112,7 @@ editor_interface.menus.editMenu = gfx_hud_object_add(`hud/menu`, {
 		},
 		{}, -- adds a separator
 		{
-			callback = function() GED:generate_env_cube() end;
+			callback = function() GED:generate_env_cube(vec(0, 0, 0)) end;
 			name = "Gen Env Cubes";
 			tip = "Generate and apply env cube";
 			icon=`icons/solid.png`;
@@ -135,11 +129,6 @@ editor_interface.menus.editMenu = gfx_hud_object_add(`hud/menu`, {
 
 editor_interface.menus.viewMenu = gfx_hud_object_add(`hud/menu`, {
 	items = {
-		{
-			callback = function() debug_layer:selectConsole(not console.enabled) end;
-			name = "Show console";
-			tip = "Show console";
-		},
 		{
 			callback = function(self)
 				editor_interface.statusbar.enabled = not editor_interface.statusbar.enabled
@@ -395,8 +384,8 @@ editor_interface.toolbar:addTool("Show collision", `icons/show_collision.png`, (
 ), "")
 editor_interface.toolbar:addTool("Toggle Physics", `icons/toggle_physics.png`, (
 	function (self)
-		physics.enabled = not physics.enabled
-		-- if physics.enabled then
+		main.physicsEnabled = not main.physicsEnabled
+		-- if main.physicsEnabled then
 			-- self.colour = self.activeColour
 			-- self.selected = true
 		-- else
@@ -467,14 +456,14 @@ editor_interface.statusbar = gfx_hud_object_add(`hud/StatusBar`, { parent=hud_bo
 
 -- Windows
 function destroy_all_editor_windows()
-	safe_destroy(editor_interface.windows.content_browser)
-	safe_destroy(editor_interface.windows.event_editor)
-	safe_destroy(editor_interface.windows.level_properties)
-	safe_destroy(editor_interface.windows.material_editor)
-	safe_destroy(editor_interface.windows.object_editor)
-	safe_destroy(editor_interface.windows.object_properties)
-	safe_destroy(editor_interface.windows.outliner)
-	safe_destroy(editor_interface.windows.settings)
+	editor_interface.windows.content_browser = safe_destroy(editor_interface.windows.content_browser)
+	editor_interface.windows.event_editor = safe_destroy(editor_interface.windows.event_editor)
+	editor_interface.windows.level_properties = safe_destroy(editor_interface.windows.level_properties)
+	editor_interface.windows.material_editor = safe_destroy(editor_interface.windows.material_editor)
+	editor_interface.windows.object_editor = safe_destroy(editor_interface.windows.object_editor)
+	editor_interface.windows.object_properties = safe_destroy(editor_interface.windows.object_properties)
+	editor_interface.windows.outliner = safe_destroy(editor_interface.windows.outliner)
+	editor_interface.windows.settings = safe_destroy(editor_interface.windows.settings)
 end
 if editor_interface.windows.content_browser ~= nil then
 	destroy_all_editor_windows()

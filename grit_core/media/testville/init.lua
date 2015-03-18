@@ -78,5 +78,4 @@ object `/common/props/furniture/WorkBench` (-1.761258,-0.358200,0.650000) {name=
 
 env.clockTicking = false
 env.secondsSinceMidnight = 10*60*60
---player_ctrl:warp(vector3(-1.580179, -3.82132, 1.49557),quat(0.9471574, -0.3077501, 0.0279533, -0.0860314))
 

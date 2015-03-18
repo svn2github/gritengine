@@ -50,9 +50,9 @@ hud_class `.` {
 
         -- sun_direction is the direction of the rays of light, so invert to point towards the sun
         --
-		local sun_pos = player_ctrl.camPos + (gfx_sun_falloff_distance() * gfx_sun_direction() * -1)	
+		local sun_pos = main.camPos + (gfx_sun_falloff_distance() * gfx_sun_direction() * -1)	
 
-        local screen_pos = gfx_world_to_screen(player_ctrl.camPos, player_ctrl.camDir, sun_pos) - vector3(self.win_size.x/2, self.win_size.y/2, 0)
+        local screen_pos = gfx_world_to_screen(main.camPos, main.camQuat, sun_pos) - vector3(self.win_size.x/2, self.win_size.y/2, 0)
 
 		local s_pos = screen_pos.xy
 		
@@ -63,7 +63,7 @@ hud_class `.` {
 
             if not sun_obscured then
                 local ray = -1000 * gfx_sun_direction()
-                local obscurer = physics_sweep_sphere(0.0001, player_ctrl.camPos, ray, true, 0)
+                local obscurer = physics_sweep_sphere(0.0001, main.camPos, ray, true, 0)
                 if obscurer ~= nil then
                     sun_obscured = true
                 end

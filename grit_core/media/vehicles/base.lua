@@ -11,6 +11,9 @@ Vehicle = extends (ColClass) {
     castShadows = true;
     renderingDistance = 100;
 
+    driverExitPos = vector3(-1.45, -0.24, 0.49);
+    driverExitQuat = Q_ID;
+
     cameraTrack = true;
     fovScale = true;
     topDownCam = false;
@@ -589,24 +592,20 @@ function Vehicle.setLights (persistent)
 	end
 end
 
-function Vehicle.setBoost (persistent, v)
-    if not persistent.activated then error("Not activated: "..persistent.name) end
-end
-
 function Vehicle.changePush (persistent)
     if not persistent.activated then error("Not activated: "..persistent.name) end
     persistent.instance.parked = false -- if we push/pull the vehicle at all then it becomes unparked until abandoned
     persistent.instance.engine.on = true
 end
 
-function Vehicle.setPull (persistent, v)
+function Vehicle.setBackwards (persistent, v)
     if not persistent.activated then error("Not activated: "..persistent.name) end
     local change = v and 1 or -1
     persistent.instance.push = persistent.instance.push - change
     persistent:changePush()
 end
 
-function Vehicle.setPush (persistent, v)
+function Vehicle.setForwards (persistent, v)
     if not persistent.activated then error("Not activated: "..persistent.name) end
     local change = v and 1 or -1
     persistent.instance.push = persistent.instance.push + change
@@ -615,13 +614,13 @@ end
 
 
 -- whether key is pressed
-function Vehicle.setShouldSteerLeft (persistent, v)
+function Vehicle.setLeft (persistent, v)
     if not persistent.activated then error("Not activated: "..persistent.name) end
     persistent.instance.shouldSteerLeft = v and -persistent.steerMax or 0
 end
         
 -- whether key is pressed
-function Vehicle.setShouldSteerRight (persistent, v)
+function Vehicle.setRight (persistent, v)
     if not persistent.activated then error("Not activated: "..persistent.name) end
     persistent.instance.shouldSteerRight = v and persistent.steerMax or 0
 end
@@ -684,9 +683,6 @@ end
 function Vehicle.onExplode (persistent)
 	engine_fire_counter = 0 --Temporary fix for max engine fire emission fix.
     local instance = persistent.instance
-    if player_ctrl.controlObj == persistent then
-        player_ctrl:abandonControlObj()
-    end
     instance.gfx:setAllMaterials("/common/mat/Burnt")
     if instance.wheels then
         for name, wheel in pairs(instance.wheels) do
@@ -730,12 +726,6 @@ Vehicle.controlUpdate = regular_chase_cam_update
 
 
 function Vehicle.controlBegin (persistent)
-    if not persistent.activated then return end
-    if persistent.instance.canDrive then
-        --local v_pitch = pitch((obj.instance.body.worldOrientation * V_FORWARDS).z)
-        --self.playerCamPitch = self.playerCamPitch - v_pitch
-        return true
-    end
 end
 function Vehicle.controlAbandon (persistent)
     if not persistent.activated then return end
@@ -746,8 +736,6 @@ function Vehicle.controlAbandon (persistent)
         persistent.instance.parked = true
         persistent.instance.engine.on = false
     end
-    --local v_pitch = pitch((vehicle.instance.body.worldOrientation * V_FORWARDS).z)
-    --self.playerCamPitch = self.playerCamPitch + v_pitch
 end
 
 

@@ -32,7 +32,7 @@ if ticker ~= nil then
     other_buffer = ticker.timeBuffer
     safe_destroy(ticker)
 end
-ticker = gfx_hud_object_add(`console/Ticker`, {buffer=buffer, timeBuffer=other_buffer, shadow=vec(1,-1), zOrder=7})
+ticker = gfx_hud_object_add(`console/Ticker`, {buffer=buffer, timeBuffer=other_buffer, shadow=vec(1,-1), zOrder=5})
 ticker.enabled = false
 
 -- Console
@@ -61,7 +61,7 @@ if menu ~= nil then
     buffer = menu.enabled
     safe_destroy(menu)
 end
-menu = gfx_hud_object_add(`menu/Main`, {zOrder=6})
+menu = gfx_hud_object_add(`menu/Main`, {zOrder=5})
 menu.enabled = (buffer or false)
 
 -- Crosshair
@@ -70,16 +70,17 @@ ch = gfx_hud_object_add(`Rect`, {texture=`CrossHair.png`, parent=hud_center})
 
 -- Music player
 safe_destroy(music_player)
-music_player = gfx_hud_object_add(`MusicPlayer`, {parent=hud_bottom_left})
+music_player = gfx_hud_object_add(`MusicPlayer`, {parent=hud_bottom_left, zOrder=6})
 music_player.position = music_player.size / 2 + vec(50,10)
 
 -- Compass / Pos / Speedo
 safe_destroy(compass)
 compass = gfx_hud_object_add(`Compass`, {parent=hud_top_right, position=vec(-64, -64)})
 
-safe_destroy(speedo)
-speedo = gfx_hud_object_add(`Speedo`, {parent=hud_top_right})
-speedo.position=vec(-64, -128 - speedo.size.y/2)
+-- TODO(dcunnin): speedo should be a game mode thing
+-- safe_destroy(speedo)
+-- speedo = gfx_hud_object_add(`Speedo`, {parent=hud_top_right})
+-- speedo.position=vec(-64, -128 - speedo.size.y/2)
 
 safe_destroy(clock)
 clock = gfx_hud_object_add(`Clock`, { parent=hud_top_right, size=vec(190,50) })
@@ -91,9 +92,9 @@ stats = gfx_hud_object_add(`Stats`, {
     parent = hud_bottom_right,
     stats = {
         fps = function ()
-            local max_ft = nonzero(gfx.frameTime:calcMax())
-            local avg_ft = nonzero(gfx.frameTime:calcAverage())
-            local min_ft = nonzero(gfx.frameTime:calcMin())
+            local max_ft = nonzero(main.gfxFrameTime:calcMax())
+            local avg_ft = nonzero(main.gfxFrameTime:calcAverage())
+            local min_ft = nonzero(main.gfxFrameTime:calcMin())
             local text = string.format("FPS min / avg / max: %3.0f / %3.0f / %3.0f",1/max_ft,1/avg_ft,1/min_ft)
             local fail = 0.015 / min_ft -- 15ms is frame max time
             local green = clamp(fail,0,1)
@@ -103,9 +104,9 @@ stats = gfx_hud_object_add(`Stats`, {
         end;
 
         micros = function()
-            local max_ft = nonzero(1000000*gfx.frameTime:calcMax())
-            local avg_ft = nonzero(1000000*gfx.frameTime:calcAverage())
-            local min_ft = nonzero(1000000*gfx.frameTime:calcMin())
+            local max_ft = nonzero(1000000*main.gfxFrameTime:calcMax())
+            local avg_ft = nonzero(1000000*main.gfxFrameTime:calcAverage())
+            local min_ft = nonzero(1000000*main.gfxFrameTime:calcMin())
             return string.format("Frame micros min / avg / max: %3.0f / %3.0f / %3.0f",min_ft,avg_ft,max_ft)
         end;
 
@@ -126,19 +127,19 @@ stats = gfx_hud_object_add(`Stats`, {
         end;
         
         shadow = function()
-            local shadow_bats, shadow_tris = gfx:allShadowStats()
+            local shadow_bats, shadow_tris = main:gfxAllShadowStats()
             return string.format("Shad Tris / Bats: %d / %d", shadow_tris, shadow_bats)
         end;
         gbuffer = function()
-            return string.format("Gbuf Tris / Bats: %d / %d", gfx.left.gbuffer[2], gfx.left.gbuffer[1])
+            return string.format("Gbuf Tris / Bats: %d / %d", main.gfxLeft.gbuffer[2], main.gfxLeft.gbuffer[1])
         end;
         deferred = function()
-            return string.format("Deff Tris / Bats: %d / %d", gfx.left.deferred[2], gfx.left.gbuffer[1])
+            return string.format("Deff Tris / Bats: %d / %d", main.gfxLeft.deferred[2], main.gfxLeft.gbuffer[1])
         end;
         total = function()
-            local shadow_bats, shadow_tris = gfx:allShadowStats()
-            local total_tris = shadow_tris + gfx.left.gbuffer[2] + gfx.left.deferred[2] + gfx.right.gbuffer[2] + gfx.right.deferred[2]
-            local total_bats = shadow_bats + gfx.left.gbuffer[1] + gfx.left.deferred[1] + gfx.right.gbuffer[1] + gfx.right.deferred[1]
+            local shadow_bats, shadow_tris = main:gfxAllShadowStats()
+            local total_tris = shadow_tris + main.gfxLeft.gbuffer[2] + main.gfxLeft.deferred[2] + main.gfxRight.gbuffer[2] + main.gfxRight.deferred[2]
+            local total_bats = shadow_bats + main.gfxLeft.gbuffer[1] + main.gfxLeft.deferred[1] + main.gfxRight.gbuffer[1] + main.gfxRight.deferred[1]
             return string.format("Total Tris / Bats: %d / %d", total_tris, total_bats)
         end;
 
@@ -146,10 +147,10 @@ stats = gfx_hud_object_add(`Stats`, {
             return string.format(
                     "Lua: %.1fMB (%dK) (G+%d) (P+%d) (U+%d)",
                     collectgarbage("count")/1024,
-                    gfx.count/1000,
-                    gfx.allocs,
-                    physics and physics.allocs or 0,
-                    gfx.unacctAllocs)
+                    main.gfxCount/1000,
+                    main.gfxAllocs,
+                    main and main.physicsAllocs or 0,
+                    main.gfxUnacctAllocs)
         end;
                 
     };
@@ -168,7 +169,7 @@ stats = gfx_hud_object_add(`Stats`, {
 if env_cycle_editor ~= nil and not env_cycle_editor.destroyed then
     safe_destroy(env_cycle_editor)
 end
-env_cycle_editor = gfx_hud_object_add(`EnvCycleEditor`, { } )
+env_cycle_editor = gfx_hud_object_add(`EnvCycleEditor`, { zOrder=6 } )
 env_cycle_editor.position = env_cycle_editor.size/2 + vec(50, 10)
 
 safe_destroy(lens_flare)

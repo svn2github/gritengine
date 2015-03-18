@@ -26,6 +26,7 @@ include `props/init.lua`
 include `veg/init.lua`
 include `ramps/init.lua`
 
+--[=[
 -- Object placement bindings...
 
 local tab = {
@@ -55,6 +56,10 @@ local tab = {
     ["b"] = `props/street/RoadBarrel`;
 }
 
+if common_binds ~= nil then common_binds:destroy() end
+common_binds = InputFilter(100, `common_binds`)
+
+
 for k,v in pairs(tab) do
     common_binds:bind(k, function() print(v) ; introduce_obj(v) end, nil, function() print(v) ; introduce_obj(v,true) end)
 end
@@ -76,3 +81,4 @@ common_binds:bind("C+,", function() place(`veg/prxtree`) end)
 common_binds:bind("j", function() place(`props/junk/TrashCanShite`) end)
 common_binds:bind("C+j", function() place(`props/street/Lamp`) end)
 
+]=]

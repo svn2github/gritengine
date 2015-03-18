@@ -6,8 +6,10 @@ safe_include `/user_cfg.lua`
 
 user_cfg = user_cfg or { }
 debug_cfg = debug_cfg or { }
-user_core_bindings = user_core_bindings or { }
-user_ghost_bindings = user_ghost_bindings or { }
+user_system_bindings = user_system_bindings or { }
+user_editor_core_bindings = user_editor_core_bindings or { }
+user_editor_edit_bindings = user_editor_edit_bindings or { }
+user_editor_debug_bindings = user_editor_debug_bindings or { }
 user_drive_bindings = user_drive_bindings or { }
 user_foot_bindings = user_foot_bindings or { }
 
@@ -142,7 +144,7 @@ local user_cfg_spec = {
     metricUnits = { "one of", false, true };
     audioMasterVolume =  { "range", 0, 1 }; 
     vehicleCameraTrack = { "one of", false, true };
-}           
+}
             
 
 local debug_cfg_default = {
@@ -218,161 +220,76 @@ local debug_cfg_spec = {
     textureAnimation = { "one of", false, true };
     textureScale = { "one of", false, true };
     shadingModel = { "one of", "SHARP", "HALF_LAMBERT", "WASHED_OUT" };
-}   
-
-
-
-local default_user_core_bindings = {
-    menu = "Escape";
-    console = "Tab";
-    record = "C+F12";
-    screenShot = "F12";
-    physicsPause = "F9";
-    physicsSplitImpulse = "C+F10";
-    physicsOneToOne = "F10";
-    gameLogicStep = "F11";
-    gameLogicFrameStep = "C+F11";
-    wireFrame = "F8";
-    physicsWireFrame = "F7";
-    physicsDebugWorld = "C+F7";
-    clearPlaced = "F3";
-    clearProjectiles = "F4";
-    toggleFullScreen = "A+Return";
-    toggleVSync = "F1";
 }
 
-local default_user_ghost_bindings = {
-    forwards = "w";
-    backwards = "s";
-    strafeLeft = "a";
-    strafeRight = "d";
-    board = "f";
-    ascend = "Space";
-    descend = "Shift";
-    teleportUp = "Return";
-    teleportDown = "BackSpace";
-    simpleMenuShow = "`";
-    placementEditor = "e";
-    grab = "g";
-    fast = "right";
-    prod = "middle";
+
+
+local default_user_system_bindings = {
+    menu = "Escape";
+    console = "Tab";
+    screenShot = "F12";
 }
 
 local default_user_drive_bindings = {
-    forwards = "w";
-    backwards = "s";
-    steerLeft = "a";
-    steerRight = "d";
-    specialLeft = "q";
-    specialRight = "e";
-    specialUp = "PageUp";
-    specialDown = "PageDown";
-    altUp = "Up";
-    altDown = "Down";
-    altLeft = "Left";
-    altRight = "Right";
-    abandon = "f";
-    handbrake = "Space";
-    lights = "l";
-    boost = "Shift";
-    zoomIn = {"up","S+v"};
-    zoomOut = {"down","v"};
-    camera = "c";
-    realign = "Return";
-    specialToggle = "BackSpace";
+    driveForwards = "w";
+    driveBackwards = "s";
+    driveLeft = "a";
+    driveRight = "d";
+    driveSpecialLeft = "q";
+    driveSpecialRight = "e";
+    driveSpecialUp = "PageUp";
+    driveSpecialDown = "PageDown";
+    driveAltUp = "Up";
+    driveAltDown = "Down";
+    driveAltLeft = "Left";
+    driveAltRight = "Right";
+    driveAbandon = "f";
+    driveHandbrake = "Space";
+    driveLights = "l";
+    driveZoomIn = {"up","S+v"};
+    driveZoomOut = {"down","v"};
+    driveCamera = "c";
+    driveSpecialToggle = "BackSpace";
 }
 
 local default_user_foot_bindings = {
+    walkForwards = "w";
+    walkBackwards = "s";
+    walkLeft = "a";
+    walkRight = "d";
+    walkBoard = "f";
+    walkJump = "Space";
+    walkCrouch = "c";
+    walkRun = "Shift";
+    walkZoomIn = {"up","S+v"};
+    walkZoomOut = {"down","v"};
+    walkCamera = "c";
+}
+
+local default_user_editor_core_bindings = {
+    debug = "F5";
+    ghost = "right";
     forwards = "w";
     backwards = "s";
     strafeLeft = "a";
     strafeRight = "d";
-    abandon = "f";
-    jump = "Space";
-    crouch = "c";
-    run = "Shift";
-    zoomIn = {"up","S+v"};
-    zoomOut = {"down","v"};
+    ascend = "Space";
+    descend = "Shift";
+    -- TODO: need some way of going faster
+}
+
+local default_user_editor_edit_bindings = {
+    delete = "Delete";
+    duplicate = "C+d";
+    select = "left";
+}
+
+local default_user_editor_debug_bindings = {
+    board = "f";
 }
 
 
-local core_binding_functions = {
-    menu = function()
-        if menu.enabled then
-            menu_binds.modal = false
-            menu.enabled = false
-			menu:setContent(menu.mainContent)
-        else
-            menu_binds.modal = true
-            menu.enabled = true
-        end
-    end;
-    console = function()
-			debug_layer:onKeyPressed()
-			debug_binds.modal = debug_layer.enabled
-			ticker.enabled = not debug_layer.enabled
-    end;
-    record = function() capturer:toggle() end;
-    screenShot = function() capturer:singleScreenShot() end;
-    physicsPause = function ()
-        physics.enabled = not physics.enabled
-        print("Physics enabled: "..tostring(physics.enabled))
-    end;
-    physicsOneToOne = function ()
-        physics.oneToOne = not physics.oneToOne
-        print("Physics one-to-one: "..tostring(physics.oneToOne))
-    end;
-    gameLogicStep = { function () physics_step(physics_option("STEP_SIZE")) end, nil, true };
-    gameLogicFrameStep = { function () physics_frame_step(physics_option("STEP_SIZE"), 1/60) end, nil, true };
-    wireFrame = function()
-        local pm = debug_cfg.polygonMode
-        if pm == "SOLID" then
-            debug_cfg.polygonMode = "SOLID_WIREFRAME"
-        elseif pm == "SOLID_WIREFRAME" then 
-            debug_cfg.polygonMode = "WIREFRAME"
-        else    
-            debug_cfg.polygonMode = "SOLID"
-        end     
-    end;
-    physicsWireFrame = function()
-        debug_cfg.physicsWireFrame = not debug_cfg.physicsWireFrame
-    end;
-    physicsDebugWorld = function()
-        physics.debugWorld = not physics.debugWorld
-    end;
-    clearPlaced = clear_placed;
-    clearProjectiles = clear_temporary;
-    toggleFullScreen = function ()
-        user_cfg.fullscreen = not user_cfg.fullscreen
-        -- avoid these keys getting 'stuck down' as we lose focus momentarily
-    end;
-    toggleVSync = function ()
-    user_cfg.vsync = not user_cfg.vsync
-        if user_cfg.vsync then
-            print("vsync on")
-        else
-            print("vsync off")
-        end
-    end;
-}
-
-local ghost_binding_functions = {
-    forwards = {function() ghost.forwards=1 end, function() ghost.forwards = 0 end};
-    backwards = {function() ghost.backwards=1 end, function() ghost.backwards = 0 end};
-    strafeLeft = {function() ghost.left=1 end, function() ghost.left = 0 end};
-    strafeRight = {function() ghost.right=1 end, function() ghost.right = 0 end};
-    board = function() ghost:pickDrive() end;
-    ascend = {function() ghost.up=1 end, function() ghost.up = 0 end};
-    descend = {function() ghost.down=1 end, function() ghost.down = 0 end};
-    teleportUp = {function() player_ctrl.camFocus = player_ctrl.camFocus+V_UP end, nil, true};
-    teleportDown = {function() player_ctrl.camFocus = player_ctrl.camFocus+V_DOWN end, nil, true};
-    simpleMenuShow = {function() simple_menu:show(simple_menu.Main_menu) end, nil};
-    placementEditor = function() placement_editor:manip(pick_obj_safe()) end;
-    grab = function() ghost:grab() end;
-    fast = {function() ghost.fast = true end, function() ghost.fast = false end};
-    prod = {function() ghost.prodding = true end, function() ghost.prodding = false end};
-}
-
+--[[
 local drive_binding_functions = {
     forwards = {function() player_ctrl.controlObj:setPush(true) end, function() player_ctrl.controlObj:setPush(false) end};
     backwards = {function() player_ctrl.controlObj:setPull(true) end, function() player_ctrl.controlObj:setPull(false) end};
@@ -416,16 +333,17 @@ local foot_binding_functions = {
     zoomIn = {function() player_ctrl.controlObj:controlZoomIn() end, nil, true};
     zoomOut = {function() player_ctrl.controlObj:controlZoomOut() end, nil, true};
 }
+]]
 
 
 local function process_user_table(name, given, default)
-    for k,v in pairs(given) do
+    for k, v in pairs(given) do
         if default[k] == nil then
             print(name.." contained unrecognised field \""..k.."\", ignoring.")
             given[k] = nil
         end
     end
-    for k,v in pairs(default) do
+    for k, v in pairs(default) do
         if given[k] == nil then
             given[k] = default[k]
         end
@@ -434,41 +352,60 @@ end
 
 process_user_table("user_cfg", user_cfg, user_cfg_default)
 process_user_table("debug_cfg", debug_cfg, debug_cfg_default)
-process_user_table("user_core_bindings", user_core_bindings, default_user_core_bindings)
-process_user_table("user_ghost_bindings", user_ghost_bindings, default_user_ghost_bindings)
+process_user_table("user_system_bindings", user_system_bindings, default_user_system_bindings)
+process_user_table("user_editor_core_bindings", user_editor_core_bindings, default_user_editor_core_bindings)
+process_user_table("user_editor_edit_bindings", user_editor_edit_bindings, default_user_editor_edit_bindings)
+process_user_table("user_editor_debug_bindings", user_editor_debug_bindings, default_user_editor_debug_bindings)
 process_user_table("user_drive_bindings", user_drive_bindings, default_user_drive_bindings)
 process_user_table("user_foot_bindings", user_foot_bindings, default_user_foot_bindings)
 
 
-local function bind(name, data, functions, tab)
-    local function bind_it(key)
-        local data = functions[name]
-        if type(data) == "table" then
-            -- table[1,2] may be nil so unpack won't work
-            tab.bind(tab, key, data[1], data[2], data[3])
+local function process_bindings2(bindings, func, input_filter)
+    local function bind_it(name, key)
+        input_filter:bind(
+            key,
+            function () func(name, '+') end,
+            function () func(name, '-') end,
+            function () func(name, '=') end)
+    end
+    for name, key_or_keys in pairs(bindings) do
+        if type(key_or_keys) == "table" then
+            for _,key in ipairs(key_or_keys) do
+                bind_it(name, key)
+            end
         else
-            tab.bind(tab, key, data)
+            bind_it(name, key_or_keys)
         end
-    end
-    if type(data) == "table" then
-        for _,key in ipairs(data) do
-            bind_it(key)
-        end
-    else
-        bind_it(data)
     end
 end
 
-local function process_bindings(bindings, functions, tab)
-    for name,key in pairs(bindings) do
-        bind(name, key, functions, tab)
+local function system_receive_button(button, state)
+    if button == "menu" and state == '+' then
+        menu:setEnabled(not menu.enabled)
+    elseif button == "console" and state == '+' then
+        if input_filter_pressed("Ctrl") then
+            debug_layer:setEnabled(true)
+            debug_layer:selectConsole(true)
+            hud_focus_grab(console)
+        else
+            debug_layer:setEnabled(not debug_layer.enabled)
+        end
+    elseif button == "screenShot" and state == '+' then
+        capturer:singleScreenShot()
     end
 end
 
-process_bindings(user_core_bindings, core_binding_functions, menu_binds)
-process_bindings(user_ghost_bindings, ghost_binding_functions, playing_ghost_binds)
-process_bindings(user_drive_bindings, drive_binding_functions, playing_vehicle_binds)
-process_bindings(user_foot_bindings, foot_binding_functions, playing_actor_binds)
+process_bindings2(user_system_bindings, system_receive_button, system_binds)
+process_bindings2(user_editor_core_bindings, editor_receive_button, editor_core_binds)
+process_bindings2(user_editor_edit_bindings, editor_receive_button, editor_edit_binds)
+process_bindings2(user_editor_debug_bindings, editor_receive_button, editor_debug_binds)
+
+local function play_receive_button(button, state)
+    game_manager:receiveButton(button, state)
+end
+
+process_bindings2(user_drive_bindings, play_receive_button, playing_vehicle_binds)
+process_bindings2(user_foot_bindings, play_receive_button, playing_actor_binds)
 
 
 
@@ -618,7 +555,7 @@ local function commit(c, p, flush, partial)
                 physics_option("DEBUG_WIREFRAME", v)
             elseif k == "physicsDebugWorld" then
                 print("Physics debug world: "..(v and "on" or "off"))
-                physics.debugWorld = v
+                main.physicsDebugWorld = v
             elseif k == "mouseSensitivity" then
                 -- next mouse movement picks this up
             elseif k == "mouseInvert" then
@@ -751,8 +688,10 @@ print('Reading user_cfg.lua')
     -- use proposed rather than current settings, to avoid writing out the autoUpdate header
     write_table("user_cfg", user_cfg.p, user_cfg_default, user_cfg_doc)
     write_table("debug_cfg", debug_cfg.p, debug_cfg_default, debug_cfg_doc)
-    write_table("user_core_bindings", user_core_bindings, default_user_core_bindings, {})
-    write_table("user_ghost_bindings", user_ghost_bindings, default_user_ghost_bindings, {})
+    write_table("user_system_bindings", user_system_bindings, default_user_system_bindings, {})
+    write_table("user_editor_core_bindings", user_editor_core_bindings, default_user_editor_core_bindings, {})
+    write_table("user_editor_edit_bindings", user_editor_edit_bindings, default_user_editor_edit_bindings, {})
+    write_table("user_editor_debug_bindings", user_editor_debug_bindings, default_user_editor_debug_bindings, {})
     write_table("user_drive_bindings", user_drive_bindings, default_user_drive_bindings, {})
     write_table("user_foot_bindings", user_foot_bindings, default_user_foot_bindings, {})
 

@@ -58,10 +58,10 @@ hud_class `StatusBar` {
 		self.size = vec(psize.x, self.size.y)
     end;
 	frameCallback = function(self, elapsed)
-		self.fps.text = string.format("FPS: %3.0f", 1/nonzero(gfx.frameTime:calcAverage()))
+		self.fps.text = string.format("FPS: %3.0f", 1/nonzero(main.gfxFrameTime:calcAverage()))
 		self.fps.position = vec2(-self.fps.size.x/2, self.fps.position.y)
 		
-		local x,y,z = unpack(player_ctrl.speedoPos)
+		local x,y,z = unpack(main.streamerCentre)
 		self.pos.text = string.format("POS: %+5.4f | %+5.4f | %+5.4f", x, y, z)
 		
 		self.selected.position = vec2(self.selected.size.x/2, self.selected.position.y)

@@ -22,27 +22,27 @@ include `all_streetlamps.lua`
 common_binds:bind("b",function()fire("/gtasa/"..all_vehicles[math.random(#all_vehicles)])end)
 
 function go_la()
-        player_ctrl:warp(vector3(2312.48, -1621.77, 35.7562), quat(0.870673,0.00683816,0.00386254,0.4918))
+        warp(vector3(2312.48, -1621.77, 35.7562), quat(0.870673,0.00683816,0.00386254,0.4918))
 end
 
 function go_vegas()
-        player_ctrl:warp(vector3(1856.87, 1360.64, 60.1808), quat(0.981828,-0.0473323,-0.00884934,0.183564))
+        warp(vector3(1856.87, 1360.64, 60.1808), quat(0.981828,-0.0473323,-0.00884934,0.183564))
 end
 
 function go_vegas2()
-        player_ctrl:warp(vector3(1770.23, 2959.79, 41.6458), quat(0.00732922,-0.000130489,-0.0178007,0.999815))
+        warp(vector3(1770.23, 2959.79, 41.6458), quat(0.00732922,-0.000130489,-0.0178007,0.999815))
 end
 
 function go_vegas3()
-        player_ctrl:warp(vector3(2104.36, 1969.44, 12.7467),quat(0.989455,-0.0669341,-0.00866934,0.128155))
+        warp(vector3(2104.36, 1969.44, 12.7467),quat(0.989455,-0.0669341,-0.00866934,0.128155))
 end
 
 function go_sf()
-        player_ctrl:warp(vector3(-2016.56, 884.951, 68.9321), quat(0.868686,-0.051001,0.0288787,-0.491883))
+        warp(vector3(-2016.56, 884.951, 68.9321), quat(0.868686,-0.051001,0.0288787,-0.491883))
 end
 
 function go_nowhere()
-        player_ctrl:warp(vector3(0,0,-10000))
+        warp(vector3(0,0,-10000))
 end
 
 function all_cast_shadows()

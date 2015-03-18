@@ -64,8 +64,8 @@ hud_class `.` {
     destroy = function (self)
     end;
     frameCallback = function (self, elapsed)
-        local orientation = -player_ctrl.camYaw
-        local o = player_ctrl.controlObj
+        local orientation = -cam_yaw_angle()
+        local o = nil -- TODO(dcunnin): this is a game mode thing, figure out how to reimplement it player_ctrl.controlObj
         if o and o.instance and o.instance.body then
             self.player.enabled = true
             local v = o.instance.body.worldOrientation*V_FORWARDS
@@ -73,7 +73,7 @@ hud_class `.` {
         else
             self.player.enabled = false
         end
-        self.text.text = string.format("%03d",player_ctrl.camYaw + 0.5)
+        self.text.text = string.format("%03d",cam_yaw_angle() + 0.5)
         self.ring.orientation = orientation
     end;
 }

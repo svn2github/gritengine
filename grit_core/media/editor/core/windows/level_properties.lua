@@ -105,7 +105,7 @@ hud_class `Expand_List` {
 		self.items = {}
 		
 		self.base = gfx_hud_object_add(`/common/hud/Rect`, {colour=vec(0.5, 0.5, 0.5), size=vec2(300, 20), parent=self, cornered=true;})
-		self.base.texture = `/editor/core/icons/FilledWhiteBorder042nt.png`;
+		self.base.texture = `../icons/FilledWhiteBorder042nt.png`;
 		self.title_pos = gfx_hud_object_add(`/common/hud/Positioner`, {
 			parent = self.base;
 			offset = vec2(10, 0);
@@ -127,7 +127,7 @@ hud_class `Expand_List` {
 				hoverColour = vec(1, 0.5, 0);
 				clickColour = vec(0.7, 0.3, 0);
 		})
-		self.expand_btn.texture=`/editor/core/icons/FilledWhiteBorder042.png`
+		self.expand_btn.texture=`../icons/FilledWhiteBorder042.png`
 		self.expand_btn.border.enabled = false
 		--self.expand_btn.texture = `../icons/invdeg.png`;
 		--self.expand_btn.border.texture = nil
@@ -143,10 +143,10 @@ hud_class `Expand_List` {
 		self.expand_btn.pressedCallback = function (self)
 			if(self.parent.parent.parent.container.enabled)then
 				self:setCaption("+")
-				self.parent.parent.texture = `/editor/core/icons/FilledWhiteBorder042.png`
+				self.parent.parent.texture = `../icons/FilledWhiteBorder042.png`
 			else
 				self:setCaption("-")
-				self.parent.parent.texture = `/editor/core/icons/FilledWhiteBorder042nt.png`
+				self.parent.parent.texture = `../icons/FilledWhiteBorder042nt.png`
 			end
 			self.parent.parent.parent:expand()
 		end;
@@ -213,33 +213,6 @@ hud_class `Expand_List` {
     end;
 }
 
-if ty ~= nil then safe_destroy(ty)end
-ty = gfx_hud_object_add(`Expand_List`, {
-	parent=editor_interface.windows.level_properties,
-	caption="Common",
-	needsInputCallbacks = true;
-	btcallbacks = function(self)
-		update_level_properties()
-	end;
-})
-ty.needsInputCallbacks = true
-
-local setspawnpointpos = 
-function(self)
-	local spltv = self.value.value:split(" ")
-	if tonumber(spltv[1]) ~= nil and tonumber(spltv[2]) ~= nil and tonumber(spltv[3]) ~= nil then
-		GED:set_spawn_point(vector3(tonumber(spltv[1]), tonumber(spltv[2]), tonumber(spltv[3])), current_level.spawn.rot)
-	end
-end;
-
-local setspawnpointrot = 
-function(self)
-	local spltv = self.value.value:split(" ")
-	if tonumber(spltv[1]) ~= nil and tonumber(spltv[2]) ~= nil and tonumber(spltv[3]) ~= nil and tonumber(spltv[4]) ~= nil then
-		GED:set_spawn_point(current_level.spawn.pos, quat(tonumber(spltv[1]), tonumber(spltv[2]), tonumber(spltv[3]), tonumber(spltv[4])))
-	end
-end;
-
 function update_level_properties()
 	if ty.items[8] ~= nil then
 		if ty.items[1].value ~= hud_focus then
@@ -283,12 +256,26 @@ function update_level_properties()
 
 end
 
-ty:addItem("Name: ", current_level.name, function(self) current_level.name = self.value.value end)
-ty:addItem("Author: ", "someone", function(self) current_level.author = self.value.value end)
-ty:addItem("Description: ", current_level.description, function(self) current_level.description = self.value.value end)
-ty:addItem("Spawn Position: ", "", setspawnpointpos)
-ty:addItem("Spawn Orientation: ", "", setspawnpointrot)
-ty:addItem("Clock Rate: ", "", function(self) if tonumber(self.value.value) ~= nil then env.clockRate = tonumber(self.value.value) current_level.clock_rate = tonumber(self.value.value) end end)
-ty:addItem("Game Mode: ", "", function(self) current_level.game_mode = self.value.value end)
-ty:addItem("Include1: ", "", function(self) current_level.include[1] = self.value.value end)
-ty:addItem("Include2: ", "", function(self) current_level.include[2] = self.value.value end)
+-- Predeclare the global variable
+ty = ty
+
+function editor_init_windows()
+    if ty ~= nil then safe_destroy(ty) end
+    ty = gfx_hud_object_add(`Expand_List`, {
+        parent=editor_interface.windows.level_properties,
+        caption="Common",
+        needsInputCallbacks = true;
+        btcallbacks = function(self)
+            update_level_properties()
+        end;
+    })
+    ty.needsInputCallbacks = true
+
+    ty:addItem("Name: ", "some level", function(self) current_level.name = self.value.value end)
+    ty:addItem("Author: ", "someone", function(self) current_level.author = self.value.value end)
+    ty:addItem("Description: ", "some description", function(self) current_level.description = self.value.value end)
+    ty:addItem("Clock Rate: ", "", function(self) if tonumber(self.value.value) ~= nil then env.clockRate = tonumber(self.value.value) current_level.clock_rate = tonumber(self.value.value) end end)
+    ty:addItem("Game Mode: ", "", function(self) current_level.game_mode = self.value.value end)
+    ty:addItem("Include1: ", "", function(self) current_level.include[1] = self.value.value end)
+    ty:addItem("Include2: ", "", function(self) current_level.include[2] = self.value.value end)
+end

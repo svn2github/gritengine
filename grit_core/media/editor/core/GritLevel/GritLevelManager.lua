@@ -12,7 +12,6 @@ function GritLevel.new()
 	local self = {
 		name = "Level_"..math.random();
 		description= "";		
-		game_mode = default_game_mode;
 		objects = {};
 		file_name = "";
 		env_cube = "";
@@ -26,10 +25,6 @@ function GritLevel.new()
 		cam_Yaw = {};
 		author = "";
 		
-		spawn = {
-			pos = {};
-			rot = {};
-		};
 		time = {};
 		clock_rate = 0;
 		include = {};
@@ -58,7 +53,7 @@ function GritLevel:apply_env_cube()
 end
 
 -- all temporary textures are saved inside 'cache/env'
-function GritLevel:generate_env_cube()
+function GritLevel:generate_env_cube(pos)
 	local current_time = env.secondsSinceMidnight
 	local current_clockRate = env.clockRate
 	env.clockRate = 0
@@ -68,13 +63,13 @@ function GritLevel:generate_env_cube()
 	-- dawn
 	env.secondsSinceMidnight = 6 * 60 * 60
 	local tex = GED.directory.."/cache/env/".."myenv_dawn"..math.random(1000)..".envcube.tiff"
-	gfx_bake_env_cube(tex, 128, player_ctrl.camPos, 0.7, vector3(0.0, 0.0, 0.0))
+	gfx_bake_env_cube(tex, 128, pos, 0.7, vec(0, 0, 0))
 	self.env_cube_dawn = "/"..tex
 
 	-- noon/default
 	env.secondsSinceMidnight = 12 * 60 * 60
 	tex = GED.directory.."/cache/env/".."myenv"..math.random(1000)..".envcube.tiff"
-	gfx_bake_env_cube(tex, 128, player_ctrl.camPos, 0.7, vector3(0.0, 0.0, 0.0))
+	gfx_bake_env_cube(tex, 128, pos, 0.7, vec(0, 0, 0))
 	self.env_cube = "/"..tex
 	-- noon use the same as default
 	self.env_cube_noon = "/"..tex
@@ -82,13 +77,13 @@ function GritLevel:generate_env_cube()
 	-- dusk
 	env.secondsSinceMidnight = 18 * 60 * 60
 	tex = GED.directory.."/cache/env/".."myenv_dusk"..math.random(1000)..".envcube.tiff"
-	gfx_bake_env_cube(tex, 128, player_ctrl.camPos, 0.7, vector3(0.0, 0.0, 0.0))
+	gfx_bake_env_cube(tex, 128, pos, 0.7, vec(0, 0, 0))
 	self.env_cube_dusk = "/"..tex	
 
 	-- dark
 	env.secondsSinceMidnight = 0
 	tex = GED.directory.."/cache/env/".."myenv_dark"..math.random(1000)..".envcube.tiff"
-	gfx_bake_env_cube(tex, 128, player_ctrl.camPos, 0.7, vector3(0.0, 0.0, 0.0))
+	gfx_bake_env_cube(tex, 128, pos, 0.7, vec(0, 0, 0))
 	self.env_cube_dark = "/"..tex
 
 	self:apply_env_cube()
@@ -105,8 +100,6 @@ function GritLevel:open(levelfile)
 		print(levelfile)
 		include (levelfile)
 		self.objects = object_all()
-		self.spawn.pos = vector3(0, 0, 0)
-		self.spawn.rot = quat(1, 0, 0, 0)
 		return true
 	elseif level_ext == "lvl" then
 		object_all_del()
@@ -124,9 +117,6 @@ function GritLevel:open(levelfile)
 		end
 		if level.description ~= nil then
 			self.description = level.description
-		end
-		if level.game_mode ~= nil then
-			self.game_mode = level.game_mode
 		end
 		if level.clock_rate ~= nil then
 			self.clock_rate = level.clock_rate
@@ -156,16 +146,6 @@ function GritLevel:open(levelfile)
 			return false
 		end
 		self.objects = object_all()
-		self.spawn.pos = level.spawn_pos or level.spawn.pos or vector3(0, 0, 0)
-		if level.spawn ~= nil then
-			self.spawn.rot = level.spawn.rot or quat(1, 0, 0, 0)
-		else
-			self.spawn.rot = quat(1, 0, 0, 0)
-		end
-		
-		self.spawn_point = object (`../assets/spawn_point`) (self.spawn.pos) {
-			rot = self.spawn.rot
-		}
 		
 		-- self.spawn_point.instance.body.ghost = true
 		self:set_camera()
@@ -186,15 +166,13 @@ function GritLevel:set_camera()
 	self.cam_Pitch = level.cam_Pitch or 0
 	self.cam_dir = level.cam_dir or quat(1, 0, 0, 0)
 	
+    -- TODO(dcunnin): interface with editor ghost code
+    --[[
 	player_ctrl.camPos = self.cam_pos 
 	player_ctrl.camYaw = self.cam_Yaw 
 	player_ctrl.camPitch = self.cam_Pitch
 	player_ctrl.camDir = self.cam_dir
-end
-
-function GritLevel:load_game_mode(gamemode)
-	gamemode = gamemode or self.game_mode
-	safe_include ("/"..GED.directory.."/"..GED.game_mode_dir.."/"..self.game_mode..".lua")
+    ]]
 end
 
 function GritLevel:save()
@@ -204,11 +182,6 @@ function GritLevel:save()
 	
 	-- maybe will be removed, but for now save all objects
 	self.objects = object_all()
-
-	if self.spawn_point ~= nil then
-		self.spawn.pos = self.spawn_point.spawnPos
-		self.spawn.rot = self.spawn_point.rot
-	end
 
 	file:write(
 [[
@@ -220,7 +193,6 @@ level = {
 	name = ']]..self.name.."';"..
 "\n	author = '"..self.author.."';"..
 "\n	description = '"..self.description.."';"..
-"\n	game_mode = '"..self.game_mode.."';"..
 
 "\n\n	env_cube = '"..self.env_cube.."';"..
 "\n	env_cube_dawn = '"..self.env_cube_dawn.."';"..
@@ -229,11 +201,8 @@ level = {
 "\n	env_cube_dark = '"..self.env_cube_dark.."';"..
 
 "\n\n	time = "..env.secondsSinceMidnight..";"..
-"\n	clock_rate = "..self.clock_rate..";"..
+"\n	clock_rate = "..self.clock_rate..";"
 
-"\n\n	spawn = {"..
-"\n		pos = vector3("..self.spawn.pos.x..", "..self.spawn.pos.y..", "..self.spawn.pos.z..");"..
-"\n		rot = quat("..self.spawn.rot.w..", "..self.spawn.rot.x..", "..self.spawn.rot.y..", "..self.spawn.rot.z..");\n	};"
 )
 	file:write("\n};")
 	

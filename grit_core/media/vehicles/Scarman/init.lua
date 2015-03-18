@@ -27,6 +27,7 @@ local engineX, engineY, engineZ = 0.0, 1.767, 0.093 -- Engine Smoke Pos
 local slack = 0.0 -- dunno
 
 class `.` (Vehicle) {
+    camAttachPos = vec(0, 0, 0.2),
     gfxMesh = `Body.mesh`,
     colMesh = `Body.gcol`,
     placementZOffset=0.62,

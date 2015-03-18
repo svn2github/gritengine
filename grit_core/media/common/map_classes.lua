@@ -315,22 +315,10 @@ function regular_chase_cam_update(persistent)
     local boom_length = math.max(persistent.boomLengthMin, cam_box_ray(player_ctrl.camFocus, player_ctrl.camDir, instance.boomLengthSelected, player_ctrl.camDir*V_BACKWARDS, body))
     player_ctrl.camPos = player_ctrl.camFocus + player_ctrl.camDir * vector3(0, -boom_length, 0)
 
-    player_ctrl.speedoPos = instance.camAttachPos
-    player_ctrl.speedoSpeed = #vehicle_vel
+    --player_ctrl.speedoPos = instance.camAttachPos
+    --player_ctrl.speedoSpeed = #vehicle_vel
 
 end
-
---[[
--- FOV Scale Trick
-if persistent.fovScale then
-    local fovPlot = Plot {
-        [0] = debug_cfg.FOV;
-        [30] = debug_cfg.FOV+25;
-        [30.0001] = debug_cfg.FOV+25;
-    }
-    gfx_option("FOV", fovPlot[self.speedoSpeed])
-end
-]]
 
 function top_down_cam_update(persistent)
     --this is a pure top down camera, always facing down
@@ -367,6 +355,7 @@ function ensure_absolute_path(persistent, path)
 end
 
 ColClass = extends (BaseClass) {
+        camAttachPos = vec(0, 0, 0);
         receiveImpulse = function (persistent, impulse, wpos)
             if persistent.health and persistent.impulseDamageThreshold then
                 --if impulse > 0 then
@@ -411,7 +400,7 @@ ColClass = extends (BaseClass) {
                 instance.camAttachPos = vector3(0,0,0)
                 -- this causes an alloc so do them here where the code is cold
                 instance.body.updateCallback = function (p,q)
-                    instance.camAttachPos = p
+                    instance.camAttachPos = p + q * persistent.camAttachPos
                     instance.gfx.localPosition = p
                     instance.gfx.localOrientation = q
                     persistent.pos = p
@@ -499,7 +488,7 @@ ColClass = extends (BaseClass) {
         deactivate=function(persistent)
             local instance = persistent.instance
             if instance.body then
-                if instance.body.mass > 0 and #(persistent.spawnPos - player_ctrl.camFocus) < persistent.renderingDistance then
+                if instance.body.mass > 0 and #(persistent.spawnPos - main.streamerCentre) < persistent.renderingDistance then
                     -- avoid it respawning directly in front of the camera
                     persistent.skipNextActivation = true
                 end

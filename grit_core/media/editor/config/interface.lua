@@ -5,33 +5,33 @@
 editor_interface_cfg = {
   content_browser   =   {
     opened   = false;
-    position = { 22, 10 };
-    size     = { 640, 365 };
+    position = { 0, 0 };
+    size     = { 540, 400 };
   };
   event_editor      =   {
     opened   = false;
-    position = { -136, -231 };
-    size     = { 608, 200 };
+    position = { 0, 0 };
+    size     = { 540, 400 };
   };
   level_properties  =   {
     opened   = false;
-    position = { 236.5, -240 };
-    size     = { 449, 225 };
+    position = { 0, 0 };
+    size     = { 540, 400 };
   };
   material_editor   =   {
     opened   = false;
-    position = { -3, -5 };
-    size     = { 512, 200 };
+    position = { 0, 0 };
+    size     = { 540, 400 };
   };
   object_editor     =   {
     opened   = false;
-    position = { -148, 19 };
-    size     = { 350, 200 };
+    position = { 0, 0 };
+    size     = { 540, 400 };
   };
   object_properties =   {
     opened   = false;
-    position = { -158.5, -99 };
-    size     = { 353, 426 };
+    position = { 0, 0 };
+    size     = { 540, 400 };
   };
   outliner          =   {
     opened   = false;
@@ -40,9 +40,9 @@ editor_interface_cfg = {
   };
   settings          =   {
     opened   = false;
-    position = { -11.5, -174 };
-    size     = { 611, 200 };
+    position = { 0, 0 };
+    size     = { 540, 400 };
   };
-  size              = { 1024, 768 };
+  size              = { 1026, 769 };
   theme             = "dark_orange";
 }

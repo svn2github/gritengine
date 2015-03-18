@@ -139,7 +139,6 @@ local function flame_behaviour (particle, elapsed)
                     end
                 end)
                 hit = hit + 1
-                --physics.enabled = false
             end
             if hit==2 then
                 -- if made 2 children, die on the next tick     

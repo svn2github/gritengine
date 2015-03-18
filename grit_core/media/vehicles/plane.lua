@@ -526,11 +526,7 @@ function Plane.setHandbrake (persistent, v)
     persistent.instance.handbrake = v
 end
 
-function Plane.setBoost (persistent, v)
-    if not persistent.activated then error("Not activated: "..persistent.name) end
-end
-
-function Plane.setPull(persistent, v)
+function Plane.setBackwards(persistent, v)
     if not persistent.activated then error("Not activated: "..persistent.name) end
 
     persistent.instance.parked = false
@@ -543,7 +539,7 @@ function Plane.setPull(persistent, v)
     end
 end
 
-function Plane.setPush(persistent, v)
+function Plane.setForwards(persistent, v)
     if not persistent.activated then error("Not activated: "..persistent.name) end
 
     --print("Pushing", persistent.instance.body.worldPosition)
@@ -558,12 +554,12 @@ function Plane.setPush(persistent, v)
     end
 end
 
-function Plane.setShouldSteerLeft(persistent, v)
+function Plane.setLeft(persistent, v)
     if not persistent.activated then error("Not activated: "..persistent.name) end
     persistent.instance.shouldSteerLeft = v and -persistent.steerMax or 0
 end
 
-function Plane.setShouldSteerRight (persistent, v)
+function Plane.setRight (persistent, v)
     if not persistent.activated then error("Not activated: "..persistent.name) end
     persistent.instance.shouldSteerRight = v and persistent.steerMax or 0
 end

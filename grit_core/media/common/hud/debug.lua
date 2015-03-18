@@ -5,6 +5,7 @@ hud_class `DebugLayer` {
     buttonDescs = { };
     colour = vec(0.1, 0.1, 0.1);
     buttonPadding = vec(16, 4);
+    zOrder = 6;
 
     init = function (self)
         self.needsParentResizedCallbacks = true
@@ -53,7 +54,7 @@ hud_class `DebugLayer` {
 
     selectConsole = function (self, v)
         self.consoleEnabled = v
-        console.enabled = v == true and self.enabled
+        console.enabled = self.consoleEnabled and self.enabled
     end;
 
     hidePane = function (self, pane)
@@ -81,18 +82,14 @@ hud_class `DebugLayer` {
         end
     end;
 
-    onKeyPressed = function (self)
-        local ctrl = input_filter_pressed("Ctrl")
-        if ctrl then
-            self.enabled = true
-            self:selectPane(self.selectedPane)
-            self:selectConsole(true)
+    setEnabled = function (self, v)
+        self.enabled = v
+        system_binds.modal = v
+        ticker.enabled = not v
+        self:selectConsole(self.consoleEnabled)  -- refresh console enable status
+        self:selectPane(self.selectedPane)  -- refresh pane enable status
+        if self.consoleEnabled then
             hud_focus_grab(console)
-        else
-            local v = not self.enabled
-            self.enabled = v
-            self:selectPane(self.selectedPane)
-            self:selectConsole(self.consoleEnabled)
         end
     end;
 
