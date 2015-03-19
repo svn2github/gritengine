@@ -359,6 +359,7 @@ hud_class `browser_icon` {
 	normalColour = vec(0.5, 0.5, 0.5);
 	selectedColour=vec(1, 0.8, 0);
 	name="Default";
+	type = "";
 	
 	init = function (self)
 		self.needsInputCallbacks = true;
@@ -585,6 +586,7 @@ open_level_dialog.update_file_explorer = function(m_dir)
 		local nit = nil
 		
 		nit = open_level_dialog.file_explorer:addItem(m_folders[i], `../icons/foldericon.png`)
+		nit.type = "folder"
 		nit.doubleClick = function(self)
 			if string.sub(open_level_dialog.currentdir, -1) ~= "/" then
 				open_level_dialog.currentdir = open_level_dialog.currentdir.."/"..self.name
@@ -607,7 +609,7 @@ open_level_dialog.update_file_explorer = function(m_dir)
 			else
 				nit = open_level_dialog.file_explorer:addItem(m_files[i], `../icons/fileicon.png`)
 			end
-			
+			nit.type = "file"
 			nit.pressedCallback = function (self)
 				open_level_dialog.file_edbox:setValue(self.name)
 			end;
@@ -638,22 +640,26 @@ open_level_dialog.update_file_explorer = function(m_dir)
 end;
 
 open_level_dialog.open_selected_level = function()
-	local selext = open_level_dialog.file_selbox.selected.name:sub(-5):gsub([[\)]], "", 1)
+	if open_level_dialog.file_edbox.value ~= "" then
+		local selext = open_level_dialog.file_selbox.selected.name:sub(-5):gsub([[\)]], "", 1)
 
-	local fcdir = {}
-	
-	if open_level_dialog.currentdir:sub(-1) == "/" then
-		fcdir = open_level_dialog.currentdir:reverse():sub(2):reverse()
-	else
-		fcdir = open_level_dialog.currentdir
-	end		
-
-	if open_level_dialog.file_edbox.value:sub(-4) == ".lvl" or open_level_dialog.file_edbox.value:sub(-4) == ".lua" then
-		GED:open_level(fcdir.."/"..open_level_dialog.file_edbox.value)
-	else
-		GED:open_level(fcdir.."/"..open_level_dialog.file_edbox.value..selext)
+		local fcdir = {}
+		
+		if open_level_dialog.currentdir:sub(-1) == "/" then
+			fcdir = open_level_dialog.currentdir:reverse():sub(2):reverse()
+		else
+			fcdir = open_level_dialog.currentdir
+		end		
+		
+		if open_level_dialog.file_edbox.value:sub(-4) == ".lvl" or open_level_dialog.file_edbox.value:sub(-4) == ".lua" then
+			GED:open_level(fcdir.."/"..open_level_dialog.file_edbox.value)
+		else
+			GED:open_level(fcdir.."/"..open_level_dialog.file_edbox.value..selext)
+		end
+		open_level_dialog.enabled = false
+	elseif open_level_dialog.file_explorer.selected.type == "folder" then
+		open_level_dialog.file_explorer.selected:doubleClick()
 	end
-	open_level_dialog.enabled=false
 end;
 
 open_level_dialog.toolbar_pos = gfx_hud_object_add(`/common/hud/Positioner`, {
@@ -836,6 +842,7 @@ save_level_dialog.update_file_explorer = function(m_dir)
 		local nit = nil
 		
 		nit = save_level_dialog.file_explorer:addItem(m_folders[i], `../icons/foldericon.png`)
+		nit.type = "folder"
 		nit.doubleClick = function(self)
 			if string.sub(save_level_dialog.currentdir, -1) ~= "/" then
 				save_level_dialog.currentdir = save_level_dialog.currentdir.."/"..self.name
@@ -858,7 +865,7 @@ save_level_dialog.update_file_explorer = function(m_dir)
 			else
 				nit = save_level_dialog.file_explorer:addItem(m_files[i], `../icons/fileicon.png`)
 			end
-			
+			nit.type = "file"
 			nit.pressedCallback = function (self)
 				save_level_dialog.file_edbox:setValue(self.name)
 			end;
@@ -889,31 +896,35 @@ save_level_dialog.update_file_explorer = function(m_dir)
 end;
 
 save_level_dialog.save_selected_level = function()
-	local selext = save_level_dialog.file_selbox.selected.name:sub(-5):gsub([[\)]], "", 1)
+	if save_level_dialog.file_edbox.value ~= "" then
+		local selext = save_level_dialog.file_selbox.selected.name:sub(-5):gsub([[\)]], "", 1)
 
-	local fcdir = {}
-	
-	if save_level_dialog.currentdir:sub(-1) == "/" then
-		fcdir = save_level_dialog.currentdir:reverse():sub(2):reverse()
-	else
-		fcdir = save_level_dialog.currentdir
-	end
-	
-	if fcdir:sub(1, 1) == "/" then
-		fcdir = fcdir:sub(2)
-	end
+		local fcdir = {}
+		
+		if save_level_dialog.currentdir:sub(-1) == "/" then
+			fcdir = save_level_dialog.currentdir:reverse():sub(2):reverse()
+		else
+			fcdir = save_level_dialog.currentdir
+		end
+		
+		if fcdir:sub(1, 1) == "/" then
+			fcdir = fcdir:sub(2)
+		end
 
-	if fcdir ~= "" then
-		fcdir = fcdir.."/"
+		if fcdir ~= "" then
+			fcdir = fcdir.."/"
+		end
+		
+		if save_level_dialog.file_edbox.value:sub(-4) == ".lvl" or save_level_dialog.file_edbox.value:sub(-4) == ".lua" then
+			GED:save_current_level_as(fcdir..save_level_dialog.file_edbox.value)
+		else
+			GED:save_current_level_as(fcdir..save_level_dialog.file_edbox.value..selext)
+		end
+		
+		save_level_dialog.enabled = false
+	elseif save_level_dialog.file_explorer.selected.type == "folder" then
+		save_level_dialog.file_explorer.selected:doubleClick()
 	end
-	
-	if save_level_dialog.file_edbox.value:sub(-4) == ".lvl" or save_level_dialog.file_edbox.value:sub(-4) == ".lua" then
-		GED:save_current_level_as(fcdir..save_level_dialog.file_edbox.value)
-	else
-		GED:save_current_level_as(fcdir..save_level_dialog.file_edbox.value..selext)
-	end
-	
-	save_level_dialog.enabled=false
 end;
 
 save_level_dialog.toolbar_pos = gfx_hud_object_add(`/common/hud/Positioner`, {
