@@ -14,7 +14,7 @@ level = {
 	env_cube_dusk = '';
 	env_cube_dark = '';
 
-	time = 47234.112745;
+	time = 47437.829335;
 	clock_rate = 0;
 
 	spawn = {
@@ -309,36 +309,6 @@ env_cycle = { {
 } }
 
 level.map = function()
+object "/editor/core/defaultmap/Terrain" (vector3(27.93775, 2.882975, -0.05617142)) {rot=quat(1, 0, 0, 0), name="Unnamed:/editor/core/defaultmap/Terrain:1" }
 object "/editor/core/defaultmap/Cube" (vector3(0, 0, -3.738553)) {rot=quat(1, 0, 0, 0), name="floor" }
 end;
-
-if in_editor ~= nil then
-	-- Editor level definitions:
-	level.cam_pos = vector3(10.433407783508, -9.8841428756714, 5.9377951622009)
-	level.cam_dir = quat(-0.91393822431564, 0.12665683031082, 0.052929736673832, -0.38193371891975)
-	level.cam_Pitch = -15.78
-	level.cam_Yaw = 314.64
-
-	level.events = {
-		
-	};
-
-else
-	-- in-game level initialization
-	current_level = level
-	level = nil
-	safe_include('/editor/gamemodes/'..current_level.game_mode..'.lua')
-
-	if current_level.include ~= nil and #current_level.include > 0 then
-		for i = 1, #current_level.include do
-			safe_include(current_level.include[i])
-		end
-	end
-	
-	if game ~= nil then
-		game:load_level()
-		game:play()
-	else
-		print(RED..'No gameplay defined!')
-	end
-end
