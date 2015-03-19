@@ -180,12 +180,12 @@ hud_class `content_browser_floating_object` {
         if ev == "+left" and self.inside then
 		elseif ev == "-left" then
 
-			local cast_ray = 1000 * gfx_screen_to_world(player_ctrl.camPos, player_ctrl.camDir, mouse_pos_abs)
-			local dist = physics_cast(player_ctrl.camPos, cast_ray, true, 0)
+			local cast_ray = 1000 * gfx_screen_to_world(main.camPos, main.camQuat, mouse_pos_abs)
+			local dist = physics_cast(main.camPos, cast_ray, true, 0)
 
 			local cl = class_get(self.obclass)
 
-			local pos = (player_ctrl.camPos + cast_ray * (dist or 0.02)) + (cl.placementZOffset or 0)
+			local pos = (main.camPos + cast_ray * (dist or 0.02)) + (cl.placementZOffset or 0)
 			
 			object (self.obclass) (pos) {}
 
