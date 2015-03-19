@@ -579,6 +579,7 @@ open_level_dialog.currentdir = "/"
 
 open_level_dialog.update_file_explorer = function(m_dir)
 	open_level_dialog.file_explorer:clearAll()
+	open_level_dialog.file_explorer.selected = nil
 	m_dir = m_dir or ""
 	local m_files, m_folders = get_dir_list(m_dir:gsub("/", "", 1))
 
@@ -653,11 +654,9 @@ open_level_dialog.open_selected_level = function()
 		
 		if open_level_dialog.file_edbox.value:sub(-4) == ".lvl" or open_level_dialog.file_edbox.value:sub(-4) == ".lua" then
 			GED:open_level(fcdir.."/"..open_level_dialog.file_edbox.value)
-		else
-			GED:open_level(fcdir.."/"..open_level_dialog.file_edbox.value..selext)
+			open_level_dialog.enabled = false
 		end
-		open_level_dialog.enabled = false
-	elseif open_level_dialog.file_explorer.selected.type == "folder" then
+	elseif open_level_dialog.file_explorer.selected ~= nil and open_level_dialog.file_explorer.selected.type == "folder" then
 		open_level_dialog.file_explorer.selected:doubleClick()
 	end
 end;
@@ -835,6 +834,7 @@ save_level_dialog.currentdir = "/"
 
 save_level_dialog.update_file_explorer = function(m_dir)
 	save_level_dialog.file_explorer:clearAll()
+	save_level_dialog.file_explorer.selected = nil
 	m_dir = m_dir or ""
 	local m_files, m_folders = get_dir_list(m_dir:gsub("/", "", 1))
 
@@ -917,12 +917,9 @@ save_level_dialog.save_selected_level = function()
 		
 		if save_level_dialog.file_edbox.value:sub(-4) == ".lvl" or save_level_dialog.file_edbox.value:sub(-4) == ".lua" then
 			GED:save_current_level_as(fcdir..save_level_dialog.file_edbox.value)
-		else
-			GED:save_current_level_as(fcdir..save_level_dialog.file_edbox.value..selext)
+			save_level_dialog.enabled = false
 		end
-		
-		save_level_dialog.enabled = false
-	elseif save_level_dialog.file_explorer.selected.type == "folder" then
+	elseif save_level_dialog.file_explorer.selected ~= nil and save_level_dialog.file_explorer.selected.type == "folder" then
 		save_level_dialog.file_explorer.selected:doubleClick()
 	end
 end;
