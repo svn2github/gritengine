@@ -5,6 +5,7 @@ editor_core_binds = InputFilter(45, `editor_core_binds`)
 
 if editor_edit_binds ~= nil then editor_edit_binds:destroy() end
 editor_edit_binds = InputFilter(46, `editor_edit_binds`)
+editor_edit_binds.modal = true
 
 if editor_debug_binds ~= nil then editor_debug_binds:destroy() end
 editor_debug_binds = InputFilter(47, `editor_debug_binds`)
