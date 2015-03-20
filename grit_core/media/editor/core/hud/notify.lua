@@ -6,6 +6,7 @@ hud_class `ntfmessage` {
 	colour = vec(1, 0, 0);
 	cornered = true;
 	texture=`/common/hud/CornerTextures/Filled04.png`;
+	tableid = 0;
 	
 	init = function (self)
 		self.text = gfx_hud_text_add(`/common/fonts/Arial12`)
@@ -24,9 +25,16 @@ hud_class `ntfmessage` {
 		self.needsFrameCallbacks = true
 	end;
 	
+	moveTableIdsDown = function(self)
+		for curtab=1,#ntfpanel.messages do
+			ntfpanel.messages[curtab].tableid = ntfpanel.messages[curtab].tableid - 1
+		end
+	end;
+	
 	destroy = function (self)
 		self.needsFrameCallbacks = false
-		
+		table.remove(ntfpanel.messages, self.tableid)
+		self.moveTableIdsDown()
 		self:destroy()
 	end;
 	
@@ -57,12 +65,15 @@ hud_class `notify_panel` {
 	
 	destroy = function (self)
 		self.needsParentResizedCallbacks = false
-		
 		self:destroy()
 	end;
 		
 	addMessage = function(self, msg, clr)
-		self.messages[#self.messages+1] = gfx_hud_object_add(`ntfmessage`, { parent = self,  position=vec2(0, 0), value = msg, colour = clr})
+		--local newTableid = #self.messages+1
+		print(#self.messages)
+		self.messages[#self.messages+1] = gfx_hud_object_add(`ntfmessage`, { parent = self,  position=vec2(0, 0), value = msg, colour = clr, tableid = #self.messages+1})
+		print("Notify created at position "..#self.messages.. " in the table!")
+		print(#self.messages)
 	end;
 }
 if ntfpanel ~= nil then safe_destroy(ntfpanel) end
