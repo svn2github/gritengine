@@ -933,18 +933,14 @@ function create_dialog(subject, message, options, functioncall) --Example: creat
 	if message ~= nil and functioncall ~= nil then
 		if options ~= nil then 
 			if options == "yesnocancel" then
-				--Make dialog with yes and no buttons
-				--Make yes and no return true for yes or false for no
 				yesnocancelDialogcreation(subject, message, functioncall)
+				yesnocancelDialogWindow.zOrder = 7
 			elseif options == "yesno" then
-				--Make dialog with yes and no buttons
-				--Make yes and no return true for yes or false for no
 				yesnoDialogcreation(subject, message, functioncall)
+				yesnoDialogWindow.zOrder = 7
 			elseif options == "ok" then
-				--created_dialogs[#created_dialogs+1] = create_window(subject, vec2(0,0), false, vec2(600, 200))
-				--local newDialog
 				okDialogcreation(subject, message, functioncall)
-				
+				okDialogWindow.zOrder = 7
 			else
 				print("Dialog options are not valid!")
 			end

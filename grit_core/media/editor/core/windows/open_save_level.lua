@@ -915,6 +915,10 @@ save_level_dialog.save_selected_level = function()
 			fcdir = fcdir.."/"
 		end
 		
+		if save_level_dialog.currentdir:sub(-1) ~= "/" then
+			save_level_dialog.currentdir = save_level_dialog.currentdir.."/"
+		end
+		
 		if save_level_dialog.file_edbox.value:sub(-4) == ".lvl" or save_level_dialog.file_edbox.value:sub(-4) == ".lua" then
 			GED:save_current_level_as(fcdir..save_level_dialog.file_edbox.value)
 			save_level_dialog.enabled = false
@@ -977,7 +981,25 @@ save_level_dialog.save_button = gfx_hud_object_add(`window_button`, {
 	caption="Save";
 	parent = save_level_dialog.buttons_pos;
 	pressedCallback = function (self)
-		save_level_dialog.save_selected_level()
+		if save_level_dialog.currentdir:sub(-1) ~= "/" then
+			if resource_exists(save_level_dialog.currentdir.."/"..save_level_dialog.file_edbox.value) then
+				notify("It exists!")
+				create_dialog("SAVE", "Would you ike to overwrite "..save_level_dialog.currentdir.."/"..save_level_dialog.file_edbox.value.."!", "yesnocancel", save_overwrite)
+			else
+				save_level_dialog.save_selected_level()
+				notify("Saved!")
+				save_level_dialog.enabled = false
+			end
+		else
+			if resource_exists(save_level_dialog.currentdir..save_level_dialog.file_edbox.value) then
+				notify("It exists!")
+				create_dialog("SAVE", "Would you ike to overwrite "..save_level_dialog.currentdir..save_level_dialog.file_edbox.value.."!", "yesnocancel", save_overwrite)
+			else
+				save_level_dialog.save_selected_level()
+				notify("Saved!")
+				save_level_dialog.enabled = false
+			end
+		end
 	end;
 	
 	cornered=true;
@@ -1082,3 +1104,12 @@ end;
 
 save_level_dialog.update_file_explorer()
 save_level_dialog.enabled = false
+
+function save_overwrite(boolean)
+if boolean then
+	save_level_dialog.save_selected_level()
+	notify("Saved!")
+else
+	notify("Not Saved!")
+end
+end
