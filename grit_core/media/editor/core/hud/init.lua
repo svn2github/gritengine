@@ -6,3 +6,4 @@ include `toolbar.lua`
 include `statusbar.lua`
 include `Window.lua`
 include `rollbar.lua`
+include `notify.lua`

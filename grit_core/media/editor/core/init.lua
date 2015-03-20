@@ -65,6 +65,7 @@ editor = {
             │  Welcome to Grit Editor! (v0.001)  │
             ╰────────────────────────────────────╯
         ]])
+		ntfpanel:addMessage("Object manipulation is broken, we are working on it", vec(1, 0, 0))
     end;
 
     frameCallback = function (self, elapsed_secs)
