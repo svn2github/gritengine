@@ -19,7 +19,8 @@ hud_class `ntfmessage` {
 			self.text.colour = vec(1, 1, 1)
 		end
 		self.size = vec(self.text.size.x + 20, self.size.y)
-		self.position = vec(self.size.x, self.position.y)
+		self.position = vec(0, 0)
+		self.positionAnim = true
 		self.timelimit = 3
 		self.currenttime = 0
 		self.needsFrameCallbacks = true
@@ -41,9 +42,9 @@ hud_class `ntfmessage` {
 	frameCallback = function (self, elapsed)
 		if self.currenttime < self.timelimit then
 			self.currenttime = self.currenttime + elapsed
-				self.position = vec(math.max(self.position.x - (elapsed*self.position.x*5), 0), self.position.y)
+					self.position = vec((gfx_window_size().x + (self.size.x / 2)) - ((self.currenttime / self.timelimit) * (self.size.x)), (self.size.y * self.tableid) + 5)
 		else
-			self.alpha = self.alpha - elapsed
+			self.alpha = self.alpha - (elapsed / self.timelimit)
 			self.text.alpha = self.alpha
 			if self.alpha <= 0 then
 				self:destroy()
@@ -51,8 +52,6 @@ hud_class `ntfmessage` {
 		end
 	end;
 }
-
--- TODO: move old messages up and fix messages positions
 
 hud_class `notify_panel` {
 	alpha = 0;
@@ -69,7 +68,6 @@ hud_class `notify_panel` {
 	end;
 		
 	addMessage = function(self, msg, clr)
-		--local newTableid = #self.messages+1
 		print(#self.messages)
 		self.messages[#self.messages+1] = gfx_hud_object_add(`ntfmessage`, { parent = self,  position=vec2(0, 0), value = msg, colour = clr, tableid = #self.messages+1})
 		print("Notify created at position "..#self.messages.. " in the table!")
@@ -77,7 +75,7 @@ hud_class `notify_panel` {
 	end;
 }
 if ntfpanel ~= nil then safe_destroy(ntfpanel) end
-ntfpanel = gfx_hud_object_add(`notify_panel`, { parent=hud_bottom_right,  position=vec2(-160, 50)})
+ntfpanel = gfx_hud_object_add(`notify_panel`, {position=vec2(0, 50)})
 
 function notify(msg, clr)
 	if type(msg) == "string" then
