@@ -67,3 +67,12 @@ hud_class `notify_panel` {
 }
 if ntfpanel ~= nil then safe_destroy(ntfpanel) end
 ntfpanel = gfx_hud_object_add(`notify_panel`, { parent=hud_bottom_right,  position=vec2(-160, 50)})
+
+function notify(msg, clr)
+	if type(msg) == "string" then
+		if clr == nil then
+			clr = vec(0.65, 0.65, 0.65)
+		end
+		ntfpanel:addMessage(msg, clr)
+	end
+end
