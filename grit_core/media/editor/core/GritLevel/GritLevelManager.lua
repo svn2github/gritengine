@@ -246,39 +246,16 @@ level = {
 	file:write([[
 if in_editor ~= nil then
 	-- Editor level definitions:]])
-	file:write("\n	level.cam_pos = vector3("..player_ctrl.camPos.x..", "..player_ctrl.camPos.y..", "..player_ctrl.camPos.z..")")
-	file:write("\n	level.cam_dir = quat("..player_ctrl.camDir.w..", "..player_ctrl.camDir.x..", "..player_ctrl.camDir.y..", "..player_ctrl.camDir.z..")")
-	file:write("\n	level.cam_Pitch = "..player_ctrl.camPitch)
-	file:write("\n	level.cam_Yaw = "..player_ctrl.camYaw.."\n\n")
+	file:write("\n	level.cam_pos = vector3("..main.camPos.x..", "..main.camPos.y..", "..main.camPos.z..")")
+	file:write("\n	level.cam_dir = quat("..main.camQuat.w..", "..main.camQuat.x..", "..main.camQuat.y..", "..main.camQuat.z..")")
+	file:write("\n\n")
 	
 	file:write([[
 	level.events = {
 		
 	};
-
-else
-	-- in-game level initialization
-	current_level = level
-	level = nil
-	]])
-
-	file:write(	"safe_include('/"..GED.game_data_dir.."/"..GED.game_mode_dir.."/'..current_level.game_mode..'.lua')\n\n")
-
-	file:write([[
-	if current_level.include ~= nil and #current_level.include > 0 then
-		for i = 1, #current_level.include do
-			safe_include(current_level.include[i])
-		end
-	end
-	
-	if game ~= nil then
-		game:load_level()
-		game:play()
-	else
-		print(RED..'No gameplay defined!')
-	end
 end
-]])
+	]])
 	file:close()
 end
 
