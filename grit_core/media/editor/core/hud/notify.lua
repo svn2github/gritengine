@@ -8,6 +8,8 @@ hud_class `ntfmessage` {
 	texture=`/common/hud/CornerTextures/Filled04.png`;
 	tableid = 0;
 	speed = 5;
+	timelimit = 3;
+	currenttime = 0;
 	
 	init = function (self)
 		self.text = gfx_hud_text_add(`/common/fonts/Arial12`)
@@ -21,9 +23,7 @@ hud_class `ntfmessage` {
 		end
 		self.size = vec(self.text.size.x + 20, self.size.y)
 		self.position = vec(self.size.x/2, 0)
-		self.positionAnim = true
-		self.timelimit = 3
-		self.currenttime = 0
+
 		self.needsFrameCallbacks = true
 	end;
 	
@@ -70,14 +70,12 @@ hud_class `notify_panel` {
 	end;
 		
 	addMessage = function(self, msg, clr)
-		-- print(#self.messages)
 		self.messages[#self.messages+1] = gfx_hud_object_add(`ntfmessage`, { parent = self,  position=vec2(0, 0), value = msg, colour = clr, tableid = #self.messages+1})
-		-- print("Notify created at position "..#self.messages.. " in the table!")
-		-- print(#self.messages)
 	end;
 }
+
 if ntfpanel ~= nil then safe_destroy(ntfpanel) end
-ntfpanel = gfx_hud_object_add(`notify_panel`, {position=vec2(0, 50), parent=hud_bottom_right})
+ntfpanel = gfx_hud_object_add(`notify_panel`, { position = vec2(0, 50), parent = hud_bottom_right })
 
 function notify(msg, clr)
 	if type(msg) == "string" then
