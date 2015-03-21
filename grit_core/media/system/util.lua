@@ -793,8 +793,6 @@ if okDialogWindow == nil then
 		value = message;
 		size = vec(600, 150);
 		colour = 0.25 * vec(1, 1, 1);
-		--alignment = "CENTER"; --Default
-		--parent = hud_center;
 		parent = okDialogWindow;
 		position = vec2(0, 25);
 	})
@@ -831,8 +829,6 @@ if yesnoDialogWindow == nil then
 		value = message;
 		size = vec(600, 150);
 		colour = 0.25 * vec(1, 1, 1);
-		--alignment = "CENTER"; --Default
-		--parent = hud_center;
 		parent = yesnoDialogWindow;
 		position = vec2(0, 25);
 	})
@@ -880,8 +876,6 @@ if yesnocancelDialogWindow == nil then
 		value = message;
 		size = vec(600, 150);
 		colour = 0.25 * vec(1, 1, 1);
-		--alignment = "CENTER"; --Default
-		--parent = hud_center;
 		parent = yesnocancelDialogWindow;
 		position = vec2(0, 25);
 	})
@@ -942,7 +936,7 @@ function create_dialog(subject, message, options, functioncall) --Example: creat
 				okDialogcreation(subject, message, functioncall)
 				okDialogWindow.zOrder = 7
 			else
-				print("Dialog options are not valid!")
+				
 			end
 		else --(<--Default)
 			--Make dialog with no button
