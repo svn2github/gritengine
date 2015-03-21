@@ -1,12 +1,13 @@
 -- (c) Augusto P. Moura 2014, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
 hud_class `ntfmessage` {
-	alpha = 1;
+	alpha = 0.7;
 	size = vec(100, 30);
 	colour = vec(1, 0, 0);
 	cornered = true;
 	texture=`/common/hud/CornerTextures/Filled04.png`;
 	tableid = 0;
+	speed = 5;
 	
 	init = function (self)
 		self.text = gfx_hud_text_add(`/common/fonts/Arial12`)
@@ -19,7 +20,7 @@ hud_class `ntfmessage` {
 			self.text.colour = vec(1, 1, 1)
 		end
 		self.size = vec(self.text.size.x + 20, self.size.y)
-		self.position = vec(0, 0)
+		self.position = vec(self.size.x/2, 0)
 		self.positionAnim = true
 		self.timelimit = 3
 		self.currenttime = 0
@@ -42,9 +43,10 @@ hud_class `ntfmessage` {
 	frameCallback = function (self, elapsed)
 		if self.currenttime < self.timelimit then
 			self.currenttime = self.currenttime + elapsed
-					self.position = vec((gfx_window_size().x + (self.size.x / 2)) - ((self.currenttime / self.timelimit) * (self.size.x)), (self.size.y * self.tableid) + 5)
+			local distance = self.size.x - self.position.x
+			self.position = vec(math.max(self.position.x - (elapsed * distance * self.speed), -self.size.x/2 - 10), (self.size.y * (#ntfpanel.messages - self.tableid)) * 1.2)
 		else
-			self.alpha = self.alpha - (elapsed / self.timelimit)
+			self.alpha = self.alpha - elapsed
 			self.text.alpha = self.alpha
 			if self.alpha <= 0 then
 				self:destroy()
@@ -68,19 +70,19 @@ hud_class `notify_panel` {
 	end;
 		
 	addMessage = function(self, msg, clr)
-		print(#self.messages)
+		-- print(#self.messages)
 		self.messages[#self.messages+1] = gfx_hud_object_add(`ntfmessage`, { parent = self,  position=vec2(0, 0), value = msg, colour = clr, tableid = #self.messages+1})
-		print("Notify created at position "..#self.messages.. " in the table!")
-		print(#self.messages)
+		-- print("Notify created at position "..#self.messages.. " in the table!")
+		-- print(#self.messages)
 	end;
 }
 if ntfpanel ~= nil then safe_destroy(ntfpanel) end
-ntfpanel = gfx_hud_object_add(`notify_panel`, {position=vec2(0, 50)})
+ntfpanel = gfx_hud_object_add(`notify_panel`, {position=vec2(0, 50), parent=hud_bottom_right})
 
 function notify(msg, clr)
 	if type(msg) == "string" then
 		if clr == nil then
-			clr = vec(0.65, 0.65, 0.65)
+			clr = vec(0.9, 0.9, 0.9)
 		end
 		ntfpanel:addMessage(msg, clr)
 	end
