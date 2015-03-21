@@ -404,7 +404,7 @@ if left_toolbar ~= nil then
 	end
 end
 
-left_toolbar = gfx_hud_object_add(`/common/hud/Rect`, {alpha = 0, size=vec(0, 0), position = vec(-35, 0), orientation = 90, parent=debug_layer.consoleButton })
+left_toolbar = gfx_hud_object_add(`/common/hud/Rect`, {alpha = 0, size=vec(0, 0), position = vec(20, -20), orientation = 0, parent=hud_top_left })
 left_toolbar.buttons = {}
 
 left_toolbar.buttons[1] = gfx_hud_object_add(`hud/imagebutton`, {
@@ -469,7 +469,7 @@ if editor_interface.windows.content_browser ~= nil then
 	destroy_all_editor_windows()
 end
 
-editor_interface.windows.content_browser = create_window('Content Browser', vec2(editor_interface_cfg.content_browser.position[1], editor_interface_cfg.content_browser.position[2]), false, vec2(editor_interface_cfg.content_browser.size[1], editor_interface_cfg.content_browser.size[2]), vec2(640, 365), vec2(800, 600))
+editor_interface.windows.content_browser = create_window('Content Browser', vec2(editor_interface_cfg.content_browser.position[1], editor_interface_cfg.content_browser.position[2]), false, vec2(editor_interface_cfg.content_browser.size[1], editor_interface_cfg.content_browser.size[2]), vec2(640, 400), vec2(800, 600))
 include`windows/content_browser.lua`
 editor_interface.windows.event_editor = create_window('Event Editor', vec2(editor_interface_cfg.event_editor.position[1], editor_interface_cfg.event_editor.position[2]), true, vec2(editor_interface_cfg.event_editor.size[1], editor_interface_cfg.event_editor.size[2]), vec2(350, 200), vec2(800, 600))
 editor_interface.windows.level_properties = create_window('Level Properties', vec2(editor_interface_cfg.level_properties.position[1], editor_interface_cfg.level_properties.position[2]), true, vec2(editor_interface_cfg.level_properties.size[1], editor_interface_cfg.level_properties.size[2]), vec2(380, 225), vec2(800, 600))

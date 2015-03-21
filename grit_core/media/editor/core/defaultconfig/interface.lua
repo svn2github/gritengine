@@ -6,7 +6,7 @@ editor_interface_cfg = {
   content_browser   =   {
     opened   = false;
     position = { 0, 0 };
-    size     = { 540, 400 };
+    size     = { 640, 400 };
   };
   event_editor      =   {
     opened   = false;
