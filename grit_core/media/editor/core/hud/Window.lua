@@ -39,6 +39,7 @@ hud_class `window_title_bar` {
         if ev == "+left" and self.inside then
 			self.dragging = true
 			self.draggingPos = mouse_pos_abs - vec2(self.parent.parent.position.x, self.parent.parent.position.y)
+			GED:set_active_window(self.parent.parent)
 		elseif ev == "-left" then
 			self.dragging = false
 			self.draggingPos = vec2(0, 0)

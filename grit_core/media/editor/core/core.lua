@@ -22,6 +22,7 @@ GED = {
     camYaw = 0,
     camPitch = 0,
 
+	currentWindow = currentWindow,
 
     -- holds editor camera position and rotation to get back when stop playing
     camera = {
@@ -93,7 +94,10 @@ function ghost:pickDrive()
 end
 ]]
 
-
+function GED:open_window(wnd)
+    wnd.enabled = true
+	self:set_active_window(wnd)
+end;
 
 function GED:select_obj()
     input_filter_set_cursor_hidden(true)
@@ -250,7 +254,7 @@ end;
 function GED:open_level(level_file)
     
     if level_file == nil then
-        open_level_dialog.enabled = true
+			self:open_window(open_level_dialog)
         return
     end
     
@@ -279,6 +283,7 @@ end;
 function GED:save_current_level_as(name)
     if name == nil then
         save_level_dialog.enabled = true
+		self:open_window(save_level_dialog)
         return
     else
         current_level.file_name = name
@@ -384,35 +389,35 @@ function GED:paste_object()
 end;
 
 function GED:editor_settings()
-    editor_interface.windows.settings.enabled = true
+	self:open_window(editor_interface.windows.settings)
 end;
 
 function GED:open_content_browser()
-    editor_interface.windows.content_browser.enabled = true
+	self:open_window(editor_interface.windows.content_browser)
 end;
 
 function GED:open_event_editor()
-    editor_interface.windows.event_editor.enabled = true
+	self:open_window(editor_interface.windows.event_editor)
 end;
 
 function GED:open_object_properties()
-    editor_interface.windows.object_properties.enabled = true
+	self:open_window(editor_interface.windows.object_properties)
 end;
 
 function GED:open_material_editor()
-    editor_interface.windows.material_editor.enabled = true
+	self:open_window(editor_interface.windows.material_editor)
 end;
 
 function GED:open_level_properties()
-    editor_interface.windows.level_properties.enabled = true
+	self:open_window(editor_interface.windows.level_properties)
 end;
 
 function GED:open_outliner()
-    editor_interface.windows.outliner.enabled = true
+	self:open_window(editor_interface.windows.outliner)
 end;
 
 function GED:open_object_editor()
-    editor_interface.windows.object_editor.enabled = true
+	self:open_window(editor_interface.windows.object_editor)
 end;
 
 function GED:disable_all_windows()
@@ -424,4 +429,16 @@ function GED:disable_all_windows()
     editor_interface.windows.outliner.enabled = false
     editor_interface.windows.settings.enabled = false
     editor_interface.windows.object_editor.enabled = false
+end
+
+function GED:set_active_window(wnd)
+	if self.currentWindow ~= nil and self.currentWindow ~= wnd then
+		self.currentWindow.zOrder = 0
+		self.currentWindow.draggable_area.colour = vec(1, 1, 1)
+		self.currentWindow.window_title.colour = vec(0, 0, 0)
+	end
+	self.currentWindow = wnd
+	wnd.zOrder = 1
+	wnd.draggable_area.colour = vec(1, 0.5, 0)
+	wnd.window_title.colour = vec(1, 1, 1)
 end
