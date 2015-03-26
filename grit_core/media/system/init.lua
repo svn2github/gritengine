@@ -95,11 +95,11 @@ mouse_pos_abs = V_ZERO
 function physics_step (elapsed_secs)
     local _, initial_allocs = get_alloc_stats()
 
-    game_manager:stepUpdate(elapsed_secs)
     object_do_step_callbacks(elapsed_secs)
+    physics_update()
+    game_manager:stepUpdate(elapsed_secs)
     gfx_particle_pump(elapsed_secs)
     do_events(elapsed_secs)
-    physics_update()
 
     local _, final_allocs = get_alloc_stats()
     main.physicsAllocs = final_allocs - initial_allocs
@@ -172,10 +172,6 @@ function main:run (...)
             input_filter_trickle_button(button)
         end
 
-        -- GAME LOGIC (frames)
-        game_manager:frameUpdate(elapsed_secs)
-
-
         -- PHYSICS
         if main.physicsEnabled then
 
@@ -188,6 +184,10 @@ function main:run (...)
                 physics_frame_step(step_size, elapsed_secs)
             end
         end
+
+
+        -- GAME LOGIC (frames)
+        game_manager:frameUpdate(elapsed_secs)
 
 
         -- AUDIO
