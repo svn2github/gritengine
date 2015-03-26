@@ -41,11 +41,9 @@ BaseClass = {
         init = function (persistent)
             local class_name = persistent.className
             local gfxMesh = persistent.gfxMesh or class_name..".mesh"
-            ensure_absolute_path(persistent, gfxMesh)
             persistent:addDiskResource(gfxMesh)
             if persistent.extraResources == nil then return end
             for _,v in ipairs(persistent.extraResources) do
-                ensure_absolute_path(persistent, v)
                 persistent:addDiskResource(v)
             end
         end;
@@ -349,11 +347,6 @@ function top_angled_cam_update(persistent)
     regular_chase_cam_update(persistent)
 end
 
-function ensure_absolute_path(persistent, path)
-    if path:sub(1,1) == '/' then return end
-    error(("Class \"%s\" expected absolute path, did you forget 'r'?  Got \"%s\"."):format(persistent.className, path), 2)
-end
-
 ColClass = extends (BaseClass) {
         camAttachPos = vec(0, 0, 0);
         receiveImpulse = function (persistent, impulse, wpos)
@@ -377,7 +370,6 @@ ColClass = extends (BaseClass) {
         init = function (persistent)
             local class_name = persistent.className
             local colMesh = persistent.colMesh or class_name..".gcol"
-            ensure_absolute_path(persistent, colMesh)
             persistent:addDiskResource(colMesh)
             BaseClass.init(persistent)
         end;
