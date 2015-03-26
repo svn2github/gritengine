@@ -14,8 +14,61 @@ playground = playground or {
 
 material `Long` { diffuseMap = `/common/props/debug/crates/Panel.dds`, normalMap = `/common/props/debug/crates/PanelN.dds`, emissiveMap = `/common/props/debug/crates/PanelE.dds`, emissiveColour={6,6,6} }
 
+PickUpClass = {
+    radius = 1;
+    renderingDistance = 50;
 
-class `Coin` (ColClass) {
+    init = function (self)
+        local class_name = self.className
+        local gfx_mesh = self.gfxMesh or class_name..".mesh"
+        self:addDiskResource(gfx_mesh)
+    end;
+
+    destroy = function (self)
+    end;
+
+    activate = function (self, instance)
+        local class_name = self.className
+        local gfx_mesh = self.gfxMesh or class_name..".mesh"
+
+        instance.angle = 0
+        instance.gfx = gfx_body_make(gfx_mesh)
+        instance.gfx.localPosition = self.spawnPos
+        instance.gfx.enabled = not self.pickedUp
+        self.needsStepCallbacks = not self.pickedUp
+        self:stepCallback(0)
+    end;
+
+    deactivate = function (self)
+        local instance = self.instance
+        self.needsStepCallbacks = false
+        instance.gfx = safe_destroy(instance.gfx)
+
+    end;
+
+    stepCallback = function (self, elapsed_secs)
+        local instance = self.instance
+        -- rotate
+        instance.angle = (instance.angle + (elapsed_secs * 360)) % 360  -- 1 rev per second
+        instance.gfx.localOrientation = quat(instance.angle, V_UP)
+
+        -- test for controllable
+        physics_test(self.radius, self.spawnPos, true, function(body)
+            if self.pickedUp then return end
+            self.pickedUp = true
+            self.instance.gfx.enabled = false
+            self.needsStepCallbacks = false
+            local found_obj = body.owner
+            if found_obj == nil then return end
+            if found_obj == playground.vehicle or found_obj == playground.protagonist then
+                playground:coinPickUp()
+            end
+        end)
+    end;
+}
+
+
+class `Coin` (PickUpClass) {
     
 }
 
@@ -33,6 +86,9 @@ function playground:init()
 
     self.coin = object `Coin` (-49.45975, 5.918219, 1.112) {
     }
+
+    self.coinsPickedUp = 0
+    self.coinsTotal = 1
 
     self.vehicle = nil
     playing_binds.enabled = true
@@ -58,6 +114,7 @@ function playground:init()
     self.debugText2 = gfx_hud_text_add(`/common/fonts/misc.fixed`)
     self.debugText2.text = ''
     self.debugText2.position = vec(100, 85)
+
 end
 
 function playground:mouseMove(rel)
@@ -74,6 +131,10 @@ function playground:mouseMove(rel)
 
     self.lastMouseMoveTime = seconds()
 
+end
+
+function playground:coinPickUp()
+    self.coinsPickedUp = self.coinsPickedUp + 1
 end
 
 function playground:scanForBoard()
