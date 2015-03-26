@@ -283,9 +283,10 @@ hud_class `MenuBar` {
 	selecting = false;
 	spacing = 1;
 	texture = `../icons/menubar.png`;
+	
     init = function (self)
         self.needsParentResizedCallbacks = true
-		-- self.needsInputCallbacks = true
+		self.needsInputCallbacks = true
         self.buttons = {}
 
 		self.leftPositioner = gfx_hud_object_add(`/common/hud/Positioner`, {
@@ -324,14 +325,14 @@ hud_class `MenuBar` {
 			caption = name;
 			padding = self.buttonPadding;
 			borderTexture = `/common/hud/CornerTextures/SquareBorderWhite.png`;
-			parent=self.leftPositioner;
+			parent = self.leftPositioner;
 		})
 		--self.buttons[#self.buttons].border.enabled = false
 		self.buttons[#self.buttons].border.alpha = 0.5
-		self.buttons[#self.buttons].position=vec2(self.lastButton + (self.buttons[#self.buttons].size.x/2), 0)
+		self.buttons[#self.buttons].position = vec2(self.lastButton + (self.buttons[#self.buttons].size.x/2), 0)
 		self.lastButton = self.lastButton + self.buttons[#self.buttons].size.x + self.spacing
 		obj.parent = self.buttons[#self.buttons]
-		obj.position=vec2(obj.size.x/2 - self.buttons[#self.buttons].size.x/2, - self.buttons[#self.buttons].size.y/2 - obj.size.y/2)
+		obj.position = vec2(obj.size.x/2 - self.buttons[#self.buttons].size.x/2, - self.buttons[#self.buttons].size.y/2 - obj.size.y/2)
 		obj.enabled = false
 	end;
 
@@ -350,21 +351,21 @@ hud_class `MenuBar` {
 	end;
 
 	-- -- used to hide menu when click out (doesn't work)
-    -- buttonCallback = function (self, ev)
-		-- if self.selected == nil then return end
-		-- if ev == "+left" and self.inside == false and self.selected.menu.inside == false then
-            -- self.selecting = false
-			-- self.selected.menu.enabled = false
-        -- end
-    -- end;
-	
     buttonCallback = function (self, ev)
-		if ev == "+left"  then
-			self.selecting = false
-			if self.selected ~= nil then
-				self.selected.menu.enabled = false
-			end
+		if self.selected == nil then return end
+		if ev == "+left" and not mouse_inside_any_menu() then
+            self.selecting = false
+			self.selected.menu.enabled = false
         end
-    end;	
+    end;
+	
+    -- buttonCallback = function (self, ev)
+		-- if ev == "+left"  then
+			-- self.selecting = false
+			-- if self.selected ~= nil then
+				-- self.selected.menu.enabled = false
+			-- end
+        -- end
+    -- end;	
 	
 }
