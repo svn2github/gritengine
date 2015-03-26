@@ -9,6 +9,16 @@ playground = playground or {
     lastMouseMoveTime = 0;
 }
 
+
+-- TODO(dcunnin): delete this when we have a proper coin class
+
+material `Long` { diffuseMap = `/common/props/debug/crates/Panel.dds`, normalMap = `/common/props/debug/crates/PanelN.dds`, emissiveMap = `/common/props/debug/crates/PanelE.dds`, emissiveColour={6,6,6} }
+
+
+class `Coin` (ColClass) {
+    
+}
+
     
 function playground:init()
     include `img/placement.lua`
@@ -19,6 +29,9 @@ function playground:init()
     }
 
     object `/vehicles/Scarman` (-49.45975, 9.918219, 1.112) {
+    }
+
+    self.coin = object `Coin` (-49.45975, 5.918219, 1.112) {
     }
 
     self.vehicle = nil
@@ -235,8 +248,12 @@ function playground:stepCallback(elapsed_secs)
 
     main.camQuat = quat(self.camYaw, V_DOWN) * quat(self.camPitch, V_EAST)
 
-    local ray_len = cam_box_ray(instance.camAttachPos, main.camQuat, instance.boomLengthSelected, main.camQuat*V_BACKWARDS, body)
-    local boom_length = math.max(obj.boomLengthMin, ray_len)
+    local ray_skip = 0.4
+    local ray_dir = main.camQuat * V_BACKWARDS
+    local ray_start = instance.camAttachPos + ray_skip * ray_dir
+    local ray_len = instance.boomLengthSelected - ray_skip
+    local ray_hit_len = cam_box_ray(ray_start, main.camQuat, ray_len, ray_dir, body)
+    local boom_length = math.max(obj.boomLengthMin, ray_hit_len)
     main.camPos = instance.camAttachPos + main.camQuat * vector3(0, -boom_length, 0)
     main.streamerCentre = instance.camAttachPos
     main.audioCentrePos = main.camPos
