@@ -60,10 +60,15 @@ main = {
 }
 
 function yaw_angle(q)
-    local dir = q * V_FORWARDS
-    local v = dir.xy
-    if #v < 0.1 then return 0 end
-    return math.deg(math.atan2(v.x, v.y))
+    local dir1 = q * V_FORWARDS
+    local dir2 = q * V_UP
+    local v1 = dir1.xy
+    local v2 = dir2.xy
+    if #v1 < 0.5 then
+        return math.deg(math.atan2(v2.x, v2.y))
+    else
+        return math.deg(math.atan2(v1.x, v1.y))
+    end
 end
 
 function cam_yaw_angle()
