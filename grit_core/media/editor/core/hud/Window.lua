@@ -9,7 +9,7 @@ hud_class `window_title_bar` {
 	draggingPos = vec2(0, 0);
 
 	cornered=true;
-	texture=`/common/hud/CornerTextures/Filled04.png`;
+	texture=`/editor/core/icons/titlebar.png`;
 	
 	init = function (self)
 		self.needsFrameCallbacks = true
@@ -109,7 +109,7 @@ hud_class `window_border` {
 	
 	parentResizedCallback = function(self, psize)
 		if self.parent ~= nil then
-			self.size = vec2(self.parent.size.x + self.parent.borderSize, self.parent.size.y + self.parent.borderSize)
+			self.size = vec2(self.parent.size.x, self.parent.size.y)
 		end
 	end;
 }
@@ -121,9 +121,9 @@ hud_class `Window` {
 	resizeable = true;
 	title = "Window";
 	min_size = vec2(150, 150);
-	size=vec2(512, 400);
-	colour=vector3(0, 0.5, 1);
-	borderSize=2;
+	size = vec2(512, 400);
+	colour = vector3(0, 0.5, 1);
+	borderSize = 2;
 
 	init = function (self)
 		self.needsFrameCallbacks = false;
@@ -144,7 +144,7 @@ hud_class `Window` {
 			size = vec2(self.size.x, 24);
 			colour = vector3(1, 1, 1);
 			zOrder = 2;
-			alpha=0.7;
+			alpha=0.8;
 		})
 
 		self.close_btn = gfx_hud_object_add(`/common/hud/Button`, {				
@@ -192,12 +192,12 @@ hud_class `Window` {
 		self:setTitle(self.title)
 
 		self.border = gfx_hud_object_add(`window_border`, {
-			size = vec2(self.size.x + self.borderSize, self.size.y + self.borderSize);
+			size = vec2(self.size.x, self.size.y);
 			colour=vector3(0.6, 0.6, 0.6);
 			alpha=1;
 			parent= self;
 			cornered=true;
-			texture=`/common/hud/CornerTextures/Border04.png`;
+			texture=`/editor/core/icons/window_border.png`;
 		})
 		
 		self.titleBarPositioner = gfx_hud_object_add(`/common/hud/Positioner`, {
