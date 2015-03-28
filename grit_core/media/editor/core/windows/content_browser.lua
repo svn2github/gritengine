@@ -83,7 +83,7 @@ hud_class `browser_icon2` {
     end;
 
     pressedCallback = function (self)
-        print "Button has no associated action."
+
     end;
 	
 	doubleClick = function(self)

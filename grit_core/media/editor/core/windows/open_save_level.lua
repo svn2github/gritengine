@@ -93,7 +93,7 @@ hud_class `window_button` {
     end;
 
     pressedCallback = function (self)
-        print "Button has no associated action."
+
     end;
 
 }
@@ -165,7 +165,7 @@ hud_class `image_button` {
     end;
 
     pressedCallback = function (self)
-        print "Button has no associated action."
+
     end;
 }
 
@@ -250,7 +250,7 @@ hud_class `window_editbox` {
     end;
 
 	enterCallback = function(self)
-		-- print("")
+
 	end;
 	
 	
@@ -432,7 +432,7 @@ hud_class `browser_icon` {
     end;
 
     pressedCallback = function (self)
-        print "Button has no associated action."
+
     end;
 	
 	doubleClick = function(self)
