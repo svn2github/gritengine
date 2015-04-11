@@ -6,6 +6,7 @@ include `line.lua`
 
 include `stack.lua`
 
+include `LoadingScreen/init.lua`
 include `Button/init.lua`
 include `label.lua`
 include `editbox.lua`
@@ -24,6 +25,14 @@ include `stats.lua`
 
 include `MusicPlayer/init.lua`
 
+-- Loading Screen
+
+if loading_screen ~= nil then
+    loading_screen:destroy()
+end
+loading_screen = gfx_hud_object_add(`LoadingScreen`, { zOrder=14})
+loading_screen.enabled = false
+
 -- Ticker
 local buffer
 local other_buffer
@@ -32,7 +41,7 @@ if ticker ~= nil then
     other_buffer = ticker.timeBuffer
     safe_destroy(ticker)
 end
-ticker = gfx_hud_object_add(`console/Ticker`, {buffer=buffer, timeBuffer=other_buffer, shadow=vec(1,-1), zOrder=5})
+ticker = gfx_hud_object_add(`console/Ticker`, {buffer=buffer, timeBuffer=other_buffer, shadow=vec(1,-1), zOrder=10})
 ticker.enabled = false
 
 -- Console
@@ -47,7 +56,7 @@ else
 end
 console = gfx_hud_object_add(`console/Console`, {buffer=buffer, cmdBuffer=other_buffer, shadow=vec(1,-1)})
 console_frame = gfx_hud_object_add(`Stretcher`, {
-    child=console, zOrder=7, position=vec(500, 300);
+    child=console, zOrder=15, position=vec(500, 300);
     calcRect = function (self, psize)
         return 40, psize.y * 0.6, psize.x, psize.y
     end;
@@ -61,7 +70,7 @@ if menu ~= nil then
     buffer = menu.enabled
     safe_destroy(menu)
 end
-menu = gfx_hud_object_add(`menu/Main`, {zOrder=5})
+menu = gfx_hud_object_add(`menu/Main`, {zOrder=14})
 menu.enabled = (buffer or false)
 
 -- Crosshair

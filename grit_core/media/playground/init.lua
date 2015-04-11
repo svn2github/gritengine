@@ -74,12 +74,20 @@ class `Coin` (PickUpClass) {
 
     
 function playground:init()
+    loading_screen.enabled = true
+    loading_screen:setProgress(0)
+    loading_screen:setMapName('Playground')
+    loading_screen:setStatus('Background loading resources...')
+    loading_screen:pump()
+
     include `img/placement.lua`
     include `img/placement_veg.lua`
 
     self.protagonist = object `/detached/characters/robot_med` (-53.45975, 9.918219, 1.112) {
         rot=quat(-0.3363351, 0, 0, 0.9417424)
     }
+
+    local pos = self.protagonist.spawnPos
 
     object `/vehicles/Scarman` (-49.45975, 9.918219, 1.112) {
     }
@@ -97,10 +105,6 @@ function playground:init()
 
     self.protagonist:activate()
 
-    main.physicsEnabled = true
-
-    playing_binds.mouseCapture = true
-
     main.camQuat = Q_ID
     main.audioCentreVel = vec(0, 0, 0);
     main.audioCentreQuat = quat(1, 0, 0, 0);
@@ -114,6 +118,33 @@ function playground:init()
     self.debugText2 = gfx_hud_text_add(`/common/fonts/misc.fixed`)
     self.debugText2.text = ''
     self.debugText2.position = vec(100, 85)
+
+    streamer_centre_full(pos)
+
+    local to_go = get_in_queue_size()
+    local init_to_go = to_go
+    while to_go > 0 do
+        to_go = get_in_queue_size()
+        loading_screen:setProgress((init_to_go - to_go) / init_to_go)
+        loading_screen:pump()
+    end
+    loading_screen:setProgress(1)
+    loading_screen:setStatus('Activating objects')
+    loading_screen:pump()
+    streamer_centre_full(pos)
+
+    main.physicsEnabled = true
+
+    playing_binds.mouseCapture = true
+
+    self:mouseMove(vec(0,0))
+    self:stepCallback(0)
+    self:frameCallback(0)
+
+    loading_screen:setStatus('All done')
+    loading_screen:pump()
+
+    loading_screen.enabled = false
 
 end
 

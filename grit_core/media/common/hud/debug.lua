@@ -5,7 +5,7 @@ hud_class `DebugLayer` {
     buttonDescs = { };
     colour = vec(0.1, 0.1, 0.1);
     buttonPadding = vec(16, 4);
-    zOrder = 6;
+    zOrder = 15;
 
     init = function (self)
         self.needsParentResizedCallbacks = true

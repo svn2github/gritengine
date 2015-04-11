@@ -36,8 +36,8 @@ game_manager = {
         end
         core_option("FOREGROUND_WARNINGS", false)
         self.currentMode = new_mode
-        new_mode:init();
         menu:setEnabled(false)
+        new_mode:init();
         core_option("FOREGROUND_WARNINGS", true)
     end;
 
