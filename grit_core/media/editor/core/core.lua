@@ -173,6 +173,7 @@ function GED:destroy_all_editor_objects()
 end;
 
 function GED:play()
+	game_manager:enter('fpsgame')
 end;
 
 function is_inside_window(window)

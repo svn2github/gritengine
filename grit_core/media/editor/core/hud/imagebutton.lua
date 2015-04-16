@@ -48,10 +48,12 @@ hud_class `imagebutton` {
 					self:pressedCallback()
 				end
 			end
-            self.dragging = false
-			
-			if not self.selected then
-				self.colour = self.defaultColour
+			if not self.destroyed then -- if pressed callback destroy itself
+				self.dragging = false
+				
+				if not self.selected then
+					self.colour = self.defaultColour
+				end
 			end
         end
     end;

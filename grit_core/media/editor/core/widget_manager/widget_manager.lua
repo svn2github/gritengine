@@ -128,7 +128,7 @@ function widget_manager:set_mode(mode)
 end
 
 function widget_manager:unselect()
-	if self.selectedObj.instance ~= nil then
+	if self.selectedObj ~= nil and self.selectedObj.instance ~= nil then
 		self.selectedObj.instance.gfx.wireframe = false
 	end
 	editor_interface.statusbar.selected.text = "None"

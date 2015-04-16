@@ -17,6 +17,8 @@ safe_include `defaultconfig/recent.lua`
 -- [dcunnin] We should put all this stuff in /common, thereby building a reusable asset library.
 include `defaultmap/init.lua`
 
+include`default_game_mode.lua`
+
 include `widget_manager/init.lua`
 include `GritLevel/init.lua`
 include `directory_list.lua`
@@ -55,7 +57,9 @@ editor = {
         main.audioCentreVel = vec(0, 0, 0);
         main.audioCentreQuat = quat(1, 0, 0, 0);
 
-        GED:new_level()
+		if not next(object_all()) then
+			GED:new_level()
+		end
 
         GED:set_widget_mode(1)
         widget_menu[1]:select(true)
@@ -65,7 +69,10 @@ editor = {
             │  Welcome to Grit Editor! (v0.001)  │
             ╰────────────────────────────────────╯
         ]])
-		notify("Object manipulation is broken, we are working on it", vec(1, 0, 0))
+		notify("The editor is very unstable, we are working on it", vec(1, 0, 0))
+		-- TEMPORARY
+		main.physicsEnabled = true
+		ticker.enabled=false
     end;
 
     frameCallback = function (self, elapsed_secs)
@@ -79,8 +86,8 @@ editor = {
     end;
 
     destroy = function (self)
-        object_all_del()
-
+		widget_manager:unselect()
+		
         GED:save_editor_interface()
         -- current_level = nil
         -- if level ~= nil then
@@ -98,15 +105,10 @@ editor = {
         destroy_all_editor_menus()		
         destroy_all_editor_windows()
         
+		GED.currentWindow = nil
+		
         safe_destroy(left_toolbar)
         left_toolbar = nil
-        
-        -- gizmo_cb:stop()	
-        -- gizmo = nil
-        -- gizmo_resize = nil
-        -- destroy_gizmo = nil
-        -- create_gizmo = nil
-        -- gizmo_fade = nil
     end;
 }
     
