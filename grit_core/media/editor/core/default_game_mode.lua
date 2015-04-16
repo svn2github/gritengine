@@ -45,6 +45,12 @@ function fpsgame:init()
     self.camYaw = 90;
     self.camPitch = 0;
     self.playerCamPitch = 0;  -- Without vehicle pitch offset
+	notify("WASD = move, X = toggle third/first person camera", rgb(0, 0, 0))
+	
+	ch.enabled = true
+	stats.enabled = true
+	self.defaultFOV = gfx_option("FOV")
+	gfx_option("FOV", 60)
 end;
 
 function fpsgame:mouseMove(rel)
@@ -88,9 +94,9 @@ function fpsgame:receiveButton(button, state)
     elseif button == 'walkCrouch' then
         prot:setCrouch(pressed)
     elseif button == 'walkZoomIn' then
-        self:prevWeapon() 
+        self:toggleCamera()
     elseif button == 'walkZoomOut' then
-        self:nextWeapon() 
+        self:toggleCamera()
     elseif button == 'walkCamera' then
         self:toggleCamera()
     elseif button == 'driveForwards' then    
@@ -164,6 +170,8 @@ function fpsgame:destroy()
     playing_actor_binds:unbind("x")
 	self.player1:destroy()
 	self.player1 = nil
+	ch.enabled = false
+	stats.enabled = false
 end;
 
 game_manager:define("fpsgame", fpsgame)

@@ -274,8 +274,8 @@ local default_user_editor_core_bindings = {
     strafeLeft = "a";
     strafeRight = "d";
     ascend = "Space";
-    descend = "Shift";
-    -- TODO: need some way of going faster
+	descend = "Ctrl";
+	faster = "Shift";
 }
 
 local default_user_editor_edit_bindings = {

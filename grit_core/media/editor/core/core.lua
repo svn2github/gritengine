@@ -104,7 +104,7 @@ function GED:select_obj()
     widget_manager:select(true)
 end;
 
-function GED:unselect_obj()
+function GED:stop_dragging_obj()
     input_filter_set_cursor_hidden(false)
     widget_manager:select(false)
 end;
@@ -173,7 +173,11 @@ function GED:destroy_all_editor_objects()
 end;
 
 function GED:play()
-	game_manager:enter('fpsgame')
+	if current_level.game_mode ~= nil and current_level.game_mode ~= "" then
+		game_manager:enter(current_level.game_mode)
+	else
+		game_manager:enter('fpsgame')
+	end
 end;
 
 function is_inside_window(window)
@@ -233,11 +237,14 @@ function GED:generate_env_cube(pos)
     current_level:generate_env_cube(pos)
 end;
 
-function GED:new_level()
+function GED:new_level(ndestroyobjs)
     include `edenv.lua`  -- [dcunnin] why not system/env_cycle.lua ?
     env_recompute()
-    object_all_del()
-
+	
+	-- ndestroyobjs = doesn't destroy current objects
+	if not ndestroyobjs then
+		object_all_del()
+	end
     -- destroy old editor objects
     local remaining_editor_objects = object_all()
     for i = 1, #remaining_editor_objects do

@@ -6,7 +6,6 @@ level = {
 	name = 'DefaultMap';
 	author = '';
 	description = 'Default Grit Editor Map';
-	game_mode = 'detached_game';
 
 	env_cube = '';
 	env_cube_dawn = '';
@@ -14,13 +13,8 @@ level = {
 	env_cube_dusk = '';
 	env_cube_dark = '';
 
-	time = 47437.829335;
+	time = 47490.008599;
 	clock_rate = 0;
-
-	spawn = {
-		pos = vector3(0, 0, 0);
-		rot = quat(1, 0, 0, 0);
-	};
 };
 
 level.include = {
@@ -309,6 +303,17 @@ env_cycle = { {
 } }
 
 level.map = function()
-object "/editor/core/defaultmap/Terrain" (vector3(27.93775, 2.882975, -0.05617142)) {rot=quat(1, 0, 0, 0), name="Unnamed:/editor/core/defaultmap/Terrain:1" }
-object "/editor/core/defaultmap/Cube" (vector3(0, 0, -3.738553)) {rot=quat(1, 0, 0, 0), name="floor" }
+object "/editor/core/defaultmap/Terrain" (vector3(27.93775, 2.882975, -5.880655)) {rot=quat(1, 0, 0, 0), name="Unnamed:/editor/core/defaultmap/Terrain:1" }
+object "/editor/core/defaultmap/Cube" (vector3(0, 0, -9.417662)) {rot=quat(1, 0, 0, 0), name="floor" }
 end;
+
+if in_editor ~= nil then
+	-- Editor level definitions:
+	level.cam_pos = vector3(-18.311773300171, -25.027969360352, 14.23138999939)
+	level.cam_dir = quat(0.89072519540787, -0.12629318237305, 0.061297431588173, -0.43232080340385)
+
+	level.events = {
+		
+	};
+end
+	

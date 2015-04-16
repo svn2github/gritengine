@@ -34,9 +34,10 @@ function editor_receive_button(button, state)
     if state == "-" then on_off = 0 end
 
     if button == "debug" then
-        Ged:play()
+        if state == '+' then
+			GED:play()
+        end
             -- must toggle between that and GED:return_editor() 
-
     elseif button == "forwards" then
         GED.forwards = on_off
 
@@ -51,10 +52,14 @@ function editor_receive_button(button, state)
 
     elseif button == "ascend" then
         GED.ascend = on_off
-
     elseif button == "descend" then
         GED.descend = on_off
-
+    elseif button == "faster" then
+        if state == '+' then
+			GED.fast = true
+        elseif state == '-' then
+			GED.fast = false
+        end
     elseif button == "delete" then
         GED:delete_selection()
 
@@ -91,7 +96,7 @@ function editor_receive_button(button, state)
                 end
             end
         elseif state == '-' then
-            GED:unselect_obj()  -- isn't actually unselect, but just stop dragging
+            GED:stop_dragging_obj()
         end
 
     end

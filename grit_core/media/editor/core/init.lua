@@ -56,11 +56,13 @@ editor = {
         main.audioCentrePos = vec(0, 0, 0);
         main.audioCentreVel = vec(0, 0, 0);
         main.audioCentreQuat = quat(1, 0, 0, 0);
-
-		if not next(object_all()) then
-			GED:new_level()
+		-- TODO: user select if want to open a default map or not
+		if true and not next(object_all()) then
+			GED:open_level(`/editor/core/defaultmap/defaultmap.lvl`)
+		else
+			GED:new_level(next(object_all()))
 		end
-
+		
         GED:set_widget_mode(1)
         widget_menu[1]:select(true)
 

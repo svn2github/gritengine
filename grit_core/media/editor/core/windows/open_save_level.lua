@@ -922,6 +922,9 @@ save_level_dialog.save_selected_level = function()
 		if save_level_dialog.file_edbox.value:sub(-4) == ".lvl" or save_level_dialog.file_edbox.value:sub(-4) == ".lua" then
 			GED:save_current_level_as(fcdir..save_level_dialog.file_edbox.value)
 			save_level_dialog.enabled = false
+		elseif save_level_dialog.file_edbox.value ~= "" then
+			GED:save_current_level_as(fcdir..save_level_dialog.file_edbox.value..selext)
+			save_level_dialog.enabled = false			
 		end
 	elseif save_level_dialog.file_explorer.selected ~= nil and save_level_dialog.file_explorer.selected.type == "folder" then
 		save_level_dialog.file_explorer.selected:doubleClick()

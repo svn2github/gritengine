@@ -34,6 +34,8 @@ hud_class `.` {
         self.flare[7] = gfx_hud_object_add(`/common/hud/Rect`, {texture=`Flare1.png`, needsAlpha = true, size=vec(2048, 256), parent = self})	
 		
         self.flare[8] = gfx_hud_object_add(`/common/hud/Rect`, {texture=`Flare0.png`, size=self.size, parent = self})
+		self.flare[0].enabled =false
+		self.flare[1].enabled =false
 		self.flare[2].enabled =false
 		self.flare[4].enabled =false
 		self.flare[5].enabled =false
