@@ -3,7 +3,7 @@
 hud_class `ntfmessage` {
 	alpha = 0.7;
 	size = vec(100, 30);
-	colour = vec(1, 0, 0);
+	colour = vec(0.9, 0.9, 0.9);
 	cornered = true;
 	texture=`/common/hud/CornerTextures/Filled04.png`;
 	tableid = 0;
@@ -12,15 +12,20 @@ hud_class `ntfmessage` {
 	currenttime = 0;
 	
 	init = function (self)
-		self.text = gfx_hud_text_add(`/common/fonts/Arial12`)
+		self.text = gfx_hud_text_add(`/common/fonts/Verdana12`)
 		self.text.parent = self
 		self.text.text = self.value
 		
-		if self.colour.x + self.colour.y + self.colour.z >= 1.5 then
-			self.text.colour = vec(0, 0, 0)
+		if self.text_colour ~= nil then
+			self.text.colour = self.text_colour
 		else
-			self.text.colour = vec(1, 1, 1)
+			if self.colour.x + self.colour.y + self.colour.z >= 1.5 then
+				self.text.colour = vec(0, 0, 0)
+			else
+				self.text.colour = vec(1, 1, 1)
+			end
 		end
+		
 		self.size = vec(self.text.size.x + 20, self.size.y)
 		self.position = vec(self.size.x/2, 0)
 
@@ -35,8 +40,9 @@ hud_class `ntfmessage` {
 	
 	destroy = function (self)
 		self.needsFrameCallbacks = false
-		table.remove(ntfpanel.messages, self.tableid)
-		self.moveTableIdsDown()
+		--table.remove(ntfpanel.messages, self.tableid)
+		--self.moveTableIdsDown()
+		ntfpanel.messages[self.tableid] = nil
 		self:destroy()
 	end;
 	
@@ -69,19 +75,19 @@ hud_class `notify_panel` {
 		self:destroy()
 	end;
 		
-	addMessage = function(self, msg, clr)
-		self.messages[#self.messages+1] = gfx_hud_object_add(`ntfmessage`, { parent = self,  position=vec2(0, 0), value = msg, colour = clr, tableid = #self.messages+1})
+	addMessage = function(self, msg, clr, text_clr)
+		self.messages[#self.messages+1] = gfx_hud_object_add(`ntfmessage`, { parent = self,  position=vec2(0, 0), value = msg, colour = clr, text_colour = text_clr, tableid = #self.messages+1})
 	end;
 }
 
 if ntfpanel ~= nil then safe_destroy(ntfpanel) end
 ntfpanel = gfx_hud_object_add(`notify_panel`, { position = vec2(0, 50), parent = hud_bottom_right })
 
-function notify(msg, clr)
+function notify(msg, clr, text_clr)
 	if type(msg) == "string" then
 		if clr == nil then
-			clr = vec(0.9, 0.9, 0.9)
+			clr = rgb(0.9, 0.9, 0.9)
 		end
-		ntfpanel:addMessage(msg, clr)
+		ntfpanel:addMessage(msg, clr, text_clr)
 	end
 end
