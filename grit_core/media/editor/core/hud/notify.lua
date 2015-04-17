@@ -86,7 +86,7 @@ ntfpanel = gfx_hud_object_add(`notify_panel`, { position = vec2(0, 50), parent =
 function notify(msg, clr, text_clr)
 	if type(msg) == "string" then
 		if clr == nil then
-			clr = rgb(0.9, 0.9, 0.9)
+			clr = vec(0.9, 0.9, 0.9)
 		end
 		ntfpanel:addMessage(msg, clr, text_clr)
 	end
