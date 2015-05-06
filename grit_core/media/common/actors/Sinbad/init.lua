@@ -90,12 +90,12 @@ class `.` {} {
     end;
 }   
 
-material `Body` { blendedBones=4, diffuseMap=`Body.tga`, shadowBias=0.15 }
-material `Gold` { blendedBones=3, diffuseMap=`Clothes.tga`, shadowBias=0.05 }
-material `Sheaths` { blendedBones=1, diffuseMap=`Sword.tga`, shadowBias=0.05 }
-material `Clothes` { blendedBones=4, diffuseMap=`Clothes.tga`, shadowBias=0.05 }
-material `Teeth` { blendedBones=3, diffuseMap=`Body.tga`, shadowBias=0.05 }
-material `Eyes` { blendedBones=1, diffuseMap=`Body.tga`, shadowBias=0.05 }
-material `Spikes` { blendedBones=1, diffuseMap=`Clothes.tga`, shadowBias=0.05 }
+material `Body` { blendedBones=4, diffuseMap=`Body.tga`, shadowBias=0.15, specularMask=0, glossMask=0 }
+material `Gold` { blendedBones=3, diffuseMap=`Clothes.tga`, shadowBias=0.05, specularMask=0, glossMask=0 }
+material `Sheaths` { blendedBones=1, diffuseMap=`Sword.tga`, shadowBias=0.05, specularMask=0, glossMask=0 }
+material `Clothes` { blendedBones=4, diffuseMap=`Clothes.tga`, shadowBias=0.05, specularMask=0, glossMask=0 }
+material `Teeth` { blendedBones=3, diffuseMap=`Body.tga`, shadowBias=0.05, specularMask=0, glossMask=0 }
+material `Eyes` { blendedBones=1, diffuseMap=`Body.tga`, shadowBias=0.05, specularMask=0, glossMask=0 }
+material `Spikes` { blendedBones=1, diffuseMap=`Clothes.tga`, shadowBias=0.05, specularMask=0, glossMask=0 }
 
 env.clockRate = 1
