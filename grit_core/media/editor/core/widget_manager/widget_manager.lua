@@ -179,7 +179,7 @@ function widget_manager:select(mode)
 						self.objInitialOrientation = self.widget.instance.pivot.localOrientation
 					end
 					-- self.objinitpos = self.widget.instance.pivot.localPosition
-					
+					input_filter_set_cursor_hidden(true)
 				elseif self.selectedObj.instance ~= nil and self.selectedObj ~= self.lastobj then
 					self.selectedObj.instance.gfx.wireframe = false
 					self.selectedObj = self.lastobj

@@ -1,4 +1,5 @@
 include `gui.lua`
+include `tip.lua`
 include `imagebutton.lua`
 include `listedit.lua`
 include `menubar.lua`
@@ -9,3 +10,6 @@ include `rollbar.lua`
 include `notify.lua`
 include `draggable.lua`
 include `connect_line.lua`
+include `boxsizer.lua`
+include `object_list.lua`
+include `notebook.lua`

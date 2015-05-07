@@ -15,9 +15,9 @@ end
 -- Create the menu bar
 editor_interface.menubar = gfx_hud_object_add(`hud/MenuBar`, {
 	parent=hud_top_left;
-	--colour=vector3(0.15, 0.15, 0.15);
+	colour=GED.currentTheme.colours.menu_bar.background;
 	size=vec(20, 26);
-	alpha=0.75;
+	alpha=GED.currentTheme.colours.menu_bar.background_alpha;
 })
 
 editor_interface.menus = {}
@@ -37,27 +37,27 @@ editor_interface.menus.fileMenu = gfx_hud_object_add(`hud/menu`, {
 	items = {
 		{
 			callback = function()
-				GED:new_level()
+				GED:newLevel()
 			end;
 			name = "New";
 			tip = "Creates a new level";
 			icon=`icons/new.png`;
 		},
 		{
-			callback = function() GED:open_level() end;
+			callback = function() GED:openLevel() end;
 			name = "Open";
 			tip = "Open a level";
 			icon=`icons/open.png`;
 		},
 		{}, -- adds a separator
 		{
-			callback = function() GED:save_current_level() end;
+			callback = function() GED:saveCurrentLevel() end;
 			name = "Save";
 			tip = "Save the current level";
 			icon=`icons/save.png`;
 		},
 		{
-			callback = function() GED:save_current_level_as() end;
+			callback = function() GED:saveCurrentLevelAs() end;
 			name = "Save As";
 			tip = "Save as the current level";
 			icon=`icons/save_as.png`;
@@ -91,35 +91,35 @@ editor_interface.menus.editMenu = gfx_hud_object_add(`hud/menu`, {
 		},
 		{}, -- adds a separator
 		{
-			callback = function() GED:cut_object() end;
+			callback = function() GED:cutObject() end;
 			name = "Cut";
 			tip = "Cut selected object";
 		},
 		{
-			callback = function() GED:copy_object() end;
+			callback = function() GED:copyObject() end;
 			name = "Copy";
 			tip = "Copy selected object";
 		},
 		{
-			callback = function() GED:paste_object() end;
+			callback = function() GED:pasteObject() end;
 			name = "Paste";
 			tip = "Paste object";
 		},
 		{
-			callback = function() if GED.selection ~= nil then GED:duplicate_selection() end end;
+			callback = function() if GED.selection ~= nil then GED:duplicateSelection() end end;
 			name = "Duplicate";
 			tip = "Duplicate current selection";
 		},
 		{}, -- adds a separator
 		{
-			callback = function() GED:generate_env_cube(vec(0, 0, 0)) end;
+			callback = function() GED:generateEnvCube(vec(0, 0, 0)) end;
 			name = "Gen Env Cubes";
 			tip = "Generate and apply env cube";
 			icon=`icons/solid.png`;
 		},	
 		{}, -- adds a separator
 		{
-			callback = function() GED:editor_settings() end;
+			callback = function() GED:editorSettings() end;
 			name = "Editor Settings";
 			tip = "Open Editor Settings";
 			icon=`icons/config.png`;
@@ -141,7 +141,7 @@ editor_interface.menus.viewMenu = gfx_hud_object_add(`hud/menu`, {
 		{}, -- adds a separator
 		{
 			callback = function(self)
-				GED:open_content_browser()
+				GED:openContentBrowser()
 			end;
 			name = "Content browser";
 			tip = "Open Content Browser window";
@@ -149,37 +149,37 @@ editor_interface.menus.viewMenu = gfx_hud_object_add(`hud/menu`, {
 		},
 		
 		{
-			callback = function() GED:open_event_editor() end;
+			callback = function() GED:openEventEditor() end;
 			name = "Event Editor";
 			tip = "Open Event Editor window";
 			icon=`icons/event_editor.png`;
 		},
 		{
-			callback = function() GED:open_object_properties() end;
+			callback = function() GED:openObjectProperties() end;
 			name = "Object Properties";
 			tip = "Open Object Properties window";
 			icon=`icons/properties.png`;
 		},
 		{
-			callback = function() GED:open_material_editor() end;
+			callback = function() GED:openMaterialEditor() end;
 			name = "Material Editor";
 			tip = "Open Material Editor window";
 			icon=`icons/material_editor.png`;
 		},
 		{
-			callback = function() GED:open_level_properties() end;
+			callback = function() GED:openLevelProperties() end;
 			name = "Level properties";
 			tip = "Open Level Properties window";
 			icon=`icons/level_config.png`;
 		},
 		{
-			callback = function() GED:open_outliner() end;
+			callback = function() GED:openOutliner() end;
 			name = "Outliner";
 			tip = "Open Outliner window";
 			icon=`icons/properties.png`;
 		},		
 		-- {
-			-- callback = function() GED:open_object_editor() end;
+			-- callback = function() GED:openObjectEditor() end;
 			-- name = "Object Editor";
 			-- tip = "Open object editor window";
 			-- icon=`icons/object_editor.png`;
@@ -237,7 +237,7 @@ editor_interface.menus.gameMenu = gfx_hud_object_add(`hud/menu`, {
 		},		
 		{}, -- adds a separator
 		{
-			callback = function() GED:run_game() end;
+			callback = function() GED:runGame() end;
 			name = "Run game";
 			tip = "Run game in a new window";
 			icon=`icons/play.png`;
@@ -310,32 +310,32 @@ editor_interface.toolbar = gfx_hud_object_add(`hud/ToolBar`, {
 
 -- Add tools to the tool bar
 -- addTool(Name, texture, callback, tip)
-editor_interface.toolbar:addTool("New", `icons/new.png`, (function(self) GED:new_level() end), "Create new level")
-editor_interface.toolbar:addTool("Open", `icons/open.png`, (function(self) GED:open_level() end), "")
-editor_interface.toolbar:addTool("Save", `icons/save.png`, (function(self) GED:save_current_level() end), "")
-editor_interface.toolbar:addTool("Save As", `icons/save_as.png`, (function(self) GED:save_current_level_as() end), "")
+editor_interface.toolbar:addTool("New", `icons/new.png`, (function(self) GED:newLevel() end), "Create new level")
+editor_interface.toolbar:addTool("Open", `icons/open.png`, (function(self) GED:openLevel() end), "Open Level")
+editor_interface.toolbar:addTool("Save", `icons/save.png`, (function(self) GED:saveCurrentLevel() end), "Save Current Level")
+editor_interface.toolbar:addTool("Save As", `icons/save_as.png`, (function(self) GED:saveCurrentLevelAs() end), "Save Level As")
 editor_interface.toolbar:addSeparator()
-editor_interface.toolbar:addTool("Undo", `icons/undo.png`, (function(self) GED:undo() end), "")
-editor_interface.toolbar:addTool("Redo", `icons/redo.png`, (function(self) GED:redo() end), "")
+editor_interface.toolbar:addTool("Undo", `icons/undo.png`, (function(self) GED:undo() end), "Undo")
+editor_interface.toolbar:addTool("Redo", `icons/redo.png`, (function(self) GED:redo() end), "Redo")
 editor_interface.toolbar:addSeparator()
 
 widget_menu = {}
 
 widget_menu[0] = editor_interface.toolbar:addTool("Select", `icons/select.png`, (function(self)
-	-- GED:set_widget_mode(0)
-end), "")
+	-- GED:setWidgetMode(0)
+end), "Selection Mode")
 
 widget_menu[1] = editor_interface.toolbar:addTool("Translate", `icons/translate.png`, (function(self)
-	GED:set_widget_mode(1)
-end), "")
+	GED:setWidgetMode(1)
+end), "Translate")
 
 widget_menu[2] = editor_interface.toolbar:addTool("Rotate", `icons/rotate.png`, (function(self)
-	GED:set_widget_mode(2)
-end), "")
+	GED:setWidgetMode(2)
+end), "Rotate")
 
 widget_menu[3] = editor_interface.toolbar:addTool("Scale", `icons/scale.png`, (function(self)
-	GED:set_widget_mode(3)
-end), "")
+	GED:setWidgetMode(3)
+end), "Scale")
 
 editor_interface.toolbar:addTool("Local, global", `icons/global.png`, (function(self)
 	if self.mode == nil then
@@ -351,37 +351,37 @@ editor_interface.toolbar:addTool("Local, global", `icons/global.png`, (function(
 		self.mode = "global"
 		widget_manager.translate_mode = "global"
 	end
-end), "")
+end), "Set Widget Mode Global/Local")
 
 -- editor_interface.toolbar:addSeparator()
 -- editor_interface.toolbar:addTool("Pivot", `icons/pivot_centre.png`, (function(self)  end), "")
 editor_interface.toolbar:addSeparator()
-editor_interface.toolbar:addTool("Controller", `icons/controller.png`, (function(self) GED:play() end), "")
+editor_interface.toolbar:addTool("Controller", `icons/controller.png`, (function(self) GED:play() end), "Play")
 --editor_interface.toolbar:addTool("Play", `icons/play.png`, (function(self) GED:simulate() end), "")
---editor_interface.toolbar:addTool("Stop", `icons/stop.png`, (function(self) GED:stop_simulate() end), "")
---editor_interface.toolbar:addTool("Play Window", `icons/play_window.png`, (function(self) run_game() end), "")
+--editor_interface.toolbar:addTool("Stop", `icons/stop.png`, (function(self) GED:stopSimulate() end), "")
+--editor_interface.toolbar:addTool("Play Window", `icons/play_window.png`, (function(self) runGame() end), "")
 editor_interface.toolbar:addSeparator()
 editor_interface.toolbar:addTool("Toggle Postprocessing", `icons/toggle_postprocess.png`,(
 	function(self)
 		gfx_option("POST_PROCESSING", not gfx_option("POST_PROCESSING"))
 	end
-), "")
-editor_interface.toolbar:addTool("Solid mode", `icons/solid.png`, (function(self) gfx_option("WIREFRAME", false) end), "")
-editor_interface.toolbar:addTool("Wireframe mode", `icons/wireframe.png`, (function(self) gfx_option("WIREFRAME_SOLID", true)  gfx_option("WIREFRAME", true) end), "")
-editor_interface.toolbar:addTool("Solid Wireframe Mode", `icons/solid_wireframe.png`, (function(self) gfx_option("WIREFRAME_SOLID", false) gfx_option("WIREFRAME", true) end), "")
+), "Toggle Postprocessing")
+editor_interface.toolbar:addTool("Solid mode", `icons/solid.png`, (function(self) gfx_option("WIREFRAME", false) end), "View Mode: Solid")
+editor_interface.toolbar:addTool("Wireframe mode", `icons/wireframe.png`, (function(self) gfx_option("WIREFRAME_SOLID", true)  gfx_option("WIREFRAME", true) end), "View Mode: Wireframe")
+editor_interface.toolbar:addTool("Solid Wireframe Mode", `icons/solid_wireframe.png`, (function(self) gfx_option("WIREFRAME_SOLID", false) gfx_option("WIREFRAME", true) end), "View Mode: Solid Wireframe")
 editor_interface.toolbar:addSeparator()
--- editor_interface.toolbar:addTool("Object properties", `icons/properties.png`, (function(self) GED:open_object_properties() end), "")
--- editor_interface.toolbar:addTool("Object Editor", `icons/object_editor.png`, (function(self) GED:open_object_editor() end), "")
--- editor_interface.toolbar:addTool("Content Browser", `icons/content_browser.png`, (function(self) GED:open_content_browser() end), "")
--- editor_interface.toolbar:addTool("Event Editor", `icons/event_editor.png`, (function(self) GED:open_event_editor() end), "")
--- editor_interface.toolbar:addTool("Material Editor", `icons/material_editor.png`, (function(self) GED:open_material_editor() end), "")
--- editor_interface.toolbar:addTool("Level Configuration", `icons/level_config.png`, (function(self) GED:open_level_properties() end), "")
+-- editor_interface.toolbar:addTool("Object properties", `icons/properties.png`, (function(self) GED:openObjectProperties() end), "")
+-- editor_interface.toolbar:addTool("Object Editor", `icons/object_editor.png`, (function(self) GED:openObjectEditor() end), "")
+-- editor_interface.toolbar:addTool("Content Browser", `icons/content_browser.png`, (function(self) GED:openContentBrowser() end), "")
+-- editor_interface.toolbar:addTool("Event Editor", `icons/event_editor.png`, (function(self) GED:openEventEditor() end), "")
+-- editor_interface.toolbar:addTool("Material Editor", `icons/material_editor.png`, (function(self) GED:openMaterialEditor() end), "")
+-- editor_interface.toolbar:addTool("Level Configuration", `icons/level_config.png`, (function(self) GED:openLevelProperties() end), "")
 -- editor_interface.toolbar:addSeparator()
 editor_interface.toolbar:addTool("Show collision", `icons/show_collision.png`, (
 	function()
 		debug_cfg.physicsWireFrame = not debug_cfg.physicsWireFrame
 	end
-), "")
+), "Show Collision")
 editor_interface.toolbar:addTool("Toggle Physics", `icons/toggle_physics.png`, (
 	function (self)
 		main.physicsEnabled = not main.physicsEnabled
@@ -393,9 +393,9 @@ editor_interface.toolbar:addTool("Toggle Physics", `icons/toggle_physics.png`, (
 			-- self.selected = false
 		-- end
 	end
-), "")
+), "Toggle Physics")
 editor_interface.toolbar:addSeparator()
-editor_interface.toolbar:addTool("Editor Settings", `icons/config.png`, (function(self) GED:editor_settings() end), "")
+editor_interface.toolbar:addTool("Editor Settings", `icons/config.png`, (function(self) GED:editorSettings() end), "Editor Settings")
 
 if left_toolbar ~= nil then
 	safe_destroy(left_toolbar)
@@ -409,10 +409,10 @@ left_toolbar.buttons = {}
 
 left_toolbar.buttons[1] = gfx_hud_object_add(`hud/imagebutton`, {
 	pressedCallback = function(self)
-		GED:open_object_properties()
+		GED:openObjectProperties()
 	end;
 	texture = `icons/properties.png`;
-	tip="";
+	tip="Level Properties";
 	position=vec2(0, -30);
 	parent = left_toolbar;
 	alpha = 0.3;
@@ -420,20 +420,20 @@ left_toolbar.buttons[1] = gfx_hud_object_add(`hud/imagebutton`, {
 
 left_toolbar.buttons[2] = gfx_hud_object_add(`hud/imagebutton`, {
 	pressedCallback = function(self)
-		GED:open_content_browser()
+		GED:openContentBrowser()
 	end;
 	texture = `icons/content_browser.png`;
-	tip="";
+	tip="Content Browser";
 	position=vec2(0, -60);
 	parent = left_toolbar;
 })
 
 left_toolbar.buttons[3] = gfx_hud_object_add(`hud/imagebutton`, {
 	pressedCallback = function(self)
-		GED:open_event_editor()
+		GED:openEventEditor()
 	end;
 	texture = `icons/event_editor.png`;
-	tip="";
+	tip="Event Editor";
 	position=vec2(0, -90);
 	parent = left_toolbar;
 	alpha = 0.3;
@@ -441,10 +441,10 @@ left_toolbar.buttons[3] = gfx_hud_object_add(`hud/imagebutton`, {
 
 left_toolbar.buttons[4] = gfx_hud_object_add(`hud/imagebutton`, {
 	pressedCallback = function(self)
-		GED:open_level_properties()
+		GED:openLevelProperties()
 	end;
 	texture = `icons/level_config.png`;
-	tip="";
+	tip="Level Config";
 	position=vec2(0, -120);
 	parent = left_toolbar;
 })
@@ -480,6 +480,28 @@ editor_interface.windows.object_properties = create_window('Properties', vec2(ed
 editor_interface.windows.outliner = create_window('Outliner', vec2(editor_interface_cfg.outliner.position[1], editor_interface_cfg.outliner.position[2]), true, vec2(editor_interface_cfg.outliner.size[1], editor_interface_cfg.outliner.size[2]), vec2(350, 200), vec2(800, 600))
 editor_interface.windows.settings = create_window('Editor Settings', vec2(editor_interface_cfg.settings.position[1], editor_interface_cfg.settings.position[2]), true, vec2(editor_interface_cfg.settings.size[1], editor_interface_cfg.settings.size[2]), vec2(350, 200), vec2(800, 600))
 
+editor_interface.windows.settings.content = create_notebook(editor_interface.windows.settings)
+
+general_panel = create_panel()
+general_panel.text = gfx_hud_text_add(`/common/fonts/Verdana12`)
+general_panel.text.text = "TODO: General"
+general_panel.text.parent = general_panel
+
+themes_panel = create_panel()
+themes_panel.text = gfx_hud_text_add(`/common/fonts/Verdana12`)
+themes_panel.text.text = "TODO: Themes"
+themes_panel.text.parent = themes_panel
+
+system_panel = create_panel()
+system_panel.text = gfx_hud_text_add(`/common/fonts/Verdana12`)
+system_panel.text.text = "TODO: System"
+system_panel.text.parent = system_panel
+
+editor_interface.windows.settings.content:addPage(general_panel, "General")
+editor_interface.windows.settings.content:addPage(themes_panel, "Themes")
+editor_interface.windows.settings.content:addPage(system_panel, "System")
+
+
 editor_interface.windows.content_browser.enabled = editor_interface_cfg.content_browser.opened
 editor_interface.windows.event_editor.enabled = editor_interface_cfg.event_editor.opened
 editor_interface.windows.level_properties.enabled = editor_interface_cfg.level_properties.opened
@@ -495,4 +517,3 @@ editor_interface.toolbar.tools[6].alpha = 0.3
 editor_interface.toolbar.tools[7].alpha = 0.3
 editor_interface.toolbar.tools[10].alpha = 0.3
 editor_interface.toolbar.tools[11].alpha = 0.3
-editor_interface.toolbar.tools[19].alpha = 0.3

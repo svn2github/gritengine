@@ -39,7 +39,7 @@ hud_class `window_title_bar` {
         if ev == "+left" and self.inside then
 			self.dragging = true
 			self.draggingPos = mouse_pos_abs - vec2(self.parent.parent.position.x, self.parent.parent.position.y)
-			GED:set_active_window(self.parent.parent)
+			GED:setActiveWindow(self.parent.parent)
 		elseif ev == "-left" then
 			self.dragging = false
 			self.draggingPos = vec2(0, 0)
@@ -198,6 +198,7 @@ hud_class `Window` {
 			parent= self;
 			cornered=true;
 			texture=`/editor/core/icons/window_border.png`;
+			zOrder=2;
 		})
 		
 		self.titleBarPositioner = gfx_hud_object_add(`/common/hud/Positioner`, {
@@ -280,7 +281,7 @@ hud_class `Window` {
 	end;
 }
 
-function create_window(w_title, pos, res, w_size, w_min_size, w_max_size)
+function create_window(w_title, pos, res, w_size, w_min_size, w_max_size, w_bk_colour, w_bk_alpha)
 	local t_window = {}
 	t_window = gfx_hud_object_add(`Window`, {
 		title=w_title;
@@ -289,6 +290,8 @@ function create_window(w_title, pos, res, w_size, w_min_size, w_max_size)
 		resizeable=res;
 		size=w_size;
 		min_size = w_min_size;
+		colour = w_bk_colour or vec(0.3, 0.3, 0.3);
+		alpha = w_bk_alpha or 1;
 	})
 	-- t_window.enabled = false
 	return t_window

@@ -61,10 +61,10 @@ function editor_receive_button(button, state)
 			GED.fast = false
         end
     elseif button == "delete" then
-        GED:delete_selection()
+        GED:deleteSelection()
 
     elseif button == "duplicate" then
-        GED:duplicate_selection()
+        GED:duplicateSelection()
 
     elseif button == "board" then
         -- ghost:pickDrive()
@@ -91,12 +91,12 @@ function editor_receive_button(button, state)
             if mouse_pos_abs.x > 40 and mouse_pos_abs.y > 20 then
                 if (console.enabled and mouse_pos_abs.y < gfx_window_size().y - console_frame.size.y) or not console.enabled and mouse_pos_abs.y < gfx_window_size().y - 25 then
                     if not mouse_inside_any_window() and not mouse_inside_any_menu() and addobjectelement == nil then
-                        GED:select_obj()
+                        GED:selectObj()
                     end
                 end
             end
         elseif state == '-' then
-            GED:stop_dragging_obj()
+            GED:stopDraggingObj()
         end
 
     end

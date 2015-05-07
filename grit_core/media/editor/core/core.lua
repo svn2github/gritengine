@@ -24,6 +24,8 @@ GED = {
 
 	currentWindow = currentWindow,
 
+	currentTheme = editor_themes[editor_interface_cfg.theme];
+	
     -- holds editor camera position and rotation to get back when stop playing
     camera = {
         pos = {};
@@ -90,33 +92,32 @@ end
 function ghost:pickDrive()
     local obj = pick_obj_safe()
     if obj == nil then return end
-    player_ctrl:beginControlObj(obj)
+    main:beginControlObj(obj)
 end
 ]]
 
-function GED:open_window(wnd)
+function GED:openWindow(wnd)
     wnd.enabled = true
-	self:set_active_window(wnd)
+	self:setActiveWindow(wnd)
 end;
 
-function GED:select_obj()
-    input_filter_set_cursor_hidden(true)
+-- if the widget is under mouse cursor, then start dragging, otherwise select an object
+function GED:selectObj()
     widget_manager:select(true)
 end;
 
-function GED:stop_dragging_obj()
-    input_filter_set_cursor_hidden(false)
+function GED:stopDraggingObj()
+	input_filter_set_cursor_hidden(false)
     widget_manager:select(false)
 end;
 
-function GED:delete_selection()
+function GED:deleteSelection()
     local selobj = widget_manager.selectedObj
-    self:unselect_obj()
     widget_manager:unselect()
     safe_destroy(selobj)
 end;
 
-function GED:duplicate_selection()
+function GED:duplicateSelection()
     if widget_manager ~= nil and widget_manager.selectedObj ~= nil then
         object (widget_manager.selectedObj.className) (widget_manager.selectedObj.instance.body.worldPosition) {
             rot=widget_manager.selectedObj.instance.body.worldOrientation
@@ -131,11 +132,8 @@ function GED:return_editor()
     editor_interface.statusbar.enabled = true
 
     -- reset the editor camera
-    player_ctrl.camPos = GED.camera.pos
-    player_ctrl.camYaw = GED.camera.rot.Yaw
-    player_ctrl.camPitch = GED.camera.rot.Pitch
-    player_ctrl.camDir = GED.camera.rot.Dir
-    
+    main.camPos = GED.camera.pos
+    main.camQuat = GED.camera.rot
 end;
 ]]
 
@@ -146,24 +144,14 @@ end;
 function GED:simulate()
 end;
 
-function GED:stop_simulate()
+function GED:stopSimulate()
 end;
 
--- [dcunnin] I'd rather let them escape back to menu to play the game.  Having two Grits
--- loaded simultaneously would make both of them slow.  They should just save the map and start the
--- game from the main menu.
-
---[[
-function GED:run_game()
-    if true then
-        os.execute("grit.dat include`"..current_level.file_name.."`")
-    else
-        os.execute("Grit.linux.x86_64")
-    end
+function GED:runGame()
+	game_manager:enter('fpsgame')
 end;
-]]
 
-function GED:destroy_all_editor_objects()
+function GED:destroyAllEditorObjects()
     local objs = object_all()
     for i = 1, #objs do
         if objs[i].editor_object ~= nil then
@@ -172,6 +160,7 @@ function GED:destroy_all_editor_objects()
     end
 end;
 
+-- TODO: replace by a "game_mode:playInEditor()"
 function GED:play()
 	if current_level.game_mode ~= nil and current_level.game_mode ~= "" then
 		game_manager:enter(current_level.game_mode)
@@ -233,11 +222,11 @@ function mouse_inside_any_menu()
     return false
 end
 
-function GED:generate_env_cube(pos)
-    current_level:generate_env_cube(pos)
+function GED:generateEnvCube(pos)
+    current_level:generateEnvCube(pos)
 end;
 
-function GED:new_level(ndestroyobjs)
+function GED:newLevel(ndestroyobjs)
     include `edenv.lua`  -- [dcunnin] why not system/env_cycle.lua ?
     env_recompute()
 	
@@ -259,10 +248,10 @@ function GED:new_level(ndestroyobjs)
     end
 end;
 
-function GED:open_level(level_file)
+function GED:openLevel(level_file)
     
     if level_file == nil then
-			self:open_window(open_level_dialog)
+			self:openWindow(open_level_dialog)
         return
     end
     
@@ -280,18 +269,18 @@ function GED:open_level(level_file)
 end;
 
 -- save current level, if have a "file_name" specified
-function GED:save_current_level()
+function GED:saveCurrentLevel()
     if #current_level.file_name > 0 then
         current_level:save()
     else
-        self:save_current_level_as()
+        self:saveCurrentLevelAs()
     end
 end;
 
-function GED:save_current_level_as(name)
+function GED:saveCurrentLevelAs(name)
     if name == nil then
         save_level_dialog.enabled = true
-		self:open_window(save_level_dialog)
+		self:openWindow(save_level_dialog)
         return
     else
         current_level.file_name = name
@@ -306,7 +295,7 @@ function GED:save_current_level_as(name)
 end;
 
 -- turn the toolbar icons as selected and change mode
-function GED:set_widget_mode(mode)
+function GED:setWidgetMode(mode)
     if widget_manager.mode == mode then return end
     
     widget_manager:set_mode(mode)
@@ -319,7 +308,7 @@ function GED:set_widget_mode(mode)
 end;
 
 -- save editor interface windows
-function GED:save_editor_interface()
+function GED:saveEditorInterface()
     editor_interface_cfg = {
       content_browser   =   {
         opened   = editor_interface.windows.content_browser.enabled;
@@ -387,48 +376,52 @@ end;
 function GED:redo()
 end;
 
-function GED:cut_object()
+function GED:cutObject()
 end;
 
-function GED:copy_object()
+function GED:copyObject()
 end;
 
-function GED:paste_object()
+function GED:pasteObject()
 end;
 
-function GED:editor_settings()
-	self:open_window(editor_interface.windows.settings)
+function GED:editorSettings()
+	self:openWindow(editor_interface.windows.settings)
 end;
 
-function GED:open_content_browser()
-	self:open_window(editor_interface.windows.content_browser)
+function GED:openContentBrowser()
+	self:openWindow(editor_interface.windows.content_browser)
 end;
 
-function GED:open_event_editor()
-	self:open_window(editor_interface.windows.event_editor)
+function GED:openEventEditor()
+	self:openWindow(editor_interface.windows.event_editor)
 end;
 
-function GED:open_object_properties()
-	self:open_window(editor_interface.windows.object_properties)
+function GED:openObjectProperties()
+	self:openWindow(editor_interface.windows.object_properties)
 end;
 
-function GED:open_material_editor()
-	self:open_window(editor_interface.windows.material_editor)
+function GED:openMaterialEditor()
+	self:openWindow(editor_interface.windows.material_editor)
 end;
 
-function GED:open_level_properties()
-	self:open_window(editor_interface.windows.level_properties)
+function GED:openLevelProperties()
+	self:openWindow(editor_interface.windows.level_properties)
 end;
 
-function GED:open_outliner()
-	self:open_window(editor_interface.windows.outliner)
+function GED:openOutliner()
+	self:openWindow(editor_interface.windows.outliner)
 end;
 
-function GED:open_object_editor()
-	self:open_window(editor_interface.windows.object_editor)
+-- TODO: object editor is not inside a editor window, but uses all Grit window
+-- You right click on the object on the content browser and select "Edit Object"
+-- It hides the sky (would be cool also to select the background colour) and all editor interface, creates a object and centralize the camera on it, so you can rotate around
+-- the object. You can also reload object assets on a button on the object editor toolbar
+function GED:openObjectEditor()
+	self:openWindow(editor_interface.windows.object_editor)
 end;
 
-function GED:disable_all_windows()
+function GED:disableAllWindows()
     editor_interface.windows.content_browser.enabled = false
     editor_interface.windows.event_editor.enabled = false
     editor_interface.windows.object_properties.enabled = false
@@ -437,16 +430,16 @@ function GED:disable_all_windows()
     editor_interface.windows.outliner.enabled = false
     editor_interface.windows.settings.enabled = false
     editor_interface.windows.object_editor.enabled = false
-end
+end;
 
-function GED:set_active_window(wnd)
+function GED:setActiveWindow(wnd)
 	if self.currentWindow ~= nil and self.currentWindow ~= wnd then
 		self.currentWindow.zOrder = 0
-		self.currentWindow.draggable_area.colour = vec(1, 1, 1)
-		self.currentWindow.window_title.colour = vec(0, 0, 0)
+		self.currentWindow.draggable_area.colour = GED.currentTheme.colours.window.title_background_inactive
+		self.currentWindow.window_title.colour = GED.currentTheme.colours.window.title_text_inactive
 	end
 	self.currentWindow = wnd
 	wnd.zOrder = 1
-	wnd.draggable_area.colour = vec(1, 0.5, 0)
-	wnd.window_title.colour = vec(1, 1, 1)
-end
+	wnd.draggable_area.colour = GED.currentTheme.colours.window.title_background
+	wnd.window_title.colour = GED.currentTheme.colours.window.title_text
+end;

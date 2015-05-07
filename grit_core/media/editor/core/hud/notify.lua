@@ -1,4 +1,4 @@
--- (c) Augusto P. Moura 2014, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
+-- (c) Augusto P. Moura 2015, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
 hud_class `ntfmessage` {
 	alpha = 0.7;

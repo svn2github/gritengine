@@ -8,9 +8,11 @@ hud_class `imagebutton` {
 	activeColour = vec(0.2, 0.7, 1);
 	defaultColour = vec(1, 1, 1);
 	selected = false;
+	hoverTime = 0;
 	
 	init = function (self)
-		self.needsInputCallbacks = true;
+		self.needsInputCallbacks = true
+		self.needsFrameCallbacks = false
 		self.dragging = false;
 		self.inside = false;
 	end;
@@ -24,12 +26,29 @@ hud_class `imagebutton` {
 		self:mousemovecb(local_pos, screen_pos, inside)
 	end;
 
+	frameCallback = function (self, elapsed)
+		self.hoverTime = self.hoverTime + elapsed
+		if self.hoverTime >= 0.9 then
+			show_tip(self.tip)
+			self.hoverTime = -1
+			self.needsFrameCallbacks = false
+		end
+	end;	
+	
 	mousemovecb = function (self, local_pos, screen_pos, inside)
 		if self.dragging ~= true and not self.selected then
 			if inside then
 				self.colour = self.hoverColour
+				if self.hoverTime == 0 and self.tip ~= nil then
+					self.needsFrameCallbacks = true
+				end
 			else
 				self.colour=self.defaultColour
+				self.needsFrameCallbacks = false
+				self.hoverTime = 0
+				if TIP ~= nil and type(TIP) ~= "table" then
+					TIP:destroy()
+				end
 			end
 		end
 	end;

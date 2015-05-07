@@ -39,7 +39,7 @@ function fpsgame:init()
 
     playing_binds.mouseCapture = true
 
-    main.camQuat = Q_ID
+    --main.camQuat = Q_ID
     main.audioCentreVel = vec(0, 0, 0);
     main.audioCentreQuat = quat(1, 0, 0, 0);
     self.camYaw = 90;

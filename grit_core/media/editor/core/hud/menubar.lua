@@ -275,14 +275,14 @@ hud_class `menubarbutton` {
 }
 
 hud_class `MenuBar` {
-    colour = vec(0.7, 0.75, 0.8);
-    --colour = vec(0.8, 0.2, 0);
+    -- colour = vec(0.7, 0.75, 0.8);
+    colour = vec(0.2, 0.2, 0.2);
 	buttonPadding = vec(16, 4);
 	lastButton = 0;
 	selected = nil;
 	selecting = false;
 	spacing = 1;
-	texture = `../icons/menubar.png`;
+	-- texture = `../icons/menubar.png`;
 	
     init = function (self)
         self.needsParentResizedCallbacks = true

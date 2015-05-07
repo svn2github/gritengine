@@ -9,15 +9,17 @@
 -- configurations
 include `defaultconfig/config.lua`
 safe_include `../config/config.lua`
-include `../config/interface.lua`
-safe_include `defaultconfig/interface.lua`
-include `../config/recent.lua`
-safe_include `defaultconfig/recent.lua`
+include `defaultconfig/interface.lua`
+safe_include `../config/interface.lua`
+include `defaultconfig/recent.lua`
+safe_include `../config/recent.lua`
 
 -- [dcunnin] We should put all this stuff in /common, thereby building a reusable asset library.
 include `defaultmap/init.lua`
 
 include`default_game_mode.lua`
+
+include `themes/init.lua`
 
 include `widget_manager/init.lua`
 include `GritLevel/init.lua`
@@ -33,7 +35,10 @@ editor = {
     init = function (self)
         -- [dcunnin] Ideally we would declare things earlier and only instantiate them at this
         -- point.  However all the code is mixed up right now.
-        include `init_editor_interface.lua`
+		
+        GED.currentTheme = editor_themes[editor_interface_cfg.theme]
+		
+		include `init_editor_interface.lua`
 
         editor_core_binds.enabled = true
         editor_edit_binds.enabled = true
@@ -51,19 +56,19 @@ editor = {
 
         main.physicsEnabled = false
         main.streamerCentre = vec(0, 0, 0)
-        main.camPos = vec(0, 0, 0)
-        main.camQuat = Q_ID
+        --main.camPos = vec(0, 0, 0)
+        --main.camQuat = Q_ID
         main.audioCentrePos = vec(0, 0, 0);
         main.audioCentreVel = vec(0, 0, 0);
         main.audioCentreQuat = quat(1, 0, 0, 0);
 		-- TODO: user select if want to open a default map or not
 		if true and not next(object_all()) then
-			GED:open_level(`/editor/core/defaultmap/defaultmap.lvl`)
+			GED:openLevel(`/editor/core/defaultmap/defaultmap.lvl`)
 		else
-			GED:new_level(next(object_all()))
+			GED:newLevel(next(object_all()))
 		end
 		
-        GED:set_widget_mode(1)
+        GED:setWidgetMode(1)
         widget_menu[1]:select(true)
 
         print(BOLD..GREEN..[[
@@ -90,7 +95,7 @@ editor = {
     destroy = function (self)
 		widget_manager:unselect()
 		
-        GED:save_editor_interface()
+        GED:saveEditorInterface()
         -- current_level = nil
         -- if level ~= nil then
             -- level = nil

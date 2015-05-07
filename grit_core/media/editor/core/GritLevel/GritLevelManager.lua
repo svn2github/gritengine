@@ -34,7 +34,7 @@ function GritLevel.new()
 	return self
 end;
 
-function GritLevel:apply_env_cube()
+function GritLevel:applyEnvCube()
 	if self.env_cube ~= nil and self.env_cube ~= "" then
 		if resource_exists(self.env_cube_dawn) then
 			env_cube_dawn = self.env_cube_dawn
@@ -53,7 +53,7 @@ function GritLevel:apply_env_cube()
 end
 
 -- all temporary textures are saved inside 'cache/env'
-function GritLevel:generate_env_cube(pos)
+function GritLevel:generateEnvCube(pos)
 	local current_time = env.secondsSinceMidnight
 	local current_clockRate = env.clockRate
 	env.clockRate = 0
@@ -86,7 +86,7 @@ function GritLevel:generate_env_cube(pos)
 	gfx_bake_env_cube(tex, 128, pos, 0.7, vec(0, 0, 0))
 	self.env_cube_dark = "/"..tex
 
-	self:apply_env_cube()
+	self:applyEnvCube()
 	env.secondsSinceMidnight = current_time
 	env.clockRate = current_clockRate
 end
@@ -148,10 +148,10 @@ function GritLevel:open(levelfile)
 		self.objects = object_all()
 		
 		-- self.spawn_point.instance.body.ghost = true
-		self:set_camera()
+		self:setCamera()
 		
 		env.secondsSinceMidnight = self.time
-		self:apply_env_cube()
+		self:applyEnvCube()
 		env_recompute()
 		return true
 	else
@@ -160,7 +160,7 @@ function GritLevel:open(levelfile)
 	end
 end
 
-function GritLevel:set_camera()
+function GritLevel:setCamera()
 	self.cam_pos = level.cam_pos or vector3(0, 0, 0)
 	self.cam_Yaw = level.cam_Yaw or 0
 	self.cam_Pitch = level.cam_Pitch or 0
@@ -168,10 +168,10 @@ function GritLevel:set_camera()
 	
     -- TODO(dcunnin): interface with editor ghost code
     --[[
-	player_ctrl.camPos = self.cam_pos 
-	player_ctrl.camYaw = self.cam_Yaw 
-	player_ctrl.camPitch = self.cam_Pitch
-	player_ctrl.camDir = self.cam_dir
+	main.camPos = self.cam_pos 
+	GED.camYaw = self.cam_Yaw 
+	GED.camPitch = self.cam_Pitch
+	main.camQuat = self.cam_dir
     ]]
 end
 

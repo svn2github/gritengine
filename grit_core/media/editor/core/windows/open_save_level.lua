@@ -627,9 +627,9 @@ open_level_dialog.update_file_explorer = function(m_dir)
 				end		
 
 				if open_level_dialog.file_edbox.value:sub(-4) ~= ".lvl" then
-					GED:open_level(fcdir.."/"..open_level_dialog.file_edbox.value..selext)
+					GED:openLevel(fcdir.."/"..open_level_dialog.file_edbox.value..selext)
 				else
-					GED:open_level(fcdir.."/"..open_level_dialog.file_edbox.value)
+					GED:openLevel(fcdir.."/"..open_level_dialog.file_edbox.value)
 				end
 				open_level_dialog.enabled=false
 			end;
@@ -653,7 +653,7 @@ open_level_dialog.open_selected_level = function()
 		end		
 		
 		if open_level_dialog.file_edbox.value:sub(-4) == ".lvl" or open_level_dialog.file_edbox.value:sub(-4) == ".lua" then
-			GED:open_level(fcdir.."/"..open_level_dialog.file_edbox.value)
+			GED:openLevel(fcdir.."/"..open_level_dialog.file_edbox.value)
 			open_level_dialog.enabled = false
 		end
 	elseif open_level_dialog.file_explorer.selected ~= nil and open_level_dialog.file_explorer.selected.type == "folder" then
@@ -882,9 +882,9 @@ save_level_dialog.update_file_explorer = function(m_dir)
 				end		
 
 				if save_level_dialog.file_edbox.value:sub(-4) ~= ".lvl" then
-					GED:save_current_level_as(fcdir.."/"..save_level_dialog.file_edbox.value..selext)
+					GED:saveCurrentLevelAs(fcdir.."/"..save_level_dialog.file_edbox.value..selext)
 				else
-					GED:save_current_level_as(fcdir.."/"..save_level_dialog.file_edbox.value)
+					GED:saveCurrentLevelAs(fcdir.."/"..save_level_dialog.file_edbox.value)
 				end
 				save_level_dialog.enabled=false
 			end;
@@ -920,10 +920,10 @@ save_level_dialog.save_selected_level = function()
 		end
 		
 		if save_level_dialog.file_edbox.value:sub(-4) == ".lvl" or save_level_dialog.file_edbox.value:sub(-4) == ".lua" then
-			GED:save_current_level_as(fcdir..save_level_dialog.file_edbox.value)
+			GED:saveCurrentLevelAs(fcdir..save_level_dialog.file_edbox.value)
 			save_level_dialog.enabled = false
 		elseif save_level_dialog.file_edbox.value ~= "" then
-			GED:save_current_level_as(fcdir..save_level_dialog.file_edbox.value..selext)
+			GED:saveCurrentLevelAs(fcdir..save_level_dialog.file_edbox.value..selext)
 			save_level_dialog.enabled = false			
 		end
 	elseif save_level_dialog.file_explorer.selected ~= nil and save_level_dialog.file_explorer.selected.type == "folder" then
