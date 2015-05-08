@@ -198,7 +198,7 @@ hud_class `Window` {
 			parent= self;
 			cornered=true;
 			texture=`/editor/core/icons/window_border.png`;
-			zOrder=2;
+			zOrder=3;
 		})
 		
 		self.titleBarPositioner = gfx_hud_object_add(`/common/hud/Positioner`, {

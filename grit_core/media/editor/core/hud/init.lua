@@ -1,4 +1,5 @@
-include `gui.lua`
+include `radiobutton.lua`
+include `checkbox.lua`
 include `tip.lua`
 include `imagebutton.lua`
 include `listedit.lua`

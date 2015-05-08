@@ -7,8 +7,6 @@
 --  http://www.opensource.org/licenses/mit-license.php
 ------------------------------------------------------------------------------
 
--- DOESN'T WORKS, JUST A CONCEPT..
-
 hud_class `boxsizer` {
 	alpha = 1;
 	size = vec(256, 256);
@@ -23,9 +21,9 @@ hud_class `boxsizer` {
 		self.childs = {}
 		
 		if self.orient == "v" then
-			self.update = self.updateV
+			self.update = self.updateChildsV
 		else
-			self.update = self.updateH
+			self.update = self.updateChildsH
 		end	
 		self.expandType = function(self, psize) self.size = psize end;
 	end;
@@ -38,43 +36,86 @@ hud_class `boxsizer` {
 	
 	parentResizedCallback = function (self, psize)
 		if self.expand then
-			--self.size = psize
 			self:expandType(psize)
 		end
 		self:update(psize)
 	end;
 	
-	updateV = function (self, psize)
+	updateChildsV = function (self, psize)
 		for i = 1, #self.childs do
 			-- self.childs[i].position = vec(self.childs[i].position.x, -psize.y/#self.childs*(i+1))
 			if not self.childs[i].destroyed then
-				self.childs[i].position = vec(self.childs[i].position.x,
-					psize.y/2 - ((i-1) * psize.y/#self.childs+1) -psize.y/2/#self.childs+1
-				)
+				self.childs[i].position = vec(self.childs[i].position.x, math.ceil(psize.y/2 -psize.y/(2*#self.childs) - ((i-1) * psize.y/#self.childs)))
 			end
 			--psize.y/2 - ((i-1) * self.menuitems[i].size.y) -self.menuitems[i].size.y/2
 		end
 	end;
 	
+	updateChildsH = function (self, psize)
+		for i = 1, #self.childs do
+			if not self.childs[i].destroyed then
+				self.childs[i].position = vec(math.ceil(psize.x/2 -psize.x/(2*#self.childs)- ((i-1) * psize.x/#self.childs)) , self.childs[i].position.y)
+			end
+		end
+	end;	
+	
 	addChild = function (self, child)
 		self.childs[#self.childs+1] = child
 		self.childs[#self.childs].parent = self
-		self:update(self.parent.size)
+		self:update(self.size)
+		
+		if self.childs[#self.childs].expand then
+			self.childs[#self.childs]:updateExpandType()
+			self.childs[#self.childs]:expandType(self.size)
+		end
+		
 	end;
 	
 	updateExpandType = function(self)
 		if self.expand then
 			if self.parent.type ~= nil and #self.parent.childs > 0 then
 				if self.parent.type == "boxsizer" then
-					if self.parent.orient == "v" then
-						self.expandType = function(self) self.size = vec(self.parent.size.x/#self.parent.childs, self.parent.size.y) end
-					elseif self.parent.orient == "h" then
-						self.expandType = function(self) self.size = vec(self.parent.size.x, self.parent.size.y/#self.parent.childs) end
+					if self.parent.orient == "h" then
+						self.expandType = function(self, psize) self.size = vec(self.parent.size.x / #self.parent.childs, self.parent.size.y) end
+					elseif self.parent.orient == "v" then
+						self.expandType = function(self, psize) self.size = vec(self.parent.size.x, self.parent.size.y/#self.parent.childs) end
 					end
-				elseif self.parent.type == "grid" then
-					self.expandType = function(self) self.size = vec(self.parent.size.x/#self.parent.childs, self.parent.size.y/#self.parent.childs) end
+				-- elseif self.parent.type == "grid" then
+					-- self.expandType = function(self, psize) self.size = vec(self.parent.size.x/#self.parent.childs, self.parent.size.y/#self.parent.childs) end
 				end
 			end
 		end
 	end;
 }
+
+function create_box_sizer(g_expand, g_orient, p, g_size, g_colour, g_alpha)
+	local bs = gfx_hud_object_add(`/editor/core/hud/boxsizer`, { parent = p, orient = g_orient or "h", expand = g_expand or false, colour = g_colour or vec(0.3, 0.3, 0.3), alpha = g_alpha or 1, size = g_size })
+	if p then
+		bs:updateExpandType()
+	end
+	return bs
+end
+
+-- safe_destroy(bxsz)
+-- safe_destroy(it1)
+-- safe_destroy(it2)
+-- safe_destroy(it3)
+-- safe_destroy(it4)
+
+-- bxsz = create_box_sizer(true, "h", editor_interface.windows.object_properties)
+
+-- it1 = gfx_hud_object_add(`/editor/core/hud/boxsizer`, { colour = vec(1, 0, 0), size = vec(50, 50), alpha = 1 })
+-- it2 = gfx_hud_object_add(`/editor/core/hud/boxsizer`, { colour = vec(0, 1, 0), size = vec(50, 50), alpha = 1, expand = false })
+-- it3 = gfx_hud_object_add(`/editor/core/hud/boxsizer`, { colour = vec(0, 0, 1), size = vec(50, 50), alpha = 1 })
+-- it4 = gfx_hud_object_add(`/editor/core/hud/boxsizer`, { colour = vec(0, 1, 1), size = vec(50, 50), alpha = 1, orient="v" })
+
+-- bxsz:addChild(it1)
+-- bxsz:addChild(it2)
+-- bxsz:addChild(it3)
+-- bxsz:addChild(it4)
+
+-- it4child1 = gfx_hud_object_add(`/editor/core/hud/boxsizer`, { colour = vec(1, 0, 1), size = vec(50, 50), alpha = 1 })
+-- it4child2 = gfx_hud_object_add(`/editor/core/hud/boxsizer`, { colour = vec(0, 0, 0), size = vec(50, 50), alpha = 1 })
+
+-- it4:addChild(it4child1)
+-- it4:addChild(it4child2)
