@@ -73,6 +73,10 @@ editor_interface.menus.fileMenu = gfx_hud_object_add(`hud/menu`, {
 			icon=`icons/x.png`;
 		},
 	};
+	textColour=vec(1, 1, 1);
+	colour=vec(0.2, 0.2, 0.2);
+	menu_hoverColour = vec(0.7, 0.35, 0.15);
+	menu_hoverTextColour = vec(1, 1, 1);
 })
 
 editor_interface.menus.editMenu = gfx_hud_object_add(`hud/menu`, {
@@ -106,7 +110,7 @@ editor_interface.menus.editMenu = gfx_hud_object_add(`hud/menu`, {
 			tip = "Paste object";
 		},
 		{
-			callback = function() if GED.selection ~= nil then GED:duplicateSelection() end end;
+			callback = function() if widget_manager.selectedObj ~= nil then GED:duplicateSelection() end end;
 			name = "Duplicate";
 			tip = "Duplicate current selection";
 		},
@@ -125,6 +129,10 @@ editor_interface.menus.editMenu = gfx_hud_object_add(`hud/menu`, {
 			icon=`icons/config.png`;
 		},
 	};
+	textColour=vec(1, 1, 1);
+	colour=vec(0.2, 0.2, 0.2);
+	menu_hoverColour = vec(0.7, 0.35, 0.15);
+	menu_hoverTextColour = vec(1, 1, 1);
 })
 
 editor_interface.menus.viewMenu = gfx_hud_object_add(`hud/menu`, {
@@ -219,6 +227,10 @@ editor_interface.menus.viewMenu = gfx_hud_object_add(`hud/menu`, {
 			icon_enabled = gfx_option("FULLSCREEN");
 		},
 	};
+	textColour=vec(1, 1, 1);
+	colour=vec(0.2, 0.2, 0.2);
+	menu_hoverColour = vec(0.7, 0.35, 0.15);
+	menu_hoverTextColour = vec(1, 1, 1);
 })
 
 editor_interface.menus.gameMenu = gfx_hud_object_add(`hud/menu`, {
@@ -243,6 +255,10 @@ editor_interface.menus.gameMenu = gfx_hud_object_add(`hud/menu`, {
 			icon=`icons/play.png`;
 		},
 	};
+	textColour=vec(1, 1, 1);
+	colour=vec(0.2, 0.2, 0.2);
+	menu_hoverColour = vec(0.7, 0.35, 0.15);
+	menu_hoverTextColour = vec(1, 1, 1);
 })
 
 editor_interface.menus.helpMenu = gfx_hud_object_add(`hud/menu`, {
@@ -286,6 +302,10 @@ editor_interface.menus.helpMenu = gfx_hud_object_add(`hud/menu`, {
 			-- icon=`icons/help.png`;
 		},
 	};
+	textColour=vec(1, 1, 1);
+	colour=vec(0.2, 0.2, 0.2);
+	menu_hoverColour = vec(0.7, 0.35, 0.15);
+	menu_hoverTextColour = vec(1, 1, 1);
 })
 
 editor_interface.menubar:append(editor_interface.menus.fileMenu, "File")
@@ -517,3 +537,42 @@ editor_interface.toolbar.tools[6].alpha = 0.3
 editor_interface.toolbar.tools[7].alpha = 0.3
 editor_interface.toolbar.tools[10].alpha = 0.3
 editor_interface.toolbar.tools[11].alpha = 0.3
+
+function show_viewport_context_menu()
+show_context_menu(
+{
+	{
+		callback = function()
+			print("TODO")
+		end;
+		name = "Edit Properties";
+	},
+	{
+		callback = function()  end;
+		name = "Edit Object in Viewport";
+	},
+	{},
+	{
+		callback = function()  end;
+		name = "Cut";
+	},
+	{
+		callback = function()  end;
+		name = "Copy";
+	},
+	
+	{
+		callback = function()  end;
+		name = "Paste";
+	},
+	{
+		callback = function()  end;
+		name = "Duplicate";
+	},	
+	
+	{
+		callback = function()  end;
+		name = "Delete";
+	},
+})
+end

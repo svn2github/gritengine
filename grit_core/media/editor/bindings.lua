@@ -71,12 +71,17 @@ function editor_receive_button(button, state)
 
     elseif button == "ghost" then  -- used to be RMB
         if state == '+' then
-            ch.enabled = true
-            GED.ghosting = true
-            editor_core_binds.mouseCapture = true
-            editor_edit_binds.enabled = false
-            editor_debug_binds.enabled = true
-
+            if mouse_pos_abs.x > 40 and mouse_pos_abs.y > 20 then
+                if (console.enabled and mouse_pos_abs.y < gfx_window_size().y - console_frame.size.y) or not console.enabled and mouse_pos_abs.y < gfx_window_size().y - 25 then
+                    if not mouse_inside_any_window() and not mouse_inside_any_menu() and addobjectelement == nil then
+                        ch.enabled = true
+						GED.ghosting = true
+						editor_core_binds.mouseCapture = true
+						editor_edit_binds.enabled = false
+						editor_debug_binds.enabled = true
+                    end
+                end
+            end
         elseif state == '-' then
             ch.enabled = false
             editor_core_binds.mouseCapture = false

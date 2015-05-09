@@ -4,6 +4,7 @@ include `tip.lua`
 include `imagebutton.lua`
 include `listedit.lua`
 include `menubar.lua`
+include `context_menu.lua`
 include `toolbar.lua`
 include `statusbar.lua`
 include `Window.lua`

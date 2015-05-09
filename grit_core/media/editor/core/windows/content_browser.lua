@@ -28,7 +28,7 @@ hud_class `browser_icon2` {
 	destroy = function (self)
 		self.needsFrameCallbacks = false
 		self.needsParentResizedCallbacks = false
-		
+		safe_destroy(CONTEXTMENU)
 		self:destroy()
 	end;
 	
@@ -48,7 +48,16 @@ hud_class `browser_icon2` {
 	end;
 
     buttonCallback = function (self, ev)
-        if ev == "+left" and self.inside then
+        if ev == "+right" and self.inside then
+			self.rightDragging = true
+		elseif ev == "-right" then
+			if self.inside and self.rightDragging then
+				self:rightPressedCallback()
+			end
+			self.rightDragging = false
+		end
+		
+		if ev == "+left" and self.inside then
             self.dragging = true
 			self.colour=self.clickColour
 			self.alpha = 1
@@ -80,17 +89,25 @@ hud_class `browser_icon2` {
 			end
             self.dragging = false
         end
+		self:bCallback(ev)
     end;
 
+    bCallback = function (self, ev)
+
+    end;
+	
     pressedCallback = function (self)
 
     end;
+	
+    rightPressedCallback = function (self)
+
+    end;	
 	
 	doubleClick = function(self)
 
 	end;
 }
-
 
 hud_class `dynamic_res_cb` {
 	size = vec(0, 0);
@@ -214,6 +231,30 @@ content_browser.btn_size = vec(100, 25)
 
 content_browser.currentdir = "/"
 
+function cb_show_object_menu()
+show_context_menu(
+{
+	{
+		callback = function()
+			print("TODO")
+		end;
+		name = "Edit Object";
+		endPressedCallback = function (self)
+			self.parent:destroy()
+		end;
+	},
+	{
+		callback = function()
+			print("TODO")
+		end;
+		name = "Add in viewport";
+		endPressedCallback = function (self)
+			self.parent:destroy()
+		end;
+	},
+})
+end
+
 content_browser.update_file_explorer = function(m_dir)
 	content_browser.file_explorer:clearAll()
 	m_dir = m_dir or ""
@@ -245,6 +286,16 @@ content_browser.update_file_explorer = function(m_dir)
 			end;
 			nit.doubleClick = function(self)
 
+			end;
+			
+			nit.rightPressedCallback = function (self)
+				cb_show_object_menu(self)
+			end;
+			
+			nit.bCallback = function (self, ev)
+				if (ev == "+right" or ev == "+left") and not CONTEXTMENU.destroyed and not is_inside_menu(CONTEXTMENU) then
+					safe_destroy(CONTEXTMENU)
+				end
 			end;
 			
 	end

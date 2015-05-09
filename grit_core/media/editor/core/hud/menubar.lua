@@ -4,16 +4,21 @@ hud_class `menuitem` {
 	alpha = 0;
 	size = vec(150, 20);
 	value="No text";
+	textColour=vec(0, 0, 0);
+	colour = vec(1, 1, 1);
+	hoverColour = vec(1, 0.95, 0.6);
+	hoverTextColour = vec(0, 0, 0);
 	
 	init = function (self)
 		self.needsInputCallbacks = true;
 		self.item = gfx_hud_object_add(`/common/hud/Label`, {
 			parent = self;
 			size=self.size;
-			textColour=vec(1, 1, 1);
+			textColour = self.textColour;
 			alignment="LEFT";
 			value=self.value;
 			alpha=0;
+			colour = self.colour;
 		})
 		self.icon = gfx_hud_object_add(`/common/hud/Rect`, {parent=self.item, size=vec2(15, 15), colour=vec(1, 1, 1), position=vec2(-self.item.size.x/2-20, 0), alpha=0})
 		self.dragging = false;
@@ -39,11 +44,13 @@ hud_class `menuitem` {
     mouseMoveCallback = function (self, local_pos, screen_pos, inside)
         self.inside = inside
 		if inside then
-			self.item.colour = vec(0.7, 0.35, 0.15)
+			self.item.colour = self.hoverColour
 			self.item.alpha = 1
+			self.item.text.colour = self.hoverTextColour
 		else
 			self.item.colour = vec(1, 1, 1)
 			self.item.alpha = 0
+			self.item.text.colour = self.textColour
 		end
     end;
 
@@ -55,7 +62,9 @@ hud_class `menuitem` {
                 self:pressedCallback()
 				self:endPressedCallback()
             end
-            self.dragging = false
+			if not self.destroyed then
+				self.dragging = false
+			end
         end
     end;
 
@@ -64,10 +73,7 @@ hud_class `menuitem` {
     end;	
 	
 	endPressedCallback = function (self)
-		self.parent.parent.parent.parent.selecting = false
-		self.parent.enabled=false
-		self.item.colour = vec(1, 1, 1)
-		self.item.alpha = 0
+		
 	end;
 }
 
@@ -79,7 +85,11 @@ hud_class `menu` {
 	iconspacing = 20;
 	texture=`/common/hud/CornerTextures/Filled04.png`;
 	cornered=true;
-	colour=vec(0.2, 0.2, 0.2);
+	colour=vec(1, 1, 1);
+	menu_item_colour = vec(1, 1, 1);
+	textColour=vec(0, 0, 0);
+	menu_hoverColour = vec(1, 0.95, 0.6);
+	menu_hoverTextColour = vec(0, 0, 0);
 	
 	init = function (self)
 		self.needsInputCallbacks = true;
@@ -92,7 +102,19 @@ hud_class `menu` {
 					self.menuitems[i]:setThickness(1);
 					self.lastItem = self.lastItem - 5
 				else
-					self.menuitems[i] = gfx_hud_object_add(`menuitem`, { value=self.items[i].name, pressedCallback=self.items[i].callback, parent=self, position=vec2(0, self.lastItem), size=vec2(150, 20) })
+					self.menuitems[i] = gfx_hud_object_add(`menuitem`, {
+						value=self.items[i].name;
+						pressedCallback=self.items[i].callback;
+						endPressedCallback = self.items[i].endPressedCallback or function(self)end;
+						parent=self;
+						position=vec2(0, self.lastItem);
+						size=vec2(150, 20);
+						textColour = self.textColour;
+						colour = self.menu_item_colour;
+						hoverColour = self.menu_hoverColour;
+						hoverTextColour = self.menu_hoverTextColour;
+					})
+					
 					if(self.items[i].icon ~= nil) then
 						self.menuitems[i]:setIcon(self.items[i].icon)
 						if self.items[i].icon_enabled == false then
@@ -327,6 +349,16 @@ hud_class `MenuBar` {
 			borderTexture = `/common/hud/CornerTextures/SquareBorderWhite.png`;
 			parent = self.leftPositioner;
 		})
+		
+		for i = 1, #obj.menuitems do
+			obj.menuitems[i].endPressedCallback = function (self)
+				self.parent.parent.parent.parent.selecting = false
+				self.parent.enabled=false
+				self.item.colour = vec(1, 1, 1)
+				self.item.alpha = 0
+			end;
+		end
+		
 		--self.buttons[#self.buttons].border.enabled = false
 		self.buttons[#self.buttons].border.alpha = 0.5
 		self.buttons[#self.buttons].position = vec2(self.lastButton + (self.buttons[#self.buttons].size.x/2), 0)
