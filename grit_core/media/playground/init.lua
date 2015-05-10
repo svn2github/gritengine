@@ -20,7 +20,7 @@ material `mat_chromeClean` {
 
 -- Battery
 
-material `mat_basicGlas` {
+material `mat_basicGlass` {
 	specular = 0.5,
 	gloss = 1,
 	alpha = 0.2,
