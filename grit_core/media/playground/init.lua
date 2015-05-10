@@ -100,15 +100,15 @@ PickUpClass = {
 
 
 class `pickup_gearUpgradeTree1` (PickUpClass) {
-    
+    placementZOffset = 1.5
 }
 
 class `pickup_energyReplenish` (PickUpClass) {
-    
+    placementZOffset = 1.5
 }
 
 class `pickup_tool_ioWire` (PickUpClass) {
-    
+    placementZOffset = 1.1
 }
 
 function playground:init()
