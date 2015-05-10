@@ -13,9 +13,9 @@ playground = playground or {
 -- TODO(dcunnin): delete this when we have a proper coin class
 
 material `mat_chromeClean` {
-	specular = 0.6,
-	gloss = 0.8,
-	diffuseColour = vec(0.1, 0.1, 0.1),
+	specular = 0.3,
+	gloss = 0.5,
+	diffuseColour = vec(0.2, 0.2, 0.2),
 }
 
 -- Battery
