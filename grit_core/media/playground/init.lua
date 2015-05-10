@@ -14,6 +14,8 @@ playground = playground or {
 
 material `mat_chromeClean` {
     diffuseMap = `mat_chromeCleanAlbedo.png`,
+	specular = 0.6,
+	gloss = 0.8,
 }
 
 PickUpClass = {
