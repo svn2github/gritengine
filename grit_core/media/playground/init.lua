@@ -19,8 +19,6 @@ material `mat_chromeClean` {
 	shadowBias=0.2,
 }
 
--- Battery
-
 material `mat_basicGlass` {
 	specular = 0.5,
 	gloss = 1,
@@ -37,11 +35,10 @@ material `mat_batteryCoreEffect` {
 	shadowBias=0.2,
 }	
 
-
 material `mat_basicPlastic` {
 	specular = 0.1,
 	gloss = 0.3,
-	diffuseColour = vec(0.05, 0.05, 0.05),
+	diffuseColour = vec(0.02, 0.02, 0.02),
 	shadowBias=0.2,
 }	
 
@@ -97,7 +94,6 @@ PickUpClass = {
         end)
     end;
 }
-
 
 class `pickup_gearUpgradeTree1` (PickUpClass) {
     placementZOffset = 1.5
