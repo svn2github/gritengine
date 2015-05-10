@@ -50,7 +50,7 @@ game_manager = {
             self.currentMode:destroy();
             self.currentMode = nil
         end
-        debug_layer:setEnabled(false)
+        system_layer:setEnabled(false)
         menu:setEnabled(true)
     end;
 

@@ -184,4 +184,4 @@ env_cycle_editor.position = env_cycle_editor.size/2 + vec(50, 10)
 safe_destroy(lens_flare)
 lens_flare = gfx_hud_object_add(`LensFlare`, {parent=hud_center})
 
-include `debug.lua`
+include `system_layer.lua`

@@ -254,7 +254,7 @@ hud_class `.` {
                     caption = "X";
                     font = `/common/fonts/misc.fixed`;
                     pressedCallback = function (self2)
-                        debug_layer:hidePane(env_cycle_editor)
+                        system_layer:hidePane(env_cycle_editor)
                     end;
                     size = vec(20,20);
                 })

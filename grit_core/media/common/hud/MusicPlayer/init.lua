@@ -39,7 +39,7 @@ hud_class `.` {
         })
         self.showHideButton.position = vec(self.size.x/2-32, self.size.y/2-18)
         self.showHideButton.pressedCallback = function(self2)
-            debug_layer:hidePane(self)
+            system_layer:hidePane(self)
         end
         
         self.playPauseButton = gfx_hud_object_add(`/common/hud/Button`, {

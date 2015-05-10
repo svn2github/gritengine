@@ -384,11 +384,11 @@ local function system_receive_button(button, state)
         menu:setEnabled(not menu.enabled)
     elseif button == "console" and state == '+' then
         if input_filter_pressed("Ctrl") then
-            debug_layer:setEnabled(true)
-            debug_layer:selectConsole(true)
+            system_layer:setEnabled(true)
+            system_layer:selectConsole(true)
             hud_focus_grab(console)
         else
-            debug_layer:setEnabled(not debug_layer.enabled)
+            system_layer:setEnabled(not system_layer.enabled)
         end
     elseif button == "screenShot" and state == '+' then
         capturer:singleScreenShot()

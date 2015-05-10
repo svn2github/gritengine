@@ -1,6 +1,6 @@
 -- size of the whole screen
 
-hud_class `DebugLayer` {
+hud_class `SystemLayer` {
 
     buttonDescs = { };
     colour = vec(0.1, 0.1, 0.1);
@@ -105,12 +105,12 @@ hud_class `DebugLayer` {
 
 local selected_pane = nil
 local console_enabled = true
-if debug_layer ~= nil then
-    selected_pane = debug_layer.selectedPane
-    console_enabled = debug_layer.consoleEnabled
-    safe_destroy(debug_layer)
+if system_layer ~= nil then
+    selected_pane = system_layer.selectedPane
+    console_enabled = system_layer.consoleEnabled
+    safe_destroy(system_layer)
 end
-debug_layer = gfx_hud_object_add(`DebugLayer`, {
+system_layer = gfx_hud_object_add(`SystemLayer`, {
     console = console;
     consoleEnabled = console_enabled;
     selectedPane = selected_pane;
