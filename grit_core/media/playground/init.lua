@@ -37,6 +37,14 @@ material `mat_batteryCoreEffect` {
 	shadowBias=0.2,
 }	
 
+
+material `mat_basicPlastic` {
+	specular = 0.1,
+	gloss = 0.3,
+	diffuseColour = vec(0.05, 0.05, 0.05),
+	shadowBias=0.2,
+}	
+
 PickUpClass = {
     radius = 1;
     renderingDistance = 50;
@@ -99,7 +107,10 @@ class `pickup_energyReplenish` (PickUpClass) {
     
 }
 
+class `pickup_tool_ioWire` (PickUpClass) {
     
+}
+
 function playground:init()
     loading_screen.enabled = true
     loading_screen:setProgress(0)
