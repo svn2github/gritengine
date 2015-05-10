@@ -107,6 +107,10 @@ class `pickup_tool_ioWire` (PickUpClass) {
     placementZOffset = 1.1
 }
 
+class `pickup_lesserGearBundle` (PickUpClass) {
+    placementZOffset = 1.5
+}
+
 function playground:init()
     loading_screen.enabled = true
     loading_screen:setProgress(0)
