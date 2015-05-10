@@ -30,9 +30,9 @@ material `mat_batteryCoreEffect` {
 	specular = 0,
 	gloss = 0,
 	emissiveMap = `batteryCoreEffect.dds`,
-	emissiveColour = vec(3, 3, 3),
-	diffuseColour = vec(1, 1, 1),
-	textureAnimation = { 0.25, -0.05 },
+	emissiveColour = vec(0, 3, 0),
+	diffuseColour = vec(0, 1, 0),
+	textureAnimation = { 0.25, 0.15 },
 }		
 
 material `mat_basicPlastic` {
