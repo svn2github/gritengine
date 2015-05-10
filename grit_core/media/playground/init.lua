@@ -70,7 +70,7 @@ PickUpClass = {
     stepCallback = function (self, elapsed_secs)
         local instance = self.instance
         -- rotate
-        instance.angle = (instance.angle + (elapsed_secs * 360)) % 360  -- 1 rev per second
+        instance.angle = (instance.angle + (elapsed_secs * 180)) % 360  -- 1 rev per second
         instance.gfx.localOrientation = quat(instance.angle, V_UP)
 
         -- test for controllable
