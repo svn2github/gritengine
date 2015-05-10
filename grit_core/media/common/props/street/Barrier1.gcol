@@ -6,7 +6,7 @@ attributes {
 
 compound {
     hull {
-        material "common/pmat/Plastic";
+        material "/common/pmat/Plastic";
         margin 0.03999999910593033;
         shrink 0.03999999910593033;
         vertexes {
