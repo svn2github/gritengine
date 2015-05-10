@@ -274,7 +274,7 @@ local default_user_editor_core_bindings = {
     strafeLeft = "a";
     strafeRight = "d";
     ascend = "Space";
-	descend = "Ctrl";
+	descend = "c";
 	faster = "Shift";
 }
 
