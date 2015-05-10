@@ -29,11 +29,38 @@ material `mat_basicGlass` {
 material `mat_batteryCoreEffect` {
 	specular = 0,
 	gloss = 0,
+	diffuseMap = `batteryCoreEffect.dds`,
+	emissiveMap = `batteryCoreEffect.dds`,
+	emissiveColour = vec(3, 3, 3),
+	textureAnimation = { 0.5, 0.15 },
+}
+
+material `mat_batteryCoreEffect_red` {
+	specular = 0,
+	gloss = 0,
+	emissiveMap = `batteryCoreEffect.dds`,
+	emissiveColour = vec(3, 0, 0),
+	diffuseColour = vec(1, 1, 0),
+	textureAnimation = { 0.5, 0.15 },
+}
+
+material `mat_batteryCoreEffect_green` {
+	specular = 0,
+	gloss = 0,
 	emissiveMap = `batteryCoreEffect.dds`,
 	emissiveColour = vec(0, 3, 0),
 	diffuseColour = vec(0, 1, 0),
-	textureAnimation = { 0.25, 0.15 },
-}		
+	textureAnimation = { 0.5, 0.15 },
+}
+
+material `mat_batteryCoreEffect_yellow` {
+	specular = 0,
+	gloss = 0,
+	emissiveMap = `batteryCoreEffect.dds`,
+	emissiveColour = vec(3, 3, 0),
+	diffuseColour = vec(1, 1, 0),
+	textureAnimation = { 0.5, 0.15 },
+}
 
 material `mat_basicPlastic` {
 	specular = 0.1,
