@@ -18,6 +18,10 @@ playing_vehicle_binds = InputFilter(172, `playing_vehicle_binds`)
 
 playing_binds.mouseCapture = true
 
+playing_binds.enabled = false
+playing_actor_binds.enabled = false
+playing_vehicle_binds.enabled = false
+
 game_manager = {
     gameModes = { };
     currentMode = nil;
