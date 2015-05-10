@@ -13,10 +13,27 @@ playground = playground or {
 -- TODO(dcunnin): delete this when we have a proper coin class
 
 material `mat_chromeClean` {
-    diffuseMap = `mat_chromeCleanAlbedo.png`,
 	specular = 0.6,
 	gloss = 0.8,
+	diffuseColour = vec(0.1, 0.1, 0.1),
 }
+
+-- Battery
+
+material `mat_basicGlas` {
+	specular = 0.5,
+	gloss = 1,
+	alpha = 0.2,
+	diffuseColour = vec(0.1, 0.1, 0.1),
+}
+
+material `mat_batteryCoreEffect` {
+	specular = 0,
+	gloss = 0,
+	emissiveColour = vec(0, 2, 0),
+	diffuseColour = vec(0, 1, 0),
+}	
+
 
 PickUpClass = {
     radius = 1;
@@ -73,6 +90,10 @@ PickUpClass = {
 
 
 class `pickup_gearUpgradeTree1` (PickUpClass) {
+    
+}
+
+class `pickup_energyReplenish` (PickUpClass) {
     
 }
 
