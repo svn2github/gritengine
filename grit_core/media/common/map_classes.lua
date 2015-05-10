@@ -489,14 +489,14 @@ ColClass = extends (BaseClass) {
             instance.body = safe_destroy(instance.body)
             local pobjs = instance.pobjs
             if pobjs ~= nil then
-                for _,v in ipairs(pobjs) do
+                for _,v in pairs(pobjs) do
                     if not v.destroyed then v:destroy() end
                 end
             end
             instance.pobjs = nil
             local pbats = instance.pbats
             if pbats ~= nil then
-                for _,v in ipairs(pbats) do
+                for k, v in pairs(pbats) do
                     safe_destroy(v)
                 end
             end
