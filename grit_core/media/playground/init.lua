@@ -20,11 +20,10 @@ material `mat_chromeClean` {
 }
 
 material `mat_basicGlass` {
-	specular = 0.5,
+	specular = 0.4,
 	gloss = 1,
-	alpha = 0.2,
+	alpha = 0.5,
 	diffuseColour = vec(0.1, 0.1, 0.1),
-	shadowBias=0.2,
 }
 
 material `mat_batteryCoreEffect` {
@@ -32,7 +31,6 @@ material `mat_batteryCoreEffect` {
 	gloss = 0,
 	emissiveColour = vec(0, 2, 0),
 	diffuseColour = vec(0, 1, 0),
-	shadowBias=0.2,
 }	
 
 material `mat_basicPlastic` {
@@ -40,7 +38,7 @@ material `mat_basicPlastic` {
 	gloss = 0.3,
 	diffuseColour = vec(0.02, 0.02, 0.02),
 	shadowBias=0.2,
-}	
+}
 
 PickUpClass = {
     radius = 1;
