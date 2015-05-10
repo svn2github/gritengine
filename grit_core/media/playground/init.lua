@@ -12,7 +12,12 @@ playground = playground or {
 
 -- TODO(dcunnin): delete this when we have a proper coin class
 
-material `Long` { diffuseMap = `/common/props/debug/crates/Panel.dds`, normalMap = `/common/props/debug/crates/PanelN.dds`, emissiveMap = `/common/props/debug/crates/PanelE.dds`, emissiveColour={6,6,6} }
+material `Long` {
+    diffuseMap = `/common/props/debug/crates/Panel.dds`,
+    normalMap = `/common/props/debug/crates/PanelN.dds`,
+    emissiveMap = `/common/props/debug/crates/PanelE.dds`,
+    emissiveColour={6,6,6}
+}
 
 PickUpClass = {
     radius = 1;
