@@ -12,11 +12,8 @@ playground = playground or {
 
 -- TODO(dcunnin): delete this when we have a proper coin class
 
-material `Long` {
-    diffuseMap = `/common/props/debug/crates/Panel.dds`,
-    normalMap = `/common/props/debug/crates/PanelN.dds`,
-    emissiveMap = `/common/props/debug/crates/PanelE.dds`,
-    emissiveColour={6,6,6}
+material `mat_chromeClean` {
+    diffuseMap = `mat_chromeCleanAlbedo.png`,
 }
 
 PickUpClass = {
@@ -73,7 +70,7 @@ PickUpClass = {
 }
 
 
-class `Coin` (PickUpClass) {
+class `pickup_gearUpgradeTree1` (PickUpClass) {
     
 }
 
@@ -97,7 +94,7 @@ function playground:init()
     object `/vehicles/Scarman` (-49.45975, 9.918219, 1.112) {
     }
 
-    self.coin = object `Coin` (-49.45975, 5.918219, 1.112) {
+    self.coin = object `pickup_gearUpgradeTree1` (-49.45975, 5.918219, 1.112) {
     }
 
     self.coinsPickedUp = 0
