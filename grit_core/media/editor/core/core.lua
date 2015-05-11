@@ -154,7 +154,7 @@ end
 
 function GED:setDebugMode(v)
     self.debugMode = v
-    main.physicsEnabled = not v
+    main.physicsEnabled = v
     self:setMouseCapture(v)
     clock.enabled = v
     compass.enabled = v
@@ -168,8 +168,11 @@ function GED:setDebugMode(v)
 
     if not v then
 
-        -- TODO: reset all objects to spawn positions
         -- TODO: remove all non-editor objects, particles, etc
+
+        for _, obj in ipairs(object_all()) do
+            -- TODO:  Move object back to spawn point
+        end
 
     end
 end;
