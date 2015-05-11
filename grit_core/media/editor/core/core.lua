@@ -9,8 +9,10 @@
 
 GED = {
 
+    debugMode = false,
     noClip = false,
     fast = false,
+    mouseCapture = false,
     speedSlow = 3,
     speedFast = 100,
     forwards = 0,
@@ -39,54 +41,6 @@ GED = {
     game_data_dir = "editor";
 };
 
-
-local function ghost_cast (pos, ray, scale)
-    local fraction, _, n = physics_sweep_sphere(scale*.15, pos, ray, true, 1)
-    return fraction, n
-end
-
-function GED:updateGhost (elapsed)
-    local right = self.right - self.left
-    local forwards = self.forwards - self.backwards
-    local ascend = self.ascend - self.descend
-
-    local active_speed = self.fast and self.speedFast or self.speedSlow
-
-    local dist = active_speed * elapsed
-
-    local cam_pos = main.camPos
-
-    -- we now know how far to move (dist)
-    -- but not in which directions
-
-    local d = main.camQuat * vector3(dist*right, dist*forwards, 0) + vector3(0,0,dist*ascend)
-    
-
-    if not self.noClip then
-        local fraction, n = ghost_cast(cam_pos, d, 1)
-
-        if fraction ~= nil then
-            local n = norm(n)
-            d = d - dot(d,n) * n
-            local fraction2, n2 = ghost_cast(cam_pos, d, .95)
-            if fraction2 ~= nil then
-                n2 = norm(n2)
-                d = d - dot(d,n2) * n2
-                local fraction3, n3 = ghost_cast(cam_pos, d, .9)
-                if fraction3 ~= nil then
-                    return 0
-                end
-            end
-        end
-    end
-
-    -- splendid, now let's move
-    cam_pos = cam_pos + d
-    main.camPos = cam_pos
-    main.streamerCentre = cam_pos
-    main.audioCentrePos = cam_pos
-    main.audioCentreVel = vec(0, 0, 0);
-end
 
 --[[
 function ghost:pickDrive()
@@ -125,32 +79,6 @@ function GED:duplicateSelection()
     end
 end;
 
---[[
-function GED:return_editor()    
-    editor_interface.menubar.enabled = true
-    editor_interface.toolbar.enabled =true
-    editor_interface.statusbar.enabled = true
-
-    -- reset the editor camera
-    main.camPos = GED.camera.pos
-    main.camQuat = GED.camera.rot
-end;
-]]
-
-function GED:frameCallback(elapsed_secs)
-    self:updateGhost(elapsed_secs)
-end;
-
-function GED:simulate()
-end;
-
-function GED:stopSimulate()
-end;
-
-function GED:runGame()
-	game_manager:enter('fpsgame')
-end;
-
 function GED:destroyAllEditorObjects()
     local objs = object_all()
     for i = 1, #objs do
@@ -160,14 +88,96 @@ function GED:destroyAllEditorObjects()
     end
 end;
 
--- TODO: replace by a "game_mode:playInEditor()"
-function GED:play()
-	if current_level.game_mode ~= nil and current_level.game_mode ~= "" then
-		game_manager:enter(current_level.game_mode)
-	else
-		game_manager:enter('fpsgame')
-	end
+
+local function ghost_cast (pos, ray, scale)
+    local fraction, _, n = physics_sweep_sphere(scale*.15, pos, ray, true, 1)
+    return fraction, n
+end
+
+function GED:frameCallback(elapsed_secs)
+    local right = self.right - self.left
+    local forwards = self.forwards - self.backwards
+    local ascend = self.ascend - self.descend
+
+    local active_speed = self.fast and self.speedFast or self.speedSlow
+
+    local dist = active_speed * elapsed_secs
+
+    local cam_pos = main.camPos
+
+    -- we now know how far to move (dist)
+    -- but not in which directions
+
+    local d = main.camQuat * vec3(dist*right, dist*forwards, 0) + vec3(0, 0, dist*ascend)
+    
+
+    if not self.noClip then
+        local fraction, n = ghost_cast(cam_pos, d, 1)
+
+        if fraction ~= nil then
+            local n = norm(n)
+            d = d - dot(d,n) * n
+            local fraction2, n2 = ghost_cast(cam_pos, d, .95)
+            if fraction2 ~= nil then
+                n2 = norm(n2)
+                d = d - dot(d,n2) * n2
+                local fraction3, n3 = ghost_cast(cam_pos, d, .9)
+                if fraction3 ~= nil then
+                    return 0
+                end
+            end
+        end
+    end
+
+    -- splendid, now let's move
+    cam_pos = cam_pos + d
+    main.camPos = cam_pos
+    main.streamerCentre = cam_pos
+    main.audioCentrePos = cam_pos
+    main.audioCentreVel = vec(0, 0, 0);
 end;
+
+
+function GED:setMouseCapture(v)
+    self.mouseCapture = v
+    ch.enabled = v
+    playing_binds.mouseCapture = v
+end
+
+function GED:toggleMouseCapture()
+    -- Only called when we are in debug mode
+    self:setMouseCapture(not self.mouseCapture)
+    if self.mouseCapture then
+        -- Various other nice GUI things
+    end
+end
+
+function GED:setDebugMode(v)
+    self.debugMode = v
+    main.physicsEnabled = not v
+    self:setMouseCapture(v)
+    clock.enabled = v
+    compass.enabled = v
+    stats.enabled = v
+    editor_edit_binds.enabled = not v
+    editor_debug_binds.enabled = v
+
+    editor_interface.menubar.enabled = not v
+    editor_interface.toolbar.enabled = not v
+    editor_interface.statusbar.enabled = not v
+
+    if not v then
+
+        -- TODO: reset all objects to spawn positions
+        -- TODO: remove all non-editor objects, particles, etc
+
+    end
+end;
+
+function GED:toggleDebugMode()
+    self:setDebugMode(not self.debugMode)
+end
+
 
 function is_inside_window(window)
     if window.enabled then

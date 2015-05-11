@@ -268,7 +268,6 @@ local default_user_foot_bindings = {
 
 local default_user_editor_core_bindings = {
     debug = "F5";
-    ghost = "right";
     forwards = "w";
     backwards = "s";
     strafeLeft = "a";
@@ -279,6 +278,7 @@ local default_user_editor_core_bindings = {
 }
 
 local default_user_editor_edit_bindings = {
+    ghost = "right";
     delete = "Delete";
     duplicate = "C+d";
     select = "left";
@@ -286,6 +286,7 @@ local default_user_editor_edit_bindings = {
 
 local default_user_editor_debug_bindings = {
     board = "f";
+    toggleGhost = "F1";
 }
 
 

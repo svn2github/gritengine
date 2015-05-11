@@ -24,11 +24,11 @@ hud_class `Main` {
             newButton("Playground", {pressedCallback = function() 
                 game_manager:enter("Playground")
             end}),
-            newButton("Integrated Development Environment", {pressedCallback = function() 
-                game_manager:enter("Integrated Development Environment")
+            newButton("Map Editor", {pressedCallback = function() 
+                game_manager:enter("Map Editor")
             end}),
             newButton("End Game", {pressedCallback = function() 
-                game_manager:exit("Integrated Development Environment")
+                game_manager:exit()
             end}),
             newButton("Resume", {pressedCallback = function() 
                 menu:setEnabled(false)

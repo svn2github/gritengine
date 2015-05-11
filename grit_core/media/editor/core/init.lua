@@ -40,46 +40,26 @@ editor = {
 		
 		include `init_editor_interface.lua`
 
+        
+        playing_binds.enabled = true
         editor_core_binds.enabled = true
-        editor_edit_binds.enabled = true
-        editor_debug_binds.enabled = true
 
-
-        -- disable all Grit default HUD
-        --speedo.enabled = false
-        clock.enabled = false
-        compass.enabled = false
-        stats.enabled = false
-        ch.enabled = false
+        -- Start location:  Seems as good a place as any...
+        main.camPos = vec(0, 0, 10)
+        GED.camYaw = 0
+        GED.camPitch = 0
 
         editor_init_windows()
 
-        main.physicsEnabled = false
-        main.streamerCentre = vec(0, 0, 0)
-        --main.camPos = vec(0, 0, 0)
-        --main.camQuat = Q_ID
-        main.audioCentrePos = vec(0, 0, 0);
-        main.audioCentreVel = vec(0, 0, 0);
-        main.audioCentreQuat = quat(1, 0, 0, 0);
-		-- TODO: user select if want to open a default map or not
-		if true and not next(object_all()) then
-			GED:openLevel(`/editor/core/defaultmap/defaultmap.lvl`)
-		else
-			GED:newLevel(next(object_all()))
-		end
+        GED:openLevel(`/editor/core/defaultmap/defaultmap.lvl`)
 		
         GED:setWidgetMode(1)
         widget_menu[1]:select(true)
 
-        print(BOLD..GREEN..[[
-            ╭────────────────────────────────────╮
-            │  Welcome to Grit Editor! (v0.001)  │
-            ╰────────────────────────────────────╯
-        ]])
 		notify("The editor is very unstable, we are working on it", vec(1, 0, 0))
-		-- TEMPORARY
-		main.physicsEnabled = true
-		ticker.enabled=false
+        
+        GED:setDebugMode(false)
+
     end;
 
     frameCallback = function (self, elapsed_secs)
@@ -90,6 +70,15 @@ editor = {
     end;
 
     mouseMove = function (self, rel)
+        local sens = user_cfg.mouseSensitivity
+
+        local rel2 = sens * rel * vec(1, user_cfg.mouseInvert and -1 or 1)
+
+        GED.camYaw = (GED.camYaw + rel2.x) % 360
+        GED.camPitch = clamp(GED.camPitch + rel2.y, -90, 90)
+
+        main.camQuat = quat(GED.camYaw, V_DOWN) * quat(GED.camPitch, V_EAST)
+        main.audioCentreQuat = main.camQuat
     end;
 
     destroy = function (self)
@@ -101,6 +90,7 @@ editor = {
             -- level = nil
         -- end
         
+        playing_binds.enabled = false
         editor_core_binds.enabled = false
         editor_edit_binds.enabled = false
         editor_debug_binds.enabled = false
@@ -114,9 +104,8 @@ editor = {
         
 		GED.currentWindow = nil
 		
-        safe_destroy(left_toolbar)
-        left_toolbar = nil
+        left_toolbar = safe_destroy(left_toolbar)
     end;
 }
     
-game_manager:define("Integrated Development Environment", editor)
+game_manager:define("Map Editor", editor)
