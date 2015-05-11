@@ -157,7 +157,16 @@ function playground:init()
     object `/vehicles/Scarman` (-49.45975, 9.918219, 1.112) {
     }
 
-    self.coin = object `pickup_gearUpgradeTree1` (-49.45975, 5.918219, 1.112) {
+    object `pickup_gearUpgradeTree1` (-49.45975, 5.918219, 1.112) {
+    }
+
+    object `pickup_energyReplenish` (-44.45975, 5.918219, 1.112) {
+    }
+
+    object `pickup_tool_ioWire` (-39.45975, 5.918219, 1.112) {
+    }
+
+    object `pickup_lesserGearBundle` (-34.45975, 5.918219, 1.112) {
     }
 
     self.coinsPickedUp = 0
