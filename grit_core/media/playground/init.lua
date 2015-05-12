@@ -122,19 +122,22 @@ PickUpClass = {
     end;
 }
 
-class `pickup_gearUpgradeTree1` (PickUpClass) {
-    placementZOffset = 1.5
-}
-
 class `pickup_energyReplenish` (PickUpClass) {
     placementZOffset = 1.5
 }
-
+class `pickup_fiveRockets` (PickUpClass) {
+    placementZOffset = 1.5
+}
+class `pickup_gearUpgradeTree1` (PickUpClass) {
+    placementZOffset = 1.5
+}
+class `pickup_lesserGearBundle` (PickUpClass) {
+    placementZOffset = 1.5
+}
 class `pickup_tool_ioWire` (PickUpClass) {
     placementZOffset = 1.1
 }
-
-class `pickup_lesserGearBundle` (PickUpClass) {
+class `strike_bomberShell` (PickUpClass) {
     placementZOffset = 1.5
 }
 
