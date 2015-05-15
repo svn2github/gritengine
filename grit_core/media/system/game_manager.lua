@@ -56,13 +56,19 @@ game_manager = {
 
     frameUpdate = function (self, elapsed_secs)
         if self.currentMode ~= nil then
-            self.currentMode:frameCallback(elapsed_secs)
+            if not xpcall(self.currentMode.frameCallback, error_handler, self.currentMode.frameCallback, elapsed_secs) then
+                print('During game mode\'s frameCallback, exiting gamemode')
+                self:exit()
+            end
         end
     end;
 
     stepUpdate = function (self, elapsed_secs)
         if self.currentMode ~= nil then
-            self.currentMode:stepCallback(elapsed_secs)
+            if not xpcall(self.currentMode.stepCallback, error_handler, self.currentMode.stepCallback, elapsed_secs) then
+                print('During game mode\'s stepCallback, exiting gamemode')
+                self:exit()
+            end
         end
     end;
 
