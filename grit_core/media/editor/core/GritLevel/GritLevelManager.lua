@@ -223,7 +223,7 @@ level = {
 		-- to save deactivated objects too
 		self.objects[i]:activate()
 		
-		if self.objects[i].editor_object == nil then
+		if self.objects[i].editorObject == nil then
 			-- reset class name for objects using LOD
 			local class_name = self.objects[i].className:gsub("_LOD", "", 1)
 			
@@ -277,7 +277,7 @@ function GritLevel:export(file_name)
 		-- to save deactivated objects too
 		self.objects[i]:activate()
 		
-		if self.objects[i].editor_object == nil then
+		if self.objects[i].editorObject == nil then
 			-- reset class name for objects using LOD
 			local class_name = self.objects[i].className:gsub("_LOD", "", 1)
 			

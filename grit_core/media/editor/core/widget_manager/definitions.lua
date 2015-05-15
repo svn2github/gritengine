@@ -59,22 +59,22 @@ material `blue` {
 class `dummy_plane` (ColClass) {
 	renderingDistance = 1000.0;
 	castShadows = false;
-	editor_object = true;
+	editorObject = true;
 }
 class `arrow_translate` (ColClass) {
 	renderingDistance = 1000.0;
 	castShadows = false;
-	editor_object = true;
+	editorObject = true;
 }
 class `arrow_scale` (ColClass) {
 	renderingDistance = 1000.0;
 	castShadows = false;
-	editor_object = true;
+	editorObject = true;
 }
 class `arrow_rotate` (ColClass) {
 	renderingDistance = 1000.0;
 	castShadows = false;
-	editor_object = true;
+	editorObject = true;
 }
 
 get_material(`green`):setDepthBias(0, 0, 50000, 50000)

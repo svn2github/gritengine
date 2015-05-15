@@ -5,7 +5,7 @@ include `definitions.lua`
 class `widget` {} {
 
     renderingDistance = 4000;
-	editor_object = true;
+	editorObject = true;
 	
     init = function (persistent)
         -- persistent:addDiskResource(`test_girl_walk_baked.mesh`)

@@ -303,8 +303,8 @@ env_cycle = { {
 } }
 
 level.map = function()
-object "/editor/core/defaultmap/Terrain" (vector3(27.93775, 2.882975, -5.880655)) {rot=quat(1, 0, 0, 0), name="Unnamed:/editor/core/defaultmap/Terrain:1" }
-object "/editor/core/defaultmap/Cube" (vector3(0, 0, -9.417662)) {rot=quat(1, 0, 0, 0), name="floor" }
+object "/editor/core/defaultmap/Terrain" (vector3(27.93775, 2.882975, -5.880655)) {rot=quat(1, 0, 0, 0), name="Unnamed:/editor/core/defaultmap/Terrain:1", mapObject = true }
+object "/editor/core/defaultmap/Cube" (vector3(0, 0, -9.417662)) {rot=quat(1, 0, 0, 0), name="floor", mapObject = true }
 end;
 
 if in_editor ~= nil then

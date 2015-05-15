@@ -74,7 +74,8 @@ end;
 function GED:duplicateSelection()
     if widget_manager ~= nil and widget_manager.selectedObj ~= nil then
         object (widget_manager.selectedObj.className) (widget_manager.selectedObj.instance.body.worldPosition) {
-            rot=widget_manager.selectedObj.instance.body.worldOrientation
+            rot=widget_manager.selectedObj.instance.body.worldOrientation;
+            mapObject = true;
         }
     end
 end;
@@ -82,7 +83,7 @@ end;
 function GED:destroyAllEditorObjects()
     local objs = object_all()
     for i = 1, #objs do
-        if objs[i].editor_object ~= nil then
+        if objs[i].editorObject ~= nil then
             safe_destroy(objs[i])
         end
     end
@@ -137,6 +138,11 @@ function GED:frameCallback(elapsed_secs)
     main.audioCentreVel = vec(0, 0, 0);
 end;
 
+function GED:stepCallback(elapsed_secs)
+    if self.debugMode then
+        WeaponEffectManager:stepCallback(elapsed_secs, main.camPos, main.camQuat)
+    end
+end;
 
 function GED:setMouseCapture(v)
     self.mouseCapture = v
@@ -168,10 +174,13 @@ function GED:setDebugMode(v)
 
     if not v then
 
-        -- TODO: remove all non-editor objects, particles, etc
-
         for _, obj in ipairs(object_all()) do
-            -- TODO:  Move object back to spawn point
+            if obj.mapObject == nil then
+                safe_destroy(obj)
+            else
+                obj:deactivate()
+                obj.skipNextActivation = false
+            end
         end
 
     end
@@ -250,7 +259,7 @@ function GED:newLevel(ndestroyobjs)
     -- destroy old editor objects
     local remaining_editor_objects = object_all()
     for i = 1, #remaining_editor_objects do
-        if remaining_editor_objects[i].editor_object then
+        if remaining_editor_objects[i].editorObject then
             safe_destroy(remaining_editor_objects[i])
         end
     end

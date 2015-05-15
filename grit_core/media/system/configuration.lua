@@ -287,54 +287,11 @@ local default_user_editor_edit_bindings = {
 local default_user_editor_debug_bindings = {
     board = "f";
     toggleGhost = "F1";
+    weaponPrimary = "left";
+    weaponSecondary = "right";
+    weaponSwitchUp = {"e", "up"};
+    weaponSwitchDown = {"q", "down"};
 }
-
-
---[[
-local drive_binding_functions = {
-    forwards = {function() player_ctrl.controlObj:setPush(true) end, function() player_ctrl.controlObj:setPush(false) end};
-    backwards = {function() player_ctrl.controlObj:setPull(true) end, function() player_ctrl.controlObj:setPull(false) end};
-    steerLeft = {function() player_ctrl.controlObj:setShouldSteerLeft(true) end, function() player_ctrl.controlObj:setShouldSteerLeft(false) end};
-    steerRight = {function() player_ctrl.controlObj:setShouldSteerRight(true) end, function() player_ctrl.controlObj:setShouldSteerRight(false) end};
-    abandon = function() player_ctrl:abandonControlObj() end;
-    handbrake = {function() player_ctrl.controlObj:setHandbrake(true) end, function() player_ctrl.controlObj:setHandbrake(false) end};
-    lights = {function() player_ctrl.controlObj:setLights() end, nil, true};
-    boost = {function() player_ctrl.controlObj:setBoost(true) end, function() player_ctrl.controlObj:setBoost(false) end};
-    zoomIn = {function() player_ctrl.controlObj:controlZoomIn() end, nil, true};
-    zoomOut = {function() player_ctrl.controlObj:controlZoomOut() end, nil, true};
-    camera = {function() if player_ctrl.controlObj.controlUpdate == regular_chase_cam_update then
-                            player_ctrl.controlObj.controlUpdate = top_down_cam_update
-                         elseif player_ctrl.controlObj.controlUpdate == top_down_cam_update then
-                            player_ctrl.controlObj.controlUpdate = top_angled_cam_update
-                         else
-                            player_ctrl.controlObj.controlUpdate = regular_chase_cam_update
-                         end
-              end, nil, true};
-    realign = {function() player_ctrl.controlObj:realign() end, nil, true};
-    specialUp = {function() player_ctrl.controlObj:setSpecialUp(true) end, function() player_ctrl.controlObj:setSpecialUp(false) end};
-    specialDown = {function() player_ctrl.controlObj:setSpecialDown(true) end, function() player_ctrl.controlObj:setSpecialDown(false) end};
-    specialLeft = {function() player_ctrl.controlObj:setSpecialLeft(true) end, function() player_ctrl.controlObj:setSpecialLeft(false) end};
-    specialRight = {function() player_ctrl.controlObj:setSpecialRight(true) end, function() player_ctrl.controlObj:setSpecialRight(false) end};
-    altUp = {function() player_ctrl.controlObj:setAltUp(true) end, function() player_ctrl.controlObj:setAltUp(false) end};
-    altDown = {function() player_ctrl.controlObj:setAltDown(true) end, function() player_ctrl.controlObj:setAltDown(false) end};
-    altLeft = {function() player_ctrl.controlObj:setAltLeft(true) end, function() player_ctrl.controlObj:setAltLeft(false) end};
-    altRight = {function() player_ctrl.controlObj:setAltRight(true) end, function() player_ctrl.controlObj:setAltRight(false) end};
-    specialToggle = function() player_ctrl.controlObj:special() end;
-}
-
-local foot_binding_functions = {
-    forwards = {function() player_ctrl.controlObj:setForwards(true) end, function() player_ctrl.controlObj:setForwards(false) end};
-    backwards = {function() player_ctrl.controlObj:setBackwards(true) end, function() player_ctrl.controlObj:setBackwards(false) end};
-    strafeLeft = {function() player_ctrl.controlObj:setStrafeLeft(true) end, function() player_ctrl.controlObj:setStrafeLeft(false) end};
-    strafeRight = {function() player_ctrl.controlObj:setStrafeRight(true) end, function() player_ctrl.controlObj:setStrafeRight(false) end};
-    abandon = function() player_ctrl:abandonControlObj() end;
-    jump = {function() player_ctrl.controlObj:setJump(true) end, function() player_ctrl.controlObj:setJump(false) end};
-    run = {function() player_ctrl.controlObj:setRun(true) end, function() player_ctrl.controlObj:setRun(false) end};
-    crouch = {function() player_ctrl.controlObj:setCrouch(true) end, function() player_ctrl.controlObj:setCrouch(false) end};
-    zoomIn = {function() player_ctrl.controlObj:controlZoomIn() end, nil, true};
-    zoomOut = {function() player_ctrl.controlObj:controlZoomOut() end, nil, true};
-}
-]]
 
 
 local function process_user_table(name, given, default)

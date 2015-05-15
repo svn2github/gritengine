@@ -96,6 +96,20 @@ function editor_receive_button(button, state)
             GED:stopDraggingObj()
         end
 
+    elseif button == "weaponPrimary" then
+        if state == '+' then
+            WeaponEffectManager:primaryEngage(main.camPos, main.camQuat)
+        elseif state == '-' then
+            WeaponEffectManager:primaryDisengage()
+        end
+
+    elseif button == "weaponSecondary" then
+        if state == '+' then
+            WeaponEffectManager:secondaryEngage(main.camPos, main.camQuat)
+        elseif state == '-' then
+            WeaponEffectManager:secondaryDisengage()
+        end
+
     end
 end;
 

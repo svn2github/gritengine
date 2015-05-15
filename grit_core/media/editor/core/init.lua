@@ -67,6 +67,7 @@ editor = {
     end;
 
     stepCallback = function (self, elapsed_secs)
+        GED:stepCallback(elapsed_secs)
     end;
 
     mouseMove = function (self, rel)

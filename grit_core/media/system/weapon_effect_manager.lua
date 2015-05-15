@@ -1,57 +1,100 @@
 -- (c) David Cunningham 2015, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
 
-WeaponManager = {
+WeaponEffectManager = {
+
     weapons = { };
+    selectedName = nil;
 
-    setWeapon = function (self, name, weapon)
-        self.gameModes[name] = weapon
+    primaryEngaged = false;
+    secondaryEngaged = false;
+
+    set = function (self, name, weapon)
+        self.weapons[name] = weapon
     end;
 
-    getWeapon = function (self, name)
-        return self.gameModes[name]
+    get = function (self, name)
+        return self.weapons[name]
     end;
 
-    -- Sets (map name to true)
-    primaryEngagedWeapons = { };
-    secondaryEngagedWeapons = { };
+    getSelected = function (self)
+        return self.weapons[self.selectedName]
+    end;
 
-    stepUpdate = function (self, elapsed_secs, src, quat)
-        for k, _ in pairs(self.primaryEngagedWeapons) do
-            weapons[k]:primaryStepUpdate(elapsed_secs, src, quat)
+    getNext = function (self)
+        local w = next(self.weapons, self.selectedName)
+        if w == nil then return next(self.weapons, nil) end
+    end;
+
+    getPrev = function (self)
+        local last = nil
+        for k, v in pairs(self.weapons) do
+            if k == self.selectedName then
+                if last ~= nil then
+                    return last
+                end
+            end
+            last = k
         end
-        for k, _ in pairs(self.secondaryEngagedWeapons) do
-            weapons[k]v:secondaryStepUpdate(elapsed_secs, src, quat)
+        return last
+    end;
+
+    select = function (self, name)
+        local w = self:get(name)
+        if w == nil then error("No such weapon: " .. name) end
+        self:primaryDisengage()
+        self:secondaryDisengage()
+        self.selectedName = name
+    end;
+
+    stepCallback = function (self, elapsed_secs, src, quat)
+        local w = self:getSelected()
+        if w == nil then return end
+        if self.primaryEngaged then
+            w:primaryStepCallback(elapsed_secs, src, quat)
+        end
+        if self.secondaryEngaged then
+            w:secondaryStepCallback(elapsed_secs, src, quat)
         end
     end;
 
-    engagePrimary = function (self, weapon_name, src, quat, alt)
-        weapons[weapon_name]:engagePrimary(weapon_name, src, quat, alt)
-        primaryEngagedWeapons[weapon_name] = true
+    primaryEngage = function (self, src, quat)
+        local w = self:getSelected()
+        if w == nil then return end
+        w:primaryEngage(src, quat)
+        self.primaryEngaged = true
     end;
    
-    disengagePrimary = function (self, weapon_name, src, quat, alt)
-        weapons[weapon_name]:disengagePrimary(weapon_name, src, quat, alt)
-        primaryEngagedWeapons[weapon_name] = nil
+    primaryDisengage = function (self)
+        local w = self:getSelected()
+        if w == nil then return end
+        if not self.primaryEngaged then return end
+        w:primaryDisengage()
+        self.primaryEngaged = false
     end;
    
 
-    engageSecondary = function (self, weapon_name, src, quat, alt)
-        weapons[weapon_name]:engageSecondary(weapon_name, src, quat, alt)
-        secondaryEngagedWeapons[weapon_name] = true
+    secondaryEngage = function (self, src, quat)
+        local w = self:getSelected()
+        if w == nil then return end
+        w:secondaryEngage(src)
+        self.secondaryEngaged = true
     end;
    
-    disengageSecondary = function (self, weapon_name, src, quat, alt)
-        weapons[weapon_name]:disengageSecondary(weapon_name, src, quat, alt)
-        secondaryEngagedWeapons[weapon_name] = nil
+    secondaryDisengage = function (self)
+        local w = self:getSelected()
+        if w == nil then return end
+        if not self.secondaryEngaged then return end
+        w:secondaryDisengage()
+        self.secondaryEngaged = false
     end;
    
 }
 
 -- Push things around
-WeaponManager:setWeapon("Prod", {
-    accelFast = 100;
-    accelSlow = 10;
+WeaponEffectManager:set("Prod", {
+    accelFast = 30;
+    accelSlow = 3;
 
     stepCallbackAux = function (self, elapsed_secs, src, quat, accel)
         local dir = quat * V_FORWARDS
@@ -68,7 +111,7 @@ WeaponManager:setWeapon("Prod", {
     primaryStepCallback = function (self, elapsed_secs, src, quat)
         self:stepCallbackAux(elapsed_secs, src, quat, self.accelSlow)
     end;
-    primaryDisengage = function (self, src, quat)
+    primaryDisengage = function (self)
     end;
 
     secondaryEngage = function (self, src, quat)
@@ -76,32 +119,33 @@ WeaponManager:setWeapon("Prod", {
     secondaryStepCallback = function (self, elapsed_secs, src, quat)
         self:stepCallbackAux(elapsed_secs, src, quat, self.accelFast)
     end;
-    secondaryDisengage = function (self, src, quat)
+    secondaryDisengage = function (self)
     end;
 })
 
 -- Delete fired / placed objects
-WeaponManager:setWeapon("Delete", {
+WeaponEffectManager:set("Delete", {
     primaryEngage = function (self, src, quat)
         local dir = quat * V_FORWARDS
         local ray = 8000 * dir
         local dist, body = physics_cast(src, ray, true, 0)
-        if dist-= nil then return end
+        if dist == nil then return end
         local o = body.owner
         if o.temporary or o.placed then
             o:destroy()
         end
     end;
-    primaryDisengage = function (self, src, quat)
+    primaryDisengage = function (self)
     end;
 
     secondaryEngage = function (self, src, quat)
     end;
-    secondaryDisengage = function (self, src, quat)
+    secondaryDisengage = function (self)
     end;
 })
 
 
+WeaponEffectManager:select("Prod")
 
 --[[
 function ghost:grab()
