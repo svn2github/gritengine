@@ -150,30 +150,6 @@ WeaponEffectManager:select("Prod")
 --[[
 function ghost:grab()
     local function grab_callback(elapsed)
-        local obj = self.grabbedObj
-        if obj == nil then
-            print "dropping object"
-            physics.stepCallbacks:removeByName("grabbedObj")
-            return true
-        end
-            
-        local target = (player_ctrl.camPos + 3*norm(player_ctrl.camDir*V_FORWARDS))
-        local delta = target - obj.worldPosition
-                    
-        if #delta < 5 then
-            obj.linearVelocity = V_ZERO
-        else
-            obj:force(-physics_get_gravity() * obj.mass, obj.worldPosition)
-        end
-        
-        if #delta > 0.1 then
-                obj:force(delta * 1000 * obj.mass, obj.worldPosition)
-        end
-        
-        if input_filter_pressed("left") then
-            obj.angularVelocity = V_ZERO
-            obj.worldOrientation = slerp(obj.worldOrientation, player_ctrl.camDir, 0.01)
-        end
         
         return true
     end
@@ -192,4 +168,60 @@ function ghost:grab()
     end
 end
 ]]
+
+-- Pick things up and move them
+WeaponEffectManager:set("Grab", {
+    object = nil;
+    grabDist = 0;
+
+    primaryEngage = function (self, src, quat)
+        local len = 8000
+        local dir = quat * V_FORWARDS
+        local ray = len * dir
+        local dist, body = physics_cast(src, ray, true, 0)
+        if dist ~= nil then
+            self.grabDist = dist * len
+            self.object = body.owner
+        end
+    end;
+    primaryStepCallback = function (self, elapsed_secs, src, quat)
+        local obj = self.object
+        if obj == nil then return end
+        local body = obj.instance.body
+
+        local target = main.camPos + self.grabDist * (main.camQuat * V_FORWARDS)
+        local delta = target - body.worldPosition
+
+        if #delta < 5 then
+            body.linearVelocity = V_ZERO
+        else
+            body:force(-physics_get_gravity() * body.mass, body.worldPosition)
+        end
+
+        if #delta > 0.1 then
+                body:force(delta * 1000 * body.mass, body.worldPosition)
+        end
+
+    end;
+    primaryDisengage = function (self)
+        self.object = nil
+    end;
+
+    -- TODO: maybe RMB can apply a force so that we can "throw" stuff
+    secondaryEngage = function (self, src, quat)
+    end;
+    secondaryStepCallback = function (self, elapsed_secs, src, quat)
+        local obj = self.object
+        if obj == nil then return end
+        local body = obj.instance.body
+
+        if input_filter_pressed("left") then
+            body.angularVelocity = V_ZERO
+            body.worldOrientation = slerp(body.worldOrientation, main.camQuat, 0.01)
+        end
+    end;
+    secondaryDisengage = function (self)
+    end;
+})
+
 
