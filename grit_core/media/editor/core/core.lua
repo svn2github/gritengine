@@ -75,7 +75,6 @@ function GED:duplicateSelection()
     if widget_manager ~= nil and widget_manager.selectedObj ~= nil then
         object (widget_manager.selectedObj.className) (widget_manager.selectedObj.instance.body.worldPosition) {
             rot=widget_manager.selectedObj.instance.body.worldOrientation;
-            mapObject = true;
         }
     end
 end;
@@ -177,7 +176,7 @@ function GED:setDebugMode(v)
         for _, obj in ipairs(object_all()) do
             if obj.destroyed then 
                 -- Skip
-            elseif obj.mapObject == nil then
+            elseif obj.debugObject == true then
                 safe_destroy(obj)
             else
                 obj:deactivate()
