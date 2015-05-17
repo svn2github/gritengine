@@ -54,7 +54,7 @@ class `Rocket` (BaseClass) {
             self.pos = p
             gfx.localPosition = p
             local vel = random_vector3_box(vec(-0.2, -0.2, 6), vec(0.2, 0.2, 8))
-            local sz = 0.1 + math.random() * 0.1
+            local sz = 0.3 + math.random() * 0.1
             emit_textured_smoke(p, vel, sz, sz*10, vec(0.3, 0.3, 0.3) + math.random()*vec(0.4,0.4,0.4))
         end
         
