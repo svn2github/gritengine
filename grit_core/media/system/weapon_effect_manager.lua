@@ -23,7 +23,8 @@ WeaponEffectManager = {
 
     getNext = function (self)
         local w = next(self.weapons, self.selectedName)
-        if w == nil then return next(self.weapons, nil) end
+        if w == nil then return (next(self.weapons, nil)) end
+        return w
     end;
 
     getPrev = function (self)
@@ -59,6 +60,8 @@ WeaponEffectManager = {
     end;
 
     primaryEngage = function (self, src, quat)
+        src = src or main.camPos
+        quat = quat or main.camQuat
         local w = self:getSelected()
         if w == nil then return end
         w:primaryEngage(src, quat)
@@ -75,6 +78,8 @@ WeaponEffectManager = {
    
 
     secondaryEngage = function (self, src, quat)
+        src = src or main.camPos
+        quat = quat or main.camQuat
         local w = self:getSelected()
         if w == nil then return end
         w:secondaryEngage(src)
@@ -145,34 +150,22 @@ WeaponEffectManager:set("Delete", {
 })
 
 
-WeaponEffectManager:select("Prod")
-
---[[
-function ghost:grab()
-    local function grab_callback(elapsed)
-        
-        return true
-    end
-
-    if self.grabbedObj ~= nil then
-        self.grabbedObj = nil
-        physics.stepCallbacks:removeByName("grabbedObj")
-        return
-    end
-    
-    local obj = pick_obj_safe()
-    obj = obj and obj.instance.body or nil
-    if obj and obj.mass ~= 0 and obj.mass < self.grabThreshold then
-            self.grabbedObj = obj
-            physics.stepCallbacks:insert("grabbedObj", grab_callback)
-    end
-end
-]]
-
 -- Pick things up and move them
-WeaponEffectManager:set("Grab", {
+WeaponGrab = {
     object = nil;
     grabDist = 0;
+    localGrabPos = vec(0, 0, 0);
+    lastDeviation = 0;
+    accDeviation = 0;
+    accDeviationMax = 10;
+    pidParam1 = -100;
+    pidParam2 = -20;
+    pidParam3 = -1;
+
+    -- For controlling rotation
+    lastOrientationDeviation = Q_ID;
+    pidOrientationParam1 = -1;
+    pidOrientationParam2 = -3;
 
     primaryEngage = function (self, src, quat)
         local len = 8000
@@ -182,46 +175,71 @@ WeaponEffectManager:set("Grab", {
         if dist ~= nil then
             self.grabDist = dist * len
             self.object = body.owner
+            self.localGrabPos = body:worldToLocal(src + dist * ray)
+            self.lastDeviation = 0
+            self.lastOrientationDeviatoin = Q_ID
         end
     end;
     primaryStepCallback = function (self, elapsed_secs, src, quat)
         local obj = self.object
         if obj == nil then return end
+        if not obj.activated then return end
         local body = obj.instance.body
+        if body == nil then return end
 
-        local target = main.camPos + self.grabDist * (main.camQuat * V_FORWARDS)
-        local delta = target - body.worldPosition
+        -- Use a PID loop to control position of grabbed object
+        local measured_pos = body:localToWorld(self.localGrabPos)
+        local target_pos = main.camPos + self.grabDist * (main.camQuat * V_FORWARDS)
 
-        if #delta < 5 then
-            body.linearVelocity = V_ZERO
-        else
-            body:force(-physics_get_gravity() * body.mass, body.worldPosition)
+        local deviation = measured_pos - target_pos
+        local deviation_rate = (deviation - self.lastDeviation) / elapsed_secs
+        self.lastDeviation = deviation
+        local acc_deviation = self.accDeviation + deviation
+        if #acc_deviation > self.accDeviationMax then
+            acc_deviation =  norm(acc_deviation) * self.accDeviationMax
         end
+        self.accDeviation = acc_deviation
 
-        if #delta > 0.1 then
-                body:force(delta * 1000 * body.mass, body.worldPosition)
-        end
+        local acc = deviation * self.pidParam1 + deviation_rate * self.pidParam2 + acc_deviation * self.pidParam3
 
+        body:force(acc * body.mass, measured_pos)
     end;
     primaryDisengage = function (self)
         self.object = nil
     end;
 
-    -- TODO: maybe RMB can apply a force so that we can "throw" stuff
     secondaryEngage = function (self, src, quat)
     end;
     secondaryStepCallback = function (self, elapsed_secs, src, quat)
         local obj = self.object
         if obj == nil then return end
+        if not obj.activated then return end
         local body = obj.instance.body
+        if body == nil then return end
 
-        if input_filter_pressed("left") then
-            body.angularVelocity = V_ZERO
-            body.worldOrientation = slerp(body.worldOrientation, main.camQuat, 0.01)
-        end
+        -- use PD loop to control orientation of grabbed object
+        local target_orientation = main.camQuat
+        local measured_orientation = body.worldOrientation
+
+        local deviation = norm(measured_orientation * inv(target_orientation))
+        local deviation_tensor = tensor(deviation)
+
+        local deviation_change = (deviation * inv(self.lastOrientationDeviation))
+        local deviation_rate_tensor = tensor(deviation_change) / elapsed_secs
+        self.lastOrientationDeviation = deviation
+
+        local acc = deviation_tensor * self.pidOrientationParam1 + deviation_rate_tensor * self.pidOrientationParam2
+
+        body:torque(acc * body.inertia)
+        --body.angularVelocity = V_ZERO
+        --body.worldOrientation = slerp(body.worldOrientation, main.camQuat, 0.01)
     end;
     secondaryDisengage = function (self)
     end;
-})
+}
+
+WeaponEffectManager:set("Grab", WeaponGrab)
+
+WeaponEffectManager:select("Grab")
 
 
