@@ -41,6 +41,17 @@ function euler (x,y,z)
         return quat(z,V_UP) * quat(y,V_NORTH) * quat(x,V_EAST)
 end
 
+function tensor (q)
+    if vec(q.x, q.y, q.z) ~= V_ZERO then
+        local angle = q.angle
+        if angle > 180 then
+            angle = angle - 360
+        end
+        return angle * q.axis
+    end
+    return vec(0, 0, 0)
+end
+
 METRES_PER_MILE = 1609
 
 RESET = "\027[0m"

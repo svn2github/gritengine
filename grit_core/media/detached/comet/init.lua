@@ -168,41 +168,18 @@ FlyingCar = extends (ColClass) {
 
 
         do -- stabilise rotation (avoid roll and pitch)
-            local want_orientation = euler(pitch,roll,-current_bearing)
-            --want_orientation = quat(1,0,0,0)
-            --print(want_orientation)
+            local want_orientation = euler(pitch,roll,-current_bearing)  -- quaternion
 
             local orientation_dev = norm(body.worldOrientation * inv(want_orientation))
-            --print(body.worldOrientation, want_orientation, inv(want_orientation), body.worldOrientation * inv(want_orientation))
-
-            local tensor_dev = vector3(0,0,0)
-            if vector3(orientation_dev.x, orientation_dev.y, orientation_dev.z) ~= V_ZERO then
-                local angle = orientation_dev.angle
-                local axis = orientation_dev.axis
-                if angle > 180 then
-                    angle = angle - 360
-                end
-                tensor_dev = angle * axis
-            end
-
-            local tensor_cumulative = vector3(0,0,0)
+            local tensor_dev = tensor(orientation_dev)
 
             local orientation_dev_change = norm(orientation_dev * inv(instance.lastOrientationDev))
             instance.lastOrientationDev = orientation_dev
-            local tensor_dev_change = vector3(0,0,0)
-            if #vector3(orientation_dev_change.x, orientation_dev_change.y, orientation_dev_change.z) > 0 then
-                local angle = orientation_dev_change.angle
-                local axis = orientation_dev_change.axis
-            
-                if angle > 180 then
-                    angle = angle - 360
-                end
-                tensor_dev_change = angle * axis / elapsed
-            end
+            local tensor_dev_change = tensor(orientation_dev_change)
 
-            local P, I, D = -0.3, 0, -0.05
+            local P, D = -0.3, -0.05
 
-            body:torque(inertia*(P*tensor_dev + I*tensor_cumulative + D*tensor_dev_change))
+            body:torque(inertia*(P*tensor_dev + D*tensor_dev_change))
         end
 
 
