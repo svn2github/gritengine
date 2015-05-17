@@ -13,7 +13,7 @@ end
 function visual_settings(enable_settings)
     soul_mode(false)
 	--gfx_bake_env_cube(`projectb_cube.envcube.tif`, 512, vector3(38, 9, 97), 1, vector3(0.0,0.0,0.0))
-	gfx_env_cube(`projectb_cube.envcube.tiff`)
+	gfx_env_cube(0, `projectb_cube.envcube.tiff`)
 	env_cube_dawn = `projectb_cube.envcube.tiff`
 	env_cube_noon = `projectb_cube.envcube.tiff`
 	env_cube_dusk = `projectb_cube.envcube.tiff`
