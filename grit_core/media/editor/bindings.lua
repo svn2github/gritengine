@@ -110,7 +110,16 @@ function editor_receive_button(button, state)
             WeaponEffectManager:secondaryDisengage()
         end
 
-    end
-end;
+    elseif button == "weaponSwitchUp" then
+        if state == '+' then
+            WeaponEffectManager:select(WeaponEffectManager:getNext())
+        end
 
+    elseif button == "weaponSwitchDown" then
+        if state == '+' then
+            WeaponEffectManager:select(WeaponEffectManager:getPrev())
+        end
+
+    end
+end
 

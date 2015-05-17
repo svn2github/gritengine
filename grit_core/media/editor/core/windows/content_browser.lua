@@ -204,7 +204,7 @@ hud_class `content_browser_floating_object` {
 
 			local pos = (main.camPos + cast_ray * (dist or 0.02)) + (cl.placementZOffset or 0)
 			
-			object (self.obclass) (pos) { mapObject = true; }
+			object (self.obclass) (pos) { }
 
 			safe_destroy(self)
 			addobjectelement = nil

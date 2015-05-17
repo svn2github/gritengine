@@ -46,6 +46,7 @@ WeaponEffectManager = {
         self:primaryDisengage()
         self:secondaryDisengage()
         self.selectedName = name
+        print("Current weapon: " .. name)
     end;
 
     stepCallback = function (self, elapsed_secs, src, quat)
@@ -82,7 +83,7 @@ WeaponEffectManager = {
         quat = quat or main.camQuat
         local w = self:getSelected()
         if w == nil then return end
-        w:secondaryEngage(src)
+        w:secondaryEngage(src, quat)
         self.secondaryEngaged = true
     end;
    
@@ -128,6 +129,82 @@ WeaponEffectManager:set("Prod", {
     end;
 })
 
+
+function directed_ray(p, q)
+    local d,b,n,m = physics_cast(p, q * (8000 * V_FORWARDS), true, 0)
+    if d == nil then return nil end
+    return d * 8000, b, n, m
+end
+
+function pick_pos(p, q, bias)
+    local dist,_,normal = directed_ray(p, q)
+    if dist == nil then return nil end
+    local r = p + q * (dist*V_FORWARDS)
+    if bias then r = r + bias * normal end
+    return r
+end
+
+function pick_obj()
+    local _, body = directed_ray()
+    if body == nil then return nil end
+    return body.owner
+end
+
+-- Create objects
+WeaponCreate = {
+    class = `/common/props/junk/Money`;
+    rotation = 'ALIGNED';  -- Or 'FIXED' or 'RANDOM'
+    fireSpeed = 40;
+    fireSpin = 0;
+
+    getRotation = function (self, q)
+        if self.rotation == 'ALIGNED' then
+            return q
+        elseif self.rotation == 'RANDOM' then
+            return quat(math.random(360), V_UP)
+        elseif self.rotation == 'FIXED' then
+            return Q_ID
+        else
+            error('Unknown rotation value "' .. self.rotation .. '"')
+        end
+    end;
+
+    primaryEngage = function (self, src, q)
+
+        local cl = class_get(self.class)
+        local height = cl.placementZOffset or 0
+        local p = pick_pos(src, q)
+        if p == nil then return end
+        local x, y, z = unpack(p)
+
+        local rot = self:getRotation(q)
+        object (self.class) (x,y,z+height) {rot=rot, debugObject=true}
+    end;
+    primaryStepCallback = function (self, elapsed_secs, src, quat)
+    end;
+    primaryDisengage = function (self)
+    end;
+
+    secondaryEngage = function (self, src, q)
+        local rot = self:getRotation(q)
+        local x,y,z = unpack(src)
+        local o = object (self.class) (x,y,z) {rot=rot, debugObject=true}
+        o:activate() -- need this so we can add the linear velocity
+        if o.activated then
+            -- There was not an error during activation
+            o.instance.body.linearVelocity = rot * vector3(0, self.fireSpeed, 0)
+            o.instance.body.angularVelocity = rot * vec(0, 0, self.fireSpin)
+            o:beingFired()
+        end
+    end;
+    secondaryStepCallback = function (self, elapsed_secs, src, quat)
+    end;
+    secondaryDisengage = function (self)
+    end;
+}
+WeaponEffectManager:set("Create", WeaponCreate)
+
+
 -- Delete fired / placed objects
 WeaponEffectManager:set("Delete", {
     primaryEngage = function (self, src, quat)
@@ -136,14 +213,18 @@ WeaponEffectManager:set("Delete", {
         local dist, body = physics_cast(src, ray, true, 0)
         if dist == nil then return end
         local o = body.owner
-        if o.temporary or o.placed then
+        if o.debugObject then
             o:destroy()
         end
+    end;
+    primaryStepCallback = function (self, elapsed_secs, src, quat)
     end;
     primaryDisengage = function (self)
     end;
 
     secondaryEngage = function (self, src, quat)
+    end;
+    secondaryStepCallback = function (self, elapsed_secs, src, quat)
     end;
     secondaryDisengage = function (self)
     end;
@@ -164,8 +245,8 @@ WeaponGrab = {
 
     -- For controlling rotation
     lastOrientationDeviation = Q_ID;
-    pidOrientationParam1 = -1;
-    pidOrientationParam2 = -3;
+    pidOrientationParam1 = -0.3;
+    pidOrientationParam2 = -0.3;
 
     primaryEngage = function (self, src, quat)
         local len = 8000
