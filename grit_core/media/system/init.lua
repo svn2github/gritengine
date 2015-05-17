@@ -304,11 +304,11 @@ include `audio.lua`
 
 include `net.lua` 
 
+include `weapon_effect_manager.lua`
+
 include `/common/init.lua` 
 
 include `/editor/init.lua`   -- TODO(dcunnin):  This must be moved to /system
-
-include `weapon_effect_manager.lua`
 
 include `/vehicles/init.lua` 
 

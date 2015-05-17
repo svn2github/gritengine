@@ -321,6 +321,5 @@ WeaponGrab = {
 
 WeaponEffectManager:set("Grab", WeaponGrab)
 
+
 WeaponEffectManager:select("Grab")
-
-
