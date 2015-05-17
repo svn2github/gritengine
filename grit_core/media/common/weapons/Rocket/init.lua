@@ -1,8 +1,15 @@
 
-class `Rocket` (BaseClass) {
-    gfxMesh = `/common/props/debug/crates/Small.mesh`;
+material `rocket` {
+	diffuseMap=`rocket.png`,
+	normalMap=`rocket_nm.png`,
+	gloss = 0.6,
+	specular = 0.02,
+	shadowBias=0.15
+}
 
+class `Rocket` (BaseClass) {
     renderingDistance = 100.0;
+	placementZOffset = 0.1;
 
     speed = 40;
 
