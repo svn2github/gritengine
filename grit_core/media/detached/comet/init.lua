@@ -168,12 +168,12 @@ FlyingCar = extends (ColClass) {
 
 
         do -- stabilise rotation (avoid roll and pitch)
-            local want_orientation = euler(pitch,roll,-current_bearing)  -- quaternion
+            local want_orientation = euler(pitch,roll,-current_bearing)  -- quat
 
-            local orientation_dev = norm(body.worldOrientation * inv(want_orientation))
+            local orientation_dev = norm(body.worldOrientation * inv(want_orientation))  -- quat
             local tensor_dev = tensor(orientation_dev)
 
-            local orientation_dev_change = norm(orientation_dev * inv(instance.lastOrientationDev))
+            local orientation_dev_change = norm(orientation_dev * inv(instance.lastOrientationDev)) -- quat
             instance.lastOrientationDev = orientation_dev
             local tensor_dev_change = tensor(orientation_dev_change)
 
