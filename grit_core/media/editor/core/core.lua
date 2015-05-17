@@ -175,7 +175,9 @@ function GED:setDebugMode(v)
     if not v then
 
         for _, obj in ipairs(object_all()) do
-            if obj.mapObject == nil then
+            if obj.destroyed then 
+                -- Skip
+            elseif obj.mapObject == nil then
                 safe_destroy(obj)
             else
                 obj:deactivate()
