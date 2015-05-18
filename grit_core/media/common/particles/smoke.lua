@@ -6,7 +6,7 @@ do
         frames = { 640,512, 128, 128, };  frame = 0;
         initialVolume = 10; maxVolume = 200; life = 2;
         behaviour = particle_behaviour_alpha_gas_ball_diffuse;
-        alphaCurve = Plot{[0]=0.0,[0.2]=0.4,[1]=0};
+        alphaCurve = Plot{[0]=0.0,[1]=0};
         convectionCurve = particle_convection_curve;
     }
 
@@ -15,7 +15,7 @@ do
         frames = { 896,640, 128, 128, };  frame = 0;
         initialVolume = 10; maxVolume = 200; life = 2;
         behaviour = particle_behaviour_alpha_gas_ball_diffuse;
-        alphaCurve = Plot{[0]=1,[0.2]=0.2,[1]=0};
+        alphaCurve = Plot{[0]=1,[1]=0};
         convectionCurve = particle_convection_curve;
     }
 end
@@ -49,21 +49,21 @@ function emit_textured_smoke (pos, vel, start_size, end_size, colour, life)
     life = life or 3
     local r1 = start_size/2
     local r2 = end_size/2
-	if tire_smoke_counter + 1 < tire_smoke_max then
-    gfx_particle_emit(`TexturedSmoke`, pos, {
-        angle = 360*math.random();
-        velocity = vel;
-        initialVolume = 4/3 * math.pi * r1*r1*r1; -- volume of sphere
-        maxVolume = 4/3 * math.pi * r2*r2*r2; -- volume of sphere
-        life = life;
-        diffuse = colour;
-        initialColour = colour;
-        age = 0;
-    })
-		tire_smoke_counter = tire_smoke_counter + 1
-	else
-		tire_smoke_counter = tire_smoke_counter - 0.1
-	end
+    if tire_smoke_counter + 1 < tire_smoke_max then
+        gfx_particle_emit(`TexturedSmoke`, pos, {
+            angle = 360*math.random();
+            velocity = vel;
+            initialVolume = 4/3 * math.pi * r1*r1*r1; -- volume of sphere
+            maxVolume = 4/3 * math.pi * r2*r2*r2; -- volume of sphere
+            life = life;
+            diffuse = colour;
+            initialColour = colour;
+            age = 0;
+        })
+        tire_smoke_counter = tire_smoke_counter + 1
+    else
+        tire_smoke_counter = tire_smoke_counter - 0.1
+    end
 end
 
 

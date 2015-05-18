@@ -14,13 +14,14 @@ class `Rocket` (BaseClass) {
     speed = 40;
 
     castShadows = true;
+    lifePattern = {1, 2, 1, 4, 1, 2, 1, 8};
 
 
     activate = function(self, instance)
         BaseClass.activate(self, instance)
         self.needsStepCallbacks = true
         instance.orientation = self.rot or Q_ID
-
+        instance.stepsTravelled = 0
     end;
 
     deactivate = function (self)
@@ -50,13 +51,28 @@ class `Rocket` (BaseClass) {
     
             self:destroy()
         else
+            -- Put particle at current position, then move to next position (particle always behind)
+            --local vel = random_vector3_box(vec(-0.2, -0.2, 6), vec(0.2, 0.2, 8))
+            -- 1 2 1 4 1 2 1 8
+            local r1 = 0.05
+            local r2 = r1 * 50
+
+            gfx_particle_emit(`/common/particles/TexturedSmoke`, p, {
+                angle = 360*math.random();
+                velocity = V_ZERO;
+                initialVolume = 4/3 * math.pi * r1*r1*r1; -- volume of sphere
+                maxVolume = 4/3 * math.pi * r2*r2*r2; -- volume of sphere
+                life = self.lifePattern[instance.stepsTravelled % 8];
+                diffuse = 0.4 * vec(1, 1, 1);
+                age = 0;
+            })
+
             p = p + movement 
             self.pos = p
             gfx.localPosition = p
-            local vel = random_vector3_box(vec(-0.2, -0.2, 6), vec(0.2, 0.2, 8))
-            local sz = 0.3 + math.random() * 0.1
-            emit_textured_smoke(p, vel, sz, sz*10, vec(0.3, 0.3, 0.3) + math.random()*vec(0.4,0.4,0.4))
         end
+
+        instance.stepsTravelled = instance.stepsTravelled + 1
         
     end;
 

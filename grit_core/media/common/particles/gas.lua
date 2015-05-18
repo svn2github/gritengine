@@ -50,6 +50,7 @@ function particle_behaviour_alpha_gas_ball_emissive (tab, elapsed)
         alpha = tab.alphaCurve[tab.age]
         tab.alpha = alpha
     end
+    tab.alpha = tab.alpha / tab.initialVolume
     if tab.colourCurve then
         local light_colour = tab.colourCurve[tab.age]
         tab.emissive = light_colour * alpha

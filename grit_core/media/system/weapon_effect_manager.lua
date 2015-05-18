@@ -150,6 +150,39 @@ function pick_obj()
     return body.owner
 end
 
+-- Create particles
+--[[
+WeaponParticle = {
+    class = `/common/particles/Smoke`;
+    
+
+    primaryEngage = function (self, src, q)
+
+        local cl = class_get(self.class)
+        local height = cl.placementZOffset or 0
+        local p = pick_pos(src, q)
+        if p == nil then return end
+        local x, y, z = unpack(p)
+
+        local rot = self:getRotation(q)
+        object (self.class) (x,y,z+height) {rot=rot, debugObject=true}
+    end;
+    primaryStepCallback = function (self, elapsed_secs, src, quat)
+    end;
+    primaryDisengage = function (self)
+    end;
+
+    secondaryEngage = function (self, src, q)
+    end;
+    secondaryStepCallback = function (self, elapsed_secs, src, quat)
+    end;
+    secondaryDisengage = function (self)
+    end;
+}
+WeaponEffectManager:set("Particle", WeaponParticle)
+]]
+
+
 -- Create objects
 WeaponCreate = {
     class = `/common/props/junk/Money`;
