@@ -149,7 +149,6 @@ function playground:init()
     loading_screen:pump()
 
     include `img/placement.lua`
-    include `img/placement_veg.lua`
 
     self.protagonist = object `/detached/characters/robot_med` (-53.45975, 9.918219, 1.112) {
         rot=quat(-0.3363351, 0, 0, 0.9417424)

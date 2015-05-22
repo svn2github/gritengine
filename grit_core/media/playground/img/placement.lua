@@ -1,4 +1,7 @@
 -- (c) Acisclo Murillo (JostVice), Vincent Mayeur - 2012, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
+
+include `placement_veg.lua`
+
 --Main
 --object "VCtest" (0.0, 0.0, 5) {name="VCtest"}
 object `terrain` (0.0, 0.0, 0.0) {name="terrain"}
