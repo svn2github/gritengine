@@ -89,7 +89,7 @@ function editor_receive_button(button, state)
 
     elseif button == "select" then
         if state == '+' then
-            if inside then
+            if inside() then
                 GED:selectObj()
             end
         elseif state == '-' then
