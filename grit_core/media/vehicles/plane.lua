@@ -52,7 +52,7 @@ Plane = extends (ColClass) {
     health = 50000;
     --health = 25000;
     impulseDamageThreshold=1000;
-    explodeInfo = { radius = 10; };
+    explodeInfo = { radius = 7; };
 
     wheelSpinTractionControlMax = 1;
     wheelSpinTractionControlRate = 4;
@@ -635,9 +635,9 @@ function Plane.beingFired (persistent)
 end
 
 function Plane.onExplode (persistent)
-        if player_ctrl.controlObj == persistent then
-                player_ctrl:abandonControlObj()
-        end
+        --if player_ctrl.controlObj == persistent then
+        --        player_ctrl:abandonControlObj()
+        --end
         local instance = persistent.instance
         instance.gfx:setAllMaterials("/common/mat/Burnt")
         instance.canDrive = false     

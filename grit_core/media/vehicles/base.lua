@@ -63,7 +63,7 @@ Vehicle = extends (ColClass) {
 
     health = 100000;
     impulseDamageThreshold=1000;
-    explodeInfo = { radius = 10 };
+    explodeInfo = { radius = 5 };
 
     brakePlot = { [-10] = 100; [0] = 100; [10] = 2500; [20] = 2500; [40] = 2500; };
 
