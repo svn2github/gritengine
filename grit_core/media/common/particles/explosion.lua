@@ -61,7 +61,7 @@ end
 
 function explosion (pos, radius, force, num_flames)
     radius = radius or 5
-    force = force or radius * radius * 400
+    force = force or radius * radius * 800
     num_flames = num_flames or 6
 
     local volume = radius * radius * radius * 4/3 * math.pi
