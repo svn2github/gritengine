@@ -192,7 +192,8 @@ WeaponCreate = {
 
     getRotation = function (self, q)
         if self.rotation == 'ALIGNED' then
-            return q
+            local no_z = vec(1, 1, 0) * (q * V_FORWARDS)
+            return quat(V_FORWARDS, no_z)
         elseif self.rotation == 'RANDOM' then
             return quat(math.random(360), V_UP)
         elseif self.rotation == 'FIXED' then
