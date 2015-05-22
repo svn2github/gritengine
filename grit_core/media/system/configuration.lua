@@ -291,6 +291,7 @@ local default_user_editor_debug_bindings = {
     weaponSecondary = "right";
     weaponSwitchUp = {"e", "up"};
     weaponSwitchDown = {"q", "down"};
+    pausePhysics = "F2";
 }
 
 

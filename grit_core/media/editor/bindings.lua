@@ -120,6 +120,11 @@ function editor_receive_button(button, state)
             WeaponEffectManager:select(WeaponEffectManager:getPrev())
         end
 
+    elseif button == "pausePhysics" then
+        if state == '+' then
+            main.physicsEnabled = not main.physicsEnabled
+        end
+
     end
 end
 
