@@ -6,7 +6,7 @@ do
         frames = { 640,512, 128, 128, };  frame = 0;
         initialVolume = 10; maxVolume = 200; life = 2;
         behaviour = particle_behaviour_alpha_gas_ball_diffuse;
-        alphaCurve = Plot{[0]=0.0,[1]=0};
+        alphaCurve = Plot{[0]=0.0,[0.5]=0.25,[1]=0};
         convectionCurve = particle_convection_curve;
     }
 
@@ -15,7 +15,7 @@ do
         frames = { 896,640, 128, 128, };  frame = 0;
         initialVolume = 10; maxVolume = 200; life = 2;
         behaviour = particle_behaviour_alpha_gas_ball_diffuse;
-        alphaCurve = Plot{[0]=1,[1]=0};
+        alphaCurve = Plot{[0]=1,[0.5]=0.25,[1]=0};
         convectionCurve = particle_convection_curve;
     }
 end
@@ -67,8 +67,7 @@ function emit_textured_smoke (pos, vel, start_size, end_size, colour, life)
 end
 
 
-function puff_textured()
-    local p = pick_pos()
+function puff_textured(pos)
     local radius = 5
     local time = 3
     for i=1,5 do
@@ -76,8 +75,19 @@ function puff_textured()
         dir = radius * dir 
         dir = dir + random_vector3_sphere() + V_UP
         -- colour works best if all particles are the same colour
-        local rand_colour = 0.05*vector3(1,1,1)
-        emit_textured_smoke(p, 4*dir, radius/3, 4*radius, rand_colour, time)
+        local rand_colour = 0.7*vector3(1,1,1)
+        local r1 = radius/3
+        local r2 = 4*radius
+        gfx_particle_emit(`TexturedSmoke`, pos, {
+            angle = 360*math.random();
+            velocity = 4*dir;
+            initialVolume = 4/3 * math.pi * r1*r1*r1; -- volume of sphere
+            maxVolume = 4/3 * math.pi * r2*r2*r2; -- volume of sphere
+            life = time;
+            diffuse = rand_colour;
+            initialColour = rand_colour;
+            age = 0;
+        })
     end
 end
 
