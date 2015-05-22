@@ -8,7 +8,7 @@ material `rocket` {
 }
 
 class `Rocket` (BaseClass) {
-    renderingDistance = 100.0;
+    renderingDistance = 400.0;
 	placementZOffset = 0.1;
 
     speed = 40;
@@ -21,7 +21,7 @@ class `Rocket` (BaseClass) {
         BaseClass.activate(self, instance)
         self.needsStepCallbacks = true
         instance.orientation = self.rot or Q_ID
-        instance.stepsTravelled = 0
+        instance.lifeSecs = 0
     end;
 
     deactivate = function (self)
@@ -31,48 +31,55 @@ class `Rocket` (BaseClass) {
         return true  -- Do not respawn.
     end;
 
-    stepCallback = function (self, elapsed)
+    stepCallback = function (self, elapsed_secs)
 
         local instance = self.instance
         local gfx = instance.gfx
 
         local p = self.pos
 
-        local movement = (instance.orientation * V_FORWARDS) * elapsed * self.speed
+        local q = instance.orientation * quat(3, random_vector3_sphere())
 
-        local fraction, hit_obj, wall_normal = physics_sweep_cylinder(0.1, 0.5, instance.orientation * quat(90, vec(1, 0, 0)), p, movement, true, 0)
+        local movement = (q * V_FORWARDS) * elapsed_secs * self.speed
+
+        local fraction, hit_obj, wall_normal = physics_sweep_sphere(0.1, p, movement, true, 0)
+
 
         if fraction then
             -- hit something
 
             local hit_pos = p + fraction * movement
 
-            explosion(hit_pos)
+            explosion(hit_pos, 3, 5000)
     
             self:destroy()
         else
             -- Put particle at current position, then move to next position (particle always behind)
             --local vel = random_vector3_box(vec(-0.2, -0.2, 6), vec(0.2, 0.2, 8))
             -- 1 2 1 4 1 2 1 8
-            local r1 = 0.05
-            local r2 = r1 * 50
+            local r1 = 0.5
+            local life = 0.5
+            local r2 = 1
+            local grey = 1
 
-            gfx_particle_emit(`/common/particles/TexturedSmoke`, p, {
-                angle = 360*math.random();
-                velocity = V_ZERO;
-                initialVolume = 4/3 * math.pi * r1*r1*r1; -- volume of sphere
-                maxVolume = 4/3 * math.pi * r2*r2*r2; -- volume of sphere
-                life = self.lifePattern[instance.stepsTravelled % 8];
-                diffuse = 0.4 * vec(1, 1, 1);
-                age = 0;
-            })
+            if math.floor(instance.lifeSecs * 200) % 4 == 0 and instance.lifeSecs > 0.05 then
+                gfx_particle_emit(`/common/particles/TexturedSmoke`, p, {
+                    angle = 360*math.random();
+                    velocity = 0.3 * random_vector3_sphere() + vec(0,0,2);
+                    initialVolume = 4/3 * math.pi * r1*r1*r1; -- volume of sphere
+                    maxVolume = 4/3 * math.pi * r2*r2*r2; -- volume of sphere
+                    life = life;
+                    diffuse = grey * vec(1, 1, 1);
+                    age = 0;
+                })
+            end
 
             p = p + movement 
             self.pos = p
             gfx.localPosition = p
         end
 
-        instance.stepsTravelled = instance.stepsTravelled + 1
+        instance.lifeSecs = instance.lifeSecs + elapsed_secs
         
     end;
 
