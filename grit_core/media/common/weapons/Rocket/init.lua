@@ -38,9 +38,9 @@ class `Rocket` (BaseClass) {
 
         local p = self.pos
 
-        local q = instance.orientation * quat(3, random_vector3_sphere())
+        local dir = (instance.orientation * quat(3, random_vector3_sphere())) * V_FORWARDS
 
-        local movement = (q * V_FORWARDS) * elapsed_secs * self.speed
+        local movement = dir * elapsed_secs * self.speed
 
         local fraction, hit_obj, wall_normal = physics_sweep_sphere(0.1, p, movement, true, 0)
 
@@ -62,8 +62,8 @@ class `Rocket` (BaseClass) {
             local r2 = 1
             local grey = 1
 
-            if math.floor(instance.lifeSecs * 200) % 4 == 0 and instance.lifeSecs > 0.05 then
-                gfx_particle_emit(`/common/particles/TexturedSmoke`, p, {
+            if math.floor(instance.lifeSecs * 200) % 2 == 0 and instance.lifeSecs > 0.05 then
+                gfx_particle_emit(`/common/particles/TexturedSmoke`, p - dir, {
                     angle = 360*math.random();
                     velocity = 0.3 * random_vector3_sphere() + vec(0,0,2);
                     initialVolume = 4/3 * math.pi * r1*r1*r1; -- volume of sphere
