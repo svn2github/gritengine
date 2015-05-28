@@ -374,10 +374,6 @@ function playground:receiveButton(button, state)
 end
 
 function playground:frameCallback(elapsed_secs)
-end
-
-function playground:stepCallback(elapsed_secs)
-
     if self.vehicle ~= nil and not self.vehicle.activated then
         self:abandonControlObj()
     end
@@ -416,6 +412,12 @@ function playground:stepCallback(elapsed_secs)
 
     main.camQuat = quat(self.camYaw, V_DOWN) * quat(self.camPitch, V_EAST)
 
+    --player_ctrl.speedoPos = instance.camAttachPos
+    --player_ctrl.speedoSpeed = #vehicle_vel
+    if self.vehicle ~= nil then
+        self.protagonist:updateDriven(instance.camAttachPos, Q_ID)
+    end
+
     local ray_skip = 0.4
     local ray_dir = main.camQuat * V_BACKWARDS
     local ray_start = instance.camAttachPos + ray_skip * ray_dir
@@ -426,11 +428,10 @@ function playground:stepCallback(elapsed_secs)
     main.streamerCentre = instance.camAttachPos
     main.audioCentrePos = main.camPos
 
-    --player_ctrl.speedoPos = instance.camAttachPos
-    --player_ctrl.speedoSpeed = #vehicle_vel
-    if self.vehicle ~= nil then
-        self.protagonist:updateDriven(body.worldPosition, body.worldOrientation)
-    end
+end
+
+function playground:stepCallback(elapsed_secs)
+
 end
 
 function playground:destroy()
