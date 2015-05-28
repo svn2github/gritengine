@@ -101,8 +101,8 @@ function physics_step (elapsed_secs)
     local _, initial_allocs = get_alloc_stats()
 
     object_do_step_callbacks(elapsed_secs)
-    physics_update()
     game_manager:stepUpdate(elapsed_secs)
+    physics_update()
     gfx_particle_pump(elapsed_secs)
     do_events(elapsed_secs)
 
