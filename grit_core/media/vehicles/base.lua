@@ -734,7 +734,6 @@ function Vehicle.controlAbandon (persistent)
     local speed = dot(body.linearVelocity, (body.worldOrientation * V_FORWARDS))
     if speed < 5 and speed > -5 then
         persistent.instance.parked = true
-        persistent.instance.engine.on = false
     end
 end
 
