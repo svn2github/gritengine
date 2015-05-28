@@ -177,11 +177,9 @@ function main:run (...)
             input_filter_trickle_button(button)
         end
 
-        -- PHYSICS
+        -- PHYSICS (and game logic)
         if main.physicsEnabled then
-
             local step_size = physics_option("STEP_SIZE")
-
             if main.physicsOneToOne then
                 main.physicsLeftOver = 0
                 physics_step(step_size)
@@ -190,27 +188,23 @@ function main:run (...)
             end
         end
 
-
-        -- GAME LOGIC (frames)
+        -- GRAPHICS
+        if gfx_window_active() then
+            physics_update_graphics(main.physicsEnabled and main.physicsLeftOver or 0)
+            if main.physicsDebugWorld then physics_draw() end
+        end
         game_manager:frameUpdate(elapsed_secs)
+        object_do_frame_callbacks(elapsed_secs)
 
 
         -- AUDIO
         audio_update(main.audioCentrePos, main.audioCentreVel, main.audioCentreQuat)
 
 
-        -- GRAPHICS
+        -- STREAMING
         give_queue_allowance(1 + 1*get_in_queue_size())
-    
-        if gfx_window_active() then
-            physics_update_graphics(main.physicsEnabled and main.physicsLeftOver or 0)
-            if main.physicsDebugWorld then physics_draw() end
-        end
-    
-        game_manager:frameUpdate(elapsed_secs)
-
         streamer_centre(main.streamerCentre)
-        object_do_frame_callbacks(elapsed_secs) -- grit objects with frame callbacks
+
 
         if gfx_window_active() then
             main.gfxFrameTime:add(elapsed_secs)
