@@ -16,8 +16,6 @@ include `pmat/init.lua`
 
 include `mat/init.lua`
 
-include `actors/init.lua`
-
 include `weapons/init.lua`
 
 include `carcols.lua`

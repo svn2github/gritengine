@@ -1,5 +1,0 @@
-Body.mesh
-Body.skeleton
-Clothes.tga
-Body.tga
-Sword.tga: (c) 2009-2010 Zi Ye <omniter@gmail.com> Licesnsed under Creative Commons Attribution-Share Alike 3.0 Unported License.

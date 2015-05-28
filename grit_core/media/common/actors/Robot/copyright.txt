@@ -1,3 +1,0 @@
-Robot.dds
-Robot.mesh
-Robot.skeleton : (c) 2007 Torus Knot Software, Licensed under MIT
