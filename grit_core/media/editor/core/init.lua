@@ -44,6 +44,8 @@ editor = {
         playing_binds.enabled = true
         editor_core_binds.enabled = true
 
+        self.lastMouseMoveTime = seconds()
+
         -- Start location:  Seems as good a place as any...
         main.camPos = vec(0, 0, 10)
         GED.camYaw = 0
@@ -80,6 +82,11 @@ editor = {
 
         main.camQuat = quat(GED.camYaw, V_DOWN) * quat(GED.camPitch, V_EAST)
         main.audioCentreQuat = main.camQuat
+        self.lastMouseMoveTime = seconds()
+    end;
+
+    receiveButton = function(self, button, state)
+        editor_receive_button(button, state)
     end;
 
     destroy = function (self)
@@ -93,8 +100,10 @@ editor = {
         
         playing_binds.enabled = false
         editor_core_binds.enabled = false
+        editor_core_move_binds.enabled = false
         editor_edit_binds.enabled = false
         editor_debug_binds.enabled = false
+        editor_debug_ghost_binds.enabled = false
 
         editor_interface.menubar:destroy()
         editor_interface.toolbar:destroy()

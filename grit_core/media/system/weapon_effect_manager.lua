@@ -145,7 +145,7 @@ function pick_pos(p, q, bias)
 end
 
 function pick_obj()
-    local _, body = directed_ray()
+    local _, body = directed_ray(main.camPos, main.camQuat)
     if body == nil then return nil end
     return body.owner
 end
