@@ -1,24 +1,19 @@
+material `Black` { diffuseColour={.01,.01,.01}, }
 
--- Reference material for rocket smoke
--- http://www.armyrecognition.com/november_2011_news_defense_army_military_industry/rheinmetall_ads_gmbh_demonstrate_new_active_defence_system_for_tactical_armoured_vehicles_1811113.html
-
-material `rocket` {
-	diffuseMap=`rocket.png`,
-	normalMap=`rocket_nm.png`,
-	gloss = 0.6,
-	specular = 0.02,
-	shadowBias=0.15
-}
-
-class `Rocket` (BaseClass) {
+class `Grenade` (BaseClass) {
     renderingDistance = 400.0;
 	placementZOffset = 0.1;
-
-    speed = 40;
 
     castShadows = true;
     lifePattern = {1, 2, 1, 4, 1, 2, 1, 8};
 
+    velocity = vec(0, 0, 0);
+
+    fuse = 3;
+
+    friction = 0.05;
+    restitution = 0.3;
+    mass = 3;
 
     activate = function(self, instance)
         BaseClass.activate(self, instance)
@@ -43,7 +38,9 @@ class `Rocket` (BaseClass) {
 
         local dir = (instance.orientation * quat(3, random_vector3_sphere())) * V_FORWARDS
 
-        local movement = dir * elapsed_secs * self.speed
+        local movement = self.velocity * elapsed_secs
+        self.velocity = self.velocity + physics_get_gravity() * elapsed_secs
+
 
         local fraction, hit_obj, wall_normal = physics_sweep_sphere(0.1, p, movement, true, 0)
 
@@ -51,12 +48,17 @@ class `Rocket` (BaseClass) {
         if fraction then
             -- hit something
 
-            local hit_pos = p + fraction * movement
+            p = p + fraction * movement
 
-            explosion(hit_pos, 3, 5000)
-    
-            self:destroy()
+            local rest = dot(self.velocity, -wall_normal) * wall_normal
+            local parallel_vel = self.velocity + rest
+            local speed = #parallel_vel
+            local friction = self.friction * speed * speed
+            self.velocity = (parallel_vel * .95) + self.restitution * rest
+            hit_obj:impulse(self.mass * (1 + self.restitution) * -rest, p)
+
         else
+
             -- Put particle at current position, then move to next position (particle always behind)
             --local vel = random_vector3_box(vec(-0.2, -0.2, 6), vec(0.2, 0.2, 8))
             local r1 = 0.1
@@ -64,8 +66,8 @@ class `Rocket` (BaseClass) {
             local r2 = 1
             local grey = 1
 
-            if math.floor(instance.lifeSecs * 200) % 2 == 0 and instance.lifeSecs > 0.05 then
-                gfx_particle_emit(`/common/particles/TexturedSmoke`, p - dir, {
+            if math.floor(instance.lifeSecs * 200) % 10 == 0 and instance.lifeSecs > 0.05 then
+                gfx_particle_emit(`/common/particles/TexturedSmoke`, p, {
                     angle = 360*math.random();
                     velocity = 0.3 * random_vector3_sphere() + vec(0,0,2);
                     initialVolume = 4/3 * math.pi * r1*r1*r1; -- volume of sphere
@@ -82,20 +84,25 @@ class `Rocket` (BaseClass) {
         end
 
         instance.lifeSecs = instance.lifeSecs + elapsed_secs
+
+        if instance.lifeSecs > self.fuse then
+            explosion(p, 3, 5000)
+            self:destroy()
+        end;
         
     end;
 
 }   
 
 
-WeaponEffectManager:set("Rocket", {
+WeaponEffectManager:set("Grenade", {
 
     lastFire = 0;
     reloadSec = 0.5;
     
     fire = function (self, p, q)
         self.lastFire = seconds()
-        object `Rocket` (p) { rot=q }
+        object `Grenade` (p) { velocity=q*vec(0, 25, 0) }
     end;
     
     checkFire = function (self, p, q)

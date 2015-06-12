@@ -15,7 +15,7 @@ do
         frames = { 896,640, 128, 128, };  frame = 0;
         initialVolume = 10; maxVolume = 200; life = 2;
         behaviour = particle_behaviour_alpha_gas_ball_diffuse;
-        alphaCurve = Plot{[0]=1,[0.5]=0.25,[1]=0};
+        alphaCurve = Plot{[0]=1,[0.2]=0.3,[0.5]=0.1,[1]=0};
         convectionCurve = particle_convection_curve;
     }
 end
