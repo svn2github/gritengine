@@ -159,11 +159,11 @@ Vehicle = extends (ColClass) {
     exhaustSmokeVents = { };
 }
 
-function Vehicle.init (persistent)
-    ColClass.init(persistent)
-    if persistent.meshWheelInfo then
+function Vehicle.init (self)
+    ColClass.init(self)
+    if self.meshWheelInfo then
         local resources = {}
-        for _, info in pairs(persistent.meshWheelInfo) do
+        for _, info in pairs(self.meshWheelInfo) do
             if info.mesh then
                 resources[info.mesh] = true
             end
@@ -171,34 +171,34 @@ function Vehicle.init (persistent)
                 resources[info.brakeMesh] = true
             end
         end 
-        local class_name = persistent.className
+        local class_name = self.className
         for k, _ in pairs(resources) do
-            persistent:addDiskResource(k)
+            self:addDiskResource(k)
         end
     end
-    if persistent.engineInfo then
-        local ei = persistent.engineInfo
+    if self.engineInfo then
+        local ei = self.engineInfo
         if ei.sound ~= nil then
             if type(ei.sound) == "table" then
                 for _, s in ipairs(ei.sound) do
-                    persistent:addDiskResource(s)
+                    self:addDiskResource(s)
                 end
             else
-                persistent:addDiskResource(ei.sound)
+                self:addDiskResource(ei.sound)
             end
         end
     end
 end
 
-function Vehicle.destroy (persistent)
-    ColClass.destroy(persistent)
+function Vehicle.destroy (self)
+    ColClass.destroy(self)
 end
 
-function Vehicle.activate (persistent, instance)
+function Vehicle.activate (self, instance)
     -- set all the materials to the lights off position
     instance.materialMap = {}
     for name, _ in pairs(Vehicle.lightDefaults) do
-        local tab = persistent[name]
+        local tab = self[name]
         if tab ~= nil then
             none_one_or_all(tab.materials, function (line)
                 instance.materialMap[line.mesh] = line.off
@@ -206,11 +206,11 @@ function Vehicle.activate (persistent, instance)
         end
     end
 
-    if ColClass.activate(persistent, instance) then
+    if ColClass.activate(self, instance) then
             return true
     end
 
-    persistent.needsStepCallbacks = true
+    self.needsStepCallbacks = true
 
     local body = instance.body
     body.linearDamping = 0
@@ -221,26 +221,26 @@ function Vehicle.activate (persistent, instance)
 	instance.lightsEnabled = false
     instance.brake = false
     instance.push = 0
-    instance.parked = persistent.parked or true
-    instance.lightsOverride = persistent.lightsOverride or false
-    if persistent.canDrive == false then instance.canDrive = false else instance.canDrive = true end
+    instance.parked = self.parked or true
+    instance.lightsOverride = self.lightsOverride or false
+    if self.canDrive == false then instance.canDrive = false else instance.canDrive = true end
 
-    instance.boomLengthSelected = (persistent.boomLengthMax + persistent.boomLengthMin)/2
+    instance.boomLengthSelected = (self.boomLengthMax + self.boomLengthMin)/2
 
     instance.numWheels = 0
-    if persistent.bonedWheelInfo then
-        for k, info in pairs(persistent.bonedWheelInfo) do
+    if self.bonedWheelInfo then
+        for k, info in pairs(self.bonedWheelInfo) do
             instance.numWheels = instance.numWheels + 1
         end
     end
-    if persistent.meshWheelInfo then
-        for k, info in pairs(persistent.meshWheelInfo) do
+    if self.meshWheelInfo then
+        for k, info in pairs(self.meshWheelInfo) do
             instance.numWheels = instance.numWheels + 1
         end
     end
 
     if instance.numWheels == 0 then
-        error("A vehicle must have at least one wheel (class \""..persistent.className.."\")")
+        error("A vehicle must have at least one wheel (class \""..self.className.."\")")
     end
     
     local mpw = body.mass/instance.numWheels -- mass per wheel (hacky)
@@ -248,24 +248,24 @@ function Vehicle.activate (persistent, instance)
     instance.steer, instance.shouldSteerLeft, instance.shouldSteerRight = 0, 0, 0 
     local n = instance.gfx
     
-    instance.engine = Engine.new(persistent.engineInfo);
+    instance.engine = Engine.new(self.engineInfo);
     
     instance.lastExhaust = {}
-    for i, _ in ipairs(persistent.exhaustSmokeVents) do
+    for i, _ in ipairs(self.exhaustSmokeVents) do
         instance.lastExhaust[i] = 0;
     end
 
 
-    instance.brakeCurve = Plot (persistent.brakePlot)
+    instance.brakeCurve = Plot (self.brakePlot)
 
     instance.wheels = {}
     instance.drivenWheels = {}
     instance.handbrakeWheels = {}
     
-    if persistent.bonedWheelInfo then
-        for k, info in pairs(persistent.bonedWheelInfo) do
+    if self.bonedWheelInfo then
+        for k, info in pairs(self.bonedWheelInfo) do
             local wmass = (info.massShare or 1) * mpw
-            instance.wheels[k] = WheelAssembly.newBoned(k, persistent, wmass, info)
+            instance.wheels[k] = WheelAssembly.newBoned(k, self, wmass, info)
             instance.wheels[k].steerFactor = info.steer or 0
             instance.wheels[k].drive = info.drive
             if info.drive then table.insert(instance.drivenWheels, instance.wheels[k]) end
@@ -273,13 +273,13 @@ function Vehicle.activate (persistent, instance)
         end 
     end
 
-    if persistent.meshWheelInfo then
-        for k, info in pairs(persistent.meshWheelInfo) do
+    if self.meshWheelInfo then
+        for k, info in pairs(self.meshWheelInfo) do
             if instance.wheels[k]~=nil then
-                error("There is more than one wheel called \""..k.."\" in \""..persistent.className.."\"")
+                error("There is more than one wheel called \""..k.."\" in \""..self.className.."\"")
             end
             local wmass = (info.massShare or 1) * mpw
-            instance.wheels[k] = WheelAssembly.newMesh(k, persistent, wmass, info)
+            instance.wheels[k] = WheelAssembly.newMesh(k, self, wmass, info)
             instance.wheels[k].steerFactor = info.steer or 0
             instance.wheels[k].drive = info.drive
             if info.drive then table.insert(instance.drivenWheels, instance.wheels[k]) end
@@ -287,7 +287,7 @@ function Vehicle.activate (persistent, instance)
         end 
     end
 
-    persistent.instance.numDrivenWheels = #instance.drivenWheels
+    self.instance.numDrivenWheels = #instance.drivenWheels
 
     local super = body.updateCallback
     body.updateCallback = function (p, q)
@@ -299,12 +299,12 @@ function Vehicle.activate (persistent, instance)
         local speed = dot(body.linearVelocity, body.worldOrientation * V_FORWARDS)
         for name, v in pairs(Vehicle.lightDefaults) do
             local l = instance[name]
-            local tab = persistent[name]
+            local tab = self[name]
             if l then
                 if instance.exploded then
                     l.enabled = false
                 else
-                    local night = time > persistent.lightsOnTime or time < persistent.lightsOffTime
+                    local night = time > self.lightsOnTime or time < self.lightsOffTime
                     local enabled = not instance.parked and night
                     if instance.lightsOverride and night == instance.lightsOverrideOn then
 						instance.lightsOverride = false
@@ -355,8 +355,8 @@ function Vehicle.activate (persistent, instance)
         local speed = #lv
         if speed > 0 then
 
-            local sheer = cross(norm(lv), body.worldOrientation * persistent.glideDirection)
-            local torque = persistent.glideFactor * sheer - persistent.glideDampingFactor * body.angularVelocity
+            local sheer = cross(norm(lv), body.worldOrientation * self.glideDirection)
+            local torque = self.glideFactor * sheer - self.glideDampingFactor * body.angularVelocity
 
             local clamped_speed = math.min(speed, 125)
             body:torque(clamped_speed * clamped_speed * torque)
@@ -365,7 +365,7 @@ function Vehicle.activate (persistent, instance)
     end
 
     for name, v in pairs(Vehicle.lightDefaults) do
-        local tab = persistent[name]
+        local tab = self[name]
         if tab then
             tab = extends (v) (tab)
             local l = light_from_table(gfx_light_make(), tab)
@@ -377,8 +377,8 @@ function Vehicle.activate (persistent, instance)
 
 end
 
-function Vehicle.stepCallback (persistent, elapsed)
-    local instance = persistent.instance
+function Vehicle.stepCallback (self, elapsed)
+    local instance = self.instance
     local body = instance.body
     --velocity
     local q = body.worldOrientation
@@ -390,7 +390,7 @@ function Vehicle.stepCallback (persistent, elapsed)
     local mph = forward_speed * 60 * 60 / METRES_PER_MILE
 
     -- DRAG
-    local drag_force = -vec(sign(local_vel.x), sign(local_vel.y), sign(local_vel.z)) * 0.5 * 1.5 * persistent.drag * local_vel * local_vel
+    local drag_force = -vec(sign(local_vel.x), sign(local_vel.y), sign(local_vel.z)) * 0.5 * 1.5 * self.drag * local_vel * local_vel
     body:force(q * drag_force, body.worldPosition)
     
     -- STEERING
@@ -398,13 +398,13 @@ function Vehicle.stepCallback (persistent, elapsed)
     local change = steerTarget - instance.steer
     if math.abs(change) > 0.001 then
         local rate
-        local fastness = clamp(mph/persistent.steerFastSpeed, 0, 1)
+        local fastness = clamp(mph/self.steerFastSpeed, 0, 1)
         if between(0, steerTarget, instance.steer) and math.abs(instance.steer) > 0.001 then
-            rate = lerp(persistent.unsteerRate, persistent.unsteerRateFast, fastness)
+            rate = lerp(self.unsteerRate, self.unsteerRateFast, fastness)
         else
-            rate = lerp(persistent.steerRate, persistent.steerRateFast, fastness)
+            rate = lerp(self.steerRate, self.steerRateFast, fastness)
         end
-        local max = lerp(persistent.steerMax, persistent.steerMaxFast, fastness)
+        local max = lerp(self.steerMax, self.steerMaxFast, fastness)
         rate = rate * elapsed
         change = clamp(change, -rate, rate)
         instance.steer = instance.steer + change
@@ -452,15 +452,7 @@ function Vehicle.stepCallback (persistent, elapsed)
         local speed = forward_speed
         local wrong_way = (math.abs(speed) > 1 and sign(speed) ~= sign(instance.push))
                        or (instance.handbrake and math.abs(speed) < 0.01)
-        if wrong_way then
-            if instance.engine:reversing() then
-                instance.brake = true
-            else
-                instance.brake = true
-            end
-        else
-            instance.brake = false
-        end
+        instance.brake = wrong_way
     end
 
     for k, wheel in pairs(instance.wheels) do
@@ -478,16 +470,16 @@ function Vehicle.stepCallback (persistent, elapsed)
     local h_fire_threshold = 0.25
     local upside_down_time_allowed = 4 -- seconds
     
-    local h = persistent.instance.health / persistent.health
+    local h = self.instance.health / self.health
     if h > 0 then
         if (body.worldOrientation * V_UP).z < -0.75 and speed < 2 then
             -- upside down this frame
             instance.upsideDownTimer = instance.upsideDownTimer + elapsed
             if instance.upsideDownTimer > upside_down_time_allowed then
                 -- set the car to 25% health if not already less than that
-                local twenty_five_percent = h_fire_threshold * persistent.health
+                local twenty_five_percent = h_fire_threshold * self.health
                 if instance.health > twenty_five_percent then
-                    persistent:receiveDamage(instance.health - twenty_five_percent + 1)
+                    self:receiveDamage(instance.health - twenty_five_percent + 1)
                 end
             end
         else
@@ -496,8 +488,8 @@ function Vehicle.stepCallback (persistent, elapsed)
 
         -- engine and exhaust smoke
         if (not instance.parked) and #body.linearVelocity < 30 then
-            for i, v in ipairs(persistent.exhaustSmokeVents) do
-                if instance.lastExhaust[i] > 0.02 then --comparison against persistent because instance doesn't seem to work o_O
+            for i, v in ipairs(self.exhaustSmokeVents) do
+                if instance.lastExhaust[i] > 0.02 then --comparison against self because instance doesn't seem to work o_O
                     emit_exhaust_smoke(#body.linearVelocity, body:localToWorld(v), body.worldOrientation * V_BACKWARDS)
                     instance.lastExhaust[i] = 0
                 else
@@ -509,10 +501,10 @@ function Vehicle.stepCallback (persistent, elapsed)
         if h < h_smoke_threshold then
             if h < h_fire_threshold then
                 local rate = 0.20 / 5 -- lose 20% of total health every 4 seconds
-                persistent:receiveDamage(elapsed * rate * persistent.health)
+                self:receiveDamage(elapsed * rate * self.health)
             end
             local engine_smoke_fire_level = 1 - h / h_smoke_threshold
-            for _, v in ipairs(persistent.engineSmokeVents) do
+            for _, v in ipairs(self.engineSmokeVents) do
                 local world_v = body:localToWorld(v)
                 if h < h_fire_threshold then
                     for i=1, 10 do    
@@ -526,9 +518,9 @@ function Vehicle.stepCallback (persistent, elapsed)
     end
 end
 
-function Vehicle.setFade (persistent, fade)
-    ColClass.setFade(persistent, fade)
-    local instance = persistent.instance
+function Vehicle.setFade (self, fade)
+    ColClass.setFade(self, fade)
+    local instance = self.instance
     if instance.wheels then
         for _, wheel in pairs(instance.wheels) do
             wheel:setFade(fade)
@@ -542,18 +534,18 @@ function Vehicle.setFade (persistent, fade)
     end
 end
 
-function Vehicle.beingFired (persistent)
-    if not persistent.activated then error("Not activated: "..persistent.name) end
-    persistent.instance.parked = false
-    persistent.instance.engine.on = true
+function Vehicle.beingFired (self)
+    if not self.activated then error("Not activated: "..self.name) end
+    self.instance.parked = false
+    self.instance.engine.on = true
 end
 
-function Vehicle.deactivate (persistent)
-    local instance = persistent.instance
-    persistent.needsStepCallbacks = false
+function Vehicle.deactivate (self)
+    local instance = self.instance
+    self.needsStepCallbacks = false
     if instance.wheels then
         for name in pairs(instance.wheels) do
-            persistent:removeWheel(name)
+            self:removeWheel(name)
         end
     end
     safe_destroy(instance.engine)
@@ -561,79 +553,86 @@ function Vehicle.deactivate (persistent)
     instance.wheels = {}
     instance.drivenWheels = {}
     instance.handbrakeWheels = {}
-    return ColClass.deactivate(persistent, instance)
+    return ColClass.deactivate(self, instance)
 end
 
-function Vehicle.getSpeed (persistent)
-    if not persistent.activated then error("Not activated: "..persistent.name) end
-    local rb = persistent.instance.body
+function Vehicle.getSpeed (self)
+    if self.exploded then return 0 end
+    if not self.activated then error("Not activated: "..self.name) end
+    local rb = self.instance.body
     return #rb.linearVelocity
 end
 
-function Vehicle.setHandbrake (persistent, v)
-    if not persistent.activated then error("Not activated: "..persistent.name) end
-    persistent.instance.handbrake = v
+function Vehicle.setHandbrake (self, v)
+    if self.exploded then return end
+    if not self.activated then error("Not activated: "..self.name) end
+    self.instance.handbrake = v
 end
 
-function Vehicle.setLights (persistent)
-    if not persistent.activated then error("Not activated: "..persistent.name) end
+function Vehicle.setLights (self)
+    if self.exploded then return end
+    if not self.activated then error("Not activated: "..self.name) end
     
-    if persistent.instance.lightsEnabled then
-    persistent.instance.lightsOverrideOn = false
+    if self.instance.lightsEnabled then
+    self.instance.lightsOverrideOn = false
     else
-    persistent.instance.lightsOverrideOn = true
+    self.instance.lightsOverrideOn = true
     end
-	if (env.secondsSinceMidnight < persistent.lightsOnTime and env.secondsSinceMidnight > persistent.lightsOffTime) and persistent.instance.lightsOverrideOn == false then
-		persistent.instance.lightsOverride = false
-	elseif (env.secondsSinceMidnight > persistent.lightsOnTime or env.secondsSinceMidnight < persistent.lightsOffTime) and persistent.instance.lightsOverrideOn == true then
-		persistent.instance.lightsOverride = false
+	if (env.secondsSinceMidnight < self.lightsOnTime and env.secondsSinceMidnight > self.lightsOffTime) and self.instance.lightsOverrideOn == false then
+		self.instance.lightsOverride = false
+	elseif (env.secondsSinceMidnight > self.lightsOnTime or env.secondsSinceMidnight < self.lightsOffTime) and self.instance.lightsOverrideOn == true then
+		self.instance.lightsOverride = false
 	else
-		persistent.instance.lightsOverride = true
+		self.instance.lightsOverride = true
 	end
 end
 
-function Vehicle.changePush (persistent)
-    if not persistent.activated then error("Not activated: "..persistent.name) end
-    persistent.instance.parked = false -- if we push/pull the vehicle at all then it becomes unparked until abandoned
-    persistent.instance.engine.on = true
+function Vehicle.changePush (self)
+    if not self.activated then error("Not activated: "..self.name) end
+    self.instance.parked = false -- if we push/pull the vehicle at all then it becomes unparked until abandoned
+    self.instance.engine.on = true
 end
 
-function Vehicle.setBackwards (persistent, v)
-    if not persistent.activated then error("Not activated: "..persistent.name) end
+function Vehicle.setBackwards (self, v)
+    if self.instance.exploded then return end
+    if not self.activated then error("Not activated: "..self.name) end
     local change = v and 1 or -1
-    persistent.instance.push = persistent.instance.push - change
-    persistent:changePush()
+    self.instance.push = self.instance.push - change
+    self:changePush()
 end
 
-function Vehicle.setForwards (persistent, v)
-    if not persistent.activated then error("Not activated: "..persistent.name) end
+function Vehicle.setForwards (self, v)
+    if self.instance.exploded then return end
+    if not self.activated then error("Not activated: "..self.name) end
     local change = v and 1 or -1
-    persistent.instance.push = persistent.instance.push + change
-    persistent:changePush()
+    self.instance.push = self.instance.push + change
+    self:changePush()
 end
 
 
 -- whether key is pressed
-function Vehicle.setLeft (persistent, v)
-    if not persistent.activated then error("Not activated: "..persistent.name) end
-    persistent.instance.shouldSteerLeft = v and -persistent.steerMax or 0
+function Vehicle.setLeft (self, v)
+    if self.instance.exploded then return end
+    if not self.activated then error("Not activated: "..self.name) end
+    self.instance.shouldSteerLeft = v and -self.steerMax or 0
 end
         
 -- whether key is pressed
-function Vehicle.setRight (persistent, v)
-    if not persistent.activated then error("Not activated: "..persistent.name) end
-    persistent.instance.shouldSteerRight = v and persistent.steerMax or 0
+function Vehicle.setRight (self, v)
+    if self.instance.exploded then return end
+    if not self.activated then error("Not activated: "..self.name) end
+    self.instance.shouldSteerRight = v and self.steerMax or 0
 end
         
 
-function Vehicle.realign (persistent)
-    ColClass.realign(persistent)
-    persistent.instance.broken = false
+function Vehicle.realign (self)
+    ColClass.realign(self)
+    self.instance.broken = false
 end
 
-function Vehicle.setMu (persistent, mu_front_side, mu_front_drive, mu_side, mu_drive)
-    if not persistent.activated then error("Not activated: "..persistent.name) end
-    for _, w in pairs(persistent.instance.wheels) do
+function Vehicle.setMu (self, mu_front_side, mu_front_drive, mu_side, mu_drive)
+    if not self.activated then error("Not activated: "..self.name) end
+    for _, w in pairs(self.instance.wheels) do
         if w.steerFactor ~= 0 then
             w.sideMu = mu_front_side
             w.driveMu = mu_front_drive
@@ -644,35 +643,35 @@ function Vehicle.setMu (persistent, mu_front_side, mu_front_drive, mu_side, mu_d
     end
 end
 
-function Vehicle.reset (persistent)
-    if not persistent.activated then error("Not activated: "..persistent.name) end
-    local was_driving = player_ctrl.controlObj == persistent
-    persistent.spawnPos = persistent.instance.body.worldPosition
-    persistent.rot = persistent.instance.body.worldOrientation
-    persistent:deactivate()
-    persistent.skipNextActivation = false
-    persistent:activate()
+function Vehicle.reset (self)
+    if not self.activated then error("Not activated: "..self.name) end
+    local was_driving = player_ctrl.controlObj == self
+    self.spawnPos = self.instance.body.worldPosition
+    self.rot = self.instance.body.worldOrientation
+    self:deactivate()
+    self.skipNextActivation = false
+    self:activate()
     if was_driving then
-        player_ctrl:drive(persistent)
+        player_ctrl:drive(self)
     end
 end
 
-function Vehicle.reload(persistent)
-    ColClass.reload(persistent)
-    local instance = persistent.instance
+function Vehicle.reload(self)
+    ColClass.reload(self)
+    local instance = self.instance
     for _, wheel in pairs(instance.wheels) do
         wheel:reload()
     end
 end
 
-function Vehicle.receiveDamage (persistent, damage)
-    ColClass.receiveDamage(persistent, damage)
+function Vehicle.receiveDamage (self, damage)
+    ColClass.receiveDamage(self, damage)
     -- car-specific damage stuff
     -- e.g. knocking off bumpers / doors
 end
 
-function Vehicle.removeWheel (persistent, name)
-    local instance = persistent.instance
+function Vehicle.removeWheel (self, name)
+    local instance = self.instance
     local wheel = instance.wheels[name]
     safe_destroy(wheel)
     instance.wheels[name] = nil
@@ -680,28 +679,28 @@ function Vehicle.removeWheel (persistent, name)
     instance.handbrakeWheels[name] = nil
 end
 
-function Vehicle.onExplode (persistent)
+function Vehicle.onExplode (self)
 	engine_fire_counter = 0 --Temporary fix for max engine fire emission fix.
-    local instance = persistent.instance
+    local instance = self.instance
     instance.gfx:setAllMaterials("/common/mat/Burnt")
     if instance.wheels then
         for name, wheel in pairs(instance.wheels) do
             wheel:setBurnt(true)
             if math.random() > 0.5 then
-                persistent:removeWheel(name)
+                self:removeWheel(name)
             end
         end
     end
     safe_destroy(instance.engine)
     instance.engine = nil;
-    persistent.instance.canDrive = false
-    ColClass.onExplode(persistent)
+    self.instance.canDrive = false
+    ColClass.onExplode(self)
 end
 
-function Vehicle.getStatistics (persistent)
-    local instance = persistent.instance
+function Vehicle.getStatistics (self)
+    local instance = self.instance
 
-    local tot_triangles, tot_batches = ColClass.getStatistics (persistent)
+    local tot_triangles, tot_batches = ColClass.getStatistics (self)
 
     if instance.wheels then
         for name, wheel in pairs(instance.wheels) do
@@ -725,15 +724,15 @@ Vehicle.controlZoomOut = regular_chase_cam_zoom_out
 Vehicle.controlUpdate = regular_chase_cam_update
 
 
-function Vehicle.controlBegin (persistent)
+function Vehicle.controlBegin (self)
 end
-function Vehicle.controlAbandon (persistent)
-    if not persistent.activated then return end
-    local instance = persistent.instance
+function Vehicle.controlAbandon (self)
+    if not self.activated then return end
+    local instance = self.instance
     local body = instance.body
     local speed = dot(body.linearVelocity, (body.worldOrientation * V_FORWARDS))
     if speed < 5 and speed > -5 then
-        persistent.instance.parked = true
+        self.instance.parked = true
     end
 end
 
@@ -755,10 +754,10 @@ Bike = extends (Vehicle) {
 
 }
 
-function Bike.stepCallback (persistent, elapsed)
-    Vehicle.stepCallback(persistent, elapsed)
+function Bike.stepCallback (self, elapsed)
+    Vehicle.stepCallback(self, elapsed)
 
-    local instance = persistent.instance
+    local instance = self.instance
 
     local fwheel = instance.wheels.front
     local rwheel = instance.wheels.rear
@@ -785,18 +784,18 @@ function Bike.stepCallback (persistent, elapsed)
             if instance.steer == 0 then
                     turn_radius = math.huge
             else
-                    turn_radius = #dir / (math.atan(instance.steer) * math.cos(math.rad(persistent.canterAngle)))
+                    turn_radius = #dir / (math.atan(instance.steer) * math.cos(math.rad(self.canterAngle)))
             end
             local desired_lean =
                     math.deg(math.atan((speed*speed) / (#physics_get_gravity()*turn_radius)))
             --desired_lean = desired_lean / 2
-            desired_lean = clamp(desired_lean, -persistent.maxLean, persistent.maxLean)
+            desired_lean = clamp(desired_lean, -self.maxLean, self.maxLean)
             desired_vector = quat(desired_lean, forwards_ws) * V_UP
         else
             local dir = fwheel.pos-rwheel.pos
             local speed = dot(body.linearVelocity, norm(dir.normalised))
             local turn_radius = #dir
-                     / (math.atan(instance.steer) * math.cos(math.rad(persistent.canterAngle)))
+                     / (math.atan(instance.steer) * math.cos(math.rad(self.canterAngle)))
             local desired_lean =
                     math.deg(math.atan((speed*speed) / (#physics_get_gravity()*turn_radius)))
             desired_vector = quat(desired_lean, forwards_ws) * V_UP
@@ -829,10 +828,10 @@ function Bike.stepCallback (persistent, elapsed)
         spin = dot(spin, forwards_ws)
         spin = spin * forwards_ws
 
-        local torque = persistent.stabilisationFactor * sheer
-                     - persistent.stabilisationDampingFactor * spin
+        local torque = self.stabilisationFactor * sheer
+                     - self.stabilisationDampingFactor * spin
 
-        if #torque > persistent.fallTorque then
+        if #torque > self.fallTorque then
             instance.broken = true
             return
         end

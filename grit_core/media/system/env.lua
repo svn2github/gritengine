@@ -4,6 +4,8 @@ print "Loading env.lua"
 
 include `sky.lua`
 
+env_saturation_mask = 1
+
 env_cube_dawn_begin_time = 5*60*60
 env_cube_noon_begin_time = 8*60*60
 env_cube_dusk_begin_time = 17*60*60
@@ -137,7 +139,7 @@ function env_recompute()
 
     -- environment properties
     gfx_particle_ambient(vector3(lerp(current_env.particleLight, next_env.particleLight, slider)))
-    gfx_global_saturation(lerp(current_env.saturation, next_env.saturation, slider))
+    gfx_global_saturation(env_saturation_mask * lerp(current_env.saturation, next_env.saturation, slider))
     gfx_fog_colour(fog_colour)
     gfx_fog_density(lerp(current_env.fogDensity, next_env.fogDensity, slider))
     gfx_sunlight_diffuse(lerp(current_env.diffuseLight, next_env.diffuseLight, slider))
