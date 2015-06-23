@@ -42,7 +42,11 @@ editor = {
 
         
         playing_binds.enabled = true
+        playing_actor_binds.enabled = false
+        playing_vehicle_binds.enabled = false
         editor_core_binds.enabled = true
+        editor_edit_binds.enabled = false
+        editor_debug_binds.enabled = false
 
         self.lastMouseMoveTime = seconds()
 
@@ -99,6 +103,8 @@ editor = {
         -- end
         
         playing_binds.enabled = false
+        playing_actor_binds.enabled = false
+        playing_vehicle_binds.enabled = false
         editor_core_binds.enabled = false
         editor_core_move_binds.enabled = false
         editor_edit_binds.enabled = false
