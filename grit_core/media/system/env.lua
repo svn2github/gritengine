@@ -6,10 +6,10 @@ include `sky.lua`
 
 env_saturation_mask = 1
 
-env_cube_dawn_begin_time = 5*60*60
-env_cube_noon_begin_time = 8*60*60
-env_cube_dusk_begin_time = 17*60*60
-env_cube_dark_begin_time = 20*60*60
+env_cube_dawn_time = 6*60*60
+env_cube_noon_time = 12*60*60
+env_cube_dusk_time = 18*60*60
+env_cube_dark_time = 24*60*60
     
 --TODO: this cubemap info should be also taken from map env overrides, maybe?
 env_cube_dawn = `env_cube_dawn.envcube.tiff`
@@ -27,21 +27,22 @@ function env_recompute()
 
     local secs = env.secondsSinceMidnight
     
-    if secs < env_cube_dawn_begin_time then
+    if secs < env_cube_dawn_time then
         gfx_env_cube(0, env_cube_dark)
-        gfx_env_cube(1, env_cube_dark)
-    elseif secs < env_cube_noon_begin_time then
-        gfx_env_cube(0, env_cube_dawn)
         gfx_env_cube(1, env_cube_dawn)
-    elseif secs < env_cube_dusk_begin_time then
-        gfx_env_cube(0, env_cube_noon)
+        gfx_env_cube_cross_fade(invlerp(0, env_cube_dawn_time, secs))
+    elseif secs < env_cube_noon_time then
+        gfx_env_cube(0, env_cube_dawn)
         gfx_env_cube(1, env_cube_noon)
-    elseif secs < env_cube_dark_begin_time then
-        gfx_env_cube(0, env_cube_dusk)
+        gfx_env_cube_cross_fade(invlerp(env_cube_dawn_time, env_cube_noon_time, secs))
+    elseif secs < env_cube_dusk_time then
+        gfx_env_cube(0, env_cube_noon)
         gfx_env_cube(1, env_cube_dusk)
-    else
-        gfx_env_cube(0, env_cube_dark)
+        gfx_env_cube_cross_fade(invlerp(env_cube_noon_time, env_cube_dusk_time, secs))
+    elseif secs < env_cube_dark_time then
+        gfx_env_cube(0, env_cube_dusk)
         gfx_env_cube(1, env_cube_dark)
+        gfx_env_cube_cross_fade(invlerp(env_cube_dusk_time, env_cube_dark_time, secs))
     end
     
     -- account for the fact that the sun is on the other side of the planet in summer

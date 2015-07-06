@@ -475,7 +475,7 @@ void fp_main (
                                                shadow_filter_noise,
                                                #endif
                                                #endif
-                                               env_cube,
+                                               env_cube0, env_cube1,
                                                pos_ls1_, pos_ls2_, pos_ls3_,
                                                sun_diffuse,
                                                sun_specular,
@@ -925,7 +925,7 @@ void fp_main (
                                                shadow_filter_noise,
                                                #endif
                                                #endif
-                                               env_cube,
+                                               env_cube0, env_cube1,
                                                pos_ls1_, pos_ls2_, pos_ls3_,
                                                sun_diffuse,
                                                sun_specular,

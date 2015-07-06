@@ -655,9 +655,15 @@ float3 deferred_shading (
 
         float env_map_mipmaps = 9; // 512
         float3 reflect_ws = -reflect(camera_dir_ws, normal_ws);
-        float3 env_ambient = 16*gamma_decode(texCUBElod(env_cube, float4(reflect_ws, env_map_mipmaps-1)).rgb);
-        float3 env_diff_light = 16*gamma_decode(texCUBElod(env_cube, float4(normal_ws, env_map_mipmaps-1)).rgb);
-        float3 env_spec_light = 16*gamma_decode(texCUBElod(env_cube, float4(reflect_ws, (1-gloss)*env_map_mipmaps)).rgb);
+        float3 env_ambient0 = 16*gamma_decode(texCUBElod(env_cube0, float4(reflect_ws, env_map_mipmaps-1)).rgb);
+        float3 env_diff_light0 = 16*gamma_decode(texCUBElod(env_cube0, float4(normal_ws, env_map_mipmaps-1)).rgb);
+        float3 env_spec_light0 = 16*gamma_decode(texCUBElod(env_cube0, float4(reflect_ws, (1-gloss)*env_map_mipmaps)).rgb);
+        float3 env_ambient1 = 16*gamma_decode(texCUBElod(env_cube0, float4(reflect_ws, env_map_mipmaps-1)).rgb);
+        float3 env_diff_light1 = 16*gamma_decode(texCUBElod(env_cube0, float4(normal_ws, env_map_mipmaps-1)).rgb);
+        float3 env_spec_light1 = 16*gamma_decode(texCUBElod(env_cube0, float4(reflect_ws, (1-gloss)*env_map_mipmaps)).rgb);
+        float3 env_ambient = lerp(env_ambient0, env_ambient1, 0);
+        float3 env_diff_light = lerp(env_diff_light0, env_diff_light1, 0);
+        float3 env_spec_light = lerp(env_spec_light0, env_spec_light1, 0);
         float3 env_diff_component = diff_colour * env_scale*env_diff_light;
         float3 env_spec_component = specular * env_scale*env_spec_light;
         float3 env_fresnel_component = gloss * strength(1.0 - dot(normal_ws, camera_dir_ws), 5) * env_ambient;

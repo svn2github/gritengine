@@ -333,6 +333,11 @@ local function material_internal (name, original, shadow_mat, fade, world, tab)
                 mat:setTextureAddressingMode(0,0,tex_index,"WRAP","WRAP","WRAP")
                 mat:setTextureFiltering(0,0,tex_index,"ANISOTROPIC","ANISOTROPIC","LINEAR")
                 tex_index = tex_index + 1
+                mat:createTextureUnitState(0,0)
+                mat:setTextureName(0,0,tex_index,gfx_env_cube(1):sub(2))
+                mat:setTextureAddressingMode(0,0,tex_index,"WRAP","WRAP","WRAP")
+                mat:setTextureFiltering(0,0,tex_index,"ANISOTROPIC","ANISOTROPIC","LINEAR")
+                tex_index = tex_index + 1
         end
 
         -- stipple texture

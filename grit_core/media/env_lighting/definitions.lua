@@ -2,6 +2,8 @@ material `sphere_mat` {
     diffuseColour = vec(0, 0, 0),
     diffuseMask = vec(0, 0, 0),
     gloss = 1.0,
+    glossMask = 1.0,
+    specular = 1.0,
 }
 
 material `sphere_mat2` {

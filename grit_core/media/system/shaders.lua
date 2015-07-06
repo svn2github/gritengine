@@ -464,7 +464,8 @@ local function make_program_cg_ (category, diffuse_map, pma, emissive_map, norma
                 end
         end
         if not forward_only then
-                env_maps, tunit = samplerCube(env_maps, tunit, "env_cube")
+                env_maps, tunit = samplerCube(env_maps, tunit, "env_cube0")
+                env_maps, tunit = samplerCube(env_maps, tunit, "env_cube1")
         end
         if stipple then
                 extra_maps, tunit = sampler(extra_maps, tunit, "stipple_map")

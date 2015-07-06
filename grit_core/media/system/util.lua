@@ -197,6 +197,10 @@ function clamp(v,bot,top)
         return v
 end
 
+function invlerp(v0, v1, vb)
+    return (vb - v0)/(v1 - v0)
+end
+
 function lerp(v0, v1, a)
         return (1-a)*v0 + a*v1
 end
