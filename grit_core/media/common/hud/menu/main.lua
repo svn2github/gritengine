@@ -65,8 +65,8 @@ hud_class `Main` {
         edgeSize = vec2(10,40);
         edgePosition = vec2(-(210 / 2) + 5, 0);
         pressedCallback = function() 
-          game_manager:enter("Playground")
           menu.setMenu = "Game Menu"
+          game_manager:enter("Playground")
         end
       });
 
