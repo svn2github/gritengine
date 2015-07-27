@@ -1,8 +1,8 @@
 hud_class `Button` {
   caption = "Button";
-  captionColour = vec(1, 1, 1);
+  captionColour = vec(0.9, 0.9, 0.9);
   captionColourClick = vec(1, 0.5, 0);
-  captionColourHover = vec(0, 0, 0);
+  captionColourHover = vec(1, 1, 1);
   captionColourGreyed = vec(0.4, 0.4, 0.4);
   font = `/common/fonts/Impact50`;
   edgeSize = vec(1, 40);
@@ -78,8 +78,10 @@ hud_class `Button` {
     self.inside = inside
     if(self.inside)then
       self.edge.alpha = 1
+      self.text.shadow = vec(2, -2)
     else
       self.edge.alpha = 0
+      self.text.shadow = vec(0, 0)
     end
     self:refreshState()
   end;
