@@ -1,29 +1,34 @@
--- (c) Augusto Moura 2014, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
+------------------------------------------------------------------------------
+--  Checkbox Class
+--
+--  (c) 2014 Augusto P. Moura (augustomoura94@hotmail.com)
+--
+--  Licensed under the MIT license:
+--  http://www.opensource.org/licenses/mit-license.php
+------------------------------------------------------------------------------
 
-hud_class `checkbox` {
+hud_class `checkbox` (extends(GuiClass)
+{
 	alpha = 0;
 	colour =vec(0, 1, 0);
 	caption="";
 	padding = 5;
-	selected = false;
-	float = {
-		left = false;
-		right = false;
-		top = false;
-		bottom = false;
-	};
-	offset = vec(0, 0);
-	
+	checked = false;
+
 	init = function (self)
 		self.needsInputCallbacks = true;
 		self.needsParentResizedCallbacks = true
-		self.icon = gfx_hud_object_add(`/common/hud/Rect`, { parent=self,  position=vec2(0, 0), texture=`../icons/checkbox_unchecked.png`, size=vec(15, 15) })
+		
+		self.icon = gfx_hud_object_add(`/common/hud/Rect`, { parent = self,  position = vec2(0, 0), texture = `../icons/checkbox_unchecked.png`, size = vec(15, 15) })
+		self.icon_checked = gfx_hud_object_add(`/common/hud/Rect`, { parent = self.icon,  position = vec(0, 0), texture = `../icons/checkbox_checked.png`, size = self.icon.size })
+		self.icon_checked.enabled = false
+		
 		self.text = gfx_hud_text_add(`/common/fonts/Arial12`)
 		self.text.parent = self
 		self.text.text = self.caption
 		
-		if self.selected then
-			self:select()
+		if self.checked then
+			self:check()
 		end
 		
 		self:update()
@@ -48,39 +53,40 @@ hud_class `checkbox` {
 
     buttonCallback = function (self, ev)
 		if ev == "-left" and self.inside then
-			if self.selected then
-				self:unselect()
+			if self.checked then
+				self:uncheck()
+				self:onUncheck()
 			else
-				self:select()
+				self:check()
+				self:onCheck()
 			end
 		end
     end;
 
-	floatUpdate = function(self, psize)
-		if self.float.left then
-			self.position = vec(-psize.x/2+self.size.x/2+self.offset.x, self.offset.y)
-		elseif self.float.right then
-			self.position = vec(psize.x/2-self.size.x/2+self.offset.x, self.offset.y)
-		end
-		
-		if self.float.top then 
-			self.position = vec(self.offset.x, psize.y/2-self.size.y/2+self.offset.y)
-		elseif self.float.bottom then
-			self.position = vec(self.offset.x, -psize.y/2+self.size.y/2+self.offset.y)
-		end
+	parentResizedCallback = function(self, psize)
+		GuiClass.parentResizedCallback(self, psize)
+	end;
+	
+	check = function(self)
+		self.icon_checked.enabled = true
+		self.checked = true
+	end;
+
+	onCheck = function(self)
+
+	end;
+	
+	uncheck = function(self)
+		self.icon_checked.enabled = false
+		self.checked = false
+	end;
+	
+	onUncheck = function(self)
+
 	end;	
 	
-	parentResizedCallback = function(self, psize)
-		self:floatUpdate(psize)
-	end;
-	
-	select = function(self)
-		self.icon.texture = `../icons/checkbox_checked.png`
-		self.selected = true
-	end;
-	
-	unselect = function(self)
-		self.icon.texture = `../icons/checkbox_unchecked.png`
-		self.selected = false
-	end;
-}
+})
+
+function create_checkbox(r_tab)
+	return gfx_hud_object_add(`checkbox`, r_tab)
+end

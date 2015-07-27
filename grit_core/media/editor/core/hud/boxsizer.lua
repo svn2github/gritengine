@@ -40,12 +40,12 @@ hud_class `boxsizer` {
 		end
 		self:update(psize)
 	end;
-	
+
 	updateChildsV = function (self, psize)
 		for i = 1, #self.childs do
 			-- self.childs[i].position = vec(self.childs[i].position.x, -psize.y/#self.childs*(i+1))
 			if not self.childs[i].destroyed then
-				self.childs[i].position = vec(self.childs[i].position.x, math.ceil(psize.y/2 -psize.y/(2*#self.childs) - ((i-1) * psize.y/#self.childs)))
+				self.childs[i].position = vec(self.childs[i].position.x, psize.y/2 -psize.y/(2*#self.childs) - ((i-1) * psize.y/#self.childs))
 			end
 			--psize.y/2 - ((i-1) * self.menuitems[i].size.y) -self.menuitems[i].size.y/2
 		end
@@ -54,7 +54,7 @@ hud_class `boxsizer` {
 	updateChildsH = function (self, psize)
 		for i = 1, #self.childs do
 			if not self.childs[i].destroyed then
-				self.childs[i].position = vec(math.ceil(psize.x/2 -psize.x/(2*#self.childs)- ((i-1) * psize.x/#self.childs)) , self.childs[i].position.y)
+				self.childs[i].position = vec(psize.x/2 -psize.x/(2*#self.childs)- ((i-1) * psize.x/#self.childs) , self.childs[i].position.y)
 			end
 		end
 	end;	
@@ -76,9 +76,13 @@ hud_class `boxsizer` {
 			if self.parent.type ~= nil and #self.parent.childs > 0 then
 				if self.parent.type == "boxsizer" then
 					if self.parent.orient == "h" then
-						self.expandType = function(self, psize) self.size = vec(self.parent.size.x / #self.parent.childs, self.parent.size.y) end
+						self.expandType = function(self, psize)
+							self.size = vec(self.parent.size.x / #self.parent.childs, self.parent.size.y)
+						end
 					elseif self.parent.orient == "v" then
-						self.expandType = function(self, psize) self.size = vec(self.parent.size.x, self.parent.size.y/#self.parent.childs) end
+						self.expandType = function(self, psize)
+							self.size = vec(self.parent.size.x, self.parent.size.y/#self.parent.childs)
+						end
 					end
 				-- elseif self.parent.type == "grid" then
 					-- self.expandType = function(self, psize) self.size = vec(self.parent.size.x/#self.parent.childs, self.parent.size.y/#self.parent.childs) end
@@ -89,7 +93,7 @@ hud_class `boxsizer` {
 }
 
 function create_box_sizer(g_expand, g_orient, p, g_size, g_colour, g_alpha)
-	local bs = gfx_hud_object_add(`/editor/core/hud/boxsizer`, { parent = p, orient = g_orient or "h", expand = g_expand or false, colour = g_colour or vec(0.3, 0.3, 0.3), alpha = g_alpha or 1, size = g_size })
+	local bs = gfx_hud_object_add(`/editor/core/hud/boxsizer`, { parent = p, orient = g_orient or "h", expand = g_expand or false, colour = g_colour or vec(0.3, 0.3, 0.3), alpha = g_alpha or 0, size = g_size })
 	if p then
 		bs:updateExpandType()
 	end

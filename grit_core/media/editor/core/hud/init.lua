@@ -1,3 +1,6 @@
+include `GUIClass.lua`
+include `GUIButton.lua`
+include `WindowNotebook.lua`
 include `radiobutton.lua`
 include `checkbox.lua`
 include `tip.lua`
@@ -13,5 +16,6 @@ include `notify.lua`
 include `draggable.lua`
 include `connect_line.lua`
 include `boxsizer.lua`
+include `flexboxsizer.lua`
 include `object_list.lua`
 include `notebook.lua`

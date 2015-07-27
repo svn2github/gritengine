@@ -115,7 +115,7 @@ hud_class `window_border` {
 }
 
 hud_class `Window` {
-	alpha = 0.2;
+	alpha = 0.7;
 	zOrder = 0;
 	showCloseBtn = true;
 	resizeable = true;
@@ -144,7 +144,7 @@ hud_class `Window` {
 			size = vec2(self.size.x, 24);
 			colour = vector3(1, 1, 1);
 			zOrder = 2;
-			alpha=0.8;
+			alpha=1;
 		})
 
 		self.close_btn = gfx_hud_object_add(`/common/hud/Button`, {				
@@ -155,8 +155,8 @@ hud_class `Window` {
 				needsParentResizedCallbacks = true;
 				parentResizedCallback = function(self, psize) self.position = vec2(psize.x/2-self.size.x/2, self.position.y) end;
 				baseColour = vec(1,1,1) * 0.3;
-				hoverColour = vec(1, 0.5, 0) * 0.75;
-				clickColour = vec(1, 0.5, 0);
+				hoverColour = vec(1, 1, 1) * 0.45;
+				clickColour = vec(1, 1, 1)* 0.7;
 		})
 		self.close_btn.border.enabled=false
 		

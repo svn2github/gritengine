@@ -31,8 +31,8 @@ editor_themes['dark_orange'] = {
 		};
 		-- Window
 		window = {
-			background = vec(0.3, 0.3, 0.3);
-			background_alpha = 1;
+			background = vec(0.15, 0.15, 0.15);
+			background_alpha = 0.7;
 			title_background = vec(1, 1, 1);
 			title_background_alpha = 1;
 			title_background_inactive = vec(0.2, 0.2, 0.2);

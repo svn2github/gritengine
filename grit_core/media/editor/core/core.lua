@@ -555,7 +555,7 @@ function GED:disableAllWindows()
 end;
 
 function GED:setActiveWindow(wnd)
-	if self.currentWindow ~= nil and self.currentWindow ~= wnd then
+	if self.currentWindow ~= nil and not self.currentWindow.destroyed and self.currentWindow ~= wnd then
 		self.currentWindow.zOrder = 0
 		self.currentWindow.draggable_area.colour = GED.currentTheme.colours.window.title_background_inactive
 		self.currentWindow.window_title.colour = GED.currentTheme.colours.window.title_text_inactive

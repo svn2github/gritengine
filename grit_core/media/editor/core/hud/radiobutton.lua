@@ -1,22 +1,28 @@
--- (c) Augusto Moura 2014, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
+------------------------------------------------------------------------------
+--  Radio Button Class
+--
+--  (c) 2014 Augusto P. Moura (augustomoura94@hotmail.com)
+--
+--  Licensed under the MIT license:
+--  http://www.opensource.org/licenses/mit-license.php
+------------------------------------------------------------------------------
 
-hud_class `radiobutton` {
+hud_class `radiobutton` (extends(GuiClass)
+{
 	alpha = 0;
 	colour =vec(0, 1, 0);
 	caption="";
 	padding = 5;
-	float = {
-		left = false;
-		right = false;
-		top = false;
-		bottom = false;
-	};
-	offset = vec(0, 0);
+	selected = false;
 	
 	init = function (self)
 		self.needsInputCallbacks = true;
 		self.needsParentResizedCallbacks = true
-		self.icon = gfx_hud_object_add(`/common/hud/Rect`, { parent=self,  position=vec2(0, 0), texture=`../icons/radiobutton_unchecked.png`, size=vec(15, 15) })
+		
+		self.icon = gfx_hud_object_add(`/common/hud/Rect`, { parent = self,  position = vec2(0, 0), texture = `../icons/radiobutton_unchecked.png`, size = vec(15, 15) })
+		self.icon_check = gfx_hud_object_add(`/common/hud/Rect`, { parent = self.icon,  position = vec2(0, 0), texture = `../icons/radiobutton_checked.png`, size = self.icon.size })
+		self.icon_check.enabled = false
+		
 		self.text = gfx_hud_text_add(`/common/fonts/Arial12`)
 		self.text.parent = self
 		self.text.text = self.caption
@@ -40,48 +46,48 @@ hud_class `radiobutton` {
 		self.text.position = vec(-self.size.x/2+self.icon.size.x+self.padding+self.text.size.x/2, self.text.position.y)
 	end;	
 
+	-- the first radio button creates a table on its parent to point what radio button is selected
+	setParentTable = function(self)
+		if self.parent.radiobuttons == nil then
+			self.parent.radiobuttons = {}
+		end
+	end;
+
     buttonCallback = function (self, ev)
 		if ev == "-left" and self.inside then
-			-- the first radio button creates a table on his parent to point what radio button is selected
+			self:setParentTable()
 			-- when a radio button is selected the previous one is unselected..
-			if self.parent.radiobuttons == nil then
-				self.parent.radiobuttons = {}
-			end
 			if self.parent.radiobuttons.selected ~= self and self.parent.radiobuttons.selected ~= nil and not self.parent.radiobuttons.selected.destroyed then
 				self.parent.radiobuttons.selected:unselect()
 			end
-			self.parent.radiobuttons.selected = self
-			self:select()
+			if self.parent.radiobuttons.selected ~= self then
+				self:select()
+			end
 		end
     end;
 
-	floatUpdate = function(self, psize)
-		if self.float.left then
-			self.position = vec(-psize.x/2+self.size.x/2+self.offset.x, self.offset.y)
-		elseif self.float.right then
-			self.position = vec(psize.x/2-self.size.x/2+self.offset.x, self.offset.y)
-		end
-		
-		if self.float.top then 
-			self.position = vec(self.offset.x, psize.y/2-self.size.y/2+self.offset.y)
-		elseif self.float.bottom then
-			self.position = vec(self.offset.x, -psize.y/2+self.size.y/2+self.offset.y)
-		end
-	end;	
-	
 	parentResizedCallback = function(self, psize)
-		self:floatUpdate(psize)
+		GuiClass.parentResizedCallback(self, psize)
 	end;
 	
 	select = function(self)
-		self.icon.texture = `../icons/radiobutton_checked.png`
+		if self.parent ~= nil then
+			self:setParentTable()
+			self.parent.radiobuttons.selected = self
+		end
+		self:onSelect()
+		self.icon_check.enabled = true
 	end;
 	
+	onSelect = function(self)
+		
+	end;	
+	
 	unselect = function(self)
-		self.icon.texture = `../icons/radiobutton_unchecked.png`
+		self.icon_check.enabled = false
 	end;
-}
+})
 
-function create_radiobutton(r_caption, r_parent, r_float, r_offset)
-	return gfx_hud_object_add(`radiobutton`, { caption = r_caption, parent = r_parent, float = r_float or { left = false, right = false, top = false, bottom = false}, offset = r_offset or vec(0, 0) })
+function create_radiobutton(options)
+	return gfx_hud_object_add(`radiobutton`, options)
 end
