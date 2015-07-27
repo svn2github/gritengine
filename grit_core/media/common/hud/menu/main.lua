@@ -1,9 +1,13 @@
 -- (c) Al-x Spiker 2015, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
+-- TODO: Make there main menus like Main Menu, Game Menu, Editor Menu, then make the Settings Menu and such decide the content based on the current main menu! For example if mainmenu="Editor" and submenu="Settings" show only settings for the editor!
+
 hud_class `Main` {
 
   --[[Test code
   for k in pairs(game_manager.gameModes) do print(k) end
+  
+  for key,value in pairs(menu) do print(key,value) end
   
   ]]--
   colour = vec(0.1, 0.1, 0.1)*0.5;
@@ -11,8 +15,20 @@ hud_class `Main` {
   padding = 16;
 
   init = function (self)
-    self.needsParentResizedCallbacks = true
-    self.needsFrameCallbacks = true
+    self.needsParentResizedCallbacks = true;
+    self.needsFrameCallbacks = true;
+
+    self.settings = {
+      mouseInvert={
+        name="Invert Mouse";
+        defaut=true;
+        --settingValue=user_cfg.mouseInvert;
+      }
+    };
+
+    self.gui = {
+
+    }
 
     self.content = ""; --Leave empty as the self.setMenu is what changes this to ensure the menu is setup correctly.
     self.setMenu = "Main Menu";
@@ -38,7 +54,7 @@ hud_class `Main` {
           menu.setMenu = "Gamemodes"
         end
       });
-    
+
     self.playgroundGamemodeLoaderButton = gfx_hud_object_add(`Button`, {
         size = vec(210,40);
         font = `/common/fonts/Impact24`;
@@ -64,6 +80,7 @@ hud_class `Main` {
         edgeSize = vec2(10,40);
         edgePosition = vec2(-(210 / 2) + 5, 0);
         pressedCallback = function() 
+          menu.setMenu = "Editor"
           game_manager:enter("Map Editor")
         end
       });
@@ -93,6 +110,27 @@ hud_class `Main` {
         edgePosition = vec2(-(210 / 2) + 5, 0);
         pressedCallback = quit
       });
+
+    self.loadSettings = function(self)
+      for key,value in pairs(menu.settings) do
+        print("The variable: ".. key .." with the name of ".. value.name .." is equal to ".. tostring(user_cfg[tostring(key)]) .."!")
+        local newSetting = gfx_hud_object_add(`Button`, {
+            size = vec(210,40);
+            font = `/common/fonts/Impact24`;
+            caption = value.name ..":".. tostring(user_cfg[tostring(key)]);
+            menuType = "Settings";
+            settingTableVariable = key;
+            parent = menu;
+            position = vec2(0, -10);
+            edgeColour = vec(1, 0, 1)*1.0;
+            edgeSize = vec2(10,40);
+            edgePosition = vec2(-(210 / 2) + 5, 0);
+            pressedCallback = function() 
+              user_cfg[tostring(key)] = not user_cfg[tostring(key)]
+            end;
+          });
+      end
+    end;
 
     self.backButton = gfx_hud_object_add(`Button`, {
         size = vec(210,40);
@@ -135,11 +173,16 @@ hud_class `Main` {
   end;
 
   setEnabled = function(self, v)
-    self.enabled = v
-    menu_binds.modal = v
-    --menu:setContent(menu.mainContent) --Coming soon
+    if(menu.setMenu == "Game Menu" or menu.setMenu == "Editor")then
+      self.enabled = v
+      menu_binds.modal = v
+      --menu:setContent(menu.mainContent) --Coming soon --Or not, never needed it, doing it a different way
+    else
+      self.enabled = true
+      menu_binds.modal = true
+    end
   end;
-  
+
   setUpContent = function (self, v)
     self.menuGritTitle.enabled = false
     self.gamemodeLoaderButton.enabled = false
@@ -160,12 +203,17 @@ hud_class `Main` {
       self.menuGritTitle.enabled = true
       self.menuGritTitle.position = vec2(0, (gfx_window_size().y / 2) - 100)
       self.backButton.enabled = true
+      --self.loadSettings() -- Leave disabled until the settings loading works properly!
     elseif(v == "Gamemodes")then
       self.menuGritTitle.enabled = true
       self.menuGritTitle.position = vec2(0, (gfx_window_size().y / 2) - 100)
       self.backButton.enabled = true
       self.playgroundGamemodeLoaderButton.enabled = true
     elseif(v == "Game Menu")then
+      self.settingsButton.enabled = false --Set to true once the settings menu works in game like its supposed to!
+      self.gameResumeButton.enabled = true
+      self.exitButton.enabled = true
+    elseif(v == "Editor")then
       self.settingsButton.enabled = false --Set to true once the settings menu works in game like its supposed to!
       self.gameResumeButton.enabled = true
       self.exitButton.enabled = true
