@@ -59,7 +59,7 @@ hud_class `Button` {
       self.text.colour = self.captionColourGreyed
     else
       if self.dragging and self.inside then
-        self.text.colour = self.captionColourClick
+        self.text.colour = self.edgeColour
       elseif self.inside then
         self.text.colour = self.captionColourHover
       else
