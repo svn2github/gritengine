@@ -24,6 +24,7 @@ hud_class `Button` {
     self.edge = gfx_hud_object_add(`/common/hud/Rect`, {
         size = vec(10, 40);
         colour = vec(1, 0, 0)*1;
+        alpha = 0;
         --texture = `/common/hud/LoadingScreen/GritLogo.png`;
         parent = self;
         position = vec2(0, 0);
@@ -75,6 +76,11 @@ hud_class `Button` {
 
   mouseMoveCallback = function (self, local_pos, screen_pos, inside)
     self.inside = inside
+    if(self.inside)then
+      self.edge.alpha = 1
+    else
+      self.edge.alpha = 0
+    end
     self:refreshState()
   end;
 
