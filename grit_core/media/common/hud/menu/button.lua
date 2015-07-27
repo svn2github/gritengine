@@ -12,7 +12,7 @@ hud_class `Button` {
   settingTableVariable = false;
 
   colour = vec(128/255, 128/255, 128/255) * 0.5;
-  alpha = 1;
+  alpha = 0.5;
 
   init = function (self)
     self.needsInputCallbacks = true

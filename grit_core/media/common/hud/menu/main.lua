@@ -10,7 +10,8 @@ hud_class `Main` {
   for key,value in pairs(menu) do print(key,value) end
   
   ]]--
-  colour = vec(0.1, 0.1, 0.1)*0.5;
+  colour = vec(0.3, 0.3, 0.3)*0.6;
+  texture = `background.jpg`;
 
   padding = 16;
 
