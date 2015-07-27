@@ -398,8 +398,8 @@ create_window_notebook = function(options)
 	return gfx_hud_object_add(`windownotebook`, options)
 end
 
-safe_destroy(re)
-re = create_window_notebook({})
-for i = 0, 6 do
-	re:addPage("Navigation Editor")
-end
+-- safe_destroy(re)
+-- re = create_window_notebook({})
+-- for i = 0, 6 do
+	-- re:addPage("Navigation Editor")
+-- end
