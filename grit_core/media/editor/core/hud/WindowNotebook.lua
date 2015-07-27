@@ -124,7 +124,7 @@ hud_class `window_page_button` {
     hoverColour = vec(1, 1, 1);
     clickColour = vec(1, 1, 1);
 
-    font = `/fonts/Ubuntu14`;
+    font = `/common/fonts/Arial12`;
     caption = "Map Editor";
     captionColour = vec(0, 0, 0);
 

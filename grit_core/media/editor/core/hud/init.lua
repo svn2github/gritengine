@@ -16,6 +16,6 @@ include `notify.lua`
 include `draggable.lua`
 include `connect_line.lua`
 include `boxsizer.lua`
-include `flexboxsizer.lua`
+-- include `flexboxsizer.lua`
 include `object_list.lua`
 include `notebook.lua`
