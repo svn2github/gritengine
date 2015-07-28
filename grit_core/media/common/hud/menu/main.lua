@@ -22,6 +22,7 @@ hud_class `Main` {
     self.settings = {
       mouseInvert={
         name="Invert Mouse";
+        type="boolean";
         defaut=true;
         --settingValue=user_cfg.mouseInvert;
       }
@@ -115,12 +116,12 @@ hud_class `Main` {
     self.loadSettings = function(self)
       for key,value in pairs(menu.settings) do
         print("The variable: ".. key .." with the name of ".. value.name .." is equal to ".. tostring(user_cfg[tostring(key)]) .."!")
-        local newSetting = gfx_hud_object_add(`Button`, {
+        menu.gui[key] = gfx_hud_object_add(`Button`, {
             size = vec(210,40);
             font = `/common/fonts/Impact24`;
             caption = value.name ..":".. tostring(user_cfg[tostring(key)]);
-            menuType = "Settings";
             settingTableVariable = key;
+            valueType = value.type;
             parent = menu;
             position = vec2(0, -10);
             edgeColour = vec(1, 0, 1)*1.0;
@@ -128,6 +129,7 @@ hud_class `Main` {
             edgePosition = vec2(-(210 / 2) + 5, 0);
             pressedCallback = function() 
               user_cfg[tostring(key)] = not user_cfg[tostring(key)]
+              menu.gui[key]:setCaption(value.name ..":".. tostring(user_cfg[tostring(key)]))
             end;
           });
       end
@@ -144,6 +146,10 @@ hud_class `Main` {
         edgePosition = vec2(-(210 / 2) + 5, 0);
         pressedCallback = function() 
           menu.setMenu = "Main Menu"
+          for k in pairs (menu.gui) do
+            safe_destroy(menu.gui[k])
+          end
+          menu.gui = {}
         end
       });
     self.gameResumeButton = gfx_hud_object_add(`Button`, {
@@ -204,7 +210,7 @@ hud_class `Main` {
       self.menuGritTitle.enabled = true
       self.menuGritTitle.position = vec2(0, (gfx_window_size().y / 2) - 100)
       self.backButton.enabled = true
-      --self.loadSettings() -- Leave disabled until the settings loading works properly!
+      self.loadSettings() -- Leave disabled until the settings loading works properly!
     elseif(v == "Gamemodes")then
       self.menuGritTitle.enabled = true
       self.menuGritTitle.position = vec2(0, (gfx_window_size().y / 2) - 100)

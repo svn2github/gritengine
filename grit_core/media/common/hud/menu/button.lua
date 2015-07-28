@@ -8,7 +8,7 @@ hud_class `Button` {
   edgeSize = vec(1, 40);
   edgeColour = vec(1, 102/255, 0);
   edgePosition = vec(0, 0);
-  menuType = "None";
+  buttonType = "Setting";
   settingTableVariable = false;
 
   colour = vec(128/255, 128/255, 128/255) * 0.5;
