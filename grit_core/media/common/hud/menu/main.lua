@@ -20,7 +20,6 @@ hud_class `Main` {
     self.settings = {
       mouseInvert={
         name="Invert Mouse";
-        type="boolean";
         defaut=true;
         --settingValue=user_cfg.mouseInvert;
       }
@@ -50,7 +49,6 @@ hud_class `Main` {
         edgeSize = vec2(10,40);
         edgePosition = vec2(-(210 / 2) + 5, 0);
         pressedCallback = function() 
-          --game_manager:enter("Playground")
           menu.setMenu = "Gamemodes"
         end
       });
@@ -114,27 +112,10 @@ hud_class `Main` {
     self.loadSettings = function(self)
       for key,value in pairs(menu.settings) do
         print("The variable: ".. key .." with the name of ".. value.name .." is equal to ".. tostring(user_cfg[tostring(key)]) .."!")
-        --[[menu.gui[key] = gfx_hud_object_add(`Button`, {
-            size = vec(210,40);
-            font = `/common/fonts/Impact24`;
-            caption = value.name ..":".. tostring(user_cfg[tostring(key)]);
-            settingTableVariable = key;
-            valueType = value.type;
-            parent = menu;
-            position = vec2(0, -10);
-            edgeColour = vec(1, 0, 1)*1.0;
-            edgeSize = vec2(10,40);
-            edgePosition = vec2(-(210 / 2) + 5, 0);
-            pressedCallback = function() 
-              user_cfg[tostring(key)] = not user_cfg[tostring(key)]
-              menu.gui[key]:setCaption(value.name ..":".. tostring(user_cfg[tostring(key)]))
-            end;
-          })]]--
     menu.gui[key] = gfx_hud_object_add(`SettingEdit`, {
         size = vec(gfx_window_size().x - 200,40);
         font = `/common/fonts/Impact24`;
         caption = value.name;
-        valueType = value.type;
         valueLocation = user_cfg;
         valueKey = tostring(key);
         parent = menu;

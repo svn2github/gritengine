@@ -4,7 +4,6 @@ hud_class `SettingEdit` {
   alpha = 0.5;
   colour = vec(128/255, 128/255, 128/255) * 0.5;
   caption="Setting";
-  valueType="boolean";
   valueLocation = user_cfg;
   valueKey = "";
 
@@ -14,31 +13,26 @@ hud_class `SettingEdit` {
     self.label = gfx_hud_object_add(`/common/hud/Label`, {
         value = self.caption;
         font = `/common/fonts/Impact24`;
-        --size = vec(10, 40);
         colour = vec(1, 0, 0)*1;
         alpha = 0;
-        --texture = `/common/hud/LoadingScreen/GritLogo.png`;
         parent = self;
       })
     self.label.size = self.label.text.size
     self.label.position = vec2(-(self.label.parent.size.x / 2) + ((self.label.size.x / 2) + 10), 0)
 
-    if(self.valueType == "boolean")then
+    if(type(self.valueLocation[self.valueKey]) == "boolean")then
       self.setBackground = gfx_hud_object_add(`/common/hud/Rect`, {
           colour = vec(1, 1, 1) * 0.8;
           alpha = 0.5;
           size = vec(70, 35);
-          --texture = `/editor/core/icons/checkbox_checked.png`;
           parent = self;
         })
       self.setBackground.position = vec2((self.setBackground.parent.size.x / 2) - ((self.setBackground.size.x / 2) + 5), 0)
       self.set = gfx_hud_object_add(`Button`, {
-          --colour = vec(128/255, 128/255, 128/255) * 0.2;
           caption = tostring(self.valueLocation[self.valueKey]);
           font = `/common/fonts/Impact24`;
           size = vec(70, 35);
           borderTexture = nil;
-          --texture = `/editor/core/icons/checkbox_checked.png`;
           parent = self;
           pressedCallback = function(self)
             self.parent.valueLocation[self.parent.valueKey] = not self.parent.valueLocation[self.parent.valueKey]
@@ -46,9 +40,9 @@ hud_class `SettingEdit` {
           end;
         })
       self.set.position = vec2((self.set.parent.size.x / 2) - ((self.set.size.x / 2) + 5), 0)
-    elseif(self.valueType == "string")then
+    elseif(type(self.valueLocation[self.valueKey]) == "string")then
 
-    elseif(self.valueType == "number")then
+    elseif(type(self.valueLocation[self.valueKey]) == "number")then
 
     end
   end;
