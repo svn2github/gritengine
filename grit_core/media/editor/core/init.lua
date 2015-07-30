@@ -32,6 +32,8 @@ include `core.lua`
 current_level = nil
 
 editor = {
+	description = "Just a simple map editor, have fun!";
+	
     init = function (self)
         -- [dcunnin] Ideally we would declare things earlier and only instantiate them at this
         -- point.  However all the code is mixed up right now.

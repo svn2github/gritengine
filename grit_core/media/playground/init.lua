@@ -12,6 +12,7 @@ playground = playground or {
     spawnPos = vec(-53.45975, 9.918219, 1.112);
     spawnRot = quat(-0.3363351, 0, 0, 0.9417424);
     seaLevel = -6;
+	description = "TODO: description of playground";
 }
 
 
