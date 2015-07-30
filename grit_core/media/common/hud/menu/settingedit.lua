@@ -40,10 +40,9 @@ hud_class `SettingEdit` {
           borderTexture = nil;
           --texture = `/editor/core/icons/checkbox_checked.png`;
           parent = self;
-          pressedCallback = function() 
-            self.valueLocation[self.valueKey] = not self.valueLocation[self.valueKey]
-            --self:setCaption(self.valueLocation[self.valueKey])
-            self:setGreyed(true)
+          pressedCallback = function(self)
+            self.parent.valueLocation[self.parent.valueKey] = not self.parent.valueLocation[self.parent.valueKey]
+            self:setCaption(tostring(self.parent.valueLocation[self.parent.valueKey]))
           end;
         })
       self.set.position = vec2((self.set.parent.size.x / 2) - ((self.set.size.x / 2) + 5), 0)
