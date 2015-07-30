@@ -1,11 +1,11 @@
 hud_class `Button` {
-  caption = "Button";
+  caption = "X";
   captionColour = vec(0.9, 0.9, 0.9);
   captionColourClick = vec(1, 0.5, 0);
   captionColourHover = vec(1, 1, 1);
   captionColourGreyed = vec(0.4, 0.4, 0.4);
   font = `/common/fonts/Impact50`;
-  edgeSize = vec(1, 40);
+  edgeSize = vec(0, 0);
   edgeColour = vec(1, 102/255, 0);
   edgePosition = vec(0, 0);
   buttonType = "Setting";
@@ -22,7 +22,7 @@ hud_class `Button` {
     self:setCaption(self.caption)
 
     self.edge = gfx_hud_object_add(`/common/hud/Rect`, {
-        size = vec(10, 40);
+        size = vec(0, 0);
         colour = vec(1, 0, 0)*1;
         alpha = 0;
         --texture = `/common/hud/LoadingScreen/GritLogo.png`;

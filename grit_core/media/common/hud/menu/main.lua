@@ -1,7 +1,5 @@
 -- (c) Al-x Spiker 2015, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
--- TODO: Make there main menus like Main Menu, Game Menu, Editor Menu, then make the Settings Menu and such decide the content based on the current main menu! For example if mainmenu="Editor" and submenu="Settings" show only settings for the editor!
-
 hud_class `Main` {
 
   --[[Test code
@@ -116,7 +114,7 @@ hud_class `Main` {
     self.loadSettings = function(self)
       for key,value in pairs(menu.settings) do
         print("The variable: ".. key .." with the name of ".. value.name .." is equal to ".. tostring(user_cfg[tostring(key)]) .."!")
-        menu.gui[key] = gfx_hud_object_add(`Button`, {
+        --[[menu.gui[key] = gfx_hud_object_add(`Button`, {
             size = vec(210,40);
             font = `/common/fonts/Impact24`;
             caption = value.name ..":".. tostring(user_cfg[tostring(key)]);
@@ -131,102 +129,113 @@ hud_class `Main` {
               user_cfg[tostring(key)] = not user_cfg[tostring(key)]
               menu.gui[key]:setCaption(value.name ..":".. tostring(user_cfg[tostring(key)]))
             end;
-          });
-      end
-    end;
-
-    self.backButton = gfx_hud_object_add(`Button`, {
-        size = vec(210,40);
+          })]]--
+    menu.gui[key] = gfx_hud_object_add(`SettingEdit`, {
+        size = vec(gfx_window_size().x - 200,40);
         font = `/common/fonts/Impact24`;
-        caption = "Go Back";
-        parent = self;
-        position = vec2(0, -(gfx_window_size().y / 2) + 100);
-        edgeColour = vec(1, 0, 0)*1.0;
-        edgeSize = vec2(10,40);
-        edgePosition = vec2(-(210 / 2) + 5, 0);
-        pressedCallback = function() 
-          menu.setMenu = "Main Menu"
-          for k in pairs (menu.gui) do
-            safe_destroy(menu.gui[k])
-          end
-          menu.gui = {}
-        end
-      });
-    self.gameResumeButton = gfx_hud_object_add(`Button`, {
-        size = vec(210,40);
-        font = `/common/fonts/Impact24`;
-        caption = "Resume";
-        parent = self;
-        position = vec2(0, -50);
-        edgeColour = vec(1, 1, 1)*1.0;
-        edgeSize = vec2(10,40);
-        edgePosition = vec2(-(210 / 2) + 5, 0);
-        pressedCallback = function() 
-          menu:setEnabled(false)
-        end
+        caption = value.name;
+        valueType = value.type;
+        valueLocation = user_cfg;
+        valueKey = tostring(key);
+        parent = menu;
+        position = vec2(0, -10);
       })
-  end;
+    --menu.gui[key].set.position
+  end
+end;
 
-  parentResizedCallback = function (self, psize)
-    self.position = vec(psize.x/2, psize.y/2)
-    self.size = psize
-  end;
-
-  frameCallback = function (self, elapsed)
-    if(self.content ~= self.setMenu)then
-      self.content = self.setMenu
-      self:setUpContent(self.content)
+self.backButton = gfx_hud_object_add(`Button`, {
+    size = vec(210,40);
+    font = `/common/fonts/Impact24`;
+    caption = "Go Back";
+    parent = self;
+    position = vec2(0, -(gfx_window_size().y / 2) + 100);
+    edgeColour = vec(1, 0, 0)*1.0;
+    edgeSize = vec2(10,40);
+    edgePosition = vec2(-(210 / 2) + 5, 0);
+    pressedCallback = function() 
+      menu.setMenu = "Main Menu"
+      for k in pairs (menu.gui) do
+        safe_destroy(menu.gui[k])
+      end
+      menu.gui = {}
     end
-  end;
-
-  setEnabled = function(self, v)
-    if(menu.setMenu == "Game Menu" or menu.setMenu == "Editor")then
-      self.enabled = v
-      menu_binds.modal = v
-      --menu:setContent(menu.mainContent) --Coming soon --Or not, never needed it, doing it a different way
-    else
-      self.enabled = true
-      menu_binds.modal = true
+  });
+self.gameResumeButton = gfx_hud_object_add(`Button`, {
+    size = vec(210,40);
+    font = `/common/fonts/Impact24`;
+    caption = "Resume";
+    parent = self;
+    position = vec2(0, -50);
+    edgeColour = vec(1, 1, 1)*1.0;
+    edgeSize = vec2(10,40);
+    edgePosition = vec2(-(210 / 2) + 5, 0);
+    pressedCallback = function() 
+      menu:setEnabled(false)
     end
-  end;
+  })
+end;
 
-  setUpContent = function (self, v)
-    self.menuGritTitle.enabled = false
-    self.gamemodeLoaderButton.enabled = false
-    self.editorButton.enabled = false
-    self.settingsButton.enabled = false
-    self.exitButton.enabled = false
-    self.backButton.enabled = false
-    self.playgroundGamemodeLoaderButton.enabled = false
-    self.gameResumeButton.enabled = false
-    if(v == "Main Menu")then
-      self.menuGritTitle.enabled = true
-      self.gamemodeLoaderButton.enabled = true
-      self.editorButton.enabled = true
-      self.settingsButton.enabled = true
-      self.exitButton.enabled = true
-      self.menuGritTitle.position = vec2(0, (gfx_window_size().y / 2) - 250)
-    elseif(v == "Settings")then
-      self.menuGritTitle.enabled = true
-      self.menuGritTitle.position = vec2(0, (gfx_window_size().y / 2) - 100)
-      self.backButton.enabled = true
-      self.loadSettings() -- Leave disabled until the settings loading works properly!
-    elseif(v == "Gamemodes")then
-      self.menuGritTitle.enabled = true
-      self.menuGritTitle.position = vec2(0, (gfx_window_size().y / 2) - 100)
-      self.backButton.enabled = true
-      self.playgroundGamemodeLoaderButton.enabled = true
-    elseif(v == "Game Menu")then
-      self.settingsButton.enabled = false --Set to true once the settings menu works in game like its supposed to!
-      self.gameResumeButton.enabled = true
-      self.exitButton.enabled = true
-    elseif(v == "Editor")then
-      self.settingsButton.enabled = false --Set to true once the settings menu works in game like its supposed to!
-      self.gameResumeButton.enabled = true
-      self.exitButton.enabled = true
-    end
-  end;
+parentResizedCallback = function (self, psize)
+  self.position = vec(psize.x/2, psize.y/2)
+  self.size = psize
+end;
 
-  escape = function(self)
-  end;
+frameCallback = function (self, elapsed)
+  if(self.content ~= self.setMenu)then
+    self.content = self.setMenu
+    self:setUpContent(self.content)
+  end
+end;
+
+setEnabled = function(self, v)
+  if(menu.setMenu == "Game Menu" or menu.setMenu == "Editor")then
+    self.enabled = v
+    menu_binds.modal = v
+    --menu:setContent(menu.mainContent) --Coming soon --Or not, never needed it, doing it a different way
+  else
+    self.enabled = true
+    menu_binds.modal = true
+  end
+end;
+
+setUpContent = function (self, v)
+  self.menuGritTitle.enabled = false
+  self.gamemodeLoaderButton.enabled = false
+  self.editorButton.enabled = false
+  self.settingsButton.enabled = false
+  self.exitButton.enabled = false
+  self.backButton.enabled = false
+  self.playgroundGamemodeLoaderButton.enabled = false
+  self.gameResumeButton.enabled = false
+  if(v == "Main Menu")then
+    self.menuGritTitle.enabled = true
+    self.gamemodeLoaderButton.enabled = true
+    self.editorButton.enabled = true
+    self.settingsButton.enabled = true
+    self.exitButton.enabled = true
+    self.menuGritTitle.position = vec2(0, (gfx_window_size().y / 2) - 250)
+  elseif(v == "Settings")then
+    self.menuGritTitle.enabled = true
+    self.menuGritTitle.position = vec2(0, (gfx_window_size().y / 2) - 100)
+    self.backButton.enabled = true
+    self.loadSettings() -- Leave disabled until the settings loading works properly!
+  elseif(v == "Gamemodes")then
+    self.menuGritTitle.enabled = true
+    self.menuGritTitle.position = vec2(0, (gfx_window_size().y / 2) - 100)
+    self.backButton.enabled = true
+    self.playgroundGamemodeLoaderButton.enabled = true
+  elseif(v == "Game Menu")then
+    self.settingsButton.enabled = false --Set to true once the settings menu works in game like its supposed to!
+    self.gameResumeButton.enabled = true
+    self.exitButton.enabled = true
+  elseif(v == "Editor")then
+    self.settingsButton.enabled = false --Set to true once the settings menu works in game like its supposed to!
+    self.gameResumeButton.enabled = true
+    self.exitButton.enabled = true
+  end
+end;
+
+escape = function(self)
+end;
 }
