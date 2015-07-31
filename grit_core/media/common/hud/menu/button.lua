@@ -1,3 +1,5 @@
+-- (c) Al-x Spiker 2015, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
+
 hud_class `Button` {
   caption = "X";
   captionColour = vec(0.9, 0.9, 0.9);
