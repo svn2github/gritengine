@@ -27,9 +27,9 @@ hud_class `Main` {
 
     self.gui = {
 
-  }
-  
-  self.selectedOption = "";
+    }
+
+    self.selectedOption = "";
 
     self.content = ""; --Leave empty as the self.setMenu is what changes this to ensure the menu is setup correctly.
     self.setMenu = "Main Menu";
@@ -164,6 +164,11 @@ self.loadGamemodes = function(self)
       position = vec2(215, -(gfx_window_size().y / 2) + 100);
       parent = menu;
       pressedCallback = function(self)
+        menu.setMenu = "Game Menu"
+        for k in pairs (menu.gui) do
+          safe_destroy(menu.gui[k])
+        end
+        menu.gui = {}
         game_manager:enter(menu.selectedOption)
       end;
     })
