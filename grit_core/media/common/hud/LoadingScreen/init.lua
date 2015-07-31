@@ -5,8 +5,7 @@ hud_class `.` {
     speed = 10;
 
     init = function(self)
-        self.needsParentResizedCallbacks = true;    
-        self.needsFrameCallbacks = true
+        self.needsParentResizedCallbacks = true
         self.rot = 0
         
         self.texture = `Background.png`
