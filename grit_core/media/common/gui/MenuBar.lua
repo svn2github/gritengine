@@ -392,16 +392,30 @@ hud_class `MenuBar` (extends(GuiClass)
     parentResizedCallback = function (self, psize)
 		GuiClass.parentResizedCallback(self, psize)
     end;
+
+	unselect = function (self)
+		self.selecting = false
+		self.selected.menu.enabled = false		
+	end;
 	
 	mouseMoveCallback = function (self, local_pos, screen_pos, inside)
 		self.inside = inside
+		if self.selecting and --#(mouse_pos_abs-self.selected.menu.derivedPosition) > 200
+		(
+			mouse_pos_abs.x < self.selected.menu.derivedPosition.x-self.selected.menu.size.x/2-200 or
+			mouse_pos_abs.x > self.selected.menu.derivedPosition.x+self.selected.menu.size.x/2+200 or
+			mouse_pos_abs.y < self.selected.menu.derivedPosition.y-self.selected.menu.size.y/2-200 or
+			mouse_pos_abs.y > self.selected.menu.derivedPosition.y+self.selected.menu.size.y/2+200
+		)
+		then
+			self:unselect()
+		end
 	end;
 
     buttonCallback = function (self, ev)
 		if self.selected == nil then return end
 		if ev == "+left" and not mouse_inside_any_menu() then
-            self.selecting = false
-			self.selected.menu.enabled = false
+			self:unselect()
         end
     end;
 })
