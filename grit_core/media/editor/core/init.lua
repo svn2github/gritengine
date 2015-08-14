@@ -72,7 +72,7 @@ editor = {
         GED:setDebugMode(false)
 		
 		ticker.text.enabled = false
-		
+		env.clockRate = 0
     end;
 
     frameCallback = function (self, elapsed_secs)
@@ -126,6 +126,7 @@ editor = {
 		
 		editor_interface.map_editor_page:destroy()
 		editor_interface:destroy()
+		env.clockRate = 30
     end;
 }
     

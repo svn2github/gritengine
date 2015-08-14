@@ -4,8 +4,10 @@
 editor_cfg = {
 	maps_dir = "../maps";
 	thumbnails_size = vec2(256, 256);
-	mode_selected = "rotate";
-	directory = "editor";
+	mode_selected = "translate";
+	directory = "./editor";
 	load_startup_map = false;
 	startup_map = `/editor/core/defaultmap/defaultmap.lvl`;
+	default_game_mode = "fpsgame";
+	grid_size = 0.1;
 }
