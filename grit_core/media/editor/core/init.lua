@@ -19,30 +19,31 @@ include `defaultmap/init.lua`
 
 include`default_game_mode.lua`
 
-include `themes/init.lua`
+include `icons/init.lua`
 
 include `widget_manager/init.lua`
-include `GritLevel/init.lua`
+include `GritMap/init.lua`
 include `directory_list.lua`
-include `hud/init.lua`
-include `windows/open_save_level.lua`
 include `assets/init.lua`
 include `core.lua`
 
-current_level = nil
+-- TEMPORARY
+include`navigation_system.lua`
+
+current_map = nil
+
+in_editor = false
 
 editor = {
-	description = "Just a simple map editor, have fun!";
-	
     init = function (self)
         -- [dcunnin] Ideally we would declare things earlier and only instantiate them at this
         -- point.  However all the code is mixed up right now.
 		
-        GED.currentTheme = editor_themes[editor_interface_cfg.theme]
 		
+		in_editor = true
+
 		include `init_editor_interface.lua`
 
-        
         playing_binds.enabled = true
         playing_actor_binds.enabled = false
         playing_vehicle_binds.enabled = false
@@ -56,18 +57,22 @@ editor = {
         main.camPos = vec(0, 0, 10)
         GED.camYaw = 0
         GED.camPitch = 0
-
-        editor_init_windows()
-
-        GED:openLevel(`/editor/core/defaultmap/defaultmap.lvl`)
 		
-        GED:setWidgetMode(1)
-        widget_menu[1]:select(true)
-
+		-- set default values/update values for window content
+        editor_init_windows()
+		
+		if editor_cfg.load_startup_map then
+			GED:openMap(editor_cfg.startup_map)
+		else
+			gfx_option("RENDER_SKY", false)
+		end
+		
 		notify("The editor is very unstable, we are working on it", vec(1, 0, 0))
-        
+        notify("You need to toggle physics to move an object :(", vec(1, 0, 0), vec(1, 1, 1), 5)
         GED:setDebugMode(false)
-
+		
+		ticker.text.enabled = false
+		
     end;
 
     frameCallback = function (self, elapsed_secs)
@@ -98,10 +103,12 @@ editor = {
     destroy = function (self)
 		widget_manager:unselect()
 		
-        GED:saveEditorInterface()
-        -- current_level = nil
-        -- if level ~= nil then
-            -- level = nil
+		GED:saveEditorConfig()
+        -- GED:saveEditorInterface()
+		
+        -- current_map = nil
+        -- if gritmap ~= nil then
+            -- gritmap = nil
         -- end
         
         playing_binds.enabled = false
@@ -113,16 +120,12 @@ editor = {
         editor_debug_binds.enabled = false
         editor_debug_ghost_binds.enabled = false
 
-        editor_interface.menubar:destroy()
-        editor_interface.toolbar:destroy()
-        editor_interface.statusbar:destroy()
-        
-        destroy_all_editor_menus()		
-        destroy_all_editor_windows()
-        
-		GED.currentWindow = nil
+		ticker.text.enabled = false
 		
-        left_toolbar = safe_destroy(left_toolbar)
+		gfx_option("RENDER_SKY", true)
+		
+		editor_interface.map_editor_page:destroy()
+		editor_interface:destroy()
     end;
 }
     

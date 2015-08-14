@@ -6,4 +6,6 @@ editor_cfg = {
 	thumbnails_size = vec2(256, 256);
 	mode_selected = "rotate";
 	directory = "editor";
+	load_startup_map = false;
+	startup_map = `/editor/core/defaultmap/defaultmap.lvl`;
 }

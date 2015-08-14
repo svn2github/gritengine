@@ -4,11 +4,11 @@ include `definitions.lua`
 
 class `widget` {} {
 
-    renderingDistance = 4000;
+    renderingDistance = 10000;
 	editorObject = true;
 	
     init = function (persistent)
-        -- persistent:addDiskResource(`test_girl_walk_baked.mesh`)
+
     end;
 
     activate = function (persistent,instance)
@@ -114,23 +114,30 @@ class `widget` {} {
 			inst.dummy_xz.instance.body.worldPosition = inst.pivot.localPosition
 			inst.dummy_yz.instance.body.worldPosition = inst.pivot.localPosition
 		end
-		
-		if inst.dragged ~= nil and inst.dragged.instance ~= nil and inst.dragged.destroyed == false then
-			inst.dragged.instance.body.worldPosition = inst.pivot.localPosition
-			inst.dragged.spawnPos = inst.pivot.localPosition
-			
-			if inst.rotating == true then
-				inst.dragged.instance.body.worldOrientation = inst.pivot.localOrientation
-				inst.dragged.rot = inst.pivot.localOrientation
-			
-				inst.x_a.instance.body.worldOrientation = inst.dragged.instance.body.worldOrientation * euler(0, 0, -90)
-				inst.y_a.instance.body.worldOrientation = inst.dragged.instance.body.worldOrientation
-				inst.z_a.instance.body.worldOrientation = inst.dragged.instance.body.worldOrientation * euler(90, 0, -90)
+
+		for i = 1, #inst.dragged do
+			if inst.dragged[i] ~= nil and inst.dragged[i].instance ~= nil and inst.dragged[i].destroyed == false then
+				inst.dragged[i].instance.body.worldPosition = vec(
+					math.floor((inst.pivot.localPosition.x + widget_manager.offsets[i].x) / nonzero(widget_manager.grid_size) + 0.5 ) * widget_manager.grid_size,
+					math.floor((inst.pivot.localPosition.y + widget_manager.offsets[i].y) / nonzero(widget_manager.grid_size) + 0.5 ) * widget_manager.grid_size,
+					math.floor((inst.pivot.localPosition.z + widget_manager.offsets[i].z) / nonzero(widget_manager.grid_size) + 0.5 ) * widget_manager.grid_size
+				)
+				inst.dragged[i].spawnPos = inst.dragged[i].instance.body.worldPosition
+				
+				if inst.rotating == true then
+					inst.dragged[i].instance.body.worldOrientation = inst.pivot.localOrientation
+					inst.dragged[i].rot = inst.pivot.localOrientation
+				
+					inst.x_a.instance.body.worldOrientation = inst.dragged[i].instance.body.worldOrientation * euler(0, 0, -90)
+					inst.y_a.instance.body.worldOrientation = inst.dragged[i].instance.body.worldOrientation
+					inst.z_a.instance.body.worldOrientation = inst.dragged[i].instance.body.worldOrientation * euler(90, 0, -90)
+				end
 			end
 		end
     end;
 }
-
+-- keeps a good widget size, depending on the camera distance
+-- TODO: add screen size somewhere
 -- function gizmo_resize()
 	-- local mfov = math.pi / 4
 	-- local cam_obj_dist = nil

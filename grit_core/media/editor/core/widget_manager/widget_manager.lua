@@ -7,7 +7,7 @@
 --  http://www.opensource.org/licenses/mit-license.php
 ------------------------------------------------------------------------------
 
--- returns all objects from a physics_cast
+-- return an object list from a physics_cast
 local function get_pc_ol(...)
 	local t = {...}
 	if t == nil then return nil end
@@ -26,16 +26,20 @@ end
 
 widget_manager = {
 	mode = 1;
-	selectedObj = nil;
+	selectedObjs = nil;
+	offsets = {};
+	rotationOffsets = {};
 	lastobj = nil;
 	widget = nil;
 	strdrag = nil;
 	translate_mode = "global";
+	pivot_center = "active object"; -- "individual origins", "active object" or "center point"
+	grid_size = 0.1;
 };
 
 function wm_callback()
-	local cray = 1000 * gfx_screen_to_world(main.camPos, main.camQuat, mouse_pos_abs)
-	local _, b = physics_cast(main.camPos, cray, true, 0)
+	local ray = 1000 * gfx_screen_to_world(main.camPos, main.camQuat, mouse_pos_abs)
+	local _, b = physics_cast(main.camPos, ray, true, 0)
 
 	-- mouse over
 	if b ~= nil then
@@ -47,13 +51,10 @@ function wm_callback()
 		if b.owner.wc ~= nil then
 			-- b.owner.instance.gfx:setMaterial(`../arrows/line`, `../arrows/line_dragging`)
 		end
-	elseif widget_manager.lastobj ~= nil then
-		widget_manager.lastobj = nil
 	else
 		widget_manager.lastobj = nil
 	end
 
-	-----------------------------------------------------------------------
 	-- widget dragging
 	if widget_manager.msinitpos ~= nil and widget_manager.widget.instance ~= nil then
 		local diff = (mouse_pos_abs - widget_manager.msinitpos)
@@ -63,24 +64,35 @@ function wm_callback()
 		
 		if widget_manager.widget.instance ~= nil and widget_manager.strdrag ~= nil then
 			if widget_manager.mode == 1 then
+				local pos = widget_manager.widget.instance.pivot.localPosition
+				local posx = pos.x
+				local posy = pos.y
+				local posz = pos.z
+				
 				if widget_manager.strdrag == "x" then
-					widget_manager.widget.instance.pivot.localPosition = vec(mk.x, widget_manager.widget.instance.pivot.localPosition.y, widget_manager.widget.instance.pivot.localPosition.z)
+					posx = mk.x
 				elseif widget_manager.strdrag == "y" then
-					widget_manager.widget.instance.pivot.localPosition = vec(widget_manager.widget.instance.pivot.localPosition.x, mk.y, widget_manager.widget.instance.pivot.localPosition.z)
+					posy = mk.y
 				elseif widget_manager.strdrag == "z" then
-					widget_manager.widget.instance.pivot.localPosition = vec(widget_manager.widget.instance.pivot.localPosition.x, widget_manager.widget.instance.pivot.localPosition.y, mk.z)
+					posz = mk.z
 				end
 				
 				if widget_manager.strdrag == "xy" then
-					widget_manager.widget.instance.pivot.localPosition = vec(mk.x, mk.y, widget_manager.widget.instance.pivot.localPosition.z)
+					posx = mk.x
+					posy = mk.y
 				elseif widget_manager.strdrag == "xz" then
-					widget_manager.widget.instance.pivot.localPosition = vec(mk.x, widget_manager.widget.instance.pivot.localPosition.y, mk.z)
+					posx = mk.x
+					posz = mk.z
 				elseif widget_manager.strdrag == "yz" then
-					widget_manager.widget.instance.pivot.localPosition = vec(widget_manager.widget.instance.pivot.localPosition.x, mk.y, mk.z)
+					posy = mk.y
+					posz = mk.z
 				end
+				widget_manager.widget.instance.pivot.localPosition = vec(posx, posy, posz)
 			elseif widget_manager.mode == 2 then
 				local function rotate(x,y,z)
-					widget_manager.widget.instance.pivot.localOrientation = widget_manager.objInitialOrientation * quat(diff.x + diff.y, vector3(x,y,z))
+					if widget_manager.widget ~= nil and widget_manager.widget.instance ~= nil then
+						widget_manager.widget.instance.pivot.localOrientation = widget_manager.objInitialOrientation * quat(diff.x + diff.y, vector3(x,y,z))
+					end
 				end
 
 				if widget_manager.strdrag == "y" then
@@ -102,94 +114,183 @@ function wm_callback()
 end
 
 function widget_manager:enablewidget(pos, mrot)
-	if self.widget ~= nil then safe_destroy(self.widget)end
+	if self.widget ~= nil then safe_destroy(self.widget) end
 	if self.translate_mode == "global" and self.mode ~= 2 then mrot = quat(1, 0, 0, 0) end
 	
-	local mrotating = nil
-	
-	if self.mode == 2 then
-		mrotating = true
-	end
-
-	self.widget = object (`widget`) (pos) { name = "widget_obj", mode = self.mode, rot = mrot, rotating = mrotating }
+	self.widget = object (`widget`) (pos) { name = "widget_obj", mode = self.mode, rot = mrot, rotating = self.mode == 2 }
 	self.widget:activate()
 end
 
 function widget_manager:set_mode(mode)
 	self.mode = mode
 
-	if self.widget ~= nil and self.widget.instance ~= nil and self.widget.instance.dragged ~= nil and self.widget.instance.dragged.instance ~= nil then
-		local lc, rt = self.widget.instance.dragged.instance.body.worldPosition, self.widget.instance.dragged.instance.body.worldOrientation
+	if self.widget ~= nil and self.widget.instance ~= nil and self.widget.instance.dragged ~= nil and self.widget.instance.dragged[1].instance ~= nil then
+		local lc, rt = self.widget.instance.dragged[1].instance.body.worldPosition, self.widget.instance.dragged[1].instance.body.worldOrientation
 		self.dragged = self.widget.instance.dragged
 		safe_destroy(self.widget)
-		self:enablewidget(lc, rt)
+		if mode ~= 0 then
+			self:enablewidget(lc, rt)
+		end
 		self.dragged = nil
 	end
 end
 
-function widget_manager:unselect()
-	if self.selectedObj ~= nil and self.selectedObj.instance ~= nil then
-		self.selectedObj.instance.gfx.wireframe = false
+function widget_manager:setEditorToolbar(str)
+	if editor_interface.map_editor_page.statusbar ~= nil then
+		editor_interface.map_editor_page.statusbar:setText(tostring(str))
 	end
-	editor_interface.statusbar.selected.text = "None"
-	self.selectedObj = nil
+end
 
+function widget_manager:unselectAll()
+	if self.selectedObjs ~= nil then
+		for i = 0, #self.selectedObjs do
+			if self.selectedObjs[i] ~= nil and self.selectedObjs[i].instance ~= nil then
+				self.selectedObjs[i].instance.gfx.wireframe = false
+			end
+		end
+		self.selectedObjs = nil
+	end
+	self.setEditorToolbar("Selected: none")
 	safe_destroy(self.widget)
 end
 
-function widget_manager:select(mode)
+
+function widget_manager:startDragging(widget_component)
+	self.strdrag = widget_component
+	if self.mode == 1 then
+		local gh = gfx_world_to_screen(main.camPos, main.camQuat, self.widget.instance.pivot.localPosition)
+		
+		self.msinitpos = mouse_pos_abs - vec2(gh.x, gh.y)
+	elseif self.mode == 2 then
+		self.msinitpos = mouse_pos_abs
+		self.objInitialOrientation = self.widget.instance.pivot.localOrientation
+	end
+	self.objinitpos = self.widget.instance.pivot.localPosition
+	input_filter_set_cursor_hidden(true)	
+end
+
+
+function widget_manager:calcOffsets()
+	self.offsets = {}
+	for i = 1, #self.selectedObjs do
+		if self.selectedObjs[i] ~= nil and not self.selectedObjs[i].destroyed then
+			self.offsets[i] = self.selectedObjs[i].instance.body.worldPosition-self.widget.instance.pivot.localPosition
+		end
+	end
+end
+
+function widget_manager:calcCentreOffsets()
+	-- calc the middle point
+	local mid_point = vec(0, 0, 0)
+
+	for i = 1, #self.selectedObjs do
+		if self.selectedObjs[i] ~= nil and not self.selectedObjs[i].destroyed then
+			mid_point = mid_point + self.selectedObjs[i].instance.body.worldPosition
+		end
+	end
+
+	mid_point = mid_point / #self.selectedObjs
+
+	-- set offsets
+	self.offsets = {}
+	for i = 1, #self.selectedObjs do
+		if self.selectedObjs[i] ~= nil and not self.selectedObjs[i].destroyed then
+			self.offsets[i] = self.selectedObjs[i].instance.body.worldPosition-mid_point
+		end
+	end
+	return mid_point
+end
+
+function widget_manager:selectSingleObject()
+	self:unselectAll()
+
+	self.offsets[1] = vec(0, 0, 0)
+
+	local ray = 1000 * gfx_screen_to_world(main.camPos, main.camQuat, mouse_pos_abs)
+	local _, b = physics_cast(main.camPos, ray, true, 0)
+	if b ~= nil then
+		if self.selectedObjs == nil then self.selectedObjs = {} end
+		self.selectedObjs[1] = b.owner
+		
+		self:setEditorToolbar("Selected: "..self.selectedObjs[1].name)
+		
+		self.selectedObjs[1].instance.gfx.wireframe = true
+		
+		self:enablewidget(self.selectedObjs[1].instance.body.worldPosition, self.selectedObjs[1].instance.body.worldOrientation)
+		
+		if self.widget ~= nil and self.widget.instance ~= nil then
+			self.widget.instance.dragged = self.selectedObjs
+		end
+	end	
+end
+
+function widget_manager:addObject()
+	local ray = 1000 * gfx_screen_to_world(main.camPos, main.camQuat, mouse_pos_abs)
+	local _, b = physics_cast(main.camPos, ray, true, 0)
+	if b ~= nil then
+		if self.selectedObjs == nil then self.selectedObjs = {} end
+		local isonthelist = false
+		for i = 1, #self.selectedObjs do
+			if self.selectedObjs[i] ~= nil and not self.selectedObjs[i].destroyed then
+				if self.selectedObjs[i] == b.owner then
+					isonthelist = true
+				end
+			end
+		end
+		if not isonthelist then
+			self.selectedObjs[#self.selectedObjs+1] = b.owner
+		end
+		self:setEditorToolbar("Selected: Multiple")
+		b.owner.instance.gfx.wireframe = true
+
+		self:enablewidget(b.owner.instance.body.worldPosition, b.owner.instance.body.worldOrientation)
+		if self.pivot_center == "active object" then
+			self:calcOffsets()
+		else
+			self.widget.instance.pivot.localPosition = self:calcCentreOffsets()
+		end
+		
+		if self.widget ~= nil and self.widget.instance ~= nil then
+			self.widget.instance.dragged = self.selectedObjs
+		end
+	end	
+end
+
+function widget_manager:unselect()
+
+end
+
+function widget_manager:select(mode, multi)
     if mode == false then
 		self.strdrag = nil
-		-- main.frameCallbacks:removeByName("widget_manager")
 		self.objInitialOrientation = nil
 	else
-
-		local cray = 1000 * gfx_screen_to_world(main.camPos, main.camQuat, mouse_pos_abs)
-		
-		if self.selectedObj == nil then
-			local _, b = physics_cast(main.camPos, cray, true, 0)
-			if b ~= nil then
-				self.selectedObj = b.owner
-				editor_interface.statusbar.selected.text = self.selectedObj.name
-				self.selectedObj.instance.gfx.wireframe = true
-				self:enablewidget(self.selectedObj.instance.body.worldPosition, self.selectedObj.instance.body.worldOrientation)
-				self.widget.instance.dragged = self.selectedObj
-
-			end
+		if self.selectedObjs == nil then -- simple selection
+			self:selectSingleObject()
 		else
-			local objlst = get_pc_ol(physics_cast(main.camPos, cray, false, 0))
+			local ray = 1000 * gfx_screen_to_world(main.camPos, main.camQuat, mouse_pos_abs)
+			local objlst = get_pc_ol(physics_cast(main.camPos, ray, false, 0))
 
 			if objlst ~= nil then
 				local wcc = nil
 				
+				-- check if any of the traced objects is a widget component
 				for i = 1, #objlst do
 					if objlst[i].wc ~= nil then
 						wcc = objlst[i].wc
 						break
 					end
 				end
-				-- if is a widget component
-				if wcc ~= nil then
-					self.strdrag = wcc
-					if self.mode == 1 then
-						local gh = gfx_world_to_screen(main.camPos, main.camQuat, self.widget.instance.pivot.localPosition)
-						self.msinitpos = mouse_pos_abs - vec2(gh.x, gh.y)
-					elseif self.mode == 2 then
-						self.msinitpos = mouse_pos_abs
-						self.objInitialOrientation = self.widget.instance.pivot.localOrientation
-					end
-					-- self.objinitpos = self.widget.instance.pivot.localPosition
-					input_filter_set_cursor_hidden(true)
-				elseif self.selectedObj.instance ~= nil and self.selectedObj ~= self.lastobj then
-					self.selectedObj.instance.gfx.wireframe = false
-					self.selectedObj = self.lastobj
-					editor_interface.statusbar.selected.text = self.selectedObj.name
-					self.selectedObj.instance.gfx.wireframe = true
-					self:enablewidget(self.selectedObj.instance.body.worldPosition, self.selectedObj.instance.body.worldOrientation)
-					self.widget.instance.dragged = self.selectedObj
+				
+				if wcc ~= nil then -- if is a widget component, start dragging
+					self:startDragging(wcc)
+				elseif not multi then
+					self:selectSingleObject()
+				elseif multi then
+					self:addObject()
 				end
 			else
-				self:unselect()
+				self:unselectAll()
 			end
 		end	
 	end

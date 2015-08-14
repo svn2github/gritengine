@@ -28,7 +28,7 @@ local function inside()
     --
     -- All these cross-cutting dependencies on other aspects of GUI layout have to go...
     if mouse_pos_abs.x > 40 and mouse_pos_abs.y > 20 then
-        if (console.enabled and mouse_pos_abs.y < gfx_window_size().y - console_frame.size.y) or not console.enabled and mouse_pos_abs.y < gfx_window_size().y - 25 then
+        if (console.enabled and mouse_pos_abs.y < gfx_window_size().y - console_frame.size.y) or not console.enabled and mouse_pos_abs.y < gfx_window_size().y - 52 then
             if not mouse_inside_any_window() and not mouse_inside_any_menu() and addobjectelement == nil then
                 return true
             end

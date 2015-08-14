@@ -20,6 +20,14 @@ function fpsgame:editorPlay()
 	self:controlObj(self.player1)
 end;
 
+function fpsgame:editorDebug(v)
+	if v then
+		
+	else
+		
+	end
+end;
+
 function fpsgame:init()
     -- player1 means local player
 	self.player1 = object `player` (main.camPos) {

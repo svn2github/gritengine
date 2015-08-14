@@ -9,6 +9,7 @@ include `MoveSpinClass.lua`
 include `fonts/init.lua`
 
 include `hud/init.lua`
+include `gui/init.lua`
 
 include `particles/init.lua`
 

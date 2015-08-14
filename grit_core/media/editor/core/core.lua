@@ -27,10 +27,6 @@ GED = {
 
     controlObj = nil,
 
-	currentWindow = currentWindow,
-
-	currentTheme = editor_themes[editor_interface_cfg.theme];
-	
     -- holds editor camera position and rotation to get back when stop playing
     camera = {
         pos = {};
@@ -39,13 +35,14 @@ GED = {
 
     directory = "editor";
     
-    map_dir = "level_templates";
+    map_dir = "map_templates";
     
     game_data_dir = "editor";
+	playGameMode = "fpsgame";
 };
 
 
-function GED:toggleBoard()
+function GED:toggleBoard(mobj)
     if self.controlObj ~= nil then
         -- Currently controlling an object.  Exit it.
         playing_actor_binds.enabled = false
@@ -61,7 +58,7 @@ function GED:toggleBoard()
 
     else
         -- Board object being pointed at, if possible.
-        local obj = pick_obj()
+        local obj = mobj or pick_obj()
         if obj == nil then return end
         if obj.controllable == "VEHICLE" then
             playing_vehicle_binds.enabled = true
@@ -82,14 +79,15 @@ function GED:toggleBoard()
     end
 end
 
-function GED:openWindow(wnd)
-    wnd.enabled = true
-	self:setActiveWindow(wnd)
-end;
-
 -- if the widget is under mouse cursor, then start dragging, otherwise select an object
 function GED:selectObj()
-    widget_manager:select(true)
+	if input_filter_pressed("Shift") then
+		widget_manager:select(true, true)
+	else
+		widget_manager:select(true, false)
+	end
+
+   -- widget_manager:select(true)
 end;
 
 function GED:stopDraggingObj()
@@ -119,7 +117,6 @@ function GED:destroyAllEditorObjects()
         end
     end
 end;
-
 
 local function ghost_cast (pos, ray, scale)
     local fraction, _, n = physics_sweep_sphere(scale*.15, pos, ray, true, 1)
@@ -251,6 +248,8 @@ function GED:setDebugMode(v)
         end
     end
 
+	editor_interface.enabled = not v
+	
     self.debugMode = v
     main.physicsEnabled = v
     self:setMouseCapture(v)
@@ -262,10 +261,14 @@ function GED:setDebugMode(v)
     editor_debug_binds.enabled = v
     editor_debug_ghost_binds.enabled = v
 
-    editor_interface.menubar.enabled = not v
-    editor_interface.toolbar.enabled = not v
-    editor_interface.statusbar.enabled = not v
-
+	if editor_interface.map_editor_page ~= nil then
+		if v then
+			editor_interface.map_editor_page:unselect()
+		else
+			editor_interface.map_editor_page:select()
+		end
+	end
+	
     if not v then
 
         if self.controlObj ~= nil then
@@ -284,41 +287,62 @@ function GED:setDebugMode(v)
         end
 
     end
+	
+	if v then
+		notify("Press F5 to return to the editor", vec(1, 0.5, 0), vec(1, 1, 1))
+	end
+	
 end;
 
 function GED:toggleDebugMode()
     self:setDebugMode(not self.debugMode)
 end
 
-
-function is_inside_window(window)
-    if window.enabled then
-        if mouse_pos_abs.x < gfx_window_size().x/2 + window.position.x + window.size.x/2 and
-        mouse_pos_abs.x > gfx_window_size().x/2 + window.position.x - window.size.x/2 and
-        mouse_pos_abs.y < gfx_window_size().y/2 + window.position.y + window.size.y/2 + window.draggable_area.size.y and
-        mouse_pos_abs.y > gfx_window_size().y/2 + window.position.y - window.size.y/2 then
-            return true
-        end
-    end
-    return false
+function GED:play()
+	print("Currently disabled")
 end
 
--- return true if the mouse cursor is inside any window
-function mouse_inside_any_window()
-    if is_inside_window(editor_interface.windows.content_browser) or
-    is_inside_window(editor_interface.windows.event_editor) or
-    is_inside_window(editor_interface.windows.level_properties) or
-    is_inside_window(editor_interface.windows.object_properties) or
-    is_inside_window(editor_interface.windows.outliner) or
-    is_inside_window(open_level_dialog) or
-    is_inside_window(save_level_dialog) or
-    is_inside_window(editor_interface.windows.settings) or
-    (env_cycle_editor.enabled and mouse_pos_abs.x < 530 and mouse_pos_abs.y < 430) or
-    (music_player.enabled and mouse_pos_abs.x < 560 and mouse_pos_abs.y < 260)
-    then
-        return true
+function GED:setPlayMode(v)
+	self.playGameMode:editorDebug(v)
+
+	editor_interface.enabled = not v
+	
+    self.playMode = v
+    main.physicsEnabled = v
+    self:setMouseCapture(v)
+
+    editor_edit_binds.enabled = not v
+    editor_core_move_binds.enabled = not v
+
+	if editor_interface.map_editor_page ~= nil then
+		if v then
+			editor_interface.map_editor_page:unselect()
+		else
+			editor_interface.map_editor_page:select()
+		end
+	end
+	
+    if not v then
+        if self.controlObj ~= nil then
+            self:toggleBoard()
+        end
+
+        for _, obj in ipairs(object_all()) do
+            if obj.destroyed then 
+                -- Skip
+            elseif obj.debugObject == true then
+                safe_destroy(obj)
+            else
+                obj:deactivate()
+                obj.skipNextActivation = false
+            end
+        end
+
     end
-    return false
+end;
+
+function GED:togglePlayMode()
+    self:setPlayMode(not self.playMode)
 end
 
 function is_inside_menu(menu)
@@ -333,24 +357,26 @@ end
 
 -- return true if the mouse cursor is inside any active menu
 function mouse_inside_any_menu()
-    if is_inside_menu(editor_interface.menus.fileMenu) or
-    is_inside_menu(editor_interface.menus.editMenu) or
-    is_inside_menu(editor_interface.menus.viewMenu) or
-    is_inside_menu(editor_interface.menus.gameMenu) or
-    is_inside_menu(editor_interface.menus.helpMenu)
-    then
-        return true
-    end
+	for i = 1, #_menus do
+		if _menus[i] ~= nil and not _menus[i].destroyed then
+			if is_inside_menu(_menus[i]) then return true end
+		end
+	end
     return false
 end
 
 function GED:generateEnvCube(pos)
-    current_level:generateEnvCube(pos)
+    current_map:generateEnvCube(pos)
 end;
 
-function GED:newLevel(ndestroyobjs)
-    include `edenv.lua`  -- [dcunnin] why not system/env_cycle.lua ?
+function GED:newMap(ndestroyobjs)
+    gfx_option("RENDER_SKY", true)
+	
+	-- no fog and a smooth background colour
+	include `edenv.lua`
     env_recompute()
+	
+	widget_manager:unselect()
 	
 	-- ndestroyobjs = doesn't destroy current objects
 	if not ndestroyobjs then
@@ -364,54 +390,56 @@ function GED:newLevel(ndestroyobjs)
         end
     end
     
-    current_level = GritLevel.new()
-    if update_level_properties ~= nil then
-        update_level_properties()
-    end
+    current_map = GritMap.new()
+    -- if update_map_properties ~= nil then
+        -- update_map_properties()
+    -- end
 end;
 
-function GED:openLevel(level_file)
-    
-    if level_file == nil then
-			self:openWindow(open_level_dialog)
+function GED:openMap(map_file)
+    if map_file == nil then
+			open_map_dialog()
         return
     end
-    
-    -- if is a lua script creates a new level before
-    if level_file:sub(-3) ~= "lua" then
-        current_level = nil
-        current_level = GritLevel.new()
+
+	widget_manager:unselect()
+	
+    -- if is a lua script creates a new map
+    if map_file:sub(-3) ~= "lua" then
+        current_map = nil
+        current_map = GritMap.new()
     end
+	
+	gfx_option("RENDER_SKY", true)
+	
+    return current_map:open(map_file)
     
-    current_level:open(level_file)
-    
-    if update_level_properties ~= nil then
-        update_level_properties()
-    end
+    -- if update_map_properties ~= nil then
+        -- update_map_properties()
+    -- end
 end;
 
--- save current level, if have a "file_name" specified
-function GED:saveCurrentLevel()
-    if #current_level.file_name > 0 then
-        current_level:save()
+-- save current map, if have a "file_name" specified
+function GED:saveCurrentMap()
+    if #current_map.file_name > 0 then
+        current_map:save()
     else
-        self:saveCurrentLevelAs()
+        self:saveCurrentMapAs()
     end
 end;
 
-function GED:saveCurrentLevelAs(name)
+function GED:saveCurrentMapAs(name)
     if name == nil then
-        save_level_dialog.enabled = true
-		self:openWindow(save_level_dialog)
-        return
+		save_map_dialog()
+        return false
     else
-        current_level.file_name = name
+        current_map.file_name = name
         
-        local level_ext = name:reverse():match("..."):reverse()
-        if level_ext == "lvl" then
-            current_level:save()
+        local map_ext = name:reverse():match("..."):reverse()
+        if map_ext == "lvl" then
+            return current_map:save()
         else
-            current_level:export(name)
+            return current_map:export(name)
         end        
     end
 end;
@@ -421,56 +449,50 @@ function GED:setWidgetMode(mode)
     if widget_manager.mode == mode then return end
     
     widget_manager:set_mode(mode)
-    widget_menu[0]:select(false)
-    widget_menu[1]:select(false)
-    widget_menu[2]:select(false)
-    widget_menu[3]:select(false)
-    
-    widget_menu[mode]:select(true)
 end;
 
 -- save editor interface windows
 function GED:saveEditorInterface()
     editor_interface_cfg = {
       content_browser   =   {
-        opened   = editor_interface.windows.content_browser.enabled;
-        position = { editor_interface.windows.content_browser.position.x, editor_interface.windows.content_browser.position.y };
-        size     = { editor_interface.windows.content_browser.size.x, editor_interface.windows.content_browser.size.y };
+        opened   = (editor_interface.map_editor_page.windows.content_browser == nil and false or true) or not editor_interface.map_editor_page.windows.content_browser.destroyed;
+        position = { editor_interface.map_editor_page.windows.content_browser.position.x, editor_interface.map_editor_page.windows.content_browser.position.y };
+        size     = { editor_interface.map_editor_page.windows.content_browser.size.x, editor_interface.map_editor_page.windows.content_browser.size.y };
       };
       event_editor      =   {
-        opened   = editor_interface.windows.event_editor.enabled;
-        position = { editor_interface.windows.event_editor.position.x, editor_interface.windows.event_editor.position.y };
-        size     = { editor_interface.windows.event_editor.size.x, editor_interface.windows.event_editor.size.y };
+        opened   = editor_interface.map_editor_page.windows.event_editor.enabled;
+        position = { editor_interface.map_editor_page.windows.event_editor.position.x, editor_interface.map_editor_page.windows.event_editor.position.y };
+        size     = { editor_interface.map_editor_page.windows.event_editor.size.x, editor_interface.map_editor_page.windows.event_editor.size.y };
       };
       level_properties  =   {
-        opened   = editor_interface.windows.level_properties.enabled;
-        position = { editor_interface.windows.level_properties.position.x, editor_interface.windows.level_properties.position.y };
-        size     = { editor_interface.windows.level_properties.size.x, editor_interface.windows.level_properties.size.y };
+        opened   = editor_interface.map_editor_page.windows.level_properties.enabled;
+        position = { editor_interface.map_editor_page.windows.level_properties.position.x, editor_interface.map_editor_page.windows.level_properties.position.y };
+        size     = { editor_interface.map_editor_page.windows.level_properties.size.x, editor_interface.map_editor_page.windows.level_properties.size.y };
       };
       material_editor   =   {
-        opened   = editor_interface.windows.material_editor.enabled;
-        position = { editor_interface.windows.material_editor.position.x, editor_interface.windows.material_editor.position.y };
-        size     = { editor_interface.windows.material_editor.size.x, editor_interface.windows.material_editor.size.y };
+        opened   = editor_interface.map_editor_page.windows.material_editor.enabled;
+        position = { editor_interface.map_editor_page.windows.material_editor.position.x, editor_interface.map_editor_page.windows.material_editor.position.y };
+        size     = { editor_interface.map_editor_page.windows.material_editor.size.x, editor_interface.map_editor_page.windows.material_editor.size.y };
       };
-      object_editor     =   {
-        opened   = editor_interface.windows.object_editor.enabled;
-        position = { editor_interface.windows.object_editor.position.x, editor_interface.windows.object_editor.position.y };
-        size     = { editor_interface.windows.object_editor.size.x, editor_interface.windows.object_editor.size.y };
-      };
+      -- object_editor     =   {
+        -- opened   = editor_interface.map_editor_page.windows.object_editor.enabled;
+        -- position = { editor_interface.map_editor_page.windows.object_editor.position.x, editor_interface.map_editor_page.windows.object_editor.position.y };
+        -- size     = { editor_interface.map_editor_page.windows.object_editor.size.x, editor_interface.map_editor_page.windows.object_editor.size.y };
+      -- };
       object_properties =   {
-        opened   = editor_interface.windows.object_properties.enabled;
-        position = { editor_interface.windows.object_properties.position.x, editor_interface.windows.object_properties.position.y };
-        size     = { editor_interface.windows.object_properties.size.x, editor_interface.windows.object_properties.size.y };
+        opened   = editor_interface.map_editor_page.windows.object_properties.enabled;
+        position = { editor_interface.map_editor_page.windows.object_properties.position.x, editor_interface.map_editor_page.windows.object_properties.position.y };
+        size     = { editor_interface.map_editor_page.windows.object_properties.size.x, editor_interface.map_editor_page.windows.object_properties.size.y };
       };
       outliner          =   {
-        opened   = editor_interface.windows.outliner .enabled;
-        position = { editor_interface.windows.outliner .position.x, editor_interface.windows.outliner .position.y };
-        size     = { editor_interface.windows.outliner .size.x, editor_interface.windows.outliner .size.y };
+        opened   = editor_interface.map_editor_page.windows.outliner .enabled;
+        position = { editor_interface.map_editor_page.windows.outliner .position.x, editor_interface.map_editor_page.windows.outliner .position.y };
+        size     = { editor_interface.map_editor_page.windows.outliner .size.x, editor_interface.map_editor_page.windows.outliner .size.y };
       };
       settings          =   {
-        opened   = editor_interface.windows.settings.enabled;
-        position = { editor_interface.windows.settings.position.x, editor_interface.windows.settings.position.y };
-        size     = { editor_interface.windows.settings.size.x, editor_interface.windows.settings.size.y };
+        opened   = editor_interface.map_editor_page.windows.settings.enabled;
+        position = { editor_interface.map_editor_page.windows.settings.position.x, editor_interface.map_editor_page.windows.settings.position.y };
+        size     = { editor_interface.map_editor_page.windows.settings.size.x, editor_interface.map_editor_page.windows.settings.size.y };
       };
       size              = { gfx_window_size().x, gfx_window_size().y };
       theme             = "dark_orange";
@@ -492,6 +514,23 @@ function GED:saveEditorInterface()
     file:close()
 end;
 
+-- save editor config
+function GED:saveEditorConfig()
+    local file = io.open("editor/config/config.lua", "w")
+
+    if file == nil then error("Could not open file", 1) end
+
+    file:write(
+[[-- file auto generated by Grit Editor, be careful when modifying this manually
+-- this file stores all editor configurations.
+]]
+)
+    file:write("\neditor_cfg = ")
+    file:write(dump(editor_cfg, false))
+
+    file:close()
+end;
+
 function GED:undo()
 end;
 
@@ -507,61 +546,6 @@ end;
 function GED:pasteObject()
 end;
 
-function GED:editorSettings()
-	self:openWindow(editor_interface.windows.settings)
-end;
-
-function GED:openContentBrowser()
-	self:openWindow(editor_interface.windows.content_browser)
-end;
-
-function GED:openEventEditor()
-	self:openWindow(editor_interface.windows.event_editor)
-end;
-
-function GED:openObjectProperties()
-	self:openWindow(editor_interface.windows.object_properties)
-end;
-
-function GED:openMaterialEditor()
-	self:openWindow(editor_interface.windows.material_editor)
-end;
-
-function GED:openLevelProperties()
-	self:openWindow(editor_interface.windows.level_properties)
-end;
-
-function GED:openOutliner()
-	self:openWindow(editor_interface.windows.outliner)
-end;
-
--- TODO: object editor is not inside a editor window, but uses all Grit window
--- You right click on the object on the content browser and select "Edit Object"
--- It hides the sky (would be cool also to select the background colour) and all editor interface, creates a object and centralize the camera on it, so you can rotate around
--- the object. You can also reload object assets on a button on the object editor toolbar
-function GED:openObjectEditor()
-	self:openWindow(editor_interface.windows.object_editor)
-end;
-
-function GED:disableAllWindows()
-    editor_interface.windows.content_browser.enabled = false
-    editor_interface.windows.event_editor.enabled = false
-    editor_interface.windows.object_properties.enabled = false
-    editor_interface.windows.material_editor.enabled = false
-    editor_interface.windows.level_properties.enabled = false
-    editor_interface.windows.outliner.enabled = false
-    editor_interface.windows.settings.enabled = false
-    editor_interface.windows.object_editor.enabled = false
-end;
-
-function GED:setActiveWindow(wnd)
-	if self.currentWindow ~= nil and not self.currentWindow.destroyed and self.currentWindow ~= wnd then
-		self.currentWindow.zOrder = 0
-		self.currentWindow.draggable_area.colour = GED.currentTheme.colours.window.title_background_inactive
-		self.currentWindow.window_title.colour = GED.currentTheme.colours.window.title_text_inactive
-	end
-	self.currentWindow = wnd
-	wnd.zOrder = 1
-	wnd.draggable_area.colour = GED.currentTheme.colours.window.title_background
-	wnd.window_title.colour = GED.currentTheme.colours.window.title_text
+function exit_editor()
+	game_manager:exit()
 end;
