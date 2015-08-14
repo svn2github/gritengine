@@ -96,16 +96,30 @@ function GED:stopDraggingObj()
 end;
 
 function GED:deleteSelection()
-    local selobj = widget_manager.selectedObj
-    widget_manager:unselect()
-    safe_destroy(selobj)
+    local selobjs = {}
+	
+	for i = 1, #widget_manager.selectedObjs do
+		if not widget_manager.selectedObjs[i].destroyed and widget_manager.selectedObjs[i].instance ~= nil then
+			selobjs[#selobjs+1] = widget_manager.selectedObjs[i]
+		end
+	end		
+    widget_manager:unselectAll()
+	
+	for i = 1, #selobjs do
+		safe_destroy(selobjs[i])
+	end
 end;
 
 function GED:duplicateSelection()
-    if widget_manager ~= nil and widget_manager.selectedObj ~= nil then
-        object (widget_manager.selectedObj.className) (widget_manager.selectedObj.instance.body.worldPosition) {
-            rot=widget_manager.selectedObj.instance.body.worldOrientation;
-        }
+    if widget_manager ~= nil and widget_manager.selectedObjs ~= nil then
+		for i = 1, #widget_manager.selectedObjs do
+			if not widget_manager.selectedObjs[i].destroyed and widget_manager.selectedObjs[i].instance ~= nil then
+				object (widget_manager.selectedObjs[i].className) (widget_manager.selectedObjs[i].instance.body.worldPosition)
+				{
+					rot = widget_manager.selectedObjs[i].instance.body.worldOrientation;
+				}
+			end
+		end
     end
 end;
 
@@ -376,7 +390,7 @@ function GED:newMap(ndestroyobjs)
 	include `edenv.lua`
     env_recompute()
 	
-	widget_manager:unselect()
+	widget_manager:unselectAll()
 	
 	-- ndestroyobjs = doesn't destroy current objects
 	if not ndestroyobjs then
@@ -402,7 +416,7 @@ function GED:openMap(map_file)
         return
     end
 
-	widget_manager:unselect()
+	widget_manager:unselectAll()
 	
     -- if is a lua script creates a new map
     if map_file:sub(-3) ~= "lua" then

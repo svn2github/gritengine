@@ -256,10 +256,6 @@ function widget_manager:addObject()
 	end	
 end
 
-function widget_manager:unselect()
-
-end
-
 function widget_manager:select(mode, multi)
     if mode == false then
 		self.strdrag = nil

@@ -285,7 +285,7 @@ local default_user_editor_core_move_bindings = {
 local default_user_editor_edit_bindings = {
     ghost = "right";
     delete = "Delete";
-    duplicate = "C+d";
+    duplicate = "C+v";
     select = "left";
 }
 
