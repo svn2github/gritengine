@@ -97,10 +97,10 @@ hud_class `.` {
 			-- increase size with distance
 			local dsize = math.min(math.sqrt((self.flare[0].position.x - s_pos.x) ^ 2 + (self.flare[0].position.y - s_pos.y) ^ 2) * 0.07, 16)			
 			self.flare[0].size = vec2(dsize*0.85, dsize)			
-			dsize = math.min(math.sqrt((self.flare[1].position.x - s_pos.x) ^ 2 + (self.flare[1].position.y - s_pos.y) ^ 2) * 0.2, 200)			
+			dsize = math.min(#(self.flare[1].position - s_pos) * 0.2, 200)			
 			self.flare[1].size = vec2(dsize*0.7, dsize)
 			
-			dsize = math.min(math.sqrt((self.flare[3].position.x - s_pos.x)*5 ^ 2 + (self.flare[3].position.y - s_pos.y) ^ 2)*5 * 0.2+50, 1024)
+			dsize = math.min(#(self.flare[3].position - s_pos)*5 * 0.2+50, 1024)
 			self.flare[3].size = vec2(dsize*3.5, dsize*3.5)
 			
 			-- rotates around sun position
