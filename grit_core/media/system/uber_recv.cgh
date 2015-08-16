@@ -583,7 +583,6 @@ float test_shadow (float3 pos_ls, sampler2D tex, float our_dist, float spread, f
 // {{{ factored out lighting equation
 
 float3 deferred_shading (
-        float env_scale,
         float3 diff_colour,
         float3 normal_ws,
         float specular,
@@ -607,7 +606,8 @@ float3 deferred_shading (
         float3 sun_diffuse_colour,
         float3 sun_specular_colour,
         float fog_param,
-        float3 fog_colour
+        float3 fog_colour,
+        float env_cube_cross_fade
 
 ) {
 
@@ -658,14 +658,14 @@ float3 deferred_shading (
         float3 env_ambient0 = 16*gamma_decode(texCUBElod(env_cube0, float4(reflect_ws, env_map_mipmaps-1)).rgb);
         float3 env_diff_light0 = 16*gamma_decode(texCUBElod(env_cube0, float4(normal_ws, env_map_mipmaps-1)).rgb);
         float3 env_spec_light0 = 16*gamma_decode(texCUBElod(env_cube0, float4(reflect_ws, (1-gloss)*env_map_mipmaps)).rgb);
-        float3 env_ambient1 = 16*gamma_decode(texCUBElod(env_cube0, float4(reflect_ws, env_map_mipmaps-1)).rgb);
-        float3 env_diff_light1 = 16*gamma_decode(texCUBElod(env_cube0, float4(normal_ws, env_map_mipmaps-1)).rgb);
-        float3 env_spec_light1 = 16*gamma_decode(texCUBElod(env_cube0, float4(reflect_ws, (1-gloss)*env_map_mipmaps)).rgb);
-        float3 env_ambient = lerp(env_ambient0, env_ambient1, 0);
-        float3 env_diff_light = lerp(env_diff_light0, env_diff_light1, 0);
-        float3 env_spec_light = lerp(env_spec_light0, env_spec_light1, 0);
-        float3 env_diff_component = diff_colour * env_scale*env_diff_light;
-        float3 env_spec_component = specular * env_scale*env_spec_light;
+        float3 env_ambient1 = 16*gamma_decode(texCUBElod(env_cube1, float4(reflect_ws, env_map_mipmaps-1)).rgb);
+        float3 env_diff_light1 = 16*gamma_decode(texCUBElod(env_cube1, float4(normal_ws, env_map_mipmaps-1)).rgb);
+        float3 env_spec_light1 = 16*gamma_decode(texCUBElod(env_cube1, float4(reflect_ws, (1-gloss)*env_map_mipmaps)).rgb);
+        float3 env_ambient = lerp(env_ambient0, env_ambient1, env_cube_cross_fade);
+        float3 env_diff_light = lerp(env_diff_light0, env_diff_light1, env_cube_cross_fade);
+        float3 env_spec_light = lerp(env_spec_light0, env_spec_light1, env_cube_cross_fade);
+        float3 env_diff_component = diff_colour * env_diff_light;
+        float3 env_spec_component = specular * env_spec_light;
         float3 env_fresnel_component = gloss * strength(1.0 - dot(normal_ws, camera_dir_ws), 5) * env_ambient;
         float3 env_light = env_diff_component + env_spec_component + env_fresnel_component;
 

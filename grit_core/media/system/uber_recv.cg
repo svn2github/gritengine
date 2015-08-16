@@ -454,10 +454,9 @@ void fp_main (
 
                      diff_colour, normal_ws, specular, gloss, translucency, pixel_alpha);
 
-        float env_scale = the_fog_params.y;
+        float env_cube_cross_fade = the_fog_params.y;
 
-        float3 pixel_colour = deferred_shading(env_scale,
-                                               diff_colour,
+        float3 pixel_colour = deferred_shading(diff_colour,
                                                normalize(normal_ws),
                                                specular,
                                                gloss,
@@ -480,7 +479,8 @@ void fp_main (
                                                sun_diffuse,
                                                sun_specular,
                                                the_fog_params.x,
-                                               the_fog_colour);
+                                               the_fog_colour,
+                                               env_cube_cross_fade);
 
         pixel0.rgb = pixel_colour;
         pixel0.a = pixel_alpha;
@@ -901,13 +901,12 @@ void fp_main (
         #endif
 
         float2 screen_pos = wpos.xy;
-        float env_scale = the_fog_params.y;
+        float env_cube_cross_fade = the_fog_params.y;
 
         float3 normal_ws = mul(inv_view, float4(normal_vs,0)).xyz;
         //float3 normal_ws = normal_vs;
 
-        float3 pixel_colour = deferred_shading(env_scale,
-                                               diff_colour,
+        float3 pixel_colour = deferred_shading(diff_colour,
                                                normal_ws,
                                                specular,
                                                gloss,
@@ -930,7 +929,8 @@ void fp_main (
                                                sun_diffuse,
                                                sun_specular,
                                                the_fog_params.x,
-                                               the_fog_colour);
+                                               the_fog_colour,
+                                               env_cube_cross_fade);
 
         //pixel_colour = zero(pixel_colour) + cam_dist/100;
 
