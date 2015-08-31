@@ -298,6 +298,8 @@ include `audio.lua`
 
 include `net.lua` 
 
+include`navigation_system.lua`
+
 include `weapon_effect_manager.lua`
 
 include `/common/init.lua` 

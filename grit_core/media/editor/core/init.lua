@@ -37,7 +37,6 @@ navigation_reset = do_nothing
 navigation_update_params = do_nothing
 navigation_build_nav_mesh = do_nothing
 navigation_debug_option = do_nothing
-include`navigation_system.lua`
 
 editor = {
     init = function (self)
