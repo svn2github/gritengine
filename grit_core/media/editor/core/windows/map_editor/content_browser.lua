@@ -213,12 +213,19 @@ hud_class `content_browser_floating_object` {
 		if insidew() then
 			self.positioning = true
 			local cast_ray = 1000 * gfx_screen_to_world(main.camPos, main.camQuat, mouse_pos_abs)
-			local dist = physics_cast(main.camPos, cast_ray, true, 0)
-			local pos = (main.camPos + cast_ray * (dist or 0.02)) + (self.zOffset or 0)
+			local dist
+			
+			if self.obj ~= nil and not self.obj.destroyed and self.obj.instance ~= nil and self.obj.instance.body ~= nil then
+			dist = physics_cast(main.camPos, cast_ray, true, 0, self.obj.instance.body)
+			else
+				dist = physics_cast(main.camPos, cast_ray, true, 0)
+			end
+			
+			local pos = (main.camPos + cast_ray * (dist or 0.02)) + vec(0, 0, (self.zOffset or 0))
 			
 			if self.obj == nil then
 				self.alpha = 0
-				self.obj = object (self.obclass) (pos) { }
+				self.obj = object (self.obclass) (pos) { name = "Unnamed:"..self.obclass..":"..math.random(0, 50000) }
 				self.obj:activate()
 			else
 				if self.obj.instance then
@@ -243,6 +250,9 @@ hud_class `content_browser_floating_object` {
 			if not insidew() and self.positioning then
 				safe_destroy(self.obj)
 				self.obj = nil
+			end
+			if self.obj ~= nil and not self.obj.destroyed then
+				current_map:registerObject(self.obj)
 			end
 			-- if insidew() then
 				-- local cast_ray = 1000 * gfx_screen_to_world(main.camPos, main.camQuat, mouse_pos_abs)
@@ -297,15 +307,20 @@ hud_class `ContentBrowser` (extends(WindowClass)
 			expand_offset = vec(0, -35-10);
 		})
 
+		self.dir_tree.enabled = false
+		
 		self.file_explorer = gfx_hud_object_add(`/common/gui/file_list`, {
-			colour = vec(0.4, 0.4, 0.4);
+			colour = vec(0.5, 0.5, 0.5);
 			parent = self;
 		})
-		self.file_explorer.size = vec2(self.size.x-self.dir_tree.size.x-20, self.size.y-70)
-		self.file_explorer.position = vec(self.size.x/2-self.file_explorer.size.x/2-10, -15)
+		self.file_explorer.size = vec2(self.size.x-20 -- self.dir_tree.size.x
+		, self.size.y-70)
+		self.file_explorer.position = vec(0--self.size.x/2-self.file_explorer.size.x/2-10
+		, -15)
 
 		self.file_explorer.parentresizecb = function(self, psize)
-			self.size = vec2(psize.x-self.parent.dir_tree.size.x-20, psize.y-70)
+			self.size = vec2(psize.x--self.parent.dir_tree.size.x
+			-20, psize.y-70)
 		end;
 		
 		self.file_explorer.addItem = function(self, m_name, icon, pc, dpc, ccb)
@@ -347,7 +362,10 @@ hud_class `ContentBrowser` (extends(WindowClass)
 			icon_texture = _gui_textures.arrow_up;
 			position = vec2(0, 0);
 			parent = self;
-			colour = vec(0.5, 0.5, 0.5);
+			colour = vec(1, 1, 1)*0.5;
+			defaultColour = V_ID*0.5;
+			hoverColour = V_ID*0.6;
+			clickColour = V_ID*0.7;
 			size = vec2(25, 25);
 			offset = vec(-5, -5);
 			align_right = true;
@@ -473,12 +491,12 @@ function create_content_browser()
 	end
 	
 	content_browserx = gfx_hud_object_add(`ContentBrowser`, {
-		title = "Content Browser";
+		title = "Class Browser";
 		parent = hud_center;
-		position = vec(0, 0);
+		position = vec(230, -200);
 		resizeable = true;
-		size = vec2(754, 488);
-		min_size = vec2(754, 488);
+		size = vec2(560, 320);
+		min_size = vec2(470, 235);
 		colour = _current_theme.colours.window.background;
 		alpha = 1;	
 	})

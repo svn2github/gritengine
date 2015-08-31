@@ -25,6 +25,8 @@ GED = {
     camPitch = 0,
     lastMouseMoveTime = 0,
 
+	selectionEnabled = true;
+	
     controlObj = nil,
 
     -- holds editor camera position and rotation to get back when stop playing
@@ -81,13 +83,17 @@ end
 
 -- if the widget is under mouse cursor, then start dragging, otherwise select an object
 function GED:selectObj()
-	if input_filter_pressed("Shift") then
-		widget_manager:select(true, true)
-	else
-		widget_manager:select(true, false)
+	if self.selectionEnabled then
+		if input_filter_pressed("Shift") then
+			widget_manager:select(true, true)
+		else
+			widget_manager:select(true, false)
+		end
 	end
+end;
 
-   -- widget_manager:select(true)
+function GED:leftMouseClick()
+	self:selectObj()
 end;
 
 function GED:stopDraggingObj()
@@ -106,7 +112,11 @@ function GED:deleteSelection()
     widget_manager:unselectAll()
 	
 	for i = 1, #selobjs do
-		safe_destroy(selobjs[i])
+		if not selobjs[i].destroyed then
+			current_map.objects[selobjs[i].name] = nil
+			current_map.object_properties[selobjs[i].name] = nil
+			safe_destroy(selobjs[i])
+		end
 	end
 end;
 
@@ -379,6 +389,25 @@ function mouse_inside_any_menu()
     return false
 end
 
+function extra_inside_hud()
+	return false
+end
+
+function inside_hud()
+    -- [dcunnin] If the intention of this is to detect whether the cursor is over a window,
+    -- there must be a better way.
+    --
+    -- All these cross-cutting dependencies on other aspects of GUI layout have to go...
+    if mouse_pos_abs.x > 40 and mouse_pos_abs.y > 20 then
+        if (console.enabled and mouse_pos_abs.y < gfx_window_size().y - console_frame.size.y) or not console.enabled and mouse_pos_abs.y < gfx_window_size().y - 52 then
+            if not mouse_inside_any_window() and not mouse_inside_any_menu() and not extra_inside_hud() and addobjectelement == nil then
+                return true
+            end
+        end
+    end
+    return false
+end
+
 function GED:generateEnvCube(pos)
     current_map:generateEnvCube(pos)
 end;
@@ -417,17 +446,24 @@ function GED:openMap(map_file)
     end
 
 	widget_manager:unselectAll()
-	
-    -- if is a lua script creates a new map
-    if map_file:sub(-3) ~= "lua" then
+
+	-- you can create a new map and include a lua that cointains object placements
+	local map_ext = get_extension(map_file)
+	if map_ext == "lua" then
         current_map = nil
-        current_map = GritMap.new()
-    end
-	
-	gfx_option("RENDER_SKY", true)
-	
-    return current_map:open(map_file)
-    
+        current_map = GritMap.new()		
+		include (mapfile)
+		self.objects = object_all()
+	elseif map_ext == "gmap" then
+		gfx_option("RENDER_SKY", true)
+		
+		if current_map == nil then
+			current_map = GritMap.new()	
+		end
+		
+		return current_map:open(map_file)		
+	end
+
     -- if update_map_properties ~= nil then
         -- update_map_properties()
     -- end
@@ -449,8 +485,8 @@ function GED:saveCurrentMapAs(name)
     else
         current_map.file_name = name
         
-        local map_ext = name:reverse():match("..."):reverse()
-        if map_ext == "lvl" then
+        local map_ext = get_extension(name)
+        if map_ext == "gmap" then
             return current_map:save()
         else
             return current_map:export(name)

@@ -25,17 +25,24 @@ include `widget_manager/init.lua`
 include `GritMap/init.lua`
 include `directory_list.lua`
 include `assets/init.lua`
+include `util.lua`
 include `core.lua`
-
--- TEMPORARY
-include`navigation_system.lua`
 
 current_map = nil
 
 in_editor = false
 
+-- Temporary
+navigation_reset = do_nothing
+navigation_update_params = do_nothing
+navigation_build_nav_mesh = do_nothing
+navigation_debug_option = do_nothing
+include`navigation_system.lua`
+
 editor = {
     init = function (self)
+		navigation_reset()
+	
         -- [dcunnin] Ideally we would declare things earlier and only instantiate them at this
         -- point.  However all the code is mixed up right now.
 		
@@ -101,7 +108,7 @@ editor = {
     end;
 
     destroy = function (self)
-		widget_manager:unselect()
+		widget_manager:unselectAll()
 		
 		GED:saveEditorConfig()
         -- GED:saveEditorInterface()
@@ -127,6 +134,7 @@ editor = {
 		editor_interface.map_editor_page:destroy()
 		editor_interface:destroy()
 		env.clockRate = 30
+		navigation_reset()
     end;
 }
     

@@ -11,6 +11,15 @@ function ed_object_editor_page.new()
 	return self
 end;
 
+function toggle_vehicle_weels(vehicle, v)
+	if vehicle.instance.wheels ~= nil then
+		vehicle.instance.wheels.front_left.wheelGfx.enabled = v
+		vehicle.instance.wheels.front_right.wheelGfx.enabled = v
+		vehicle.instance.wheels.rear_left.wheelGfx.enabled = v
+		vehicle.instance.wheels.rear_left.wheelGfx.enabled = v
+	end
+end
+
 function ed_object_editor_page:select()
 	self.camPos = main.camPos
 	self.camQuat = main.camQuat
@@ -21,6 +30,7 @@ function ed_object_editor_page:select()
 	for i = 1, #objs do
 		if objs[i] ~= nil and not objs[i].destroyed and objs[i].instance ~= nil and objs[i].instance.gfx ~= nil and objs[i] ~= self.object then
 			objs[i].instance.gfx.enabled = false
+			toggle_vehicle_weels(objs[i], false)
 		end
 	end
 	
@@ -28,6 +38,7 @@ function ed_object_editor_page:select()
 		self.object:activate()
 		if self.object.instance.gfx ~= nil then
 			self.object.instance.gfx.enabled = true
+			toggle_vehicle_weels(self.object, true)
 		end
 		main.camPos = self.object.spawnPos
 		GED:toggleBoard(self.object)
@@ -47,11 +58,13 @@ function ed_object_editor_page:unselect()
 	for i = 1, #objs do
 		if objs[i] ~= nil and not objs[i].destroyed and objs[i].instance ~= nil and objs[i].instance.gfx ~= nil and not objs[i].objectEditor then
 			objs[i].instance.gfx.enabled = true
+			toggle_vehicle_weels(objs[i], true)
 		end
 	end
 
 	if self.object ~= nil and self.object.instance ~= nil and not self.object.destroyed then
 		self.object.instance.gfx.enabled = false
+		toggle_vehicle_weels(self.object, false)
 	end		
 	
 	--safe_destroy(self.object)

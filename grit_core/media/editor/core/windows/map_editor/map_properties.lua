@@ -25,7 +25,7 @@ hud_class `Expand_List_Item` {
 		self:setTitle(self.name)
 		
 		self.value = gfx_hud_object_add(`/common/hud/EditBox`, {
-			value = "/.lvl";
+			value = "/.gmap";
 			size = vec((self.size.x/2) - self.title.size.x+15,20);
 			alignment = "LEFT";
 			parent=self;

@@ -1,17 +1,14 @@
 function open_map_dialog()
-	if open_file_dialog ~= nil and not open_file_dialog.destroyed then
-		open_file_dialog:destroy()
-	end
-	
-	open_file_dialog = create_filedialog({
-		title = "Open Level";
+	open_file_dialog = create_openfiledialog({
+		title = "Open Map";
 		parent = hud_center;
 		position = vec(0, 0);
 		resizeable = true;
-		size = vec2(720, 465);
-		min_size = vec2(720, 465);
+		size = vec2(470, 290);
+		min_size = vec2(470, 290);
 		colour = _current_theme.colours.window.background;
 		alpha = 1;
+		choices = { "Grit Map (*.gmap)", "Lua Script (*.lua)" };
 		callback = function(self, str)
 			if resource_exists("/"..str) then
 				if GED:openMap("/"..str) then
@@ -29,19 +26,16 @@ function open_map_dialog()
 end
 
 function save_map_dialog()
-	if save_file_dialog ~= nil and not save_file_dialog.destroyed then
-		save_file_dialog:destroy()
-	end
-	
-	save_file_dialog = create_filedialog({
-		title = "Save Level";
+	save_file_dialog = create_savefiledialog({
+		title = "Save Map";
 		parent = hud_center;
 		position = vec(0, 0);
 		resizeable = true;
-		size = vec2(720, 465);
-		min_size = vec2(720, 465);
+		size = vec2(470, 290);
+		min_size = vec2(470, 290);
 		colour = _current_theme.colours.window.background;
 		alpha = 1;
+		choices = { "Grit Map (*.gmap)", "Lua Script (*.lua)" };
 		callback = function(self, str)
 			if resource_exists("/"..str) then
 				local save_overwrite = function (boolean)

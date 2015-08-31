@@ -3,6 +3,6 @@
 
 -- TODO
 recent = {
-	["Entry"] = "/maps/entry.lvl";
-	["Playground"] = "/maps/playground.lvl";
+	["Entry"] = "/maps/entry.gmap";
+	["Playground"] = "/maps/playground.gmap";
 }

@@ -21,23 +21,6 @@ editor_edit_binds.enabled = false
 editor_debug_binds.enabled = false
 editor_debug_ghost_binds.enabled = false
 
-
-local function inside()
-    -- [dcunnin] If the intention of this is to detect whether the cursor is over a window,
-    -- there must be a better way.
-    --
-    -- All these cross-cutting dependencies on other aspects of GUI layout have to go...
-    if mouse_pos_abs.x > 40 and mouse_pos_abs.y > 20 then
-        if (console.enabled and mouse_pos_abs.y < gfx_window_size().y - console_frame.size.y) or not console.enabled and mouse_pos_abs.y < gfx_window_size().y - 52 then
-            if not mouse_inside_any_window() and not mouse_inside_any_menu() and addobjectelement == nil then
-                return true
-            end
-        end
-    end
-    return false
-end
-
-    
 function editor_receive_button(button, state)
     local on_off
     if state == "+" or state == '=' then on_off = 1 end
@@ -102,7 +85,7 @@ function editor_receive_button(button, state)
 
     elseif button == "ghost" then
         if state == '+' then
-            if inside() then
+            if inside_hud() then
                 GED:setMouseCapture(true)
             end
         elseif state == '-' then
@@ -116,8 +99,8 @@ function editor_receive_button(button, state)
 
     elseif button == "select" then
         if state == '+' then
-            if inside() then
-                GED:selectObj()
+            if inside_hud() then
+                GED:leftMouseClick()
             end
         elseif state == '-' then
             GED:stopDraggingObj()

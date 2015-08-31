@@ -7,7 +7,7 @@ editor_cfg = {
 	mode_selected = "translate";
 	directory = "./editor";
 	load_startup_map = false;
-	startup_map = `/editor/core/defaultmap/defaultmap.lvl`;
+	startup_map = `/editor/core/defaultmap/defaultmap.gmap`;
 	default_game_mode = "fpsgame";
 	grid_size = 0.1;
 }
