@@ -8,8 +8,8 @@ hud_class `Main` {
   for key,value in pairs(game_manager.gameModes) do print(key,value) end
   
   ]]--
-  colour = vec(1, 1, 1);
-  texture = `background.dds`;
+  colour = vec(1, 1, 1)*0.2;
+  --texture = `background.dds`;
 
   padding = 16;
 
@@ -48,7 +48,6 @@ hud_class `Main` {
         parent = self;
         position = vec2(0, 0);
         edgeColour = vec(1, 102/255, 0)*1.0;
-        edgeSize = vec2(10,40);
         edgePosition = vec2(-(210 / 2) + 5, 0);
         pressedCallback = function() 
           menu.setMenu = "Gamemodes"
@@ -62,7 +61,6 @@ hud_class `Main` {
         parent = self;
         position = vec2(0, 0);
         edgeColour = vec(0, 1, 0)*1.0;
-        edgeSize = vec2(10,40);
         edgePosition = vec2(-(210 / 2) + 5, 0);
         pressedCallback = function() 
           menu.setMenu = "Game Menu"
@@ -77,7 +75,6 @@ self.editorButton = gfx_hud_object_add(`Button`, {
     parent = self;
     position = vec2(0, -50);
     edgeColour = vec(0, 102/255, 1)*1.0;
-    edgeSize = vec2(10,40);
     edgePosition = vec2(-(210 / 2) + 5, 0);
     pressedCallback = function() 
       menu.setMenu = "Editor"
@@ -92,7 +89,6 @@ self.settingsButton = gfx_hud_object_add(`Button`, {
     parent = self;
     position = vec2(0, -100);
     edgeColour = vec(1, 1, 0);
-    edgeSize = vec2(10,40);
     edgePosition = vec2(-(210 / 2) + 5, 0);
     pressedCallback = function() 
       menu.setMenu = "Settings"
@@ -106,7 +102,6 @@ self.exitButton = gfx_hud_object_add(`Button`, {
     parent = self;
     position = vec2(0, -150);
     edgeColour = vec(1, 0, 1)*1.0;
-    edgeSize = vec2(10,40);
     edgePosition = vec2(-(210 / 2) + 5, 0);
     pressedCallback = quit
   });

@@ -7,7 +7,7 @@ hud_class `Button` {
   captionColourHover = vec(1, 1, 1);
   captionColourGreyed = vec(0.4, 0.4, 0.4);
   font = `/common/fonts/Impact50`;
-  edgeSize = vec(0, 0);
+  edgeSize = vec2(3,40);
   edgeColour = vec(1, 102/255, 0);
   edgePosition = vec(0, 0);
   buttonType = "Setting";
