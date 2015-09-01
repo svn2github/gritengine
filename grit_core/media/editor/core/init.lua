@@ -33,10 +33,32 @@ current_map = nil
 in_editor = false
 
 -- Temporary
-navigation_reset = do_nothing
-navigation_update_params = do_nothing
-navigation_build_nav_mesh = do_nothing
-navigation_debug_option = do_nothing
+if os.getenv("OS") == nil then -- linux
+	navigation_reset = do_nothing
+	navigation_update_params = do_nothing
+	navigation_build_nav_mesh = do_nothing
+	navigation_debug_option = do_nothing
+end
+-- Test navmesh
+test = function()
+	navigation_add_gfx_body(pick_obj().instance.gfx)
+	navigation_update_params()
+	navigation_build_nav_mesh()
+end
+-- Test navmesh
+test2 = function()
+	local objal = object_all()
+	local gfxobjs = {}
+	for i = 1, #objal do
+		if not objal[i].destroyed and objal[i].instance ~= nil and objal[i].instance.gfx ~= nil then
+			gfxobjs[#gfxobjs+1] = objal[i].instance.gfx
+		end
+	end
+	
+	navigation_add_gfx_bodies(gfxobjs)
+	navigation_update_params()
+	navigation_build_nav_mesh()
+end
 
 editor = {
     init = function (self)

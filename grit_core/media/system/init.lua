@@ -128,6 +128,11 @@ function physics_frame_step (step_size, elapsed_secs)
     main.physicsLeftOver = elapsed_secs
 end
 
+-- Temporary:
+if os.getenv("OS") == nil then -- linux
+	navigation_update_debug = do_nothing
+	navigation_update = do_nothing
+end
 
 function main:run (...)
 
@@ -185,6 +190,8 @@ function main:run (...)
                 physics_step(step_size)
             else
                 physics_frame_step(step_size, elapsed_secs)
+				-- NAVIGATION
+				navigation_update(elapsed_secs)				
             end
         end
 
@@ -196,6 +203,8 @@ function main:run (...)
         game_manager:frameUpdate(elapsed_secs)
         object_do_frame_callbacks(elapsed_secs)
 
+		-- NAVIGATION DEBUG
+		navigation_update_debug(elapsed_secs)		
 
         -- AUDIO
         audio_update(main.audioCentrePos, main.audioCentreVel, main.audioCentreQuat)
