@@ -11,7 +11,7 @@ function open_navmesh_dialog()
 		min_size = vec2(720, 465);
 		colour = _current_theme.colours.window.background;
 		alpha = 1;
-		choices = { "Navmesh binary file (*.bin)"};
+		choices = { "Navmesh binary file (*.navmesh)"};
 		callback = function(self, str)
 			if resource_exists("/"..str) then
 				if navigation_load_navmesh(str) then
@@ -38,7 +38,7 @@ function save_navmesh_dialog()
 		min_size = vec2(720, 465);
 		colour = _current_theme.colours.window.background;
 		alpha = 1;
-		choices = { "Navmesh binary file (*.bin)"};
+		choices = { "Navmesh binary file (*.navmesh)"};
 		callback = function(self, str)
 			if resource_exists("/"..str) then
 				local save_overwrite = function (boolean)
