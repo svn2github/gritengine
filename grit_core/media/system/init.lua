@@ -275,6 +275,8 @@ function main:run (...)
 
     end
 
+	game_manager:exit()
+	
     save_user_cfg()
 
     env:shutdown()
