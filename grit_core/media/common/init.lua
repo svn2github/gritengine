@@ -25,6 +25,8 @@ include `props/init.lua`
 include `veg/init.lua`
 include `ramps/init.lua`
 
+include `ai/init.lua`
+
 --[=[
 -- Object placement bindings...
 

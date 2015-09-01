@@ -320,6 +320,8 @@ include `/vehicles/init.lua`
 -- Game modes
 include `/playground/init.lua`
 
+include `/navigation_demo/init.lua`
+
 safe_include `/user_script.lua` 
 
 include `welcome_msg.lua`
