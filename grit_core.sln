@@ -54,6 +54,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ZLib", "dependencies\FreeIm
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "giflib", "dependencies\giflib.vcxproj", "{193EAE32-2E81-4D8B-A9BB-B6BE9A1721B0}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "recast", "dependencies\recast.vcxproj", "{C3782BB5-2225-4AC5-A6E4-A03D5688D5DB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -142,6 +144,10 @@ Global
 		{193EAE32-2E81-4D8B-A9BB-B6BE9A1721B0}.Debug|Win32.Build.0 = Debug|Win32
 		{193EAE32-2E81-4D8B-A9BB-B6BE9A1721B0}.Normal|Win32.ActiveCfg = Normal|Win32
 		{193EAE32-2E81-4D8B-A9BB-B6BE9A1721B0}.Normal|Win32.Build.0 = Normal|Win32
+		{C3782BB5-2225-4AC5-A6E4-A03D5688D5DB}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C3782BB5-2225-4AC5-A6E4-A03D5688D5DB}.Debug|Win32.Build.0 = Debug|Win32
+		{C3782BB5-2225-4AC5-A6E4-A03D5688D5DB}.Normal|Win32.ActiveCfg = Normal|Win32
+		{C3782BB5-2225-4AC5-A6E4-A03D5688D5DB}.Normal|Win32.Build.0 = Normal|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
