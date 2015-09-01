@@ -94,6 +94,7 @@ hud_class `Button` {
     elseif ev == "-left" then
       if self.dragging and self.inside and not self.greyed then
         self:pressedCallback()
+		if self.destroyed then return end
       end
       self.dragging = false
     end
