@@ -322,7 +322,9 @@ include `/vehicles/init.lua`
 -- Game modes
 include `/playground/init.lua`
 
+if os.getenv("OS") ~= nil then
 include `/navigation_demo/init.lua`
+end
 
 safe_include `/user_script.lua` 
 
