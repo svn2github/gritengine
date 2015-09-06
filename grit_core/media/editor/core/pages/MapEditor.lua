@@ -86,8 +86,8 @@ editor_interface.map_editor_page =
 		self.menus.gameMenu.enabled = false
 		self.menus.helpMenu.enabled = false
 
-		-- self.windows.content_browser.enabled = false
-		safe_destroy(self.windows.content_browser)
+		self.windows.content_browser.enabled = false
+		--safe_destroy(self.windows.content_browser)
 		self.windows.event_editor.enabled = false
 		self.windows.level_properties.enabled = false
 		self.windows.material_editor.enabled = false
@@ -471,8 +471,10 @@ editor_interface.map_editor_page =
 		
 		self.mlefttoolbar:addSeparator()
 		
+
 		self.mlefttoolbar:addTool("Object Properties", map_editor_icons.object_properties, function(self) open_window(editor_interface.map_editor_page.windows.object_properties) end, "Map Properties")
-		self.mlefttoolbar:addTool("Content Browser", map_editor_icons.content_browser, function(self) if editor_interface.map_editor_page.windows.content_browser == nil or editor_interface.map_editor_page.windows.content_browser.destroyed then editor_interface.map_editor_page.windows.content_browser = create_content_browser() end end, "Content Browser")
+		--self.mlefttoolbar:addTool("Content Browser", map_editor_icons.content_browser, function(self) if editor_interface.map_editor_page.windows.content_browser == nil or editor_interface.map_editor_page.windows.content_browser.destroyed then editor_interface.map_editor_page.windows.content_browser = create_content_browser() end end, "Content Browser")
+		self.mlefttoolbar:addTool("Content Browser", map_editor_icons.content_browser, function(self) local wnd = editor_interface.map_editor_page.windows.content_browser if not wnd.destroyed then wnd.enabled = not wnd.enabled end end, "Content Browser")
 		self.mlefttoolbar:addTool("Event Editor", map_editor_icons.event_editor, function(self) open_window(editor_interface.map_editor_page.windows.event_editor) end, "Event Editor")
 		self.mlefttoolbar:addTool("Map Config", map_editor_icons.world_properties, function(self) open_window(editor_interface.map_editor_page.windows.level_properties) end, "Map Config")
 		self.mlefttoolbar:addSeparator()
@@ -500,6 +502,12 @@ editor_interface.map_editor_page =
 		-- TODO: replace all these windows to dynamic windows (properly declared as a class)
 		-- self.windows.content_browser = create_window('Content Browser', vec2(editor_interface_cfg.content_browser.position[1], editor_interface_cfg.content_browser.position[2]), true, vec2(editor_interface_cfg.content_browser.size[1], editor_interface_cfg.content_browser.size[2]), vec2(640, 400), vec2(800, 600))
 		include`../windows/map_editor/content_browser.lua`
+		
+		self.windows.content_browser = create_content_browser()
+		
+		
+		
+		
 		self.windows.event_editor = create_window('Event Editor', vec2(editor_interface_cfg.event_editor.position[1], editor_interface_cfg.event_editor.position[2]), true, vec2(editor_interface_cfg.event_editor.size[1], editor_interface_cfg.event_editor.size[2]), vec2(350, 200), vec2(800, 600))
 		self.windows.level_properties = create_window('Map Properties', vec2(editor_interface_cfg.level_properties.position[1], editor_interface_cfg.level_properties.position[2]), true, vec2(editor_interface_cfg.level_properties.size[1], editor_interface_cfg.level_properties.size[2]), vec2(380, 225), vec2(800, 600))
 		include`../windows/map_editor/map_properties.lua`

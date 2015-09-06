@@ -291,9 +291,9 @@ hud_class `ContentBrowser` (extends(WindowClass)
 	init = function (self)
 		WindowClass.init(self)
 		
-		self.close_btn.pressedCallback = function (self)
-			safe_destroy(self.parent.parent.parent)
-		end;
+		-- self.close_btn.pressedCallback = function (self)
+			-- safe_destroy(self.parent.parent.parent)
+		-- end;
 		
 		self.dir_tree = create_gui_object({
 			colour = vec(0.2, 0.2, 0.2);
