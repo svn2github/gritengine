@@ -615,11 +615,9 @@ float3 deferred_shading (
         // artifacts in unshadowyness will occur if the poly is parallel to the sun
         // unshadowyness also fades away from the camera
         float unshadowyness = 1.0;
-        float3 shadow_uv;
         #if RECEIVE_SHADOWS == 1
                 float shadowyness = 0.0;
                 if (cam_dist < SHADOW_DIST1) {
-                        shadow_uv = float3(mod(pos_ls1_.xy/pos_ls1_.z,1),0);
                         #if SHADOW_FILTER_NOISE == 1
                         shadowyness = test_shadow(pos_ls1_, shadow_map1, shadow_filter_noise, sun_dist_, SPREAD1, screen_pos);
                         #else
@@ -627,7 +625,6 @@ float3 deferred_shading (
                         #endif
                 }
                 else if (cam_dist < SHADOW_DIST2) {
-                        shadow_uv = float3(mod(pos_ls2_.xy/pos_ls2_.z,1),1);
                         #if SHADOW_FILTER_NOISE == 1
                         shadowyness = test_shadow(pos_ls2_, shadow_map2, shadow_filter_noise, sun_dist_, SPREAD2, screen_pos);
                         #else
@@ -635,7 +632,6 @@ float3 deferred_shading (
                         #endif
                 }
                 else if (cam_dist < SHADOW_DIST3) {
-                        shadow_uv = float3(mod(pos_ls3_.xy/pos_ls3_.z,1),0);
                         #if SHADOW_FILTER_NOISE == 1
                         shadowyness = test_shadow(pos_ls3_, shadow_map3, shadow_filter_noise, sun_dist_, SPREAD3, screen_pos);
                         #else
