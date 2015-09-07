@@ -415,6 +415,8 @@ end;
 function GED:newMap(ndestroyobjs)
     gfx_option("RENDER_SKY", true)
 	
+	navigation_reset()
+	
 	-- no fog and a smooth background colour
 	include `edenv.lua`
     env_recompute()
@@ -456,6 +458,8 @@ function GED:openMap(map_file)
 		self.objects = object_all()
 	elseif map_ext == "gmap" then
 		gfx_option("RENDER_SKY", true)
+		
+		navigation_reset()
 		
 		if current_map == nil then
 			current_map = GritMap.new()	
