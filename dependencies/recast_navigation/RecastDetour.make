@@ -20,11 +20,11 @@ ifndef AR
 endif
 
 ifeq ($(config),debug)
-  OBJDIR     = obj/Debug/Recast
+  OBJDIR     = obj/Debug/RecastDetour
   TARGETDIR  = lib/Debug
-  TARGET     = $(TARGETDIR)/libRecast.a
+  TARGET     = $(TARGETDIR)/libRecastDetour.a
   DEFINES   += -DDEBUG
-  INCLUDES  += -IRecast/Include
+  INCLUDES  += -IDebugUtils/Include -IDetour/Include -IDetourTileCache/Include -IDetourCrowd/Include -IRecast/Include
   CPPFLAGS  += -MMD -MP $(DEFINES) $(INCLUDES)
   CFLAGS    += $(CPPFLAGS) $(ARCH) -Wall -ffast-math -g
   CXXFLAGS  += $(CFLAGS) -fno-exceptions -fno-rtti
@@ -42,11 +42,11 @@ ifeq ($(config),debug)
 endif
 
 ifeq ($(config),release)
-  OBJDIR     = obj/Release/Recast
+  OBJDIR     = obj/Release/RecastDetour
   TARGETDIR  = lib/Release
-  TARGET     = $(TARGETDIR)/libRecast.a
+  TARGET     = $(TARGETDIR)/libRecastDetour.a
   DEFINES   += -DNDEBUG
-  INCLUDES  += -IRecast/Include
+  INCLUDES  += -IDebugUtils/Include -IDetour/Include -IDetourTileCache/Include  -IDetourCrowd/Include -IRecast/Include
   CPPFLAGS  += -MMD -MP $(DEFINES) $(INCLUDES)
   CFLAGS    += $(CPPFLAGS) $(ARCH) -Wall -ffast-math -g -O2
   CXXFLAGS  += $(CFLAGS) -fno-exceptions -fno-rtti
@@ -64,6 +64,20 @@ ifeq ($(config),release)
 endif
 
 OBJECTS := \
+	$(OBJDIR)/DetourNavMeshQuery.o \
+	$(OBJDIR)/DetourNode.o \
+	$(OBJDIR)/DetourNavMesh.o \
+	$(OBJDIR)/DetourNavMeshBuilder.o \
+	$(OBJDIR)/DetourCommon.o \
+	$(OBJDIR)/DetourAlloc.o \
+	$(OBJDIR)/DetourObstacleAvoidance.o \
+	$(OBJDIR)/DetourLocalBoundary.o \
+	$(OBJDIR)/DetourProximityGrid.o \
+	$(OBJDIR)/DetourPathCorridor.o \
+	$(OBJDIR)/DetourCrowd.o \
+	$(OBJDIR)/DetourPathQueue.o \
+	$(OBJDIR)/DetourTileCache.o \
+	$(OBJDIR)/DetourTileCacheBuilder.o \
 	$(OBJDIR)/RecastLayers.o \
 	$(OBJDIR)/RecastMesh.o \
 	$(OBJDIR)/Recast.o \
@@ -74,6 +88,10 @@ OBJECTS := \
 	$(OBJDIR)/RecastContour.o \
 	$(OBJDIR)/RecastRegion.o \
 	$(OBJDIR)/RecastArea.o \
+	$(OBJDIR)/RecastDebugDraw.o \
+	$(OBJDIR)/DetourDebugDraw.o \
+	$(OBJDIR)/RecastDump.o \
+	$(OBJDIR)/DebugDraw.o \
 
 RESOURCES := \
 
@@ -91,7 +109,7 @@ all: $(TARGETDIR) $(OBJDIR) prebuild prelink $(TARGET)
 	@:
 
 $(TARGET): $(GCH) $(OBJECTS) $(LDDEPS) $(RESOURCES)
-	@echo Linking Recast
+	@echo Linking RecastDetour
 	$(SILENT) $(LINKCMD)
 	$(POSTBUILDCMDS)
 
@@ -112,7 +130,7 @@ else
 endif
 
 clean:
-	@echo Cleaning Recast
+	@echo Cleaning RecastDetour
 ifeq (posix,$(SHELLTYPE))
 	$(SILENT) rm -f  $(TARGET)
 	$(SILENT) rm -rf $(OBJDIR)
@@ -134,6 +152,48 @@ $(GCH): $(PCH)
 	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 endif
 
+$(OBJDIR)/DetourNavMeshQuery.o: Detour/Source/DetourNavMeshQuery.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+$(OBJDIR)/DetourNode.o: Detour/Source/DetourNode.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+$(OBJDIR)/DetourNavMesh.o: Detour/Source/DetourNavMesh.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+$(OBJDIR)/DetourNavMeshBuilder.o: Detour/Source/DetourNavMeshBuilder.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+$(OBJDIR)/DetourCommon.o: Detour/Source/DetourCommon.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+$(OBJDIR)/DetourAlloc.o: Detour/Source/DetourAlloc.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+$(OBJDIR)/DetourTileCache.o: DetourTileCache/Source/DetourTileCache.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+$(OBJDIR)/DetourTileCacheBuilder.o: DetourTileCache/Source/DetourTileCacheBuilder.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+$(OBJDIR)/DetourObstacleAvoidance.o: DetourCrowd/Source/DetourObstacleAvoidance.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+$(OBJDIR)/DetourLocalBoundary.o: DetourCrowd/Source/DetourLocalBoundary.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+$(OBJDIR)/DetourProximityGrid.o: DetourCrowd/Source/DetourProximityGrid.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+$(OBJDIR)/DetourPathCorridor.o: DetourCrowd/Source/DetourPathCorridor.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+$(OBJDIR)/DetourCrowd.o: DetourCrowd/Source/DetourCrowd.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+$(OBJDIR)/DetourPathQueue.o: DetourCrowd/Source/DetourPathQueue.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 $(OBJDIR)/RecastLayers.o: Recast/Source/RecastLayers.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
@@ -162,6 +222,18 @@ $(OBJDIR)/RecastRegion.o: Recast/Source/RecastRegion.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 $(OBJDIR)/RecastArea.o: Recast/Source/RecastArea.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+$(OBJDIR)/RecastDebugDraw.o: DebugUtils/Source/RecastDebugDraw.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+$(OBJDIR)/DetourDebugDraw.o: DebugUtils/Source/DetourDebugDraw.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+$(OBJDIR)/RecastDump.o: DebugUtils/Source/RecastDump.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+$(OBJDIR)/DebugDraw.o: DebugUtils/Source/DebugDraw.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 

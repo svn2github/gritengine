@@ -200,11 +200,7 @@ PERF_LDFLAGS  ?=
 # RECAST NAVIGATION
 ################################################################################
 
-RECAST_ARCHIVES   ?= $(ROOT)/dependencies/recast_navigation/lib/Release/libDebugUtils.a \
-		$(ROOT)/dependencies/recast_navigation/lib/Release/libDetour.a \
-		$(ROOT)/dependencies/recast_navigation/lib/Release/libDetourCrowd.a \
-		$(ROOT)/dependencies/recast_navigation/lib/Release/libDetourTileCache.a \
-		$(ROOT)/dependencies/recast_navigation/lib/Release/libRecast.a \
+RECAST_ARCHIVES   ?= $(ROOT)/dependencies/recast_navigation/lib/Debug/libRecastDetour.a \
 
 RECAST_CXXFLAGS   ?= -isystem $(ROOT)/dependencies/recast_navigation/DebugUtils/Include \
 		-isystem $(ROOT)/dependencies/recast_navigation/Detour/Include \
@@ -214,7 +210,7 @@ RECAST_CXXFLAGS   ?= -isystem $(ROOT)/dependencies/recast_navigation/DebugUtils/
 
 RECAST_LDFLAGS    ?=
 
-RECAST_LDLIBS     ?= $(RECAST_ARCHIVES) 
+RECAST_LDLIBS     ?= $(RECAST_ARCHIVES)
 
 
 # vim: shiftwidth=8:tabstop=8:noexpandtab
