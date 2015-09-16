@@ -33,12 +33,6 @@ current_map = nil
 in_editor = false
 
 -- Temporary
-if os.getenv("OS") == nil then -- linux
-	navigation_reset = do_nothing
-	navigation_update_params = do_nothing
-	navigation_build_nav_mesh = do_nothing
-	navigation_debug_option = do_nothing
-end
 -- Test navmesh
 test = function()
 	navigation_add_gfx_body(pick_obj().instance.gfx)

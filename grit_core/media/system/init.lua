@@ -128,12 +128,6 @@ function physics_frame_step (step_size, elapsed_secs)
     main.physicsLeftOver = elapsed_secs
 end
 
--- Temporary:
-if os.getenv("OS") == nil then -- linux
-	navigation_update_debug = do_nothing
-	navigation_update = do_nothing
-end
-
 function main:run (...)
 
     -- execute cmdline arguments on console
@@ -322,9 +316,7 @@ include `/vehicles/init.lua`
 -- Game modes
 include `/playground/init.lua`
 
-if os.getenv("OS") ~= nil then
 include `/navigation_demo/init.lua`
-end
 
 safe_include `/user_script.lua` 
 
