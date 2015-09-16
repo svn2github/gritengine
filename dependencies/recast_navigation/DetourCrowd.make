@@ -24,7 +24,7 @@ ifeq ($(config),debug)
   TARGETDIR  = lib/Debug
   TARGET     = $(TARGETDIR)/libDetourCrowd.a
   DEFINES   += -DDEBUG
-  INCLUDES  += -I/DetourCrowd/Include -I/Detour/Include -I/Recast/Include
+  INCLUDES  += -IDetourCrowd/Include -IDetour/Include -IRecast/Include
   CPPFLAGS  += -MMD -MP $(DEFINES) $(INCLUDES)
   CFLAGS    += $(CPPFLAGS) $(ARCH) -Wall -ffast-math -g
   CXXFLAGS  += $(CFLAGS) -fno-exceptions -fno-rtti
@@ -46,7 +46,7 @@ ifeq ($(config),release)
   TARGETDIR  = lib/Release
   TARGET     = $(TARGETDIR)/libDetourCrowd.a
   DEFINES   += -DNDEBUG
-  INCLUDES  += -I/DetourCrowd/Include -I/Detour/Include -I/Recast/Include
+  INCLUDES  += -IDetourCrowd/Include -IDetour/Include -IRecast/Include
   CPPFLAGS  += -MMD -MP $(DEFINES) $(INCLUDES)
   CFLAGS    += $(CPPFLAGS) $(ARCH) -Wall -ffast-math -g -O2
   CXXFLAGS  += $(CFLAGS) -fno-exceptions -fno-rtti

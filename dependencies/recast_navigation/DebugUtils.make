@@ -24,7 +24,7 @@ ifeq ($(config),debug)
   TARGETDIR  = lib/Debug
   TARGET     = $(TARGETDIR)/libDebugUtils.a
   DEFINES   += -DDEBUG
-  INCLUDES  += -I/DebugUtils/Include -I/Detour/Include -I/DetourTileCache/Include -I/Recast/Include
+  INCLUDES  += -IDebugUtils/Include -IDetour/Include -IDetourTileCache/Include -IRecast/Include
   CPPFLAGS  += -MMD -MP $(DEFINES) $(INCLUDES)
   CFLAGS    += $(CPPFLAGS) $(ARCH) -Wall -ffast-math -g
   CXXFLAGS  += $(CFLAGS) -fno-exceptions -fno-rtti
@@ -46,7 +46,7 @@ ifeq ($(config),release)
   TARGETDIR  = lib/Release
   TARGET     = $(TARGETDIR)/libDebugUtils.a
   DEFINES   += -DNDEBUG
-  INCLUDES  += -I/DebugUtils/Include -I/Detour/Include -I/DetourTileCache/Include -I/Recast/Include
+  INCLUDES  += -IDebugUtils/Include -IDetour/Include -IDetourTileCache/Include -IRecast/Include
   CPPFLAGS  += -MMD -MP $(DEFINES) $(INCLUDES)
   CFLAGS    += $(CPPFLAGS) $(ARCH) -Wall -ffast-math -g -O2
   CXXFLAGS  += $(CFLAGS) -fno-exceptions -fno-rtti

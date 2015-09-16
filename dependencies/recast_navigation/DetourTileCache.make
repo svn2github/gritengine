@@ -24,7 +24,7 @@ ifeq ($(config),debug)
   TARGETDIR  = lib/Debug
   TARGET     = $(TARGETDIR)/libDetourTileCache.a
   DEFINES   += -DDEBUG
-  INCLUDES  += -I/DetourTileCache/Include -I/Detour/Include -I/Recast/Include
+  INCLUDES  += -IDetourTileCache/Include -IDetour/Include -IRecast/Include
   CPPFLAGS  += -MMD -MP $(DEFINES) $(INCLUDES)
   CFLAGS    += $(CPPFLAGS) $(ARCH) -Wall -ffast-math -g
   CXXFLAGS  += $(CFLAGS) -fno-exceptions -fno-rtti
@@ -46,7 +46,7 @@ ifeq ($(config),release)
   TARGETDIR  = lib/Release
   TARGET     = $(TARGETDIR)/libDetourTileCache.a
   DEFINES   += -DNDEBUG
-  INCLUDES  += -I/DetourTileCache/Include -I/Detour/Include -I/Recast/Include
+  INCLUDES  += -IDetourTileCache/Include -IDetour/Include -IRecast/Include
   CPPFLAGS  += -MMD -MP $(DEFINES) $(INCLUDES)
   CFLAGS    += $(CPPFLAGS) $(ARCH) -Wall -ffast-math -g -O2
   CXXFLAGS  += $(CFLAGS) -fno-exceptions -fno-rtti
