@@ -24,7 +24,7 @@ ifeq ($(config),debug)
   TARGETDIR  = lib/Debug
   TARGET     = $(TARGETDIR)/libDetourCrowd.a
   DEFINES   += -DDEBUG
-  INCLUDES  += -I../../../DetourCrowd/Include -I../../../Detour/Include -I../../../Recast/Include
+  INCLUDES  += -I/DetourCrowd/Include -I/Detour/Include -I/Recast/Include
   CPPFLAGS  += -MMD -MP $(DEFINES) $(INCLUDES)
   CFLAGS    += $(CPPFLAGS) $(ARCH) -Wall -ffast-math -g
   CXXFLAGS  += $(CFLAGS) -fno-exceptions -fno-rtti
