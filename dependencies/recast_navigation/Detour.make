@@ -24,7 +24,7 @@ ifeq ($(config),debug)
   TARGETDIR  = lib/Debug
   TARGET     = $(TARGETDIR)/libDetour.a
   DEFINES   += -DDEBUG
-  INCLUDES  += -I../../../Detour/Include
+  INCLUDES  += -I/Detour/Include
   CPPFLAGS  += -MMD -MP $(DEFINES) $(INCLUDES)
   CFLAGS    += $(CPPFLAGS) $(ARCH) -Wall -ffast-math -g
   CXXFLAGS  += $(CFLAGS) -fno-exceptions -fno-rtti
@@ -46,7 +46,7 @@ ifeq ($(config),release)
   TARGETDIR  = lib/Release
   TARGET     = $(TARGETDIR)/libDetour.a
   DEFINES   += -DNDEBUG
-  INCLUDES  += -I../../../Detour/Include
+  INCLUDES  += -I/Detour/Include
   CPPFLAGS  += -MMD -MP $(DEFINES) $(INCLUDES)
   CFLAGS    += $(CPPFLAGS) $(ARCH) -Wall -ffast-math -g -O2
   CXXFLAGS  += $(CFLAGS) -fno-exceptions -fno-rtti
@@ -130,22 +130,22 @@ $(GCH): $(PCH)
 	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 endif
 
-$(OBJDIR)/DetourNavMeshQuery.o: ../../../Detour/Source/DetourNavMeshQuery.cpp
+$(OBJDIR)/DetourNavMeshQuery.o: Detour/Source/DetourNavMeshQuery.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-$(OBJDIR)/DetourNode.o: ../../../Detour/Source/DetourNode.cpp
+$(OBJDIR)/DetourNode.o: Detour/Source/DetourNode.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-$(OBJDIR)/DetourNavMesh.o: ../../../Detour/Source/DetourNavMesh.cpp
+$(OBJDIR)/DetourNavMesh.o: Detour/Source/DetourNavMesh.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-$(OBJDIR)/DetourNavMeshBuilder.o: ../../../Detour/Source/DetourNavMeshBuilder.cpp
+$(OBJDIR)/DetourNavMeshBuilder.o: Detour/Source/DetourNavMeshBuilder.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-$(OBJDIR)/DetourCommon.o: ../../../Detour/Source/DetourCommon.cpp
+$(OBJDIR)/DetourCommon.o: Detour/Source/DetourCommon.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-$(OBJDIR)/DetourAlloc.o: ../../../Detour/Source/DetourAlloc.cpp
+$(OBJDIR)/DetourAlloc.o: Detour/Source/DetourAlloc.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 

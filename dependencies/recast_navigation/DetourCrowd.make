@@ -46,7 +46,7 @@ ifeq ($(config),release)
   TARGETDIR  = lib/Release
   TARGET     = $(TARGETDIR)/libDetourCrowd.a
   DEFINES   += -DNDEBUG
-  INCLUDES  += -I../../../DetourCrowd/Include -I../../../Detour/Include -I../../../Recast/Include
+  INCLUDES  += -I/DetourCrowd/Include -I/Detour/Include -I/Recast/Include
   CPPFLAGS  += -MMD -MP $(DEFINES) $(INCLUDES)
   CFLAGS    += $(CPPFLAGS) $(ARCH) -Wall -ffast-math -g -O2
   CXXFLAGS  += $(CFLAGS) -fno-exceptions -fno-rtti
@@ -130,22 +130,22 @@ $(GCH): $(PCH)
 	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 endif
 
-$(OBJDIR)/DetourObstacleAvoidance.o: ../../../DetourCrowd/Source/DetourObstacleAvoidance.cpp
+$(OBJDIR)/DetourObstacleAvoidance.o: DetourCrowd/Source/DetourObstacleAvoidance.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-$(OBJDIR)/DetourLocalBoundary.o: ../../../DetourCrowd/Source/DetourLocalBoundary.cpp
+$(OBJDIR)/DetourLocalBoundary.o: DetourCrowd/Source/DetourLocalBoundary.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-$(OBJDIR)/DetourProximityGrid.o: ../../../DetourCrowd/Source/DetourProximityGrid.cpp
+$(OBJDIR)/DetourProximityGrid.o: DetourCrowd/Source/DetourProximityGrid.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-$(OBJDIR)/DetourPathCorridor.o: ../../../DetourCrowd/Source/DetourPathCorridor.cpp
+$(OBJDIR)/DetourPathCorridor.o: DetourCrowd/Source/DetourPathCorridor.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-$(OBJDIR)/DetourCrowd.o: ../../../DetourCrowd/Source/DetourCrowd.cpp
+$(OBJDIR)/DetourCrowd.o: DetourCrowd/Source/DetourCrowd.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-$(OBJDIR)/DetourPathQueue.o: ../../../DetourCrowd/Source/DetourPathQueue.cpp
+$(OBJDIR)/DetourPathQueue.o: DetourCrowd/Source/DetourPathQueue.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 

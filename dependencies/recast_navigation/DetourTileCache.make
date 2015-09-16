@@ -24,7 +24,7 @@ ifeq ($(config),debug)
   TARGETDIR  = lib/Debug
   TARGET     = $(TARGETDIR)/libDetourTileCache.a
   DEFINES   += -DDEBUG
-  INCLUDES  += -I../../../DetourTileCache/Include -I../../../Detour/Include -I../../../Recast/Include
+  INCLUDES  += -I/DetourTileCache/Include -I/Detour/Include -I/Recast/Include
   CPPFLAGS  += -MMD -MP $(DEFINES) $(INCLUDES)
   CFLAGS    += $(CPPFLAGS) $(ARCH) -Wall -ffast-math -g
   CXXFLAGS  += $(CFLAGS) -fno-exceptions -fno-rtti
@@ -46,7 +46,7 @@ ifeq ($(config),release)
   TARGETDIR  = lib/Release
   TARGET     = $(TARGETDIR)/libDetourTileCache.a
   DEFINES   += -DNDEBUG
-  INCLUDES  += -I../../../DetourTileCache/Include -I../../../Detour/Include -I../../../Recast/Include
+  INCLUDES  += -I/DetourTileCache/Include -I/Detour/Include -I/Recast/Include
   CPPFLAGS  += -MMD -MP $(DEFINES) $(INCLUDES)
   CFLAGS    += $(CPPFLAGS) $(ARCH) -Wall -ffast-math -g -O2
   CXXFLAGS  += $(CFLAGS) -fno-exceptions -fno-rtti
@@ -126,10 +126,10 @@ $(GCH): $(PCH)
 	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 endif
 
-$(OBJDIR)/DetourTileCache.o: ../../../DetourTileCache/Source/DetourTileCache.cpp
+$(OBJDIR)/DetourTileCache.o: DetourTileCache/Source/DetourTileCache.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-$(OBJDIR)/DetourTileCacheBuilder.o: ../../../DetourTileCache/Source/DetourTileCacheBuilder.cpp
+$(OBJDIR)/DetourTileCacheBuilder.o: DetourTileCache/Source/DetourTileCacheBuilder.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
