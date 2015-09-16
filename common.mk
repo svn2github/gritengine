@@ -206,7 +206,11 @@ RECAST_ARCHIVES   ?= $(ROOT)/dependencies/recast_navigation/lib/Release/libDebug
 		$(ROOT)/dependencies/recast_navigation/lib/Release/libDetourTileCache.a \
 		$(ROOT)/dependencies/recast_navigation/lib/Release/libRecast.a \
 
-RECAST_CXXFLAGS   ?= -isystem $(ROOT)/dependencies/recast_navigation
+RECAST_CXXFLAGS   ?= -isystem $(ROOT)/dependencies/recast_navigation/DebugUtils/Include \
+		-isystem $(ROOT)/dependencies/recast_navigation/Detour/Include \
+		-isystem $(ROOT)/dependencies/recast_navigation/DetourCrowd/Include \
+		-isystem $(ROOT)/dependencies/recast_navigation/DetourTileCache/Include \
+		-isystem $(ROOT)/dependencies/recast_navigation/Recast/Include \
 
 RECAST_LDFLAGS    ?=
 
