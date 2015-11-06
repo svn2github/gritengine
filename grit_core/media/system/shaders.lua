@@ -11,7 +11,7 @@ local function prog(name, lang, type)
                 p:destroy()
                 p = make_gpuprog(name, lang, type)
         end
-        p.ignoreMissingParams = true
+        --p.ignoreMissingParams = true
         return p
 end
 
