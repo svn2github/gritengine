@@ -84,11 +84,13 @@ hud_class `window_editbox` (extends(GuiClass)
         if self.greyed then return end
         hud_focus_grab(editting and self or nil)
         self:onEditting(editting)
+		editor_core_move_binds.enabled = not editting
     end;
 
     setFocus = function (self, editting)
         self.caret.enabled = editting
         self.needsFrameCallbacks = editting
+		editor_core_move_binds.enabled = not editting
     end;
 
 	enterCallback = function(self)
@@ -410,6 +412,7 @@ hud_class `FileDialog` (extends(WindowClass)
 {
 	btn_size = vec(100, 25);
 	currentdir = "/";
+	choices = { "All Files (*.*)" };
 	
 	init = function (self)
 		WindowClass.init(self)
@@ -444,7 +447,7 @@ hud_class `FileDialog` (extends(WindowClass)
 		})		
 		self.selectbox = create_selectbox({
 			parent = self;
-			choices = { "Grit Level (*.lvl)", "Lua Script (*.lua)" };
+			choices = self.choices;
 			selection = 0;
 			align_bottom = true;
 			align_left = true;
@@ -497,7 +500,10 @@ hud_class `FileDialog` (extends(WindowClass)
 			end;
 			icon_texture = _gui_textures.arrow_up;
 			parent = self;
-			colour = vec(0.5, 0.5, 0.5);
+			colour = V_ID*0.5;
+			defaultColour = V_ID*0.5;
+			hoverColour = V_ID*0.6;
+			clickColour = V_ID*0.7;
 			size = vec2(25, 25);
 			offset = vec(-65, -5);
 			align_right = true;
@@ -508,7 +514,10 @@ hud_class `FileDialog` (extends(WindowClass)
 			pressedCallback = do_nothing;
 			icon_texture = _gui_textures.new_folder;
 			parent = self;
-			colour = vec(0.5, 0.5, 0.5);
+			colour = V_ID*0.5;
+			defaultColour = V_ID*0.5;
+			hoverColour = V_ID*0.6;
+			clickColour = V_ID*0.7;
 			size = vec2(25, 25);
 			offset = vec(-35, -5);
 			align_right = true;
@@ -519,7 +528,10 @@ hud_class `FileDialog` (extends(WindowClass)
 			pressedCallback = do_nothing;
 			icon_texture = `/editor/core/icons/map_editor/content_browser.png`;-- TODO: replace by a specific icon
 			parent = self;
-			colour = vec(0.5, 0.5, 0.5);
+			colour = V_ID*0.5;
+			defaultColour = V_ID*0.5;
+			hoverColour = V_ID*0.6;
+			clickColour = V_ID*0.7;
 			size = vec2(25, 25);
 			offset = vec(-5, -5);
 			align_right = true;
@@ -578,18 +590,19 @@ hud_class `FileDialog` (extends(WindowClass)
 				self.parent.parent.parent:update_file_explorer(self.parent.parent.parent.currentdir)
 			end	
 		end
-		local selext = self.selectbox.selected.name:sub(-5):gsub([[\)]], "", 1)	
+		--local selext = self.selectbox.selected.name:sub(-5):gsub([[\)]], "", 1)	
+		local selext = self.selectbox.selected.name:_match("%((.-)%)"):sub(3)
 		
 		for i = 1, #m_files do
-			if m_files[i]:sub(-4) == selext then
+			if get_extension(m_files[i]) == selext then
 				local nit = nil
-				if selext == ".lua" then
+				if selext == "lua" then
 					-- TODO: this is not a good place to declare these editor icons
 					nit = self.file_explorer:addItem(m_files[i], `/editor/core/icons/icons/luaicon.png`)
-				elseif selext == ".lvl" then
-					nit = self.file_explorer:addItem(m_files[i], `/editor/core/icons/icons/lvlicon.png`)
+				elseif selext == "gmap" then
+					nit = self.file_explorer:addItem(m_files[i], `/editor/core/icons/icons/worldicon.png`)
 				else
-					nit = self.file_explorer:addItem(m_files[i], `/common/gui/icons/icons/fileicon.png`)
+					nit = self.file_explorer:addItem(m_files[i], `/common/gui/icons/fileicon.png`)
 				end
 				nit.type = "file"
 				nit.pressedCallback = function (self)
@@ -621,11 +634,11 @@ hud_class `FileDialog` (extends(WindowClass)
 
 			local filepath = cd..self.file_edbox.value
 
-			local selext = self.selectbox.selected.name:sub(-5):gsub([[\)]], "", 1)
+			local selext = self.selectbox.selected.name:_match("%((.-)%)"):sub(3)
 			
 			-- add the extension if the user forget it
-			if self.file_edbox.value:sub(-4) ~= selext then
-				filepath = filepath..selext
+			if get_extension(self.file_edbox.value) ~= selext then
+				filepath = filepath.."."..selext
 			end
 			
 			if self:callback(filepath) then
@@ -649,4 +662,20 @@ function create_filedialog(options)
 	t_window = gfx_hud_object_add(`FileDialog`, options)
 	_windows[#_windows+1] = t_window
 	return t_window
+end
+
+function create_openfiledialog(options)
+	if open_file_dialog ~= nil and not open_file_dialog.destroyed then
+		open_file_dialog:destroy()
+	end
+	
+	return create_filedialog(options)
+end
+
+function create_savefiledialog(options)
+	if save_file_dialog ~= nil and not save_file_dialog.destroyed then
+		save_file_dialog:destroy()
+	end
+
+	return create_filedialog(options)
 end
