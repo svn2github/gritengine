@@ -373,7 +373,6 @@ hud_class `ContentBrowser` (extends(WindowClass)
 		})
 
 		self.dir_edbox = gfx_hud_object_add(`/common/gui/window_editbox`, {
-			colour = vec(0.5, 0.5, 0.5);
 			parent = self;
 			value = self.currentdir;
 			alignment = "LEFT";

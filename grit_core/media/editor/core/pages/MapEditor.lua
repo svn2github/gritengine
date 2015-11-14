@@ -142,6 +142,7 @@ editor_interface.map_editor_page =
 				{
 					callback = function()
 						-- TODO: prompt if user want to save his work
+						GED:saveEditorInterface()
 						exit_editor()
 					end;
 					name = "Exit";
@@ -506,8 +507,6 @@ editor_interface.map_editor_page =
 		self.windows.content_browser = create_content_browser()
 		
 		
-		
-		
 		self.windows.event_editor = create_window('Event Editor', vec2(editor_interface_cfg.event_editor.position[1], editor_interface_cfg.event_editor.position[2]), true, vec2(editor_interface_cfg.event_editor.size[1], editor_interface_cfg.event_editor.size[2]), vec2(350, 200), vec2(800, 600))
 		self.windows.level_properties = create_window('Map Properties', vec2(editor_interface_cfg.level_properties.position[1], editor_interface_cfg.level_properties.position[2]), true, vec2(editor_interface_cfg.level_properties.size[1], editor_interface_cfg.level_properties.size[2]), vec2(380, 225), vec2(800, 600))
 		include`../windows/map_editor/map_properties.lua`
@@ -538,7 +537,6 @@ editor_interface.map_editor_page =
 		})
 		
 		self.windows.settings.content.general_panel.openstartupmap_editbox = gfx_hud_object_add(`/common/gui/window_editbox`, {
-			colour = vec(0.2, 0.2, 0.2);
 			parent = self.windows.settings.content.general_panel;
 			value = editor_cfg.startup_map;
 			alignment = "LEFT";
@@ -577,13 +575,21 @@ editor_interface.map_editor_page =
 			offset = vec(10, -25);
 			size = vec(200, 22);
 		})
+		if editor_themes[editor_interface_cfg.theme] ~= nil then
+			self.windows.settings.content.themes_panel.theme_selectbox:select(editor_interface_cfg.theme)
+		else
+			self.windows.settings.content.themes_panel.theme_selectbox:select("dark")
+		end
+		
 		self.windows.settings.content.themes_panel.theme_selectbox.onSelect = function(self)
 			_current_theme = editor_themes[self.selected.name]
+			GED:saveEditorInterface()
+			notify("Restart Editor to take effect", vec(0, 1, 0))
 		end;
 		
 		self.windows.settings.content.system_panel = create_panel()
 
-		self.windows.settings.content.system_panel.theme = create_guitext({
+		self.windows.settings.content.system_panel.game_mode = create_guitext({
 			value = "Default Game Mode: ",
 			parent = self.windows.settings.content.system_panel,
 			align_top = true;
@@ -598,7 +604,7 @@ editor_interface.map_editor_page =
 			end
 		end
 		
-		self.windows.settings.content.system_panel.theme_selectbox = create_selectbox({
+		self.windows.settings.content.system_panel.game_mode_selectbox = create_selectbox({
 			parent = self.windows.settings.content.system_panel;
 			choices = gamemodes_items;
 			selection = 0;
@@ -607,7 +613,12 @@ editor_interface.map_editor_page =
 			offset = vec(10, -25);
 			size = vec(200, 22);
 		})
-		self.windows.settings.content.system_panel.theme_selectbox.onSelect = function(self)
+		
+		self.windows.settings.content.system_panel.game_mode_selectbox:select(editor_cfg.default_game_mode)
+		
+		self.windows.settings.content.system_panel.game_mode_selectbox.onSelect = function(self)
+			editor_cfg.default_game_mode = self.selected.name
+			GED:saveEditorConfig()
 			-- GED.playGameMode = self.selected.name
 		end;		
 		
@@ -700,6 +711,32 @@ editor_interface.map_editor_page =
 	end
 	
 }
+
+function restart_editor_gui()
+	safe_include`/common/gui/init.lua`
+	editor_interface.map_editor_page:destroy()
+	editor_interface.map_editor_page:init()
+	editor_interface.map_editor_page:select()
+	restart_editor_tools()
+end
+
+-- used for restart editor GUI
+editor_tools = {}
+
+function restart_editor_tools()
+	for i=1, #editor_tools do
+		local tl = editor_tools[i]
+		editor_interface.map_editor_page.mlefttoolbar:addTool(tl.name, tl.icon, tl.cb, tl.name)
+	end
+end
+
+function add_editor_tool(name, icon, cb)
+	editor_tools[#editor_tools+1] = {}
+	editor_tools[#editor_tools].name = name
+	editor_tools[#editor_tools].icon = icon
+	editor_tools[#editor_tools].callback = cb
+	editor_interface.map_editor_page.mlefttoolbar:addTool(name, icon, cb, name)
+end
 
 editor_interface.map_editor_page:init()
 

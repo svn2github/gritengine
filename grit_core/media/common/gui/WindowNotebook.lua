@@ -127,7 +127,7 @@ hud_class `window_page_button` {
 	
 	alpha = _current_theme.colours.window_notebook.btn_alpha;
 	
-	texture = _gui_textures.window_notebook.dark;
+	texture = _current_theme.colours.window_notebook.texture;
 
 	padding = vec(10,6);
 	selected = false;

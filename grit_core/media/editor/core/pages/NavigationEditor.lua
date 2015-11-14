@@ -122,6 +122,7 @@ editor_interface.navigation_editor =
 		
 		-- Rasterization
 		self.propertiesToolpanel.titles[0] = create_guitext({
+			colour = V_ID;
 			value = "Rasterization:";
 			font = `/common/fonts/ArialBold12`;
 		})
@@ -135,6 +136,7 @@ editor_interface.navigation_editor =
 
 		-- Agent:
 		self.propertiesToolpanel.titles[1] = create_guitext({
+			colour = V_ID;
 			value = "Agent:";
 			font = `/common/fonts/ArialBold12`;
 		})
@@ -152,6 +154,7 @@ editor_interface.navigation_editor =
 
 		-- Region:
 		self.propertiesToolpanel.titles[2] = create_guitext({
+			colour = V_ID;
 			value = "Region:";
 			font = `/common/fonts/ArialBold12`;
 		})
@@ -165,22 +168,24 @@ editor_interface.navigation_editor =
 
 		-- Partitioning:
 		self.propertiesToolpanel.titles[3] = create_guitext({
+			colour = V_ID;
 			value = "Partitioning:";
 			font = `/common/fonts/ArialBold12`;
 		})
 		self.propertiesToolpanel.titles[3].text.shadow = vec(1, -1)
 		self.propertiesToolpanel.bxsz:addChild(self.propertiesToolpanel.titles[3])
 
-		self.propertiesToolpanel.radiobuttons[0] = create_radiobutton({ caption = "Watershed", parent = self.propertiesToolpanel.bxsz, onSelect = function(self) nav_builder_params.partitionType = SAMPLE_PARTITION_WATERSHED end, align_left = true, offset =  vec(10, 0) })
+		self.propertiesToolpanel.radiobuttons[0] = create_radiobutton({ caption = "Watershed", textColour = V_ID, parent = self.propertiesToolpanel.bxsz, onSelect = function(self) nav_builder_params.partitionType = SAMPLE_PARTITION_WATERSHED end, align_left = true, offset =  vec(10, 0) })
 		self.propertiesToolpanel.bxsz:addChild(self.propertiesToolpanel.radiobuttons[0])
 		self.propertiesToolpanel.radiobuttons[0]:select()
-		self.propertiesToolpanel.radiobuttons[1] = create_radiobutton({ caption = "Monotone", parent = self.propertiesToolpanel.bxsz, onSelect = function(self) nav_builder_params.partitionType = SAMPLE_PARTITION_MONOTONE end, align_left = true, offset =  vec(10, 0) })
+		self.propertiesToolpanel.radiobuttons[1] = create_radiobutton({ caption = "Monotone", textColour = V_ID, parent = self.propertiesToolpanel.bxsz, onSelect = function(self) nav_builder_params.partitionType = SAMPLE_PARTITION_MONOTONE end, align_left = true, offset =  vec(10, 0) })
 		self.propertiesToolpanel.bxsz:addChild(self.propertiesToolpanel.radiobuttons[1])
-		self.propertiesToolpanel.radiobuttons[2] = create_radiobutton({ caption = "Layers", parent = self.propertiesToolpanel.bxsz, onSelect = function(self) nav_builder_params.partitionType = SAMPLE_PARTITION_LAYERS end, align_left = true, offset =  vec(10, 0) })
+		self.propertiesToolpanel.radiobuttons[2] = create_radiobutton({ caption = "Layers", textColour = V_ID, parent = self.propertiesToolpanel.bxsz, onSelect = function(self) nav_builder_params.partitionType = SAMPLE_PARTITION_LAYERS end, align_left = true, offset =  vec(10, 0) })
 		self.propertiesToolpanel.bxsz:addChild(self.propertiesToolpanel.radiobuttons[2])
 
 		-- Poligonization:
 		self.propertiesToolpanel.titles[4] = create_guitext({
+			colour = V_ID;
 			value = "Poligonization:";
 			font = `/common/fonts/ArialBold12`;
 		})
@@ -196,6 +201,7 @@ editor_interface.navigation_editor =
 
 		-- Detail Mesh:
 		self.propertiesToolpanel.titles[5] = create_guitext({
+			colour = V_ID;
 			value = "Detail Mesh:";
 			font = `/common/fonts/ArialBold12`;
 		})
@@ -209,6 +215,7 @@ editor_interface.navigation_editor =
 
 		self.propertiesToolpanel.checkboxes[1] = create_checkbox({
 			caption = "Keep Intermediate Results",
+			textColour = V_ID;
 			checked = false,
 			parent = self.propertiesToolpanel.bxsz,
 			align_left = true,
@@ -220,6 +227,7 @@ editor_interface.navigation_editor =
 
 		-- Tiling:
 		self.propertiesToolpanel.titles[6] = create_guitext({
+			colour = V_ID;
 			value = "Tiling:";
 			font = `/common/fonts/ArialBold12`;
 		})
@@ -541,6 +549,3 @@ function open_navigation_page()
 		editor_interface.nav_page:select()
 	end
 end
-
--- add the button to the editor toolbar
-editor_interface.map_editor_page.mlefttoolbar:addTool("Navigation Edtor", map_editor_icons.navigation, function(self) open_navigation_page() end, "Navigation Editor")

@@ -10,7 +10,7 @@
 hud_class `GuiText` (extends(GuiClass)
 {
 	font = _current_theme.fonts.default;
-	colour = V_ID;
+	colour = _current_theme.colours.text.default;
 	size = vec(0, 0);
 	alpha = 0;
 	value = "";

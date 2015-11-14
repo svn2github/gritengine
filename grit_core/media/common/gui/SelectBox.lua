@@ -12,6 +12,7 @@ hud_class `selectmenuitem` {
 	size = vec(150, 20);
 	value = "";
 	id = 0;
+	colour = _current_theme.colours.selectbox.menu_base;
 	baseColour = _current_theme.colours.selectbox.menu_base;
 	baseAlpha = _current_theme.colours.selectbox.menu_alpha;
 	hoverColour = _current_theme.colours.selectbox.menu_hover;
@@ -56,6 +57,7 @@ hud_class `selectmenuitem` {
         elseif ev == "-left" then
             if self.dragging and self.inside and not self.greyed then
                 self:pressedCallback()
+				if self.destroyed then return end
 				self:endPressedCallback()
             end
             self.dragging = false
@@ -91,6 +93,7 @@ hud_class `selectmenu` {
 	zOrder = 1;
 	lastItem = 0;
 	border = 2;
+	colour = _current_theme.colours.selectbox.menu_base;
 	
 	init = function (self)
 		self.needsInputCallbacks = true;
@@ -258,9 +261,29 @@ hud_class `Selectbox` (extends(GuiClass)
 	end;
 	
 	select = function(self, itm)
-		self.selected = itm
-		self:setTitle(self.selected.name)
-		self:onSelect()
+		if type(itm) == "table" then
+			self.selected = itm
+			self:setTitle(self.selected.name)
+			self:onSelect()
+		elseif type(itm) == "string" then
+			for i = 1, #self.menu.menuitems do
+				if itm == self.menu.menuitems[i].value then
+					local nitm = {}
+					nitm.name = self.menu.menuitems[i].value
+					nitm.id = self.menu.menuitems[i].id
+					self:select(nitm)
+				end
+			end
+		elseif type(itm) == "number" then
+			for i = 1, #self.menu.menuitems do
+				if itm == self.menu.menuitems[i].id then
+					local nitm = {}
+					nitm.name = elf.menu.menuitems[i].value
+					nitm.id = elf.menu.menuitems[i].id
+					self:select(nitm)
+				end
+			end
+		end
 	end;	
 	
 	parentResizedCallback = function (self, psize)

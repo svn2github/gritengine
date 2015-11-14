@@ -11,6 +11,7 @@ hud_class `RadioButton` (extends(GuiClass)
 {
 	alpha = _current_theme.colours.radiobutton.alpha;
 	colour = _current_theme.colours.radiobutton.background;
+	textColour = _current_theme.colours.text.default;
 	
 	caption = "";
 	padding = 5;
@@ -39,6 +40,7 @@ hud_class `RadioButton` (extends(GuiClass)
 		self.text = gfx_hud_text_add(self.font or _current_theme.fonts.radiobutton)
 		self.text.parent = self
 		self.text.text = self.caption
+		self.text.colour = self.textColour		
 		
 		self:update()
 	end;

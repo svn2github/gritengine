@@ -12,13 +12,13 @@
 -- TODO: move this class to another place, or update /common/hud/editbox
 hud_class `window_editbox` (extends(GuiClass)
 {
-    textColour = vec(1, 1, 1);
-    borderColour = vec(1, 1, 1)*0.5;
+    textColour = _current_theme.colours.edit_box.text;
+    borderColour = _current_theme.colours.edit_box.border;
     padding = 4;
-    colour = 0.25 * vec(1, 1, 1);
-    texture = `/common/hud/CornerTextures/Filled02.png`;
+    colour = _current_theme.colours.edit_box.background;
+    texture = _current_theme.colours.edit_box.texture;
     cornered = true;
-    font = `/common/fonts/Verdana12`;
+    font = _current_theme.fonts.default;
     value = "Text";
     number = false;
     alignment = "CENTER";
@@ -30,6 +30,7 @@ hud_class `window_editbox` (extends(GuiClass)
         self.needsInputCallbacks = true
         self.text = gfx_hud_text_add(self.font)
         self.text.parent = self
+		self.text.colour = self.textColour
 
         self.border = create_rect({
             texture = `/common/hud/CornerTextures/Border02.png`;
@@ -199,10 +200,16 @@ hud_class `browser_icon` {
 	size = vec(80, 80);
 	colour = vec(1, 0, 0);
 	zOrder = 0;
-	hoverColour = vec(1, 0.5, 0);
-	clickColour = vec(1, 0, 0);
-	normalColour = vec(0.5, 0.5, 0.5);
-	selectedColour = vec(1, 0.8, 0);
+	
+	hoverColour = _current_theme.colours.browser_icon.hover;
+	clickColour = _current_theme.colours.browser_icon.click;
+	defaultColour = _current_theme.colours.browser_icon.default;
+	selectedColour = _current_theme.colours.browser_icon.selected;
+	textHoverColour = _current_theme.colours.browser_icon.text_hover;
+	textClickColour = _current_theme.colours.browser_icon.text_click;
+	textSelectedColour = _current_theme.colours.browser_icon.text_selected;
+	textDefaultColour = _current_theme.colours.browser_icon.text_default;
+	
 	name = "Default";
 	type = "";
 	
@@ -218,6 +225,7 @@ hud_class `browser_icon` {
 		end
 		self.text.position = vec2(0, -self.icon.size.y/2+5)
 		self.text.parent = self
+		self.text.colour = self.textDefaultColour
 	end;
 	
 	destroy = function (self)
@@ -234,7 +242,7 @@ hud_class `browser_icon` {
 				self.colour = self.hoverColour
 				self.alpha = 0.5
 			else
-				self.colour = self.normalColour
+				self.colour = self.defaultColour
 				self.alpha = 0
 			end
 		end
@@ -243,7 +251,8 @@ hud_class `browser_icon` {
     buttonCallback = function (self, ev)
         if ev == "+left" and self.inside then
 			self.dragging = true
-			self.colour=self.clickColour
+			self.colour = self.clickColour
+			self.text.colour = self.textClickColour
 			self.alpha = 1
 			if self.lastClick ~= nil and seconds() - self.lastClick <= 1 then
 				self:doubleClick()
@@ -254,19 +263,22 @@ hud_class `browser_icon` {
             if self.dragging and not self.greyed then
 				if self.inside then
 					if self.parent.parent.selected ~= self then
-						self.colour=self.hoverColour
+						self.colour = self.hoverColour
+						self.text.colour = self.textHoverColour
 					end
 				
 					if self.parent.parent.selected ~= self and self.parent.parent.selected ~= nil and self.parent.parent.selected.destroyed ~= true then
-						self.parent.parent.selected.colour = self.parent.parent.selected.normalColour
+						self.parent.parent.selected.colour = self.parent.parent.selected.defaultColour
 						self.parent.parent.selected.alpha = 0
 					end
 					self.parent.parent.selected = self
 					self.colour = self.selectedColour
+					self.text.colour = self.textSelectedColour
 
 					self:pressedCallback()
 				else
-					self.colour = self.normalColour
+					self.colour = self.defaultColour
+					self.text.colour = self.textDefaultColour
 					self.alpha = 0
 				end
 			end
@@ -290,6 +302,7 @@ hud_class `file_list` (extends(GuiClass)
 	icons_size = vec2(80, 80);
     icons_spacing = 4;
 	selected = {};
+	colour = _current_theme.colours.file_explorer.background;
 	
     init = function (self)
 		self.needsParentResizedCallbacks = true;
@@ -462,7 +475,6 @@ hud_class `FileDialog` (extends(WindowClass)
 		end;
 		
 		self.file_edbox = gfx_hud_object_add(`window_editbox`, {
-			colour = vec(0.5, 0.5, 0.5);
 			parent = self;
 			value = "";
 			alignment = "LEFT";
@@ -480,7 +492,6 @@ hud_class `FileDialog` (extends(WindowClass)
 		self.file_edbox:setEditting(true)
 
 		self.file_explorer = gfx_hud_object_add(`file_list`, {
-			colour = vec(0.5, 0.5, 0.5);
 			parent = self;
 			position = vec2(0, 20);
 			size = vec2(self.size.x-20, self.size.y-120);
@@ -539,7 +550,6 @@ hud_class `FileDialog` (extends(WindowClass)
 		})
 
 		self.dir_edbox = gfx_hud_object_add(`window_editbox`, {
-			colour = vec(0.5, 0.5, 0.5);
 			parent = self;
 			value = self.currentdir;
 			alignment = "LEFT";

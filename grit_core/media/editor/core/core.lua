@@ -549,7 +549,7 @@ function GED:saveEditorInterface()
         size     = { editor_interface.map_editor_page.windows.settings.size.x, editor_interface.map_editor_page.windows.settings.size.y };
       };
       size              = { gfx_window_size().x, gfx_window_size().y };
-      theme             = "dark_orange";
+      theme             = editor_interface.map_editor_page.windows.settings.content.themes_panel.theme_selectbox.selected.name;
     }    
 
     local file = io.open("editor/config/interface.lua", "w")

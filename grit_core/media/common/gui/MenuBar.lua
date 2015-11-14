@@ -292,7 +292,7 @@ hud_class `MenuBarButton` {
 		if inside then
 			--self:showTip()
 			if self.parent.parent.selecting == true then
-				self.parent.parent.selected.menu.enabled=false
+				self.parent.parent.selected.menu.enabled = false
 				self.parent.parent.selected = self
 				self.parent.parent.selected.menu.enabled = true
 			end
@@ -329,6 +329,7 @@ hud_class `MenuBar` (extends(GuiClass)
 	spacing = 1;
 	size = vec(2, 26);
 	-- texture = `../icons/menubar.png`;
+	distanceToUnselect = 200;
 	
     init = function (self)
 		GuiClass.init(self)
@@ -350,7 +351,7 @@ hud_class `MenuBar` (extends(GuiClass)
 			pressedCallback = function (self)
 				if self.menu.enabled ~= true then
 					self.menu.enabled = true
-					self.menu.position = vec2(self.menu.size.x/2 - self.size.x/2, -self.size.y/2 - self.menu.size.y/2)
+					self.menu.position = vec2(self.menu.size.x/2 - self.size.x/2, -self.size.y/2 - self.menu.size.y/2-2)
 				else
 					self.menu.enabled = false
 				end
@@ -380,7 +381,7 @@ hud_class `MenuBar` (extends(GuiClass)
 		self.buttons[#self.buttons].position = vec2(self.lastButton + (self.buttons[#self.buttons].size.x/2), 0)
 		self.lastButton = self.lastButton + self.buttons[#self.buttons].size.x + self.spacing
 		obj.parent = self.buttons[#self.buttons]
-		obj.position = vec2(obj.size.x/2 - self.buttons[#self.buttons].size.x/2, - self.buttons[#self.buttons].size.y/2 - obj.size.y/2)
+		obj.position = vec2(obj.size.x/2 - self.buttons[#self.buttons].size.x/2, - self.buttons[#self.buttons].size.y/2 - obj.size.y/2-2)
 		obj.enabled = false
 	end;
 
@@ -402,10 +403,10 @@ hud_class `MenuBar` (extends(GuiClass)
 		self.inside = inside
 		if self.selecting and --#(mouse_pos_abs-self.selected.menu.derivedPosition) > 200
 		(
-			mouse_pos_abs.x < self.selected.menu.derivedPosition.x-self.selected.menu.size.x/2-200 or
-			mouse_pos_abs.x > self.selected.menu.derivedPosition.x+self.selected.menu.size.x/2+200 or
-			mouse_pos_abs.y < self.selected.menu.derivedPosition.y-self.selected.menu.size.y/2-200 or
-			mouse_pos_abs.y > self.selected.menu.derivedPosition.y+self.selected.menu.size.y/2+200
+			mouse_pos_abs.x < self.selected.menu.derivedPosition.x-self.selected.menu.size.x/2-self.distanceToUnselect or
+			mouse_pos_abs.x > self.selected.menu.derivedPosition.x+self.selected.menu.size.x/2+self.distanceToUnselect or
+			mouse_pos_abs.y < self.selected.menu.derivedPosition.y-self.selected.menu.size.y/2-self.distanceToUnselect or
+			mouse_pos_abs.y > self.selected.menu.derivedPosition.y+self.selected.menu.size.y/2+self.distanceToUnselect
 		)
 		then
 			self:unselect()

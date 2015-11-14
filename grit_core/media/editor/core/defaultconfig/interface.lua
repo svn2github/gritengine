@@ -16,7 +16,7 @@ editor_interface_cfg = {
   level_properties  =   {
     opened   = false;
     position = { 0, 0 };
-    size     = { 540, 400 };
+    size     = { 380, 225 };
   };
   material_editor   =   {
     opened   = false;
@@ -41,8 +41,8 @@ editor_interface_cfg = {
   settings          =   {
     opened   = false;
     position = { 0, 0 };
-    size     = { 540, 400 };
+    size     = { 350, 200 };
   };
   size              = { 1280, 720 };
-  theme             = "dark_orange";
+  theme             = "dark";
 }

@@ -111,7 +111,8 @@ hud_class `Notebook` {
 	pageButtonSize = vec(40, 20);
 	pageButtonColour = _current_theme.colours.notebook.btn_base;
 	pageSelectedButtonColour = _current_theme.colours.notebook.btn_selected;
-	contentAreaColour = _current_theme.colours.notebook.btn_selected;
+	contentAreaColour = _current_theme.colours.notebook.background;
+	menuBackgroundColour = _current_theme.colours.notebook.menu_background;
 	selected = 1;
 	
 	init = function (self)
@@ -123,7 +124,7 @@ hud_class `Notebook` {
 			parent = self,
 			position = vec2(0, -self.size.y+self.pageButtonSize.y),
 			size = vec(self.size.x, self.pageButtonSize.y),
-			colour = vec(0.4, 0.4, 0.4),
+			colour = self.menuBackgroundColour,
 			texture = `/editor/core/icons/gradients/invgrad.png`
 		})
 		self.content_area = create_rect({
