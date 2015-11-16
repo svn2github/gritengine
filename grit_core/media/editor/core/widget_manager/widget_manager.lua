@@ -57,14 +57,16 @@ function wm_callback()
 
 	-- widget dragging
 	if widget_manager.msinitpos ~= nil and widget_manager.widget.instance ~= nil then
-		local diff = (mouse_pos_abs - widget_manager.msinitpos)
+		local mouse_delta = (mouse_pos_abs - widget_manager.msinitpos)
 
-		local objtocameradist = #(main.camPos - widget_manager.widget.instance.pivot.localPosition)
-		local mk = main.camPos + objtocameradist * gfx_screen_to_world(main.camPos, main.camQuat, diff)
+		local pivot_pos = widget_manager.widget.instance.pivot.localPosition
+		
+		local objtocameradist = #(main.camPos - pivot_pos)
+		local mk = main.camPos + objtocameradist * gfx_screen_to_world(main.camPos, main.camQuat, mouse_delta)
 		
 		if widget_manager.widget.instance ~= nil and widget_manager.strdrag ~= nil then
 			if widget_manager.mode == 1 then
-				local pos = widget_manager.widget.instance.pivot.localPosition
+				local pos = pivot_pos
 				local posx = pos.x
 				local posy = pos.y
 				local posz = pos.z
@@ -91,20 +93,16 @@ function wm_callback()
 			elseif widget_manager.mode == 2 then
 				local function rotate(x,y,z)
 					if widget_manager.widget ~= nil and widget_manager.widget.instance ~= nil then
-						widget_manager.widget.instance.pivot.localOrientation = widget_manager.objInitialOrientation * quat(diff.x + diff.y, vector3(x,y,z))
+						-- widget_manager.widget.instance.pivot.localOrientation = widget_manager.objInitialOrientation * quat(mouse_delta.x + mouse_delta.y, vector3(x,y,z))
+						widget_manager.widget:rotate(quat(mouse_delta.x + mouse_delta.y, vector3(x,y,z)))
 					end
 				end
 
+				-- TODO: 1 or -1 depends of camera angle
 				if widget_manager.strdrag == "y" then
-					rotate(0,-1,0)
-				elseif widget_manager.strdrag == "y" then
 					rotate(0,1,0)
 				elseif widget_manager.strdrag == "z" then
 					rotate(0,0,1)
-				elseif widget_manager.strdrag == "z" then
-					rotate(0,0,-1)
-				elseif widget_manager.strdrag == "x" then
-					rotate(1,0,0)
 				elseif widget_manager.strdrag == "x" then
 					rotate(-1,0,0)
 				end				
@@ -125,12 +123,12 @@ function widget_manager:set_mode(mode)
 	self.mode = mode
 
 	if self.widget ~= nil and self.widget.instance ~= nil and self.widget.instance.dragged ~= nil and self.widget.instance.dragged[1].instance ~= nil then
+		self.widget.rotating = self.mode == 2
 		local lc, rt = self.widget.instance.dragged[1].instance.body.worldPosition, self.widget.instance.dragged[1].instance.body.worldOrientation
 		self.dragged = self.widget.instance.dragged
-		safe_destroy(self.widget)
-		if mode ~= 0 then
-			self:enablewidget(lc, rt)
-		end
+
+		self.widget:updateArrows()
+		
 		self.dragged = nil
 	end
 end
@@ -163,7 +161,8 @@ function widget_manager:startDragging(widget_component)
 		self.msinitpos = mouse_pos_abs - vec2(gh.x, gh.y)
 	elseif self.mode == 2 then
 		self.msinitpos = mouse_pos_abs
-		self.objInitialOrientation = self.widget.instance.pivot.localOrientation
+		---------------self.objInitialOrientation = self.widget.instance.pivot.localOrientation
+		self.widget:setInitialOrientations()
 	end
 	self.objinitpos = self.widget.instance.pivot.localPosition
 	input_filter_set_cursor_hidden(true)	
@@ -243,7 +242,10 @@ function widget_manager:addObject()
 		self:setEditorToolbar("Selected: Multiple")
 		b.owner.instance.gfx.wireframe = true
 
-		self:enablewidget(b.owner.instance.body.worldPosition, b.owner.instance.body.worldOrientation)
+		-- self:enablewidget(b.owner.instance.body.worldPosition, b.owner.instance.body.worldOrientation)
+		self.widget.instance.pivot.localPosition = b.owner.instance.body.worldPosition
+		self.widget.instance.pivot.localOrientation = b.owner.instance.body.worldOrientation
+		
 		if self.pivot_center == "active object" then
 			self:calcOffsets()
 		else

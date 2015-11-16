@@ -290,7 +290,7 @@ function GritMap:export(file_name)
 				file:write("object \""..class_name.."\" ("..self.objects[i].instance.gfx.localPosition..") {".."rot="..self.objects[i].instance.gfx.localOrientation..", name=\""..self.objects[i].name.."\" }")
 			-- sounds
 			elseif self.objects[i].instance.audio then
-				file:write("object \""..class_name.."\" ("..self.objects[i].pos..") {".."orientation="..self.objects[i].orientation..", name=\""..self.objects[i].name.."\" }")
+				file:write("object \""..class_name.."\" ("..self.objects[i].instance.audio.position..") {".."orientation="..self.objects[i].instance.audio.orientation..", name=\""..self.objects[i].name.."\" }")
 			end
 		end
 	end
