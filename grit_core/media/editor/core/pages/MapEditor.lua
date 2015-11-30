@@ -472,7 +472,6 @@ editor_interface.map_editor_page =
 		
 		self.mlefttoolbar:addSeparator()
 		
-
 		self.mlefttoolbar:addTool("Object Properties", map_editor_icons.object_properties, function(self) open_window(editor_interface.map_editor_page.windows.object_properties) end, "Map Properties")
 		--self.mlefttoolbar:addTool("Content Browser", map_editor_icons.content_browser, function(self) if editor_interface.map_editor_page.windows.content_browser == nil or editor_interface.map_editor_page.windows.content_browser.destroyed then editor_interface.map_editor_page.windows.content_browser = create_content_browser() end end, "Content Browser")
 		self.mlefttoolbar:addTool("Content Browser", map_editor_icons.content_browser, function(self) local wnd = editor_interface.map_editor_page.windows.content_browser if not wnd.destroyed then wnd.enabled = not wnd.enabled end end, "Content Browser")
@@ -506,125 +505,31 @@ editor_interface.map_editor_page =
 		
 		self.windows.content_browser = create_content_browser()
 		
-		
 		self.windows.event_editor = create_window('Event Editor', vec2(editor_interface_cfg.event_editor.position[1], editor_interface_cfg.event_editor.position[2]), true, vec2(editor_interface_cfg.event_editor.size[1], editor_interface_cfg.event_editor.size[2]), vec2(350, 200), vec2(800, 600))
 		self.windows.level_properties = create_window('Map Properties', vec2(editor_interface_cfg.level_properties.position[1], editor_interface_cfg.level_properties.position[2]), true, vec2(editor_interface_cfg.level_properties.size[1], editor_interface_cfg.level_properties.size[2]), vec2(380, 225), vec2(800, 600))
 		include`../windows/map_editor/map_properties.lua`
 		self.windows.material_editor = create_window('Material Editor', vec2(editor_interface_cfg.material_editor.position[1], editor_interface_cfg.material_editor.position[2]), true, vec2(editor_interface_cfg.material_editor.size[1], editor_interface_cfg.material_editor.size[2]), vec2(350, 200), vec2(800, 600))
 		self.windows.object_properties = create_window('Properties', vec2(editor_interface_cfg.object_properties.position[1], editor_interface_cfg.object_properties.position[2]), true, vec2(editor_interface_cfg.object_properties.size[1], editor_interface_cfg.object_properties.size[2]), vec2(350, 200), vec2(800, 600))
 		self.windows.outliner = create_window('Outliner', vec2(editor_interface_cfg.outliner.position[1], editor_interface_cfg.outliner.position[2]), true, vec2(editor_interface_cfg.outliner.size[1], editor_interface_cfg.outliner.size[2]), vec2(350, 200), vec2(800, 600))
-		self.windows.settings = create_window('Editor Settings', vec2(editor_interface_cfg.settings.position[1], editor_interface_cfg.settings.position[2]), true, vec2(editor_interface_cfg.settings.size[1], editor_interface_cfg.settings.size[2]), vec2(350, 200), vec2(800, 600))
+		-- self.windows.settings = create_window('Editor Settings', vec2(editor_interface_cfg.settings.position[1], editor_interface_cfg.settings.position[2]), true, vec2(editor_interface_cfg.settings.size[1], editor_interface_cfg.settings.size[2]), vec2(350, 200), vec2(800, 600))
 
-		self.windows.settings.content = create_notebook(self.windows.settings)
-
-		self.windows.settings.content.general_panel = create_panel()
+		include`../windows/map_editor/settings.lua`
 		
-		self.windows.settings.content.general_panel.openstartupmap_checkbox = create_checkbox({
-			caption = "Load startup map",
-			checked = editor_cfg.load_startup_map,
-			parent = self.windows.settings.content.general_panel,
-			align_left = true,
-			align_top = true,
-			offset = vec(10, -7),
-			onCheck = function(self)
-				editor_cfg.load_startup_map = true
-				editor_interface.map_editor_page.windows.settings.content.general_panel.openstartupmap_editbox:setGreyed(false)
-			end,
-			onUncheck = function(self)
-				editor_cfg.load_startup_map = false
-				editor_interface.map_editor_page.windows.settings.content.general_panel.openstartupmap_editbox:setGreyed(true)
-			end,
-		})
-		
-		self.windows.settings.content.general_panel.openstartupmap_editbox = gfx_hud_object_add(`/common/gui/window_editbox`, {
-			parent = self.windows.settings.content.general_panel;
-			value = editor_cfg.startup_map;
-			alignment = "LEFT";
-			enterCallback = function(self)
-				editor_cfg.startup_map = self.value
-			end;
-			size = vec(50, 20);
-			align_left = true;
-			align_top = true;
-			offset = vec(5, -30);
-			expand_x = true;
-			expand_offset = vec(-20, 0);
-		})
-		self.windows.settings.content.general_panel.openstartupmap_editbox:setGreyed(not editor_cfg.load_startup_map)
-
-		self.windows.settings.content.themes_panel = create_panel()
-		self.windows.settings.content.themes_panel.theme = create_guitext({
-			value = "Theme: ",
-			parent = self.windows.settings.content.themes_panel,
-			align_top = true;
-			align_left = true;
-			offset = vec(10, -5);		
-		})
-
-		local theme_items = {}
-		for k in pairs(editor_themes) do
-			theme_items[#theme_items+1] = k
+		if self.windows.settings ~= nil and not self.windows.settings.destroyed then
+			self.windows.settings:destroy()
 		end
 		
-		self.windows.settings.content.themes_panel.theme_selectbox = create_selectbox({
-			parent = self.windows.settings.content.themes_panel;
-			choices = theme_items;
-			selection = 0;
-			align_top = true;
-			align_left = true;
-			offset = vec(10, -25);
-			size = vec(200, 22);
+		self.windows.settings = gfx_hud_object_add(`/editor/core/windows/map_editor/Settings`, {
+			title = "Editor Settings";
+			parent = hud_center;
+			position = vec2(editor_interface_cfg.settings.position[1], editor_interface_cfg.settings.position[2]);
+			resizeable = true;
+			size = vec2(editor_interface_cfg.settings.size[1], editor_interface_cfg.settings.size[2]);
+			min_size = vec2(470, 235);
+			colour = _current_theme.colours.window.background;
+			alpha = 1;	
 		})
-		if editor_themes[editor_interface_cfg.theme] ~= nil then
-			self.windows.settings.content.themes_panel.theme_selectbox:select(editor_interface_cfg.theme)
-		else
-			self.windows.settings.content.themes_panel.theme_selectbox:select("dark")
-		end
-		
-		self.windows.settings.content.themes_panel.theme_selectbox.onSelect = function(self)
-			_current_theme = editor_themes[self.selected.name]
-			GED:saveEditorInterface()
-			notify("Restart Editor to take effect", vec(0, 1, 0))
-		end;
-		
-		self.windows.settings.content.system_panel = create_panel()
-
-		self.windows.settings.content.system_panel.game_mode = create_guitext({
-			value = "Default Game Mode: ",
-			parent = self.windows.settings.content.system_panel,
-			align_top = true;
-			align_left = true;
-			offset = vec(10, -5);		
-		})
-
-		local gamemodes_items = {}
-		for k in pairs(game_manager.gameModes) do
-			if k ~= "Map Editor" then
-				gamemodes_items[#gamemodes_items+1] = k
-			end
-		end
-		
-		self.windows.settings.content.system_panel.game_mode_selectbox = create_selectbox({
-			parent = self.windows.settings.content.system_panel;
-			choices = gamemodes_items;
-			selection = 0;
-			align_top = true;
-			align_left = true;
-			offset = vec(10, -25);
-			size = vec(200, 22);
-		})
-		
-		self.windows.settings.content.system_panel.game_mode_selectbox:select(editor_cfg.default_game_mode)
-		
-		self.windows.settings.content.system_panel.game_mode_selectbox.onSelect = function(self)
-			editor_cfg.default_game_mode = self.selected.name
-			GED:saveEditorConfig()
-			-- GED.playGameMode = self.selected.name
-		end;		
-		
-		self.windows.settings.content:addPage(self.windows.settings.content.general_panel, "General")
-		self.windows.settings.content:addPage(self.windows.settings.content.themes_panel, "Themes")
-		self.windows.settings.content:addPage(self.windows.settings.content.system_panel, "System")
+		_windows[#_windows+1] = self.windows.settings
 
 		self.windows.event_editor.enabled = editor_interface_cfg.event_editor.opened
 		self.windows.level_properties.enabled = editor_interface_cfg.level_properties.opened
