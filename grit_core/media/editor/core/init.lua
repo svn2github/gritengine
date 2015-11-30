@@ -25,6 +25,7 @@ include `widget_manager/init.lua`
 include `GritMap/init.lua`
 include `directory_list.lua`
 include `assets/init.lua`
+include `Pickle.lua`
 include `util.lua`
 include `core.lua`
 

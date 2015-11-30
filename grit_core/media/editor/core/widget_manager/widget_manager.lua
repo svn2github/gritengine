@@ -142,7 +142,7 @@ end
 function widget_manager:unselectAll()
 	if self.selectedObjs ~= nil then
 		for i = 0, #self.selectedObjs do
-			if self.selectedObjs[i] ~= nil and self.selectedObjs[i].instance ~= nil then
+			if self.selectedObjs[i] ~= nil and self.selectedObjs[i].instance ~= nil and self.selectedObjs[i].instance.gfx ~= nil and not self.selectedObjs[i].destroyed then
 				self.selectedObjs[i].instance.gfx.wireframe = false
 			end
 		end
@@ -151,7 +151,6 @@ function widget_manager:unselectAll()
 	self.setEditorToolbar("Selected: none")
 	safe_destroy(self.widget)
 end
-
 
 function widget_manager:startDragging(widget_component)
 	self.strdrag = widget_component
@@ -256,6 +255,44 @@ function widget_manager:addObject()
 			self.widget.instance.dragged = self.selectedObjs
 		end
 	end	
+end
+
+
+function widget_manager:selectAll()
+	local objs = object_all()
+	
+	for i = 1, #objs do
+		local b = objs[i]
+		if b ~= nil and b.instance ~= nil and not b.destroyed then
+			if self.selectedObjs == nil then self.selectedObjs = {} end
+			local isonthelist = false
+			for i = 1, #self.selectedObjs do
+				if self.selectedObjs[i] ~= nil and not self.selectedObjs[i].destroyed then
+					if self.selectedObjs[i] == b then
+						isonthelist = true
+					end
+				end
+			end
+			if not isonthelist then
+				self.selectedObjs[#self.selectedObjs+1] = b
+			end
+
+			b.instance.gfx.wireframe = true
+
+			self.widget.instance.pivot.localPosition = b.instance.body.worldPosition
+			self.widget.instance.pivot.localOrientation = b.instance.body.worldOrientation
+			
+			if self.pivot_center == "active object" then
+				self:calcOffsets()
+			else
+				self.widget.instance.pivot.localPosition = self:calcCentreOffsets()
+			end
+			
+			if self.widget ~= nil and self.widget.instance ~= nil then
+				self.widget.instance.dragged = self.selectedObjs
+			end
+		end	
+	end
 end
 
 function widget_manager:select(mode, multi)
