@@ -137,6 +137,8 @@ function directed_ray(p, q)
 end
 
 function pick_pos(p, q, bias)
+    p = p or main.camPos
+    q = q or main.camQuat
     local dist,_,normal = directed_ray(p, q)
     if dist == nil then return nil end
     local r = p + q * (dist*V_FORWARDS)

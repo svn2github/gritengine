@@ -322,4 +322,13 @@ safe_include `/user_script.lua`
 
 include `welcome_msg.lua`
 
+function debug_mode()
+    game_manager:enter('Map Editor')
+    menu.enabled = false
+    GED:toggleDebugMode()
+    gfx_option('RENDER_SKY', true)
+    menu_binds.modal = false
+    ticker.text.enabled = true
+end
+
 game_manager:exit()

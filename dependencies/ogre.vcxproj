@@ -50,6 +50,9 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Normal|Win32'">
     <BuildLog />
     <ClCompile />
+    <Lib>
+      <AdditionalOptions>/expectedoutputsize:6000000000 %(AdditionalOptions)</AdditionalOptions>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="grit_ogre\OgreMain\src\OgreDualQuaternion.cpp" />
