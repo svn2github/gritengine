@@ -40,7 +40,7 @@ DraggableClass =  {
     buttonCallback = function (self, ev)
         if ev == "+left" and self.inside then
 			self.dragging = true
-			sself.draggingPos = mouse_pos_abs - vec2(self.position.x, self.position.y)
+			self.draggingPos = mouse_pos_abs - vec2(self.position.x, self.position.y)
 		elseif ev == "-left" then
 			self.dragging = false
 			self.draggingPos = vec2(0, 0)
