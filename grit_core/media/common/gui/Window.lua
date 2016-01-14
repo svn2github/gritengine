@@ -142,7 +142,7 @@ WindowClass = {
 				clickColour = _current_theme.colours.window.closebtn_pressed;
 				captionBaseColour = vec(1, 1, 1);
 				parent = self.draggable_area;
-				align_right = true;
+				align = vec(1, 0);
 				offset = vec(-2, 0);
 		})
 

@@ -150,7 +150,7 @@ hud_class `window_page_button` {
 		if self.closebtn then
 			self.close_btn = gfx_hud_object_add(`roundbutton`, {
 				parent = self,
-				align_right = true,
+				align = vec(1, 0),
 				position=vec(0, -1),
 				offset = vec(-10, -2),
 				pressedCallback = function(self) self.parent.parent:destroyTab(self.parent.ID) end

@@ -7,22 +7,11 @@
 --  http://www.opensource.org/licenses/mit-license.php
 ------------------------------------------------------------------------------
 
--- TODO (new align): replace all editor source code from "align_left, align_top" idea to ex. align(-1, 1)
--- After that remove all this backward compatibility code
-
 GuiClass = {
 	alpha = 0;
 	colour = vec(1, 1, 1);
 
 	align = vec(0, 0); -- CENTER = vec(0, 0), RIGHT = vec(1, 0), LEFT = vec(-1, 0)...
-	
-	-- REMOVE THIS (new align):
-		align_center = false;
-		align_left = false;
-		align_right = false;
-		align_top = false;
-		align_bottom = false;
-	-- ||
 	
 	expand = false;
 	expand_x = false;
@@ -34,15 +23,7 @@ GuiClass = {
 	init = function (self)
 		self.needsParentResizedCallbacks = self.expand or
 		self.expand_x or
-		self.expand_y or
-		
-		-- REMOVE THIS (new align):
-			self.align_center or
-			self.align_left or
-			self.align_right or
-			self.align_top or
-			self.align_bottom
-		-- ||
+		self.expand_y or self.align.x ~= 0 or self.align.y ~= 0
 	end;
 	
 	destroy = function (self)
@@ -52,26 +33,7 @@ GuiClass = {
 	end;
 	
 	alignUpdate = function(self, psize)
-		-- REMOVE THIS (new align):
-			if not self.align_center then
-			local v1, v2 = 0, 0
-			if self.align_left then v1 = -1
-			elseif self.align_right then v1 = 1 end
-			if self.align_top then v2 = 1
-			elseif self.align_bottom then v2 = -1 end			
-			self.align = vec(v1, v2)
-		-- ||
-			
-			
-			
 		self.position = (psize/2 - self.size/2) * self.align + self.offset
-			
-			
-			
-			
-		-- REMOVE THIS (new align):	
-			end
-		-- ||
 	end;
 	
 	updateExpand = function(self, psize)

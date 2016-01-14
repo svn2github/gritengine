@@ -438,8 +438,7 @@ hud_class `FileDialog` (extends(WindowClass)
 			end;
 			cornered = true;
 			texture = _gui_textures.button;
-			align_right = true;
-			align_bottom = true;
+			align = vec(1, -1);
 			offset = vec(-10, 45);
 			padding = vec(30, 4);
 			size = self.btn_size;
@@ -452,8 +451,7 @@ hud_class `FileDialog` (extends(WindowClass)
 			end;
 			cornered = true;
 			texture = _gui_textures.button;
-			align_right = true;
-			align_bottom = true;
+			align = vec(1, -1);
 			offset = vec(-10, 15);
 			padding = vec(30, 4);
 			size = self.btn_size;
@@ -462,8 +460,7 @@ hud_class `FileDialog` (extends(WindowClass)
 			parent = self;
 			choices = self.choices;
 			selection = 0;
-			align_bottom = true;
-			align_left = true;
+			align = vec(-1, -1);
 			offset = vec(5, 20);
 			expand_x = true;
 			expand_offset = vec(-130, 0);
@@ -482,8 +479,7 @@ hud_class `FileDialog` (extends(WindowClass)
 				self.parent:handleCallback()
 			end;
 			size = vec(50, 20);
-			align_left = true;
-			align_bottom = true;
+			align = vec(-1, -1);
 			offset = vec(5, 45);
 			expand_x = true;
 			expand_offset = vec(-130, 0);
@@ -517,8 +513,7 @@ hud_class `FileDialog` (extends(WindowClass)
 			clickColour = V_ID*0.7;
 			size = vec2(25, 25);
 			offset = vec(-65, -5);
-			align_right = true;
-			align_top = true;
+			align = vec(1, 1);
 		})
 
 		self.newfolder_btn = create_imagebutton({
@@ -531,8 +526,7 @@ hud_class `FileDialog` (extends(WindowClass)
 			clickColour = V_ID*0.7;
 			size = vec2(25, 25);
 			offset = vec(-35, -5);
-			align_right = true;
-			align_top = true;	
+			align = vec(1, 1);
 		})
 
 		self.iconsize_btn = create_imagebutton({
@@ -545,8 +539,7 @@ hud_class `FileDialog` (extends(WindowClass)
 			clickColour = V_ID*0.7;
 			size = vec2(25, 25);
 			offset = vec(-5, -5);
-			align_right = true;
-			align_top = true;
+			align = vec(1, 1);
 		})
 
 		self.dir_edbox = gfx_hud_object_add(`window_editbox`, {
@@ -555,8 +548,7 @@ hud_class `FileDialog` (extends(WindowClass)
 			alignment = "LEFT";
 			size = vec(50, 20);
 			offset = vec(5, -8);
-			align_left = true;
-			align_top = true;
+			align = vec(-1, 1);
 			expand_x = true;
 			expand_offset = vec(-100, 0);
 		})

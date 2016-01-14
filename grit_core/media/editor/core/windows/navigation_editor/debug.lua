@@ -13,7 +13,7 @@ hud_class `Debug` (extends(WindowClass)
 			parent = self.toolsel,
 			onCheck = function(self) navigation_debug_option("enabled", true) end,
 			onUncheck= function(self) navigation_debug_option("enabled", false) end,
-			align_left = true,
+			align = vec(-1, 0),
 			offset =  vec(10, 0),
 			checked = navigation_debug_option("enabled")
 		})
@@ -23,7 +23,7 @@ hud_class `Debug` (extends(WindowClass)
 			parent = self.toolsel,
 			onCheck = function(self) navigation_debug_option("navmesh", true) end,
 			onUncheck= function(self) navigation_debug_option("navmesh", false) end,
-			align_left = true,
+			align = vec(-1, 0),
 			offset =  vec(10, 0),
 			checked = navigation_debug_option("navmesh")
 		})
@@ -33,7 +33,7 @@ hud_class `Debug` (extends(WindowClass)
 			parent = self.toolsel,
 			onCheck = function(self) navigation_debug_option("navmesh_use_tile_colours", true) end,
 			onUncheck= function(self) navigation_debug_option("navmesh_use_tile_colours", false) end,
-			align_left = true,
+			align = vec(-1, 0),
 			offset =  vec(10, 0),
 			checked = navigation_debug_option("navmesh_use_tile_colours")
 		})
@@ -43,7 +43,7 @@ hud_class `Debug` (extends(WindowClass)
 			parent = self.toolsel,
 			onCheck = function(self) navigation_debug_option("agent", true) end,
 			onUncheck= function(self) navigation_debug_option("agent", false) end,
-			align_left = true,
+			align = vec(-1, 0),
 			offset =  vec(10, 0),
 			checked = navigation_debug_option("agent")
 		})
@@ -53,7 +53,7 @@ hud_class `Debug` (extends(WindowClass)
 			parent = self.toolsel,
 			onCheck = function(self) navigation_debug_option("agent_arrows", true) end,
 			onUncheck= function(self) navigation_debug_option("agent_arrows", false) end,
-			align_left = true,
+			align = vec(-1, 0),
 			offset =  vec(10, 0),
 			checked = navigation_debug_option("agent_arrows")
 		})
@@ -63,7 +63,7 @@ hud_class `Debug` (extends(WindowClass)
 			parent = self.toolsel,
 			onCheck = function(self) navigation_debug_option("bounds", true) end,
 			onUncheck= function(self) navigation_debug_option("bounds", false) end,
-			align_left = true,
+			align = vec(-1, 0),
 			offset =  vec(10, 0),
 			checked = navigation_debug_option("bounds")
 		})
@@ -73,7 +73,7 @@ hud_class `Debug` (extends(WindowClass)
 			parent = self.toolsel,
 			onCheck = function(self) navigation_debug_option("tiling_grid", true) end,
 			onUncheck= function(self) navigation_debug_option("tiling_grid", false) end,
-			align_left = true,
+			align = vec(-1, 0),
 			offset =  vec(10, 0),
 			checked = navigation_debug_option("tiling_grid")
 		})
@@ -83,7 +83,7 @@ hud_class `Debug` (extends(WindowClass)
 			parent = self.toolsel,
 			onCheck = function(self) navigation_debug_option("obstacles", true) end,
 			onUncheck= function(self) navigation_debug_option("obstacles", false) end,
-			align_left = true,
+			align = vec(-1, 0),
 			offset =  vec(10, 0),
 			checked = navigation_debug_option("obstacles")
 		})
@@ -93,7 +93,7 @@ hud_class `Debug` (extends(WindowClass)
 			parent = self.toolsel,
 			onCheck = function(self) navigation_debug_option("offmesh_connections", true) end,
 			onUncheck= function(self) navigation_debug_option("offmesh_connections", false) end,
-			align_left = true,
+			align = vec(-1, 0),
 			offset =  vec(10, 0),
 			checked = navigation_debug_option("offmesh_connections")
 		})
@@ -103,7 +103,7 @@ hud_class `Debug` (extends(WindowClass)
 			parent = self.toolsel,
 			onCheck = function(self) navigation_debug_option("convex_volumes", true) end,
 			onUncheck= function(self) navigation_debug_option("convex_volumes", false) end,
-			align_left = true,
+			align = vec(-1, 0),
 			offset =  vec(10, 0),
 			checked = navigation_debug_option("convex_volumes")
 		})

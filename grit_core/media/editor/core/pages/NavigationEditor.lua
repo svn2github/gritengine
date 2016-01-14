@@ -175,12 +175,12 @@ editor_interface.navigation_editor =
 		self.propertiesToolpanel.titles[3].text.shadow = vec(1, -1)
 		self.propertiesToolpanel.bxsz:addChild(self.propertiesToolpanel.titles[3])
 
-		self.propertiesToolpanel.radiobuttons[0] = create_radiobutton({ caption = "Watershed", textColour = V_ID, parent = self.propertiesToolpanel.bxsz, onSelect = function(self) nav_builder_params.partitionType = SAMPLE_PARTITION_WATERSHED end, align_left = true, offset =  vec(10, 0) })
+		self.propertiesToolpanel.radiobuttons[0] = create_radiobutton({ caption = "Watershed", textColour = V_ID, parent = self.propertiesToolpanel.bxsz, onSelect = function(self) nav_builder_params.partitionType = SAMPLE_PARTITION_WATERSHED end, align = vec(-1, 0), offset =  vec(10, 0) })
 		self.propertiesToolpanel.bxsz:addChild(self.propertiesToolpanel.radiobuttons[0])
 		self.propertiesToolpanel.radiobuttons[0]:select()
-		self.propertiesToolpanel.radiobuttons[1] = create_radiobutton({ caption = "Monotone", textColour = V_ID, parent = self.propertiesToolpanel.bxsz, onSelect = function(self) nav_builder_params.partitionType = SAMPLE_PARTITION_MONOTONE end, align_left = true, offset =  vec(10, 0) })
+		self.propertiesToolpanel.radiobuttons[1] = create_radiobutton({ caption = "Monotone", textColour = V_ID, parent = self.propertiesToolpanel.bxsz, onSelect = function(self) nav_builder_params.partitionType = SAMPLE_PARTITION_MONOTONE end, align = vec(-1, 0), offset =  vec(10, 0) })
 		self.propertiesToolpanel.bxsz:addChild(self.propertiesToolpanel.radiobuttons[1])
-		self.propertiesToolpanel.radiobuttons[2] = create_radiobutton({ caption = "Layers", textColour = V_ID, parent = self.propertiesToolpanel.bxsz, onSelect = function(self) nav_builder_params.partitionType = SAMPLE_PARTITION_LAYERS end, align_left = true, offset =  vec(10, 0) })
+		self.propertiesToolpanel.radiobuttons[2] = create_radiobutton({ caption = "Layers", textColour = V_ID, parent = self.propertiesToolpanel.bxsz, onSelect = function(self) nav_builder_params.partitionType = SAMPLE_PARTITION_LAYERS end, align = vec(-1, 0), offset =  vec(10, 0) })
 		self.propertiesToolpanel.bxsz:addChild(self.propertiesToolpanel.radiobuttons[2])
 
 		-- Poligonization:
@@ -218,7 +218,7 @@ editor_interface.navigation_editor =
 			textColour = V_ID;
 			checked = false,
 			parent = self.propertiesToolpanel.bxsz,
-			align_left = true,
+			align = vec(-1, 0),
 			offset = vec(10, 0),
 			onCheck = function(self) nav_builder_params.keepInterResults = true end,
 			onUncheck = function(self) nav_builder_params.keepInterResults = false end,
@@ -253,7 +253,7 @@ editor_interface.navigation_editor =
 			caption = "Save",
 			parent = self.propertiesToolpanel.bxsz,
 			offset = vec(10, 0),
-			align_left = true,
+			align = vec(-1, 0),
 			size = vec(150, 20),
 			pressedCallback = function(self)
 				save_navmesh_dialog()
@@ -265,7 +265,7 @@ editor_interface.navigation_editor =
 			caption = "Load",
 			parent = self.propertiesToolpanel.bxsz,
 			offset = vec(10, 0),
-			align_left = true,
+			align = vec(-1, 0),
 			size = vec(150, 20),
 			pressedCallback = function(self)
 				open_navmesh_dialog()
@@ -315,7 +315,7 @@ editor_interface.navigation_editor =
 			size = vec(20, 26);
 			offset = vec(0, -29);
 			expand_x = true;
-			align_top = true;
+			align = vec(0, 1);
 			enabled = false;
 		})
 		self.menubar:init()
@@ -469,7 +469,7 @@ editor_interface.navigation_editor =
 		self.toolbar = create_toolbar({
 			parent = self.menubar;
 			zOrder = 5;
-			align_left = true;
+			align = vec(-1, 0);
 			offset = vec(self.menubar.lastButton+self.menubar.buttons[#self.menubar.buttons].size.x/2+20, 0);
 			alpha = 0;
 		})

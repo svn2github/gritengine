@@ -15,8 +15,7 @@ hud_class `Settings` (extends(WindowClass)
 			caption = "Load startup map",
 			checked = editor_cfg.load_startup_map,
 			parent = self.content.general_panel,
-			align_left = true,
-			align_top = true,
+			align = vec(-1, 1);
 			offset = vec(10, -7),
 			onCheck = function(self)
 				editor_cfg.load_startup_map = true
@@ -36,8 +35,7 @@ hud_class `Settings` (extends(WindowClass)
 				editor_cfg.startup_map = self.value
 			end;
 			size = vec(50, 20);
-			align_left = true;
-			align_top = true;
+			align = vec(-1, 1);
 			offset = vec(5, -30);
 			expand_x = true;
 			expand_offset = vec(-20, 0);
@@ -48,8 +46,7 @@ hud_class `Settings` (extends(WindowClass)
 		self.content.themes_panel.theme = create_guitext({
 			value = "Theme: ",
 			parent = self.content.themes_panel,
-			align_top = true;
-			align_left = true;
+			align = vec(-1, 1);
 			offset = vec(10, -5);		
 		})
 
@@ -62,8 +59,7 @@ hud_class `Settings` (extends(WindowClass)
 			parent = self.content.themes_panel;
 			choices = theme_items;
 			selection = 0;
-			align_top = true;
-			align_left = true;
+			align = vec(-1, 1);
 			offset = vec(10, -25);
 			size = vec(200, 22);
 		})
@@ -84,8 +80,7 @@ hud_class `Settings` (extends(WindowClass)
 		self.content.system_panel.game_mode = create_guitext({
 			value = "Default Game Mode: ",
 			parent = self.content.system_panel,
-			align_top = true;
-			align_left = true;
+			align = vec(-1, 1);
 			offset = vec(10, -5);		
 		})
 
@@ -100,8 +95,7 @@ hud_class `Settings` (extends(WindowClass)
 			parent = self.content.system_panel;
 			choices = gamemodes_items;
 			selection = 0;
-			align_top = true;
-			align_left = true;
+			align = vec(-1, 1);
 			offset = vec(10, -25);
 			size = vec(200, 22);
 		})

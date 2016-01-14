@@ -102,7 +102,7 @@ editor_interface.map_editor_page =
 			size = vec(20, 26);
 			offset = vec(0, -29);
 			expand_x = true;
-			align_top = true;
+			align = vec(0, 1);
 			enabled = false;
 		})
 		self.menubar:init()
@@ -364,7 +364,7 @@ editor_interface.map_editor_page =
 		self.toolbar = create_toolbar({
 			parent = self.menubar;
 			zOrder = 5;
-			align_left = true;
+			align = vec(-1, 0);
 			offset = vec(self.menubar.lastButton+self.menubar.buttons[#self.menubar.buttons].size.x/2+20, 0);
 			alpha = 0;
 		})
@@ -436,8 +436,7 @@ editor_interface.map_editor_page =
 			offset = vec(0, 20);
 			expand_offset = vec(0, -75);
 			expand_y = true;
-			align_bottom = true;
-			align_left = true;
+			align = vec(-1, -1);
 			orient = "v";
 		})
 		

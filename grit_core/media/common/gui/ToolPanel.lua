@@ -11,9 +11,8 @@
 
 hud_class `ToolPanel` (extends(GuiClass)
 {
-	align = "right";
 	resizing = false;
-	align_bottom = true;
+	align = vec(1, -1);
 	alpha = 0.7;
 	colour = V_ZERO;
 	
@@ -22,12 +21,6 @@ hud_class `ToolPanel` (extends(GuiClass)
 	init = function (self)
 		GuiClass.init(self)
 		self.needsInputCallbacks = true
-		
-		if self.align == "right" then
-			self.align_right = true
-		else
-			self.align_left = true
-		end
 		
 		self.icon = create_rect({
 			parent = self,

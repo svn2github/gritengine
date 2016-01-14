@@ -300,8 +300,7 @@ hud_class `ContentBrowser` (extends(WindowClass)
 			alpha = 1;
 			parent = self;
 			size = vec(180, self.size.y-120);
-			align_left = true;
-			align_top = true;
+			align = vec(-1, 1);
 			offset = vec(5, -35);
 			expand_y = true;
 			expand_offset = vec(0, -35-10);
@@ -368,8 +367,7 @@ hud_class `ContentBrowser` (extends(WindowClass)
 			clickColour = V_ID*0.7;
 			size = vec2(25, 25);
 			offset = vec(-5, -5);
-			align_right = true;
-			align_top = true;			
+			align = vec(1, 1)		
 		})
 
 		self.dir_edbox = gfx_hud_object_add(`/common/gui/window_editbox`, {
@@ -378,8 +376,7 @@ hud_class `ContentBrowser` (extends(WindowClass)
 			alignment = "LEFT";
 			size = vec(50, 20);
 			offset = vec(5, -8);
-			align_left = true;
-			align_top = true;
+			align = vec(-1, 1);
 			expand_x = true;
 			expand_offset = vec(-45, 0);
 		})
