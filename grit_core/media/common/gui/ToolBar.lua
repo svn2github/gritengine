@@ -25,6 +25,7 @@ hud_class `ToolBar` (extends(GuiClass)
 		self.positioner = create_gui_object({
 			parent = self,
 			align = vec(self.orient == "h" and -1 or 0, self.orient == "v" and 1 or 0),
+			alpha = 0,
 			--offset = vec(self.orient == "h" and 16 or 0, self.orient == "v" and -16 or 0)
 		})
 		
