@@ -278,7 +278,7 @@ function create_floating(offset, mclass)
 			parent = hud_center,
 			draggingPos = offset,
 			obclass = mclass,
-			position = vec2((select(3, get_mouse_events()))-gfx_window_size().x/2-offset.x, (select(4, get_mouse_events())) - gfx_window_size().y/2 -offset.y)
+			position = vec2(mouse_pos_abs.x-offset.x, mouse_pos_abs.y -offset.y)
 		})
 	end
 end

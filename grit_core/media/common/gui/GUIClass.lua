@@ -7,11 +7,21 @@
 --  http://www.opensource.org/licenses/mit-license.php
 ------------------------------------------------------------------------------
 
+CENTER = vec(0, 0)
+LEFT = vec(-1, 0)
+RIGHT = vec(1, 0)
+TOP = vec(0, 1)
+BOTTOM = vec(0, -1)
+TOPLEFT = vec(-1, 1)
+TOPRIGHT = vec(1, 1)
+BOTTOMLEFT = vec(-1, -1)
+BOTTOMRIGHT = vec(1, -1)
+
 GuiClass = {
 	alpha = 0;
 	colour = vec(1, 1, 1);
 
-	align = vec(0, 0); -- CENTER = vec(0, 0), RIGHT = vec(1, 0), LEFT = vec(-1, 0)...
+	align = vec(0, 0);
 	
 	expand = false;
 	expand_x = false;
@@ -62,6 +72,8 @@ GuiClass = {
 
 hud_class `GuiClass` (extends(GuiClass)
 {
+	alpha = 1;
+	
 	init = function (self)
 		GuiClass.init(self)
 	end;

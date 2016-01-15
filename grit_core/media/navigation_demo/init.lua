@@ -127,7 +127,7 @@ function navigation_demo:playerRespawn()
 					current_map.aicharacters[i]:restartAgent()
 				end
 			end
-			crowd_move(navigation_random_navmesh_point())
+			future_event(0.1, function()crowd_move(navigation_random_navmesh_point()) end)
 		end
 	end
 

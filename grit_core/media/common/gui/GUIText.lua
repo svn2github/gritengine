@@ -29,7 +29,8 @@ hud_class `GuiText` (extends(GuiClass)
 	
 	setValue = function (self, value)
 		self.text.text = tostring(value)
-		self.size = self.text.size
+		--self.text.position = vec(self.text.size.x/2+2, 0)
+		self.size = self.text.size+4
 	end;	
 
 	parentResizedCallback = function(self, psize)

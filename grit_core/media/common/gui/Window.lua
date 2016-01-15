@@ -86,7 +86,8 @@ hud_class `resizer` {
     buttonCallback = function (self, ev)
         if ev == "+left" and self.inside then
 			self.dragging = true
-			self.parent.parent.parent.draggingPos =  self.parent.parent.parent.position + (self.parent.parent.parent.size/2)
+			self.parent.parent.parent.draggingPos =  mouse_pos_abs
+			print(self.parent.parent.parent.draggingPos)
 			self.parent.parent.parent.originalSize = self.parent.parent.parent.size
 			self.parent.parent.parent.originalPos = self.parent.parent.parent.position
 		elseif ev == "-left" then
@@ -242,16 +243,16 @@ WindowClass = {
 	
     mouseMoveCallback = function (self, local_pos, screen_pos, inside)
 		self.inside = inside
-		if self.right_resizer.dragging == true then
-			local wsize = vec2(self.originalSize.x - (self.draggingPos.x + (gfx_window_size().x/2) - screen_pos.x) + math.abs((self.right_resizer.drag_offset.x + (self.right_resizer.size.x/2)) -self.right_resizer.size.x),  self.draggingPos.y + (gfx_window_size().y/2) - screen_pos.y + (self.right_resizer.drag_offset.y + (self.right_resizer.size.y/2)))
+		if self.right_resizer.dragging then
+			local wsize = vec2(self.originalSize.x + (-self.draggingPos.x + mouse_pos_abs.x), self.originalSize.y - (-self.draggingPos.y + mouse_pos_abs.y))
+
+			self.size = vec2(math.clamp(wsize.x, self.min_size.x, self.max_size.x), math.clamp(wsize.y, self.min_size.y, self.max_size.y))
+			self.position = vec2(self.originalPos.x - (self.originalSize.x - self.size.x)/2, (self.originalPos.y + (self.originalSize.y - self.size.y)/2))	
+		elseif self.left_resizer.dragging then
+			local wsize = vec2(self.originalSize.x - (-self.draggingPos.x + mouse_pos_abs.x), self.originalSize.y - (-self.draggingPos.y + mouse_pos_abs.y))
 			
 			self.size = vec2(math.clamp(wsize.x, self.min_size.x, self.max_size.x), math.clamp(wsize.y, self.min_size.y, self.max_size.y))
-			self.position=vec2(self.originalPos.x - (self.originalSize.x - self.size.x)/2, (self.originalPos.y + (self.originalSize.y - self.size.y)/2))	
-		elseif self.left_resizer.dragging == true then
-			local wsize = vec2(self.draggingPos.x + (gfx_window_size().x/2) - screen_pos.x + (self.left_resizer.drag_offset.x + (self.left_resizer.size.x/2)),  self.draggingPos.y + (gfx_window_size().y/2) - screen_pos.y + math.abs(self.left_resizer.drag_offset.y + (self.left_resizer.size.y/2)) )	
-			
-			self.size = vec2(math.clamp(wsize.x, self.min_size.x, self.max_size.x), math.clamp(wsize.y, self.min_size.y, self.max_size.y))
-			self.position=vec2(self.originalPos.x + (self.originalSize.x - self.size.x)/2, (self.originalPos.y + (self.originalSize.y - self.size.y)/2))	
+			self.position = vec2(self.originalPos.x + (self.originalSize.x - self.size.x)/2, (self.originalPos.y + (self.originalSize.y - self.size.y)/2))	
 		end
 	end;
 
@@ -304,10 +305,10 @@ end
 
 function is_inside_window(window)
     if window.enabled then
-        if mouse_pos_abs.x < gfx_window_size().x/2 + window.position.x + window.size.x/2 and
-        mouse_pos_abs.x > gfx_window_size().x/2 + window.position.x - window.size.x/2 and
-        mouse_pos_abs.y < gfx_window_size().y/2 + window.position.y + window.size.y/2 + window.draggable_area.size.y and
-        mouse_pos_abs.y > gfx_window_size().y/2 + window.position.y - window.size.y/2 then
+        if mouse_pos_abs.x < window.derivedPosition.x + window.size.x/2 and
+        mouse_pos_abs.x > window.derivedPosition.x - window.size.x/2 and
+        mouse_pos_abs.y < window.derivedPosition.y + window.size.y/2 + window.draggable_area.size.y and
+        mouse_pos_abs.y > window.derivedPosition.y - window.size.y/2 then
             return true
         end
     end
