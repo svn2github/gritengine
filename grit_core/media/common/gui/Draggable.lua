@@ -16,7 +16,7 @@ DraggableClass =  {
 	draggingPos = vec2(0, 0);
 
 	init = function (self)
-		self.needsFrameCallbacks = true
+		self.needsFrameCallbacks = false
 		self.needsInputCallbacks = true
 	end;
 	destroy = function (self)
@@ -33,14 +33,14 @@ DraggableClass =  {
         self.inside = inside
 		
 		if self.dragging == true then			
-			self.position = vec2(mouse_pos_abs.x - self.draggingPos.x, mouse_pos_abs.y - self.draggingPos.y)
+			self.position = mouse_pos_abs.y - self.draggingPos
 		end
     end;
 	
     buttonCallback = function (self, ev)
         if ev == "+left" and self.inside then
 			self.dragging = true
-			self.draggingPos = mouse_pos_abs - vec2(self.position.x, self.position.y)
+			self.draggingPos = mouse_pos_abs - self.position
 		elseif ev == "-left" then
 			self.dragging = false
 			self.draggingPos = vec2(0, 0)
