@@ -22,7 +22,7 @@ end
 -- Value is always text.  Can set .number to restrict input to numbers, but 
 -- empty string is still a valid state. If using .number, use tonumber(blah.value) or 0
 
-hud_class `EditBox` {
+EditBox = {
 
     textColour = vec(1, 1, 1);
     borderColour = 0.4 * vec(1, 1, 1);
@@ -118,6 +118,7 @@ hud_class `EditBox` {
         elseif hud_focus == self then
             if ev == "+Return" then
                 self:setEditting(false)
+				self:enterCallback()
             elseif ev == "+BackSpace" or ev == "=BackSpace" then
                 self.before = self.before:sub(1, -2)
                 self:updateText()
@@ -179,6 +180,10 @@ hud_class `EditBox` {
     onChange = function (self)
         -- By default, do nothing, since often people will only care when enter is pressed.
     end;
+
+	enterCallback = function(self)
+
+	end;
     
     setValue = function (self, value)
         self.before = value
@@ -188,3 +193,13 @@ hud_class `EditBox` {
 
 }
 
+hud_class `EditBox` (extends(EditBox)
+{
+	init = function (self)
+		EditBox.init(self)
+	end;
+	
+	destroy = function (self)
+		EditBox.destroy(self)
+	end;
+})

@@ -21,6 +21,30 @@ function table_concat(tab1, tab2)
    return tab1
 end
 
+function table_concat_copy(tab1, tab2)
+	if tab1 == nil and tab2 ~= nil then return tab2 end
+	if tab2 == nil and tab1 ~= nil then return tab1 end
+
+	local ntb = {}
+	
+	for k, v in pairs(tab1) do
+		if type(k) == "number" then
+			ntb[#ntb+1] = v
+		else
+			ntb[k] = v
+		end
+	end
+	for k, v in pairs(tab2) do
+		if type(k) == "number" then
+			ntb[#ntb+1] = v
+		else
+			ntb[k] = v
+		end
+	end	
+	
+   return ntb
+end
+
 function get_extension(str)
    return str:match("[^.]+$")
 end

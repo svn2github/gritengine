@@ -7,192 +7,35 @@
 --  http://www.opensource.org/licenses/mit-license.php
 ------------------------------------------------------------------------------
 
--- TODO: after implementing the scroll area, update the file list
+include`/editor/core/util.lua`
 
--- TODO: move this class to another place, or update /common/hud/editbox
-hud_class `window_editbox` (extends(GuiClass)
+hud_class `window_editbox` (extends(table_concat_copy(GuiClass, EditBox))
 {
-    textColour = _current_theme.colours.edit_box.text;
-    borderColour = _current_theme.colours.edit_box.border;
-    padding = 4;
-    colour = _current_theme.colours.edit_box.background;
-    texture = _current_theme.colours.edit_box.texture;
-    cornered = true;
-    font = _current_theme.fonts.default;
-    value = "Text";
-    number = false;
-    alignment = "CENTER";
 	alpha = 1;
-	
-    init = function (self)
+	init = function (self)
 		GuiClass.init(self)
-		self.needsParentResizedCallbacks = true;  
-        self.needsInputCallbacks = true
-        self.text = gfx_hud_text_add(self.font)
-        self.text.parent = self
-		self.text.colour = self.textColour
-
-        self.border = create_rect({
-            texture = `/common/hud/CornerTextures/Border02.png`;
-            colour = self.borderColour;
-            cornered = true;
-            parent = self;
-        })
-
-        self.caret = create_rect({
-            texture = `/common/hud/CornerTextures/Caret.png`;
-            colour = self.textColour;
-            cornered = true;
-            parent = self;
-        })
-
-        self.inside = false
-        self:setGreyed(not not self.greyed)
-        self.caret.enabled = false
-
-        self:setValue(self.value)
-    end;
-
-    updateText = function (self)
-        self.text.text = self.before .. self.after
-        self:updateChildrenSize()
-        self.value = self.before .. self.after
-    end;
-    
-    setGreyed = function (self, v, no_callback)
-        if v then
-            self.text.colour = vec(0.5, 0.5, 0.5)
-            self:setEditting(false, no_callback)
-        else
-            self.text.colour = self.textColour
-        end
-        self.greyed = v
-    end;
-    
-    destroy = function (self)
-    end;
-
-    mouseMoveCallback = function (self, local_pos, screen_pos, inside)
-        self.inside = inside and local_pos
-    end;
-
-    onEditting = function (self, editting)
-    end;
-    
-    setEditting = function (self, editting, no_callback)
-        local currently_editting = hud_focus == self
-        if currently_editting == editting then return end
-        if self.greyed then return end
-        hud_focus_grab(editting and self or nil)
-        self:onEditting(editting)
-		editor_core_move_binds.enabled = not editting
-    end;
-
-    setFocus = function (self, editting)
-        self.caret.enabled = editting
-        self.needsFrameCallbacks = editting
-		editor_core_move_binds.enabled = not editting
-    end;
-
-	enterCallback = function(self)
-
+		EditBox.init(self)
 	end;
 	
-	
-    buttonCallback = function (self, ev)
-        if self.greyed then return end
-        if ev == "+left" then
-            if not self.inside then
-                self:setEditting(false)
-            else
-                self:setEditting(true)
-                local txt = self.value
-                local pos = text_char_pos(self.font, txt, self.inside.x + self.size.x/2 - self.padding)
-                self.before = txt:sub(1, pos)
-                self.after = txt:sub(pos+1)
-                self:updateText()
-            end
-        elseif hud_focus == self then
-            if ev == "+Return" then
-                self:setEditting(false)
-				self:enterCallback()
-            elseif ev == "+BackSpace" or ev == "=BackSpace" then
-                self.before = self.before:sub(1, -2)
-                self:updateText()
-                self:onChange(self)
-            elseif ev == "+Delete" or ev == "=Delete" then
-                self.after = self.after:sub(2)
-                self:updateText()
-                self:onChange(self)
-            elseif ev == "+Left" or ev == "=Left" then
-                if #self.before > 0 then
-                    local char = self.before:sub(-1, -1)
-                    self.before = self.before:sub(1, -2)
-                    self.after = char .. self.after
-                    self:updateText()
-                end
-            elseif ev == "+Right" or ev == "=Right" then
-                if #self.after > 0 then
-                    local char = self.after:sub(1, 1)
-                    self.after = self.after:sub(2)
-                    self.before = self.before .. char
-                    self:updateText()
-                end
-            elseif ev:sub(1,1) == ":" then
-                if self.maxLength == nil or #self.value < self.maxLength then
-                    local key = ev:sub(2)
-                    local text = self.value
-                    if not self.number or
-                       key:match("[0-9]") or
-                       (key == "." and not text:match("[.]"))
-                    then
-                        self.before = self.before .. ev:sub(2)
-                        self:updateText()
-                        self:onChange(self)
-                    end
-                end
-            end
-        end
-    end;
-    
-    frameCallback = function (self)
-        local state = (seconds() % 0.5) / 0.5
-        self.caret.enabled = state < 0.66
-    end;
+	destroy = function (self)
+		GuiClass.destroy(self)
+		EditBox.destroy(self)
+	end;
 
-    updateChildrenSize = function (self)
-        if self.alignment == "CENTRE" then
-            self.text.position = vec(0,0)
-        elseif self.alignment == "LEFT" then
-            self.text.position = - vec(self.size.x/2 - self.padding - self.text.size.x/2, 0)
-        elseif self.alignment == "RIGHT" then
-            self.text.position = vec(self.size.x/2 - self.padding - self.text.size.x/2, 0)
-        end
-        self.caret.size = vec(self.caret.size.x, self.size.y-4)
-        self.border.size = self.size
-        local tw = gfx_font_text_width(self.font, self.before)
-        self.caret.position = vec(self.text.position.x -self.text.size.x/2 + tw, 0)
-    end;
-    
-    onChange = function (self)
-        -- By default, do nothing, since often people will only care when enter is pressed.
-    end;
-    
-    setValue = function (self, value)
-        self.before = value
-        self.after = ""
-        self:updateText()
-    end;
-
-	parentResizedCallback = function (self, psize)
+	parentResizedCallback = function(self, psize)
 		GuiClass.parentResizedCallback(self, psize)
 		self:parentresizecb(psize)
-		self:updateChildrenSize()
-	end;  	
-
+		self:updateChildrenSize()		
+	end;
+	
 	parentresizecb = function (self, psize)
 
-	end;  	
+	end;
+
+    setEditting = function (self, editting, no_callback)
+		EditBox.setEditting(self, editting, no_callback)
+		editor_core_move_binds.enabled = not editting
+    end;
 })
 
 hud_class `browser_icon` {
