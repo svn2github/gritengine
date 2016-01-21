@@ -1,13 +1,14 @@
 ------------------------------------------------------------------------------
 --  Window
 --
---  (c) 2014 Augusto P. Moura (augustomoura94@hotmail.com)
+--  (c) 2014-2016 Augusto P. Moura (augustomoura94@hotmail.com)
 --
 --  Licensed under the MIT license:
 --  http://www.opensource.org/licenses/mit-license.php
 ------------------------------------------------------------------------------
 
-hud_class `window_title_bar` {
+hud_class `window_title_bar`(extends(GuiClass)
+{
 	alpha = _current_theme.colours.window.titlebar_background_alpha;
 	size = vec(256, 24);
 	zOrder = 0;
@@ -17,36 +18,33 @@ hud_class `window_title_bar` {
 
 	cornered = true;
 	texture = _gui_textures.window.titlebar;
+	align = TOP;
 	
 	init = function (self)
-		self.needsFrameCallbacks = true
+		GuiClass.init(self)
 		self.needsInputCallbacks = true
 		self.needsParentResizedCallbacks = true
-		
+		self.offset = vec(0, self.size.y)
 	end;
 	destroy = function (self)
-		self.needsFrameCallbacks = false
 		self.needsInputCallbacks = false
 		
 		self:destroy()
-	end;
-	frameCallback = function (self, elapsed)
-		
 	end;
 
     mouseMoveCallback = function (self, local_pos, screen_pos, inside)
         self.inside = inside
 		
-		if self.dragging == true then			
-			self.parent.parent.position = vec2(mouse_pos_abs.x - self.draggingPos.x, mouse_pos_abs.y - self.draggingPos.y)
+		if self.dragging then
+			self.parent.position = vec2(mouse_pos_abs.x - self.draggingPos.x, mouse_pos_abs.y - self.draggingPos.y)
 		end
     end;
 	
     buttonCallback = function (self, ev)
         if ev == "+left" and self.inside then
 			self.dragging = true
-			self.draggingPos = mouse_pos_abs - vec2(self.parent.parent.position.x, self.parent.parent.position.y)
-			set_active_window(self.parent.parent)
+			self.draggingPos = mouse_pos_abs - vec2(self.parent.position.x, self.parent.position.y)
+			set_active_window(self.parent)
 		elseif ev == "-left" then
 			self.dragging = false
 			self.draggingPos = vec2(0, 0)
@@ -54,50 +52,12 @@ hud_class `window_title_bar` {
     end;
 	
 	parentResizedCallback = function(self, psize)
+		GuiClass.parentResizedCallback(self, psize)
 		if self.parent ~= nil then
-			self.size = vec2(self.parent.parent.size.x, self.size.y)
+			self.size = vec2(self.parent.size.x, self.size.y)
 		end
 	end;
-}
-
-hud_class `resizer` {
-	alpha = 1;
-	size = vec(20, 20);
-	zOrder = 0;
-
-	init = function (self)
-		self.needsInputCallbacks = true
-		self.dragging = false;
-		self.drag_offset = vec2(0, 0)
-	end;
-	destroy = function (self)
-		self.needsInputCallbacks = false
-		
-		self:destroy()
-	end;
-
-    mouseMoveCallback = function (self, local_pos, screen_pos, inside)
-        self.inside = inside
-		if inside then
-			self.drag_offset = local_pos
-		end
-    end;
-	
-    buttonCallback = function (self, ev)
-        if ev == "+left" and self.inside then
-			self.dragging = true
-			self.parent.parent.parent.draggingPos =  mouse_pos_abs
-			print(self.parent.parent.parent.draggingPos)
-			self.parent.parent.parent.originalSize = self.parent.parent.parent.size
-			self.parent.parent.parent.originalPos = self.parent.parent.parent.position
-		elseif ev == "-left" then
-			self.dragging = false
-			self.parent.parent.parent.draggingPos = vec2(0, 0)
-			self.parent.parent.parent.originalSize = vec2(0, 0)
-			self.parent.parent.parent.originalPos = vec2(0, 0)		
-        end
-    end;
-}
+})
 
 WindowClass = {
 	colour = _current_theme.colours.window.background;
@@ -114,10 +74,8 @@ WindowClass = {
 	borderSize = 2;
 
 	init = function (self)
-		self.needsFrameCallbacks = false
 		self.needsInputCallbacks = true
 		
-		-- for resizing
 		self.draggingPos = vec2(0, 0);
 		self.originalSize = vec2(0, 0)
 		self.originalPos = vec2(0, 0)
@@ -129,7 +87,8 @@ WindowClass = {
 		self.draggable_area = gfx_hud_object_add(`window_title_bar`, {
 			position = vec2(0, 0);
 			size = vec2(self.size.x, 24);
-			zOrder = 2;
+			zOrder = 4;
+			parent = self;
 		})
 
 		self.close_btn = create_button({				
@@ -148,11 +107,10 @@ WindowClass = {
 		})
 
 		self.close_btn.pressedCallback = function (self)
-			self.parent.parent.parent.enabled = false
+			self.parent.parent.enabled = false
 			-- safe_destroy(self.parent.parent.parent)
 		end;
 		
-		-- disables the close button if you set showCLoseBtn to false when create the window
 		if self.showCloseBtn ~= nil then	
 			if self.showCloseBtn == false then	
 				self.close_btn.enabled = false
@@ -183,72 +141,52 @@ WindowClass = {
 			expand = true;
 		})
 		
-		self.titleBarPositioner = gfx_hud_object_add(`/common/hud/Positioner`, {
-			parent = self;
-			offset = vec2(0, self.draggable_area.size.y/2);
-			factor = vec2(0, 0.5);
-		})		
-
-		self.draggable_area.parent = self.titleBarPositioner
-
-		self.left_resizer_Positioner = gfx_hud_object_add(`/common/hud/Positioner`, {
-			parent = self.border;
-			offset = vec2(8 - self.borderSize, 8 - self.borderSize);
-			factor = vec2(-0.5, -0.5);
-		})
-
-		self.right_resizer_Positioner = gfx_hud_object_add(`/common/hud/Positioner`, {
-			parent = self.border;
-			offset = vec2(-8 + self.borderSize, 8 - self.borderSize);
-			factor = vec2(0.5, -0.5);
-		})
-
-		self.left_resizer = gfx_hud_object_add(`resizer`, {
-			size = vec2(16, 16);
-			parent=self.left_resizer_Positioner;
-			position=vec2(0, 0);
-			alpha = 0;
-			--texture=`../icons/res_lef.png`;
-			needsInputCallbacks = true;
-			mouseMoveCallback = function (self, local_pos, screen_pos, inside) if self.dragging == true then self.colour = vector3(1, 1, 1) end end;
-		})
-
-		self.right_resizer = gfx_hud_object_add(`resizer`, {
-			size = vec2(16, 16);
-			colour = V_ID;
-			parent = self.right_resizer_Positioner;
-			position = vec2(0, 0);
-			alpha = 0.7;
-			texture = _gui_textures.resizers.right;
-		})
-		if self.resizeable == false then
-			self.left_resizer.enabled = false
-			self.right_resizer.enabled = false
-		end
-		
-		-- used just for initialize
 		self.title = nil
-		self.resizeable = nil
 		self.showCloseBtn = nil
 	end;
 	
 	destroy = function (self)
-		self.needsFrameCallbacks = false
-		self.needsParentResizedCallbacks = false
-
 		self:destroy()
 	end;
 	
-	buttonCallback = function(self, ev)end;
+    buttonCallback = function (self, ev)
+        if ev == "+left" then
+			if self.resizeable then
+				local mp = mouse_pos_abs
+				local dpos = self.derivedPosition
+				local size = self.size
+				
+				if mp.x > dpos.x + size.x/2 -15 and mp.x < dpos.x + size.x/2 and
+				mp.y > dpos.y - size.y/2 and mp.y < dpos.y - size.y/2 +15 then
+					self.right_resizer_dragging = true
+					self.draggingPos =  mp
+					self.originalSize = size
+					self.originalPos = self.position
+				elseif mp.x > dpos.x - size.x/2 and mp.x < dpos.x - size.x/2+15 and
+				mp.y > dpos.y - size.y/2 and mp.y < dpos.y - size.y/2 +15 then
+					self.left_resizer_dragging = true
+					self.draggingPos =  mp
+					self.originalSize = size
+					self.originalPos = self.position
+				end
+			end
+		elseif ev == "-left" then
+			self.right_resizer_dragging = false
+			self.left_resizer_dragging = false
+			self.draggingPos = vec2(0, 0)
+			self.originalSize = vec2(0, 0)
+			self.originalPos = vec2(0, 0)		
+        end
+    end;
 	
     mouseMoveCallback = function (self, local_pos, screen_pos, inside)
 		self.inside = inside
-		if self.right_resizer.dragging then
+		if self.right_resizer_dragging then
 			local wsize = vec2(self.originalSize.x + (-self.draggingPos.x + mouse_pos_abs.x), self.originalSize.y - (-self.draggingPos.y + mouse_pos_abs.y))
 
 			self.size = vec2(math.clamp(wsize.x, self.min_size.x, self.max_size.x), math.clamp(wsize.y, self.min_size.y, self.max_size.y))
 			self.position = vec2(self.originalPos.x - (self.originalSize.x - self.size.x)/2, (self.originalPos.y + (self.originalSize.y - self.size.y)/2))	
-		elseif self.left_resizer.dragging then
+		elseif self.left_resizer_dragging then
 			local wsize = vec2(self.originalSize.x - (-self.draggingPos.x + mouse_pos_abs.x), self.originalSize.y - (-self.draggingPos.y + mouse_pos_abs.y))
 			
 			self.size = vec2(math.clamp(wsize.x, self.min_size.x, self.max_size.x), math.clamp(wsize.y, self.min_size.y, self.max_size.y))
@@ -259,6 +197,17 @@ WindowClass = {
 	setTitle = function(self, name)
 		self.window_title.text  = name
 		self.window_title.position = vec2(self.window_title.size.x / 2, self.window_title.position.y)
+	end;
+	
+	isMouseInside = function(self)
+		if mouse_pos_abs.x < self.derivedPosition.x + self.size.x/2 and
+		mouse_pos_abs.x > self.derivedPosition.x - self.size.x/2 and
+		mouse_pos_abs.y < self.derivedPosition.y + self.size.y/2 + self.draggable_area.size.y and
+		mouse_pos_abs.y > self.derivedPosition.y - self.size.y/2 then
+			return true
+		end
+
+		return false		
 	end;
 }
 
@@ -305,12 +254,7 @@ end
 
 function is_inside_window(window)
     if window.enabled then
-        if mouse_pos_abs.x < window.derivedPosition.x + window.size.x/2 and
-        mouse_pos_abs.x > window.derivedPosition.x - window.size.x/2 and
-        mouse_pos_abs.y < window.derivedPosition.y + window.size.y/2 + window.draggable_area.size.y and
-        mouse_pos_abs.y > window.derivedPosition.y - window.size.y/2 then
-            return true
-        end
+		return window:isMouseInside()
     end
     return false
 end
