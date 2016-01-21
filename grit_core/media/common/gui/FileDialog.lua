@@ -237,7 +237,7 @@ hud_class `browser_icon` {
 	
 	mouseMoveCallback = function (self, local_pos, screen_pos, inside)
 		self.inside = inside
-		if self.dragging ~= true and self.parent.parent.selected ~= self then
+		if not self.dragging and self.parent.parent.selected ~= self then
 			if inside then
 				self.colour = self.hoverColour
 				self.alpha = 0.5
@@ -305,44 +305,22 @@ hud_class `file_list` (extends(GuiClass)
 	colour = _current_theme.colours.file_explorer.background;
 	
     init = function (self)
-		self.needsParentResizedCallbacks = true;
-		self.needsInputCallbacks = true;
+		self.needsParentResizedCallbacks = true
+		self.needsInputCallbacks = true
 		self.items = {}
-		self.grid = create_rect({ alpha = 0, parent = self })
-		
-		self.rollbar_pos = gfx_hud_object_add(`/common/hud/Positioner`, {
-			parent = self;
-			offset = vec2(-5, 0);
-			factor = vec2(0.5, 0);
-			zOrder = 7;
-		})
-
-		self.rollbar = gfx_hud_object_add(`/common/gui/rollbar`, { parent = self.rollbar_pos })
-		self.rollbar.roll.updateSize = function(self)
-			if self.parent.parent.parent.iconarea ~= nil then
-				if self.parent.parent.parent.iconarea.y ~= 0 then
-					self.size = vec2(self.size.x, math.min(self.parent.parent.parent.size.y / (self.parent.parent.parent.iconarea.y / self.parent.parent.parent.size.y), self.parent.parent.parent.size.y-self.parent.up.size.y*2))
-				end
-				self.position = vec2(self.position.x, math.clamp(mouse_pos_abs.y - self.draggingPos.y, -(self.parent.size.y/2 -self.size.y/2-self.parent.up.size.y), self.parent.size.y/2 -self.size.y/2-self.parent.down.size.y))
-			end
-		end;
     end;
 	
 	parentResizedCallback = function (self, psize)
-		self:parentresizecb(psize)
+		self.size = vec(psize.x, self.size.y)
 		self:reorganize()
 	end;
 
-	parentresizecb = function (self, psize)
-		self.size = psize	
-	end;	
-	
 	addItem = function(self, m_name, icon, pc, dpc)
 		if icon == nil then icon = `/common/gui/icons/foldericon.png`end
 		self.items[#self.items+1] = gfx_hud_object_add(`browser_icon`, {
 			icon_texture = icon;
 			position = vec2(0, 0);
-			parent = self.grid;
+			parent = self;
 			colour = vec(0.5, 0.5, 0.5);
 			size = vec2(self.icons_size.x, self.icons_size.y);
 			name = m_name;
@@ -378,32 +356,28 @@ hud_class `file_list` (extends(GuiClass)
 		
 		self.iconarea = vec2(colums*(self.icons_size.x+self.icons_spacing), math.ceil(#self.items/colums)*(self.icons_size.y+self.icons_spacing))
 		
-		for i = 1, #self.items do
-			if (self.items[i].position.y + self.grid.position.y + self.items[i].size.y/2 < -self.size.y/2 or self.items[i].position.y + self.grid.position.y - self.items[i].size.y > self.size.y/2) then
-				self.items[i].enabled = false
-			else
-				self.items[i].enabled = true
-			end
-		end
+		self.size = vec(self.size.x, self.iconarea.y)
+		
+		self:updateItems()
 	end;
 	clearAll = function(self)
 		for i = 1, #self.items do
 			safe_destroy(self.items[i])
-			self.items[i]=nil
+			self.items[i] = nil
 		end
 	end;
-
-    reset = function (self)
-		self.grid.position = vec(0, 0)
+	
+	reset = function(self)
+		self:reorganize()
 		self:updateItems()
-		self.rollbar.roll:updateSize()
-    end;	
+
+	end;	
 
 	updateItems = function(self)
 		for i = 1, #self.items do
-			-- if (self.items[i].position.y + self.grid.position.y + self.items[i].size.y/2 < -self.size.y/2 or self.items[i].position.y + self.grid.position.y - self.items[i].size.y > self.size.y/2) then
+			--if (self.items[i].position.y + self.position.y + self.items[i].size.y/2 < -self.parent.size.y/2 or self.items[i].position.y + self.position.y - self.items[i].size.y > self.parent.size.y/2) then
 			-- TEMPORARY(until draw only inside parent): (after that, use the commented line above)
-			if (self.items[i].position.y + self.grid.position.y - self.items[i].size.y/2 < -self.size.y/2 or self.items[i].position.y + self.grid.position.y + self.items[i].size.y/2 > self.size.y/2) then
+			if (self.items[i].position.y + self.position.y - self.items[i].size.y/2 < -self.parent.size.y/2-10 or self.items[i].position.y + self.position.y + self.items[i].size.y/2 > self.parent.size.y/2+10) then
 				self.items[i].enabled = false
 			else
 				self.items[i].enabled = true
@@ -412,9 +386,9 @@ hud_class `file_list` (extends(GuiClass)
 	end;
 	
 	mouseMoveCallback = function (self, local_pos, screen_pos, inside)
-		--if self.rollbar.roll.dragging == true then
+		if self.parent.scrollbar_y.dragging then
 			self:updateItems()
-		--end
+		end
 	end;
 
     buttonCallback = function (self, ev)
@@ -424,11 +398,13 @@ hud_class `file_list` (extends(GuiClass)
 hud_class `FileDialog` (extends(WindowClass)
 {
 	btn_size = vec(100, 25);
-	currentdir = "/";
+	
 	choices = { "All Files (*.*)" };
 	
 	init = function (self)
 		WindowClass.init(self)
+		
+		self.currentdir = "/";
 		
 		self.ok_button = create_button({
 			caption = "OK";
@@ -486,16 +462,27 @@ hud_class `FileDialog` (extends(WindowClass)
 			
 		})
 		self.file_edbox:setEditting(true)
-
-		self.file_explorer = gfx_hud_object_add(`file_list`, {
+		
+		self.scrollarea = gfx_hud_object_add(`/common/gui/ScrollArea`, {
 			parent = self;
-			position = vec2(0, 20);
-			size = vec2(self.size.x-20, self.size.y-120);
-			parentresizecb = function(self, psize)
-				self.size = vec2(psize.x-20, psize.y-120)
-			end;
+			expand_x = true;
+			expand_y = true;
+			expand_offset = vec(-120, -120);
+			align = vec(-1, 1);
+			offset = vec(115, -40);
+			x_bar = false;
 		})
-
+		
+		self.file_explorer = gfx_hud_object_add(`file_list`, {
+			position = vec2(0, 0);
+			parent = self;
+			size = vec2(self.size.x-20, self.size.y-120);
+			alpha = 0;
+			zOrder = 1;
+		})
+		--self.file_explorer.enabled = false
+		self.scrollarea:setContent(self.file_explorer)
+		
 		self.updir_btn = create_imagebutton({
 			pressedCallback = function(self)
 				if self.parent.currentdir == "/" or self.parent.currentdir == "" then return end
@@ -512,8 +499,9 @@ hud_class `FileDialog` (extends(WindowClass)
 			hoverColour = V_ID*0.6;
 			clickColour = V_ID*0.7;
 			size = vec2(25, 25);
-			offset = vec(-65, -5);
-			align = vec(1, 1);
+			offset = vec(15, -5);
+			align = vec(-1, 1);
+			zOrder = 4;
 		})
 
 		self.newfolder_btn = create_imagebutton({
@@ -547,10 +535,10 @@ hud_class `FileDialog` (extends(WindowClass)
 			value = self.currentdir;
 			alignment = "LEFT";
 			size = vec(50, 20);
-			offset = vec(5, -8);
+			offset = vec(50, -8);
 			align = vec(-1, 1);
 			expand_x = true;
-			expand_offset = vec(-100, 0);
+			expand_offset = vec(-120, 0);
 		})
 		self.dir_edbox.enterCallback = function(self)
 			self.parent:update_file_explorer(self.value)
@@ -615,6 +603,9 @@ hud_class `FileDialog` (extends(WindowClass)
 					self.parent.parent.parent:handleCallback()
 				end;
 			end
+		end
+		if self.scrollarea ~= nil then
+			self.scrollarea:reset()
 		end
 		if self.file_explorer ~= nil then
 			self.file_explorer:reset()

@@ -307,27 +307,32 @@ hud_class `ContentBrowser` (extends(WindowClass)
 		})
 
 		self.dir_tree.enabled = false
+
+		self.scrollarea = gfx_hud_object_add(`/common/gui/ScrollArea`, {
+			parent = self;
+			expand_x = true;
+			expand_y = true;
+			expand_offset = vec(-120, -40);
+			align = vec(-1, 1);
+			offset = vec(115, -35);
+			x_bar = false;
+		})
 		
 		self.file_explorer = gfx_hud_object_add(`/common/gui/file_list`, {
-			colour = vec(0.5, 0.5, 0.5);
+			position = vec2(0, 0);
 			parent = self;
-		})
-		self.file_explorer.size = vec2(self.size.x-20 -- self.dir_tree.size.x
-		, self.size.y-70)
-		self.file_explorer.position = vec(0--self.size.x/2-self.file_explorer.size.x/2-10
-		, -15)
-
-		self.file_explorer.parentresizecb = function(self, psize)
-			self.size = vec2(psize.x--self.parent.dir_tree.size.x
-			-20, psize.y-70)
-		end;
+			size = vec2(self.size.x-20, self.size.y-120);
+			alpha = 0;
+			zOrder = 1;
+		})		
+		self.scrollarea:setContent(self.file_explorer)
 		
 		self.file_explorer.addItem = function(self, m_name, icon, pc, dpc, ccb)
 			if icon == nil then icon = `/common/gui/icons/icons/foldericon.png`end
 			self.items[#self.items+1] = gfx_hud_object_add(`browser_icon2`, {
 				icon_texture = icon;
 				position = vec2(0, 0);
-				parent = self.grid;
+				parent = self;
 				colour = vec(0.5, 0.5, 0.5);
 				size = vec2(self.icons_size.x, self.icons_size.y);
 				name = m_name;
@@ -448,6 +453,9 @@ hud_class `ContentBrowser` (extends(WindowClass)
 						create_floating(self.lp, self.parent.parent.parent.currentdir.."/"..self.name)
 					end
 				end;
+		end
+		if self.scrollarea ~= nil then
+			self.scrollarea:reset()
 		end
 		if self.file_explorer ~= nil then
 			self.file_explorer:reset()
