@@ -9,17 +9,6 @@
 
 local treevlastcol = false
 
-local isMouseInside = function(obj)
-	if mouse_pos_abs.x < obj.derivedPosition.x + obj.size.x/2 and
-	mouse_pos_abs.x > obj.derivedPosition.x - obj.size.x/2 and
-	mouse_pos_abs.y < obj.derivedPosition.y + obj.size.y/2 and
-	mouse_pos_abs.y > obj.derivedPosition.y - obj.size.y/2 then
-		return true
-	end
-
-	return false
-end;
-
 hud_class `TreeViewNode` (extends(GuiClass)
 {
 	alpha = 0.2;
@@ -265,7 +254,7 @@ hud_class `DraggingTreeViewObject` {
 	zOrder = 7;
 
 	init = function (self)
-		self.needsInputCallbacks = true
+		self.needsFrameCallbacks = true
 		
 		self.iconx = create_rect({
 			parent = self,
@@ -278,7 +267,6 @@ hud_class `DraggingTreeViewObject` {
 		self.text.parent = self
 		self.text.text = self.caption
 		self.text.position = vec(self.text.size.x/2+self.iconx.size.x/2+4, 0)
-		
 	end;
 	
 	destroy = function (self)
@@ -287,11 +275,10 @@ hud_class `DraggingTreeViewObject` {
 		self:destroy()
 	end;
 	
-    mouseMoveCallback = function (self, local_pos, screen_pos, inside)
-		self.position = mouse_pos_abs
-    end;
-	
-    buttonCallback = function (self, ev)
+    frameCallback = function (self, elapsed)
+		if self.position ~= mouse_pos_abs then
+			self.position = mouse_pos_abs
+		end
     end;
 }
 
@@ -315,9 +302,6 @@ TreeView =  (extends(GuiClass)
 	end;
 	
 	destroy = function (self)
-		self.needsFrameCallbacks = false
-		self.needsParentResizedCallbacks = false
-		
 		self:destroy()
 	end;
 	
@@ -511,8 +495,7 @@ TreeView =  (extends(GuiClass)
 				if self.moveDraggingTo ~= nil then
 					if self.draggingNode ~= self.moveDraggingTo then
 						if self.draggingNode.parentNode ~= self.moveDraggingTo then
-							-- if self.moveDraggingTo.inside then
-							if isMouseInside(self.moveDraggingTo) then
+							if self.moveDraggingTo.inside then
 								self:moveInto(self.draggingNode, self.moveDraggingTo)
 							elseif self.draggingNode.parentNode ~= self then
 								self:moveInto(self.draggingNode, self)
@@ -520,7 +503,7 @@ TreeView =  (extends(GuiClass)
 							self:update()
 						end
 					else
-						if not isMouseInside(self.draggingNode) then
+						if self.moveDraggingTo.inside then
 							self:moveInto(self.draggingNode, self)
 							self:update()
 						end
