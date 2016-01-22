@@ -503,7 +503,7 @@ TreeView =  (extends(GuiClass)
 							self:update()
 						end
 					else
-						if self.moveDraggingTo.inside then
+						if not self.moveDraggingTo.inside then
 							self:moveInto(self.draggingNode, self)
 							self:update()
 						end
