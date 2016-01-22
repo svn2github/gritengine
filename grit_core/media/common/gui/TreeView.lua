@@ -230,7 +230,7 @@ hud_class `TreeViewNode` (extends(GuiClass)
 			self.dragging = true
 			self.draggingPos = mouse_pos_abs - self.derivedPosition
 		elseif ev == "-left" then
-			if self.dragging and not self.adding and isMouseInside(self) then
+			if self.dragging and not self.adding and self.inside then
 				if self.root.selected ~= nil then
 					self.root.selected.alpha = 0
 					self.root.selected.colour = vec(0, 0, 0)
