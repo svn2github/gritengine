@@ -7,9 +7,20 @@
 --  http://www.opensource.org/licenses/mit-license.php
 ------------------------------------------------------------------------------
 
-outllastcol = false
+local treevlastcol = false
 
-hud_class `TreeViewGroup` (extends(GuiClass)
+local isMouseInside = function(obj)
+	if mouse_pos_abs.x < obj.derivedPosition.x + obj.size.x/2 and
+	mouse_pos_abs.x > obj.derivedPosition.x - obj.size.x/2 and
+	mouse_pos_abs.y < obj.derivedPosition.y + obj.size.y/2 and
+	mouse_pos_abs.y > obj.derivedPosition.y - obj.size.y/2 then
+		return true
+	end
+
+	return false
+end;
+
+hud_class `TreeViewNode` (extends(GuiClass)
 {
 	alpha = 0.2;
 	size = vec(150, 20);
@@ -20,16 +31,16 @@ hud_class `TreeViewGroup` (extends(GuiClass)
 	
 	icon = `/editor/core/icons/map_editor/open_15.png`;
 	
-	isNode = false; -- if all objects are attached to this group
+	isRealNode = false; -- if all objects are attached to this node
 	
 	name = "Default";
 	
 	selected = false;
 	
-	canAddObjectChilds = true;
-	canAddGroupChilds = true;
+	canHaveObjectChilds = true;
+	canHaveNodeChilds = true;
 	
-	opened = false;
+	open = false;
 	
 	dragging = false;
 	
@@ -38,35 +49,52 @@ hud_class `TreeViewGroup` (extends(GuiClass)
 		
 		self.needsInputCallbacks = true
 		
-		self.colour = outllastcol and vec(0.5, 0.5, 0.5) or vec(0.6, 0.6, 0.6)
+		self.colour = treevlastcol and vec(0.5, 0.5, 0.5) or vec(0.6, 0.6, 0.6)
 		self.defaultColour = self.colour
 		
-		outllastcol = not outllastcol
+		treevlastcol = not treevlastcol
 		
 		self.childs = {}
 		
-		if self.canAddGroupChilds or self.canAddObjectChilds then
-		
-			self.iconcolapse = create_imagebutton({ parent = self, align= LEFT, offset = vec(3, 0), size = vec(15, 15), icon_texture = `/common/gui/icons/treeviewcolapsed.png`, alpha = 0, group = self })
+		if self.canHaveNodeChilds or self.canHaveObjectChilds then
+			self.iconcolapse = create_imagebutton({
+				parent = self,
+				align= LEFT,
+				offset = vec(3, 0),
+				size = vec(15, 15),
+				icon_texture = `/common/gui/icons/treeviewcolapsed.png`,
+				alpha = 0,
+				node = self
+			})
+			
 			self.iconcolapse.pressedCallback = function(self)
-				if self.group.opened then
-					self.group:colapseChilds()
+				if self.node.open then
+					self.node:colapseChilds()
 				else
-					self.group:showChilds()
+					self.node:showChilds()
 				end
-				
-				--self.group.opened = not self.group.opened
 			end
 			
 			self.iconcolapse.enabled = false
-		
 		end
 		
-		self.iconx = create_gui_object({ parent = self, texture = self.icon, align = LEFT, size = vec(self.size.y-2, self.size.y-2), alpha = 1, offset = vec(20, 0), colour=vec(1, 0.8, 0.5) })
-		self.text = create_guitext({ parent = self, align = LEFT, offset = vec(self.iconx.size.x + 20, 0), alpha=0 })
+		self.iconx = create_gui_object({
+			parent = self,
+			texture = self.icon,
+			align = LEFT,
+			size = vec(self.size.y-2, self.size.y-2),
+			alpha = 1,
+			offset = vec(20, 0),
+			colour=vec(1, 0.8, 0.5)
+		})
+		self.text = create_guitext({
+			parent = self,
+			align = LEFT,
+			offset = vec(self.iconx.size.x + 20, 0),
+			alpha = 0
+		})
 		self.text.colour = vec(1, 0, 0)
 		self.text:setValue(self.name)
-		--self.text.position = vec(20, 0)
 	end;
 	
 	destroy = function (self)
@@ -74,42 +102,61 @@ hud_class `TreeViewGroup` (extends(GuiClass)
 		self:destroy()
 	end;
 	
-	addChild = function (self, group)
-		self.childs[#self.childs+1] = gfx_hud_object_add(`TreeViewGroup`,
-			{ name = group, parent = self.root, offset = vec(self.offset.x+10, (-(#self.childs+1)*21)),  expand_x = true, expand_offset = vec(self.expand_offset.x-20, 0), root = self.root,align=TOP })
-			
-			
+	addChild = function (self, nodename)
+		self.childs[#self.childs+1] = gfx_hud_object_add(`TreeViewNode`, {
+			name = nodename,
+			parent = self.root,
+			offset = vec(self.offset.x+10, (-(#self.childs+1)*21)),
+			expand_x = true,
+			expand_offset = vec(self.expand_offset.x-20, 0),
+			root = self.root,
+			align = TOP,
+			parentNode = self,
+			ID = #self.childs+1,
+			canDrag = self.root.canDrag
+		})
+		
 		self.childs[#self.childs].enabled = false
-		--self.opened = true
-		self.iconcolapse.icon.texture = `/common/gui/icons/treeviewcolapsed.png`
 		self.iconcolapse.enabled = true
-		
-		--self.root.activeLines = self.root.activeLines +1
 	end;
-	
-	colapseChilds = function(self)
-		self.opened = false
-		self.root.activeLines = self.root.activeLines - #self.childs
+
+	removeChild = function(self, id)
+		table.remove(self.childs, id)
 		
-		self.iconcolapse.icon.texture = `/common/gui/icons/treeviewcolapsed.png`
+		if #self.childs == 0 then
+			self.iconcolapse.enabled = false
+			self:setIsOpen(false)
+		else
+			self:updateChildsID()
+		end
+	end;
+
+	updateChildsID = function(self)
+		for i = 1, #self.childs do
+			self.childs[i].ID = i
+		end
+	end;
+
+	colapseChilds = function(self)
+		self.root.activeLines = self.root.activeLines - #self.childs
+
+		self:setIsOpen(false)
 		
 		for i = 1, #self.childs do
-			if self.childs[i].opened then
+			if self.childs[i].open then
 				self.childs[i]:colapseChilds()
 			end
 			self.childs[i].enabled = false
-			
 		end
 		
 		self.root:update()
 	end;
 	
 	showChilds = function(self)
-		self.opened = true
 		self.root.activeLines = self.root.activeLines + #self.childs
 		
-		self.iconcolapse.icon.texture = `/common/gui/icons/treeviewopen.png`
-		
+		self:setIsOpen(true)
+
 		for i = 1, #self.childs do
 			self.childs[i].enabled = true
 		end
@@ -120,39 +167,89 @@ hud_class `TreeViewGroup` (extends(GuiClass)
 	update = function(self)
 		self.offset = vec(self.offset.x, -(self.root.cline*21))
 		self.root.cline = self.root.cline + 1
-		if self.opened then
+		self.root.line[self.root.cline] = self
+		
+		self.lineIndex = self.root.cline
+		
+		if self.open then
 			for i = 1, #self.childs do
 				self.childs[i]:update()
 			end
+		end
+	end;
+	
+	updateChildsPosition = function(self)
+		if #self.childs > 0 then
+			for i = 1, #self.childs do
+				self.childs[i].offset = vec(self.offset.x+10, self.childs[i].position.y)
+				self.childs[i].expand_offset = vec(self.expand_offset.x-20, self.childs[i].expand_offset.y)
+				if #self.childs[i].childs > 0 then
+					self.childs[i]:updateChildsPosition()
+				end
+			end
+		end
+	end;
+
+	getAllParents = function(self)
+		local parents = {}
+		local currentNode = self
+		
+		while(currentNode ~= self.root) do
+			parents[#parents+1] = currentNode.parentNode
+			currentNode = currentNode.parentNode
+		end
+		return parents
+	end;
+
+	isParent = function(self, obj)
+		local currentNode = self.parentNode
+		
+		while(currentNode ~= self.root) do
+			if currentNode == obj then
+				return true
+			end
+			currentNode = currentNode.parentNode
+		end
+		return false		
+	end;	
+	
+	setIsOpen = function(self, v)
+		self.open = v
+		
+		if v then
+			self.iconcolapse.icon.texture = `/common/gui/icons/treeviewopen.png`
+		else
+			self.iconcolapse.icon.texture = `/common/gui/icons/treeviewcolapsed.png`
 		end
 	end;
 
     mouseMoveCallback = function (self, local_pos, screen_pos, inside)
         self.inside = inside
 		
-		local kj = mouse_pos_abs - self.derivedPosition
-		
-		if self.dragging and #(kj - self.draggingPos) > 20 and not self.adding then
-			self.adding = true
+		if self.dragging and self.canDrag then
+			local kj = mouse_pos_abs - self.derivedPosition
 			
-			print(#(kj - self.draggingPos))
-			self.root:startMovingObject(self)
-		end	
+			if #(kj - self.draggingPos) > 10 and not self.adding then
+				self.adding = true
+				self.root:startMovingObject(self)
+			end
+		end
     end;
+	
     buttonCallback = function (self, ev)
         if ev == "+left" and self.inside then
 			self.dragging = true
 			self.draggingPos = mouse_pos_abs - self.derivedPosition
 		elseif ev == "-left" then
-			if self.dragging and not self.adding then
+			if self.dragging and not self.adding and isMouseInside(self) then
 				if self.root.selected ~= nil then
-					self.root.selected.alpha=0
+					self.root.selected.alpha = 0
 					self.root.selected.colour = vec(0, 0, 0)
 				end
 				self.root.selected = self
 				
-				self.alpha= 1
-				self.colour = vec(0.3, 0.6, 1)			
+				self.alpha = 1
+				self.colour = vec(0.3, 0.6, 1)
 			end
 			
 			self.dragging = false
@@ -170,28 +267,35 @@ hud_class `DraggingTreeViewObject` {
 	init = function (self)
 		self.needsInputCallbacks = true
 		
-		self.iconx = create_rect({ parent = self, texture = self.icon, alpha = 1, size = vec(20, 20) })
+		self.iconx = create_rect({
+			parent = self,
+			texture = self.icon,
+			alpha = 1,
+			size = vec(20, 20)
+		})
+		
 		self.text = gfx_hud_text_add(`/common/fonts/Verdana12`)
 		self.text.parent = self
 		self.text.text = self.caption
 		self.text.position = vec(self.text.size.x/2+self.iconx.size.x/2+4, 0)
 		
 	end;
+	
 	destroy = function (self)
 		self.needsInputCallbacks = false
 		
 		self:destroy()
 	end;
+	
     mouseMoveCallback = function (self, local_pos, screen_pos, inside)
-		self.position = vec2(mouse_pos_abs.x, mouse_pos_abs.y)
-
+		self.position = mouse_pos_abs
     end;
+	
     buttonCallback = function (self, ev)
-		
-    end;	
+    end;
 }
 
-hud_class `TreeView` (extends(GuiClass)
+TreeView =  (extends(GuiClass)
 {
 	alpha = 1;
 	size = vec(256, 256);
@@ -201,9 +305,13 @@ hud_class `TreeView` (extends(GuiClass)
 	
 	cline = 0;
 	
+	-- drag and drop nodes, into other nodes or reorganize nodes with same parent
+	canDrag = false;
+	
 	init = function (self)
 		GuiClass.init(self)
 		self.childs = {}
+		self.line = {}
 	end;
 	
 	destroy = function (self)
@@ -213,20 +321,28 @@ hud_class `TreeView` (extends(GuiClass)
 		self:destroy()
 	end;
 	
-	addGroup = function(self, group, par)
+	addNode = function(self, nodename, par)
 		if par == nil then
-			self.childs[#self.childs+1] = gfx_hud_object_add(`TreeViewGroup`, { name = group, parent = self, childs_child = true, offset = vec(0, -(self.activeLines+1)*21+20), expand_x = true, root = self, align = vec(0, 1) })
+			self.childs[#self.childs+1] = gfx_hud_object_add(`TreeViewNode`, {
+				name = nodename,
+				parent = self,
+				childs_child = true,
+				offset = vec(0, -(self.activeLines+1)*21+20),
+				expand_x = true,
+				root = self,
+				align = vec(0, 1),
+				parentNode = self,
+				ID = #self.childs+1,
+				lineIndex = self.activeLines+1,
+				canDrag = self.canDrag
+			})
+			
 			self.activeLines = self.activeLines + 1
+			self.line[#self.activeLines] = self.childs[#self.childs] 
 		else
-			par:addChild(group)
+			par:addChild(nodename)
 		end
 	end;
-	
-	-- addObject = function(self, obj, parent)
-		-- if parent == nil then parent = self.childs end
-		
-		-- parent:addObjectChild(obj)
-	-- end;
 	
 	update = function(self)
 		self.cline = 0
@@ -239,38 +355,142 @@ hud_class `TreeView` (extends(GuiClass)
 
 	startMovingObject = function(self, obj)
 		self.floatingObject = gfx_hud_object_add(`DraggingTreeViewObject`, { icon = obj.icon, caption = obj.name })
-		self.dragginGroup = obj
-		--self.floatingObject = ""
-		self.marker = create_rect({ parent = self, size = vec(self.size.x, 1), colour = vec(1, 0.5, 0) })
+		self.draggingNode = obj
+
+		self.marker = create_rect({ parent = self, size = vec(self.size.x, 3.5), colour = vec(1, 0.5, 0), texture=`/common/gui/icons/line.png` })
 		self.marker.enabled = false
 		self.needsInputCallbacks = true
 	end;
 	
 	getObjectInLine = function(self, line)
-		if line < activeLines and line > 0 then
-			return 
+		if line <= self.activeLines and line > 0 then
+			return self.line[line]
 		end
-	end;	
+	end;
 	
     mouseMoveCallback = function (self, local_pos, screen_pos, inside)
         self.inside = inside
 		
 		if self.floatingObject ~= nil then
-			local nearest_group = nil
+			local markerenabled = false
+			local nearest_node = nil
 			
-			local grpn = math.ceil((((self.derivedPosition.y - mouse_pos_abs.y)+self.size.y/2)) / 20)
-			--print(((self.derivedPosition.y - mouse_pos_abs.y)+self.size.y/2))
-			--print(grpn.." "..local_pos.y)
-			nearest_group = self.childs[grpn]
+			local grpn = math.ceil((((self.derivedPosition.y - mouse_pos_abs.y-10) + self.size.y/2)) / 20)
+			local grpnx = math.ceil((((self.derivedPosition.y - mouse_pos_abs.y-10) + self.size.y/2)) / 10)
+			grpnx = math.mod(grpnx, grpn)
 			
-			if nearest_group ~= nil and not nearest_group.destroyed then
-				self.moveDraggingTo = nearest_group
-				self.marker.enabled = true
-				self.marker.position = nearest_group.position - vec(0, nearest_group.size.y/2+1)
+			nearest_node = self:getObjectInLine(grpn)
+			
+			if nearest_node ~= nil and not nearest_node.destroyed then
+				if not nearest_node:isParent(self.draggingNode) then
+					if self.currentDragInto ~= nil then
+						self.currentDragInto.obj.colour = self.currentDragInto.originalColour
+						self.currentDragInto.obj.alpha = self.currentDragInto.originalAlpha
+					end
+
+					if grpnx ~= 0 then
+						if nearest_node.canHaveNodeChilds then
+							self.dragInto = true
+							
+							self.moveDraggingTo = nearest_node
+							
+							self.currentDragInto = {}
+							self.currentDragInto.originalColour = self.moveDraggingTo.colour
+							self.currentDragInto.originalAlpha = self.moveDraggingTo.alpha
+							self.currentDragInto.obj = self.moveDraggingTo
+							
+							self.currentDragInto.obj.colour = vec(1, 0.5, 0)
+							self.currentDragInto.obj.alpha = 0.1
+
+							markerenabled = false
+						end
+					elseif nearest_node.parentNode == self.draggingNode.parentNode and -- needs to be the same parent
+					self.draggingNode ~= nearest_node and -- not the same node
+					nearest_node.ID ~= self.draggingNode.ID -1 then -- prevents resulting in the same position
+						self.dragInto = false
+						
+						self.moveDraggingTo = nearest_node
+						
+						self.marker.colour = vec(1, 0.5, 0)
+						self.marker.position = vec(0, nearest_node.position.y- nearest_node.size.y/2+1)
+						markerenabled = true
+					end
+				end
 			end
+			
+			self.marker.enabled = markerenabled
+		else
+			self.needsInputCallbacks = false
 		end
-		
     end;
+	
+	moveTo = function(self, g1, g2)
+		local parent = g1.parentNode
+
+		if g1.ID > g2.ID then
+			table.remove(parent.childs, g1.ID)
+			
+			for i = #parent.childs, g2.ID+1, -1 do
+				if parent.childs[i] ~= nil then
+					parent.childs[i+1] = parent.childs[i]
+				end
+			end
+			parent.childs[g2.ID+1] = g1
+			self:updateChildsID()
+			self:update()
+		else
+			for i = g1.ID+1, #g2.ID do
+				parent.childs[i-1] = parent.childs[i]
+			end
+			parent.childs[g2.ID] = g1
+			self:updateChildsID()
+			self:update()			
+		end
+	end;
+	
+	moveInto = function(self, g1, g2)
+		if g1 ~= nil and g2 ~= nil and not g1.destroyed and not g2.destroyed then
+			g1.parentNode:removeChild(g1.ID)
+			
+			if g2 ~= self then
+				g2.iconcolapse.enabled = true
+				
+				if #g2.childs == 0 then
+					g2:setIsOpen(true)
+				elseif not g2.open then
+					g1.enabled = false
+				end
+				
+				g1.offset = vec(g2.offset.x + 10, g1.offset.y)
+				g1.expand_offset = vec(g2.expand_offset.x - 20, g1.expand_offset.y)
+			else
+				g1.offset = vec(0, g1.offset.y)
+				g1.expand_offset = vec(0, g1.expand_offset.y)
+			end
+			
+			g2.childs[#g2.childs+1] = g1
+			g1.parentNode = g2
+			g1.ID = #g2.childs
+
+			if #g1.childs > 0 then
+				g1:updateChildsPosition()
+			end
+			
+			self:update()
+		end
+	end;
+	
+	removeChild = function(self, id)
+		table.remove(self.childs, id)
+
+		self:updateChildsID()
+	end;
+
+	updateChildsID = function(self)
+		for i = 1, #self.childs do
+			self.childs[i].ID = i
+		end
+	end;
 	
     buttonCallback = function (self, ev)
         if ev == "+left" and self.inside then
@@ -279,28 +499,62 @@ hud_class `TreeView` (extends(GuiClass)
 			safe_destroy(self.marker)
 			self.floatingObject = nil
 			self.marker = nil
-			if self.inside and self.moveDraggingTo then
-				--self.dragginGroup
+			
+			if self.currentDragInto ~= nil then
+				self.currentDragInto.obj.colour = self.currentDragInto.originalColour
+				self.currentDragInto.obj.alpha = self.currentDragInto.originalAlpha
 			end
+			
+			self.currentDragInto = nil
+			
+			if self.dragInto then
+				if self.moveDraggingTo ~= nil then
+					if self.draggingNode ~= self.moveDraggingTo then
+						if self.draggingNode.parentNode ~= self.moveDraggingTo then
+							-- if self.moveDraggingTo.inside then
+							if isMouseInside(self.moveDraggingTo) then
+								self:moveInto(self.draggingNode, self.moveDraggingTo)
+							elseif self.draggingNode.parentNode ~= self then
+								self:moveInto(self.draggingNode, self)
+							end
+							self:update()
+						end
+					else
+						if not isMouseInside(self.draggingNode) then
+							self:moveInto(self.draggingNode, self)
+							self:update()
+						end
+					end
+				end
+			elseif self.draggingNode.parentNode == self.moveDraggingTo.parentNode then
+				self:moveTo(self.draggingNode, self.moveDraggingTo)
+			end
+			
+			self.draggingNode = nil
+			self.moveDraggingTo = nil
         end
-    end;	
+    end;
 })
 
--- safe_destroy(outl)
--- outl = gfx_hud_object_add(`TreeView`, { parent = editor_interface.map_editor_page.windows.object_properties, alpha = 0 })
+hud_class `TreeView` (extends(TreeView)
+{
+	init = function (self)
+		TreeView.init(self)
+	end;
+	
+	destroy = function (self)
+		TreeView.destroy(self)
+	end;
+	
+	buttonCallback = function(self, ev)
+		TreeView.buttonCallback(self, ev)
+	end;
+	
+    mouseMoveCallback = function (self, local_pos, screen_pos, inside)
+		TreeView.mouseMoveCallback(self, local_pos, screen_pos, inside)
+	end;
+})
 
--- outl:addGroup("Navigation")
-
--- outl.childs[1]:addChild("MyHouse01")
--- outl.childs[1]:addChild("MyCar2")
--- outl.childs[1]:addChild("Unnamed1")
--- outl.childs[1]:addChild("Tree34")
-
--- outl.childs[1].childs[4]:addChild("WOOOOOW")
--- outl.childs[1].childs[4]:addChild("WOOOOOW2")
-
--- outl.childs[1].childs[4].childs[2]:addChild("QQQQQQQQQQQQ")
-
--- for i = 1, 4 do
-	-- outl:addGroup("Example "..i.."")
--- end
+function create_treeview(options)
+	return gfx_hud_object_add(`TreeView`, options)
+end
