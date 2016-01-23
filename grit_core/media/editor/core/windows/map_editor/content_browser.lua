@@ -225,7 +225,7 @@ hud_class `content_browser_floating_object` {
 			
 			if self.obj == nil then
 				self.alpha = 0
-				self.obj = object (self.obclass) (pos) { name = "Unnamed:"..self.obclass..":"..math.random(0, 50000) }
+				self.obj = object_add(self.obclass, pos, { name = "Unnamed:"..self.obclass..":"..math.random(0, 50000) })
 				self.obj:activate()
 			else
 				if self.obj.instance then
