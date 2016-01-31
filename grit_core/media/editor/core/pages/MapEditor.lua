@@ -189,7 +189,7 @@ editor_interface.map_editor_page =
 				},
 				{},
 				{
-					callback = function() GED:generateEnvCube(vec(0, 0, 0)) end;
+					callback = function() GED:generateEnvCube(main.camPos) end;
 					name = "Gen Env Cubes";
 					tip = "Generate and apply env cube";
 					icon = map_editor_icons.solid;

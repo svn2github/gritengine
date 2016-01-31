@@ -59,6 +59,9 @@ editor = {
     init = function (self)
 		navigation_reset()
 	
+		-- fix glow in the arrows
+		gfx_option("BLOOM_THRESOLD", 3)
+	
         -- [dcunnin] Ideally we would declare things earlier and only instantiate them at this
         -- point.  However all the code is mixed up right now.
 		
@@ -151,6 +154,8 @@ editor = {
 		editor_interface:destroy()
 		env.clockRate = 30
 		navigation_reset()
+		
+		gfx_option("BLOOM_THRESOLD", 1)
     end;
 }
     
