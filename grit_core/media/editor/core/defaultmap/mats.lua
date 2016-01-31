@@ -1,11 +1,11 @@
 material `default_material` {
-	diffuseMap=`../assets/default_texture.png`;
-	normalMap=`../assets/default_texture_nm.png`;
-	glossMap=`../assets/default_texture_gm.png`;
-	gloss=1;
-	specular=1;
-	emissiveColour=vec(0, 0, 0.00001);
-	shadowBias=0.05;
+	diffuseMap = `../assets/default_texture.png`;
+	diffuseColour = V_ID * 1.7;
+	normalMap = `../assets/default_texture_nm.png`;
+	glossMap = `../assets/default_texture_gm.png`;
+	specular = 1;
+	gloss = 1.2;
+	shadowBias = 0.05;
 }
 material `Terrain` {
 	-- blend = {
