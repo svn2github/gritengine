@@ -272,6 +272,10 @@ function GED:setDebugMode(v)
         end
     end
 
+	editor.debug_mode_text.enabled = v
+	
+	ticker.text.enabled = v
+	
 	editor_interface.enabled = not v
 	
     self.debugMode = v
