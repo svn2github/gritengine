@@ -1,5 +1,7 @@
 -- (c) Alexey "Razzeeyy" Shmakov 2013, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
+local firstTime = true
+
 local playlist = {
     `Massimo_Ruberti_-_02_-_Sabotage.ogg`,
     `Massimo_Ruberti_-_03_-_Last_bird_in_the_valley.ogg`,
@@ -26,7 +28,7 @@ hud_class `.` {
         self.trackname.colour = vec(0, 0, 0)
         self.trackname.text = playlist[self.trackID]
         -- TODO: maybe load should be a no-op?  or add ensure_loaded?
-        self.audiosource = audio_body_make_ambient(playlist[self.trackID]);
+        --self.audiosource = audio_body_make_ambient(playlist[self.trackID]);
         self.texture = `body.png`
         
         self.showHideButton = gfx_hud_object_add(`/common/hud/Button`, {
@@ -50,6 +52,10 @@ hud_class `.` {
         })
         self.playPauseButton.position = vec(0, -90)
         self.playPauseButton.pressedCallback = function(this)
+			if(firstTime)then
+					self.audiosource = audio_body_make_ambient(playlist[self.trackID])
+					firstTime=false
+			end
             if self.audiosource.playing then
                 self.isplaying = false
                 self.audiosource:pause()
