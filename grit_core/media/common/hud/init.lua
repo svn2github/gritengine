@@ -73,6 +73,8 @@ end
 menu = gfx_hud_object_add(`menu/Main`, {zOrder=14})
 menu.enabled = (buffer or false)
 
+menu.setMenu("main") --Mainly for debugging, may keep it.
+
 -- Crosshair
 safe_destroy(ch)
 ch = gfx_hud_object_add(`Rect`, {texture=`CrossHair.png`, parent=hud_center})
