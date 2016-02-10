@@ -22,6 +22,11 @@ hud_class `Main` {
         name="Invert Mouse";
         defaut=true;
         --settingValue=user_cfg.mouseInvert;
+      },
+	  vsync={
+        name="VSync";
+        defaut=true;
+        --settingValue=user_cfg.mouseInvert;
       }
     };
 
@@ -107,6 +112,7 @@ self.exitButton = gfx_hud_object_add(`Button`, {
   });
 
 self.loadSettings = function(self)
+	local lastPos = -10;
   for key,value in pairs(menu.settings) do
     --print("The variable: ".. key .." with the name of ".. value.name .." is equal to ".. tostring(user_cfg[tostring(key)]) .."!") --Was used for debugging!
     menu.gui[key] = gfx_hud_object_add(`SettingEdit`, {
@@ -116,8 +122,9 @@ self.loadSettings = function(self)
         valueLocation = user_cfg;
         valueKey = tostring(key);
         parent = menu;
-        position = vec2(0, -10);
+        position = vec2(0, lastPos);
       })
+	  lastPos = lastPos - 45
     --menu.gui[key].set.position
   end
 end;
