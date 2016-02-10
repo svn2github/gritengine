@@ -28,6 +28,7 @@ material `Tree_aelmTrunk` {
 material `Tree_aelmLev` {
     vertexDiffuse = false,
     diffuseMap = `textures/tree_aelm.dds`,
+	diffuseColour = V_ID*3,
     clamp = true,
     alphaReject = 0.5,
     normalMap = `textures/tree_aelm_N.dds`,
@@ -59,7 +60,7 @@ material `flowerbed_dif` {
     shadowReceive = false,
     clamp = true,
     alphaReject = 0.5,
-    diffuseColour = { 1.3, 1.3, 1.3 },
+    diffuseColour = V_ID*5,
     ambientColour = 5,
     gloss = 0,
     specular = 0,
