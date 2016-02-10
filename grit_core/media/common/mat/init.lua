@@ -18,7 +18,7 @@ material `Chrome` { diffuseColour=V_ZERO, specular=1, gloss=1 }
 material `Test` { diffuseMap=`../tex/Test.dds` }
 material `TestNorm` { diffuseMap=`../tex/Test.dds`, normalMap=`../tex/Test_n.dds` }
 
-material `Burnt` { diffuseColour={0.1072549, 0.04, 0.015}, specular=0.03, gloss=0.01 }
+material `Burnt` { diffuseMap=`burnt.png`, diffuseColour=vec(1, 1, 1), specular=0.03, gloss=0.01 }
 
 material `Grass` { diffuseMap = `../tex/davec/Grass_d.dds`, specular=0.03, gloss = 0.01 }
 material `PackedGravel` { diffuseMap = `../tex/davec/PackedGravel_d.dds`, normalMap = `../tex/davec/PackedGravel_n.dds`, specular=0.03; specularMap = `../tex/davec/PackedGravel_d.dds`, }
