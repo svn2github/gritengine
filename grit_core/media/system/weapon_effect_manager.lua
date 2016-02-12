@@ -153,36 +153,35 @@ function pick_obj()
 end
 
 -- Create particles
---[[
-WeaponParticle = {
-    class = `/common/particles/Smoke`;
-    
+WeaponFlame = {
+    class = `/common/particles/Flame`;
 
-    primaryEngage = function (self, src, q)
+    makeFlame = function (self, size, src, quat)
+        local width = size
+        local height = size * 1.5
+        local pos = pick_pos(src, quat, width/4)
+        if pos == nil then return end
+        pos = pos - vector3(0,0,-width/4)
+        create_flame_raw(pos, width, height, self.class, 60)
+    end;
 
-        local cl = class_get(self.class)
-        local height = cl.placementZOffset or 0
-        local p = pick_pos(src, q)
-        if p == nil then return end
-        local x, y, z = unpack(p)
-
-        local rot = self:getRotation(q)
-        object (self.class) (x,y,z+height) {rot=rot, debugObject=true}
+    primaryEngage = function (self, src, quat)
+        self:makeFlame(0.2 + 0.3 * math.random(), src, quat)
     end;
     primaryStepCallback = function (self, elapsed_secs, src, quat)
     end;
     primaryDisengage = function (self)
     end;
 
-    secondaryEngage = function (self, src, q)
+    secondaryEngage = function (self, src, quat)
+        self:makeFlame(1 + 1 * math.random(), src, quat)
     end;
     secondaryStepCallback = function (self, elapsed_secs, src, quat)
     end;
     secondaryDisengage = function (self)
     end;
 }
-WeaponEffectManager:set("Particle", WeaponParticle)
-]]
+WeaponEffectManager:set("Flame", WeaponFlame)
 
 
 -- Create objects

@@ -210,7 +210,7 @@ local function engine_flame_behaviour (particle, elapsed)
 end
 
 particle `EngineFire` {
-	map = `flames_anim.png`;
+	map = `flames_anim2.png`;
     frames = particle_grid_frames(146,146, 0,0, 6,6),
 	frame = 0;
     behaviour = engine_flame_behaviour;
@@ -267,7 +267,7 @@ function emit_engine_fire (pos)
 end
 
 particle `Flame` {
-    map = `flames_anim.png`;
+    map = `flames_anim2.png`;
     frames = particle_grid_frames(146,146, 0,0, 6,6) ; frame = 0;
     behaviour = flame_behaviour;
     life = 3;
@@ -281,7 +281,7 @@ function cast_flame (pname)
     local size = 0.2 + 0.3 * math.random()
     local width = size
     local height = size * 1.5
-    local pos = pick_pos(width/4, true)
+    local pos = pick_pos(main.camPos, main.camQuat, width/4)
     if pos == nil then return end
     pos = pos - vector3(0,0,-width/4)
     create_flame_raw(pos, width, height, pname, 60)
