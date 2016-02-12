@@ -169,6 +169,9 @@ editor = {
     
 game_manager:define("Map Editor", editor)
 
-function init_editor()
+function init_editor(map)
 	game_manager:enter('Map Editor')
+	if map ~= nil then
+		GED:openMap(map)
+	end
 end
