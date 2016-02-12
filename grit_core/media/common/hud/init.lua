@@ -65,16 +65,6 @@ if console_focused then
     hud_focus_grab(console)
 end
 
--- Menu
-if menu ~= nil then
-    buffer = menu.enabled
-    safe_destroy(menu)
-end
-menu = gfx_hud_object_add(`menu/Main`, {zOrder=14})
-menu.enabled = (buffer or false)
-
-menu.setMenu("main") --Mainly for debugging, may keep it.
-
 -- Crosshair
 safe_destroy(ch)
 ch = gfx_hud_object_add(`Rect`, {texture=`CrossHair.png`, parent=hud_center})

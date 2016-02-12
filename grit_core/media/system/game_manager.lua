@@ -40,7 +40,9 @@ game_manager = {
         end
         core_option("FOREGROUND_WARNINGS", false)
         self.currentMode = new_mode
-        menu:setEnabled(false)
+		
+		create_pause_menu(false)
+		
         new_mode:init();
         core_option("FOREGROUND_WARNINGS", true)
     end;
@@ -51,7 +53,8 @@ game_manager = {
             self.currentMode = nil
         end
         system_layer:setEnabled(false)
-        menu:setEnabled(true)
+		
+		create_main_menu(true)
     end;
 
     frameUpdate = function (self, elapsed_secs)
@@ -87,4 +90,8 @@ game_manager = {
 
 playing_binds.mouseMoveCallback = function (rel)
     game_manager:mouseMove(rel)
+end
+
+function enter_gamemode(gm)
+	game_manager:enter(gm)
 end

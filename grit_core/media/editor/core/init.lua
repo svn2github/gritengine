@@ -168,3 +168,7 @@ editor = {
 }
     
 game_manager:define("Map Editor", editor)
+
+function init_editor()
+	game_manager:enter('Map Editor')
+end

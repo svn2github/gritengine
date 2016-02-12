@@ -39,9 +39,12 @@ function playground:playerRespawn()
     -- Use loading screen while we go back to spawn pos
     loading_screen.enabled = true
     loading_screen:setProgress(0)
+
     loading_screen:pump()
     streamer_centre_full(self.spawnPos)
 
+	give_queue_allowance(1 + 1*get_in_queue_size())
+	
     local to_go = get_in_queue_size()
     local init_to_go = to_go
     while to_go > 0 do
@@ -83,7 +86,7 @@ function playground:init()
 
     include `img/placement.lua`
 
-    self.protagonist = object `/detached/characters/robot_med` (0, 0, 0) { }
+    self.protagonist = object `/detached/characters/robot_scout` (0, 0, 0) { }
 
 
     object `/vehicles/Scarman` (-49.45975, 9.918219, 1.112) {

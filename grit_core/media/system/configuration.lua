@@ -357,7 +357,9 @@ end
 
 local function system_receive_button(button, state)
     if button == "menu" and state == '+' then
-        menu:setEnabled(not menu.enabled)
+        if not menu.destroyed and menu.destroyed ~= nil then
+			menu:setEnabled(not menu.enabled)
+		end
     elseif button == "console" and state == '+' then
         if input_filter_pressed("Ctrl") then
             system_layer:setEnabled(true)

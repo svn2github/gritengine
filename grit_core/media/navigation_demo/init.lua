@@ -90,6 +90,8 @@ function navigation_demo:playerRespawn()
     loading_screen:pump()
     streamer_centre_full(self.spawnPos)
 
+	give_queue_allowance(1 + 1*get_in_queue_size())
+	
     local to_go = get_in_queue_size()
     local init_to_go = to_go
     while to_go > 0 do
@@ -97,6 +99,7 @@ function navigation_demo:playerRespawn()
         loading_screen:setProgress((init_to_go - to_go) / init_to_go)
         loading_screen:pump()
     end
+	
     loading_screen:setProgress(1)
     loading_screen:setStatus('Activating objects')
     loading_screen:pump()

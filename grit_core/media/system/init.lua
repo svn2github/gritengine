@@ -315,20 +315,53 @@ include `/vehicles/init.lua`
 
 -- Game modes
 include `/playground/init.lua`
-
 include `/navigation_demo/init.lua`
-
-safe_include `/user_script.lua` 
 
 include `welcome_msg.lua`
 
+_project = {}
+
+function open_project(proj, editor)
+	local mfile = io.open(proj, "r")
+	local str = mfile:read("*all")
+	loadstring(str)()
+	mfile:close()
+	
+	if next(_project) then
+		if editor then
+			init_editor()
+			if _project.default_map ~= nil then
+				GED:open_map(_project.default_map)
+			end
+		else
+			print(_project.game_mode_name)
+			game_manager:enter(_project.game_mode_name)
+		end
+	end
+
+	_project = {}
+end
+
 function debug_mode()
     game_manager:enter('Map Editor')
-    menu.enabled = false
     GED:toggleDebugMode()
     gfx_option('RENDER_SKY', true)
-    menu_binds.modal = false
     ticker.text.enabled = true
 end
 
 game_manager:exit()
+
+safe_include `/user_script.lua`
+
+-- only loads menu if no game mode is defined on user_script
+if game_manager.currentMode == nil then
+	create_main_menu()
+else
+	if game_manager.currentMode.pause_menu == nil then
+		create_pause_menu(false)
+	end
+end
+
+-- TODO: Why? (camera doesn't work properly, debug_mode() as command line argument still not working)
+system_binds.modal = true
+system_binds.modal = false

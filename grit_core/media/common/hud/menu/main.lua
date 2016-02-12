@@ -7,10 +7,9 @@ hud_class `Main` {
 	
 	init = function (self)
 		self.needsParentResizedCallbacks = true;
-		self.needsFrameCallbacks = true;
-		
+
 		self.selectedOption = ""; --Used for loading projects
-		
+
 		self.activeMenu = "";
 		
 		self.activeGuis = {};
@@ -37,12 +36,24 @@ hud_class `Main` {
 						menu.menu.projects()
 					end
 				})
+				self.activeGuis["debugmodeButton"] = gfx_hud_object_add(`Button`, {
+					size = vec(210,40);
+					font = `/common/fonts/Impact24`;
+					caption = "Debug Mode";
+					parent = self;
+					position = vec2(0, -50);
+					edgeColour = vec(0, 1, 0);
+					edgePosition = vec2(-(210 / 2) + 5, 0);
+					pressedCallback = function() 
+						debug_mode()
+					end
+				})				
 				self.activeGuis["editorButton"] = gfx_hud_object_add(`Button`, {
 					size = vec(210,40);
 					font = `/common/fonts/Impact24`;
 					caption = "Editor";
 					parent = self;
-					position = vec2(0, -50);
+					position = vec2(0, -100);
 					edgeColour = vec(0, 102/255, 1)*1.0;
 					edgePosition = vec2(-(210 / 2) + 5, 0);
 					pressedCallback = function() 
@@ -55,7 +66,7 @@ hud_class `Main` {
 					font = `/common/fonts/Impact24`;
 					caption = "Settings";
 					parent = self;
-					position = vec2(0, -100);
+					position = vec2(0, -150);
 					edgeColour = vec(1, 1, 0);
 					edgePosition = vec2(-(210 / 2) + 5, 0);
 					pressedCallback = function() 
@@ -67,7 +78,7 @@ hud_class `Main` {
 					font = `/common/fonts/Impact24`;
 					caption = "Exit";
 					parent = self;
-					position = vec2(0, -150);
+					position = vec2(0, -200);
 					edgeColour = vec(1, 0, 1)*1.0;
 					edgePosition = vec2(-(210 / 2) + 5, 0);
 					pressedCallback = quit
@@ -123,6 +134,8 @@ hud_class `Main` {
 							caption = key;
 							parent = menu;
 							position = vec2(-205, currentPosition);
+							edgePosition = vec2(-(210 / 2) + 5, 0);
+							edgeColour = vec(1, 1, 1);
 							isSelected = false;
 							pressedCallback = function(self)
 								menu.makeSelection(self)
@@ -149,7 +162,6 @@ hud_class `Main` {
 					position = vec2(215, -(gfx_window_size().y / 2) + 100);
 					parent = menu;
 					pressedCallback = function(self)
-						menu.enabled = false
 						for k in pairs (menu.activeGuis) do
 							safe_destroy(menu.activeGuis[k])
 						end
@@ -220,13 +232,90 @@ hud_class `Main` {
 		self.size = psize
 	end;
 
-	frameCallback = function (self, elapsed)
-		--if(self.content ~= self.setMenu)then
-			--self.content = self.setMenu
-			--self:setUpContent(self.content)
-		--end
-	end;
-	
 	escape = function(self)
 	end;
 }
+
+hud_class `Pause` {
+	colour = vec(1, 1, 1)*0.2;
+	-- texture = `background.dds`;
+	alpha = 0.8;
+	padding = 0;
+	
+	init = function (self)
+		self.needsParentResizedCallbacks = true;
+
+		self.activeGuis = {};
+		
+		self.activeGuis["gritLogo"] = gfx_hud_object_add(`/common/hud/Rect`, {
+			size = vec(300, 150);
+			texture = `/common/hud/LoadingScreen/GritLogo.png`;
+			parent = self;
+			position = vec2(0, (gfx_window_size().y / 2) - 250);
+		})
+		self.activeGuis["resume"] = gfx_hud_object_add(`Button`, {
+			size = vec(210,40);
+			font = `/common/fonts/Impact24`;
+			caption = "Resume";
+			parent = self;
+			position = vec2(0, 0);
+			edgeColour = vec(1, 102/255, 0)*1.0;
+			edgePosition = vec2(-(210 / 2) + 5, 0);
+			pressedCallback = function() 
+				menu:setEnabled(false)
+			end
+		})
+		self.activeGuis["return"] = gfx_hud_object_add(`Button`, {
+			size = vec(210,40);
+			font = `/common/fonts/Impact24`;
+			caption = "Return to main menu";
+			parent = self;
+			position = vec2(0, -50);
+			edgeColour = vec(0, 102/255, 1)*1.0;
+			edgePosition = vec2(-(210 / 2) + 5, 0);
+			pressedCallback = function() 
+				game_manager:exit()
+			end
+		})
+		self.activeGuis["exitButton"] = gfx_hud_object_add(`Button`, {
+			size = vec(210,40);
+			font = `/common/fonts/Impact24`;
+			caption = "Exit";
+			parent = self;
+			position = vec2(0, -100);
+			edgeColour = vec(1, 0, 1)*1.0;
+			edgePosition = vec2(-(210 / 2) + 5, 0);
+			pressedCallback = quit
+		})
+	end;
+
+	setEnabled = function(self, v)
+		self.enabled = v
+		menu_binds.modal = v
+		main.physicsEnabled = not v
+	end;
+	
+	parentResizedCallback = function (self, psize)
+		self.position = vec(psize.x/2, psize.y/2)
+		self.size = psize
+	end;
+}
+
+menu = {}
+
+function create_main_menu(v)
+	safe_destroy(menu)
+	v = v or true
+	
+	menu = gfx_hud_object_add(`/common/hud/menu/Main`, { zOrder = 14 })
+	menu:setEnabled(v)
+
+	menu.setMenu("main") --Mainly for debugging, may keep it.
+end
+
+function create_pause_menu(v)
+	safe_destroy(menu)
+	v = v or false
+	menu = gfx_hud_object_add(`/common/hud/menu/Pause`, { zOrder = 14 })
+	menu:setEnabled(v)
+end
