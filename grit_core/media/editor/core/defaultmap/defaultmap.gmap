@@ -20,20 +20,10 @@ gritmap =
   };
   include     = {};
   objects     = {   {
-    class       = "/editor/core/defaultmap/Terrain";
-    name        = "myTerrain";
-    orientation = quat(1, 0, 0, 0);
-    position    = vector3(14.01739, 59.29418, -16.57661);
-    properties  =     {
-      buildNavmesh       = true;
-      castShadows        = true;
-      usePreBuildNavmesh = true;
-    };
-  },   {
     class       = "/editor/core/defaultmap/Cube";
     name        = "mycube";
     orientation = quat(1, 0, 0, 0);
-    position    = vector3(0, 0, -20.1);
+    position    = vector3(0, 0, -20);
     properties  =     {
       buildNavmesh       = true;
       castShadows        = true;
