@@ -25,10 +25,10 @@ hud_class `Speedo` {
 
     frameCallback = function (self, elapsed)
     
-        local x,y,z = unpack(player_ctrl.speedoPos)
+        local x,y,z = unpack(main.speedoPos)
         self.labels.contents[1].text.text = string.format("%+5.0f %+5.0f %+5.0f", x, y, z)
         
-        local speed_amount = player_ctrl.speedoSpeed
+        local speed_amount = main.speedoSpeed
         if type(speed_amount) == "string" then 
             self.labels.contents[2].text.text = speed_amount
         else
@@ -43,9 +43,9 @@ hud_class `Speedo` {
             self.labels.contents[2].text.text = string.format("%d %s", speed_amount, speed_units)
         end
 		
-		if player_ctrl and player_ctrl.controlObj and player_ctrl.controlObj.instance.engine then
-			local rpm =	player_ctrl.controlObj.instance.engine:getRpm()
-			local gear = player_ctrl.controlObj.instance.engine:getGear()
+		if main and main.controlObj and main.controlObj.instance and main.controlObj.instance.engine then
+			local rpm =	main.controlObj.instance.engine:getRpm()
+			local gear = main.controlObj.instance.engine:getGear()
 			self.labels.contents[3].enabled = true
 			self.labels.contents[4].enabled = true
 			self.labels.contents[3].text.text = string.format("%d RPM", rpm or 0)

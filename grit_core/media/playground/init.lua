@@ -104,6 +104,13 @@ function playground:init()
     object `pickup_lesserGearBundle` (-34.45975, 5.918219, 1.112) {
     }
 
+	main.speedoPos = main.camPos
+	main.speedoSpeed = 0
+	
+	safe_destroy(self.speedo)
+	self.speedo = gfx_hud_object_add(`/common/hud/Speedo`, { parent = hud_top_right })
+	self.speedo.position = vec(-64, -128 - self.speedo.size.y/2)
+	
     self.coinsPickedUp = 0
     self.coinsTotal = 1
 
@@ -184,6 +191,9 @@ function playground:board(veh)
     playing_vehicle_binds.enabled = true
     self.protagonist:enterVehicle()
     veh:controlBegin()
+	
+	main.controlObj = veh
+	
     -- When boarding a vehicle we want to keep the same effective pitch (otherwise it's jarring for the user).
     -- So we calculate the playerCamPitch necessary for that.
     local v_pitch = pitch((veh.instance.body.worldOrientation * V_FORWARDS).z)
@@ -197,6 +207,9 @@ function playground:abandonControlObj()
     self.vehicle = nil
     self.protagonist:exitVehicle(veh.instance.body:localToWorld(veh.driverExitPos), veh.instance.body.worldOrientation * veh.driverExitQuat)
     veh:controlAbandon()
+	
+	main.controlObj = nil
+	
     playing_actor_binds.enabled = true
     -- When on foot there is no vehicle pitch.
     local v_pitch = pitch((veh.instance.body.worldOrientation * V_FORWARDS).z)
@@ -338,8 +351,8 @@ function playground:frameCallback(elapsed_secs)
 
         main.camQuat = quat(self.camYaw, V_DOWN) * quat(self.camPitch, V_EAST)
 
-        --player_ctrl.speedoPos = instance.camAttachPos
-        --player_ctrl.speedoSpeed = #vehicle_vel
+        main.speedoPos = instance.camAttachPos
+        main.speedoSpeed = #vehicle_vel
         if self.vehicle ~= nil then
             self.protagonist:updateDriven(instance.camAttachPos, Q_ID)
         end
@@ -383,6 +396,8 @@ function playground:destroy()
     safe_destroy(self.debugText1)
     safe_destroy(self.debugText2)
 
+	safe_destroy(self.speedo)
+	
     playing_binds.enabled = false
     playing_actor_binds.enabled = false
     playing_vehicle_binds.enabled = false

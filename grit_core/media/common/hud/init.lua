@@ -78,11 +78,6 @@ music_player.position = music_player.size / 2 + vec(50,10)
 safe_destroy(compass)
 compass = gfx_hud_object_add(`Compass`, {parent=hud_top_right, position=vec(-64, -64)})
 
--- TODO(dcunnin): speedo should be a game mode thing
--- safe_destroy(speedo)
--- speedo = gfx_hud_object_add(`Speedo`, {parent=hud_top_right})
--- speedo.position=vec(-64, -128 - speedo.size.y/2)
-
 safe_destroy(clock)
 clock = gfx_hud_object_add(`Clock`, { parent=hud_top_right, size=vec(190,50) })
 clock.position = -clock.size/2 - vec(130, 4)
