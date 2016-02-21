@@ -365,3 +365,5 @@ end
 -- TODO: Why? (camera doesn't work properly, debug_mode() as command line argument still not working)
 system_binds.modal = true
 system_binds.modal = false
+
+main:run(...)
