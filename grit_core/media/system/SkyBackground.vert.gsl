@@ -7,7 +7,6 @@ out.position = transform_to_world(vert.position.xyz);
 
 
 var sunlight_dir_ss_ = mul(global.viewProj, Float4(-global.sunDirection,1));
-// var vert_pos_ss = mul(global.viewProj, Float4(out.position,1));
 
 // for interpolators
 var uv = vert.coord0.xy;
