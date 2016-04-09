@@ -4,13 +4,13 @@ var az = polar_rad_x / PI * 180;
 var el = polar_rad_y / PI * 180;
 var polar_ = Float2(az,el);
 
-
-
-
-
 // need to do these in fragment shader, to stop the sun vanishing at the corners of the
 // screen
 var pos_ss_ = frag.screen.xy / global.viewportSize.xy * 2 - 1;
+
+// frag.screen is origin lower left, whereas we compare it to sunlight_dir_ss which is origin top
+// left (from right-handed projection matrix).  So invert pos_ss.
+pos_ss_.y = - pos_ss_.y;
 
 // SUN GLARE
 var rel_polar = sun_pos_ss_polar.xy - polar_.xy;
@@ -103,4 +103,5 @@ if (sunlight_dir_ss.z < 1) {
     out.colour = lerp(out.colour, global.sunColour, global.sunAlpha * sun_qty);
 }
 
+// out.colour = Float3(vert_pos_ss.xy/vert_pos_ss.w % 1, 0);
 out.alpha = 1;
