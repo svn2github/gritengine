@@ -3,6 +3,8 @@
 #include <system/uber.cgh>
 #include <system/uber_recv.cgh>
 
+
+
 #if EMISSIVE_PART==1
 
 // {{{ EMISSIVE VERTEX PROGRAM
@@ -121,6 +123,7 @@ void fp_main (
 // }}}
 
 #endif // EMISSIVE_PART==1
+
 
 
 #if FORWARD_PART==1 && DEFERRED_AMBIENT_SUN_PART==1
@@ -978,16 +981,17 @@ void fp_main (
 #endif
 
 
+
 #if DEFERRED_LIGHTS_PART==1
 
 // {{{ DEFERRED LIGHTS VERTEX PROGRAM
 void vp_main (
         in float3 pos_ws : POSITION,
         in float3 light_aim_ws : NORMAL,
-        in float3 diff_colour : COLOR0,
-        in float3 spec_colour : COLOR1,
         in float3 light_pos_ws : TEXCOORD0,
         in float3 light_param : TEXCOORD1,
+        in float3 diff_colour : TEXCOORD2,
+        in float3 spec_colour : TEXCOORD3,
 
         uniform float4x4 view_proj,
         uniform float render_target_flipping,
@@ -1065,9 +1069,8 @@ void fp_main (
         float3 normal_ws = mul(inv_view, float4(normal_vs,0)).xyz;
 
         float cam_dist = normalised_cam_dist * far_clip_distance;
-        ray = normalize(ray);
 
-        float3 camera_dir_ws = -ray;
+        float3 camera_dir_ws = -normalize(ray);
 
         float3 light_ray_ws = light_pos_ws_ - pos_ws;
         float light_dist = length(light_ray_ws);

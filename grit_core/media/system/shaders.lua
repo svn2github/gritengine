@@ -718,10 +718,6 @@ end
 
 -- {{{ SCREENSPACE SHADERS (e.g. deferred)
 
-local function make_program_deferred_ambient_sun_cg ()
-        return make_program_cg_(1, false, false, false, false, false, false, 0, 1, false, false, 0, 0, false, false, gfx_option("SHADOW_RECEIVE"), false, false)
-end
-
 local function make_program_deferred_lights_cg ()
         return make_program_cg_(2, false, false, false, false, false, false, 0, 1, false, false, 0, 0, false, false, false, false, false)
 end
@@ -818,7 +814,6 @@ end
 
 function do_reset_deferred_shaders()
 
-        make_program_deferred_ambient_sun_cg()
         make_program_deferred_lights_cg()
         make_program_compositor_v_cg()
         make_program_tonemap_cg()

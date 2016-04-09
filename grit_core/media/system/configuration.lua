@@ -494,11 +494,13 @@ local function commit(c, p, flush, partial)
                     gfx_option("RENDER_SKY", true)
                     gfx_option("POINT_LIGHTS", true)
                     gfx_option("POST_PROCESSING", true)
+                    gfx_option("DEBUG_MODE", 0)
                 else
                     gfx_option("RENDER_PARTICLES", false)
                     gfx_option("RENDER_SKY", false)
                     gfx_option("POINT_LIGHTS", false)
                     gfx_option("POST_PROCESSING", false)
+                    gfx_option("DEBUG_MODE", 1)
                 end
         
             elseif k == "graphicsRAM" then

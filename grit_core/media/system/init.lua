@@ -345,7 +345,6 @@ end
 function debug_mode()
     game_manager:enter('Map Editor')
     GED:toggleDebugMode()
-    gfx_option('RENDER_SKY', true)
     ticker.text.enabled = true
 end
 
@@ -363,7 +362,7 @@ else
 end
 
 -- TODO: Why? (camera doesn't work properly, debug_mode() as command line argument still not working)
-system_binds.modal = true
-system_binds.modal = false
+-- system_binds.modal = true
+-- system_binds.modal = false
 
 main:run(...)
