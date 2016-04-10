@@ -387,31 +387,15 @@ local function shader_names (...)
         return shader_names_aux("recv_f", ...), shader_names_aux("recv_v", ...)
 end
 
-local function make_program_cg_ (category, diffuse_map, pma, emissive_map, normal_map, tran_map, spec_mode, paint_mode, blend, overlay, stipple, blended_bones, vcols, grass, world, rshadow, microflakes, forward_only)
+local function make_program_cg (diffuse_map, pma, emissive_map, normal_map, tran_map, spec_mode, paint_mode, blend, overlay, stipple, blended_bones, vcols, grass, world, rshadow, microflakes, forward_only)
         assert(blend>0)
         assert(emissive_map == false)
-        local forward, forward_amb_sun, deferred_amb_sun, deferred_lights = false, false, false
-        local fname, vname
-        if category == 0 then
-                -- material does lighting parameter calculation 
-                -- if forward_only == false then also does ambient/sun lighting
-                forward = true
-                forward_amb_sun = not forward_only
-                fname, vname = shader_names(diffuse_map, pma, emissive_map, normal_map, tran_map, spec_mode, paint_mode, blend, overlay, stipple, blended_bones, vcols, grass, world, rshadow, microflakes, forward_only)
-        elseif category == 1 then
-                -- material does ambient/sun lighting using gbuffer
-                deferred_amb_sun = true
-                fname, vname = "deferred_ambient_sun_f", "deferred_ambient_sun_v"
-        elseif category == 2 then
-                -- material does point/cone lighting using gbuffer
-                deferred_lights = true
-                fname, vname = "deferred_lights_f", "deferred_lights_v"
-        end
-        print ("Compiling shader: ", vname, fname, category)
-        local smodel = 0
-        if debug_cfg.shadingModel == "SHARP" then smodel = 0 end
-        if debug_cfg.shadingModel == "HALF_LAMBERT" then smodel = 1 end
-        if debug_cfg.shadingModel == "WASHED_OUT" then smodel = 2 end
+        local forward, forward_amb_sun, deferred_amb_sun, deferred_lights = true, false, false, false
+        -- material does lighting parameter calculation 
+        -- if forward_only == false then also does ambient/sun lighting
+        forward_amb_sun = not forward_only
+        local fname, vname = shader_names(diffuse_map, pma, emissive_map, normal_map, tran_map, spec_mode, paint_mode, blend, overlay, stipple, blended_bones, vcols, grass, world, rshadow, microflakes, forward_only)
+        print ("Compiling shader: ", vname, fname)
         local has_gloss_map = spec_mode==1 or spec_mode==2
         local paint_map, paint_colour, paint_mask, paint_alpha = false, 0, false, false
         if paint_mode ~= false then
@@ -445,7 +429,6 @@ local function make_program_cg_ (category, diffuse_map, pma, emissive_map, norma
                       .." -DBLENDED_BONES="..blended_bones
                       .." -DFLIP_BACKFACE_NORMALS="..(grass and "0" or "1")
                       .." -DWORLD_GEOMETRY="..(world and "1" or "0")
-                      .." -DSHADING_MODEL="..tostring(smodel)
                       .." -DRECEIVE_SHADOWS="..(rshadow and "1" or "0")
         defines = defines .. configuration_defines()
 
@@ -684,10 +667,6 @@ local function make_program_cg_ (category, diffuse_map, pma, emissive_map, norma
         return vp, fp
 end
 
-local function make_program_cg (...)
-        return make_program_cg_(0, ...)
-end
-
 if shader_table == nil then
         shader_table = {}
 end
@@ -696,7 +675,7 @@ function shader_names_ensure_created(...)
         local code = program_code(...)
         if shader_table[code] == nil then
                 shader_table[code] = {...}
-                make_program_cg (...)
+                make_program_cg(...)
         end
         return shader_names(...)
 end
@@ -716,122 +695,7 @@ end
 
 -- }}}
 
--- {{{ SCREENSPACE SHADERS (e.g. deferred)
-
-local function make_program_deferred_lights_cg ()
-        return make_program_cg_(2, false, false, false, false, false, false, 0, 1, false, false, 0, 0, false, false, false, false, false)
-end
-
-local function make_program_compositor_v_cg ()
-        local vname = "compositor_v"
-
-        print ("Compiling shader: ", vname)
-        local defines = "-O3"
-        defines = defines .. configuration_defines()
-
-        local vp = prog(vname,"cg","VERTEX")
-        vp.profiles = {"vs_3_0", gl_profile_vert}
-        vp.sourceFile = "system/compositor_vp.cg"
-        vp.compileArguments = defines
-        vp.entryPoint = "vp_main"
-        vp:reload()
-
-        return vp
-end
-
-local function make_program_tonemap_cg ()
-        local fname = "tonemap"
-
-        print ("Compiling shader: ", fname)
-        local defines = "-O3"
-        defines = defines .. configuration_defines()
-
-        local fp = prog(fname,"cg","FRAGMENT")
-        fp.profiles = {"ps_3_0", gl_profile_frag}
-        fp.sourceFile = "system/tonemap.cg"
-        fp.compileArguments = defines
-        fp.entryPoint = "fp_main"
-        fp:reload()
-
-        return fp
-end
-
-local function make_program_bloom_cg ()
-        local fname, fp, defines
-
-        fname = "bloom_filter_then_horz_blur"
-           print ("Compiling shader: ", fname)
-        defines = "-O3"
-        defines = defines .. configuration_defines()
-        defines = defines .. " -DBLOOM_HORZ=1"
-        defines = defines .. " -DBLOOM_FILTER=1"
-        fp = prog(fname,"cg","FRAGMENT")
-        fp.profiles = {"ps_3_0", gl_profile_frag}
-        fp.sourceFile = "system/bloom.cg"
-        fp.compileArguments = defines
-        fp.entryPoint = "fp_main"
-        fp:reload()
-
-        fname = "bloom_vert_blur"
-        print ("Compiling shader: ", fname)
-        defines = "-O3"
-        defines = defines .. configuration_defines()
-        defines = defines .. " -DBLOOM_HORZ=0"
-        fp = prog(fname,"cg","FRAGMENT")
-        fp.profiles = {"ps_3_0", gl_profile_frag}
-        fp.sourceFile = "system/bloom.cg"
-        fp.compileArguments = defines
-        fp.entryPoint = "fp_main"
-        fp:reload()
-
-        fname = "bloom_horz_blur"
-        print ("Compiling shader: ", fname)
-        defines = "-O3"
-        defines = defines .. configuration_defines()
-        defines = defines .. " -DBLOOM_HORZ=1"
-        defines = defines .. " -DBLOOM_FILTER=0"
-        fp = prog(fname,"cg","FRAGMENT")
-        fp.profiles = {"ps_3_0", gl_profile_frag}
-        fp.sourceFile = "system/bloom.cg"
-        fp.compileArguments = defines
-        fp.entryPoint = "fp_main"
-        fp:reload()
-
-        fname = "bloom_vert_blur_combine_and_tonemap"
-        print ("Compiling shader: ", fname)
-        defines = "-O3"
-        defines = defines .. configuration_defines()
-        defines = defines .. " -DBLOOM_HORZ=0"
-        defines = defines .. " -DBLOOM_COMBINE_TONEMAP=1"
-        fp = prog(fname,"cg","FRAGMENT")
-        fp.profiles = {"ps_3_0", gl_profile_frag}
-        fp.sourceFile = "system/bloom.cg"
-        fp.compileArguments = defines
-        fp.entryPoint = "fp_main"
-        fp:reload()
-
-end
-
-function do_reset_deferred_shaders()
-
-        make_program_deferred_lights_cg()
-        make_program_compositor_v_cg()
-        make_program_tonemap_cg()
-        make_program_bloom_cg(true)
-        make_program_bloom_cg(false)
-
-end
-
--- }}}
-
-
-
-
-
-
 function do_reset_shaders ()
-
-        do_reset_deferred_shaders()
         do_reset_emissive_shaders()
         do_reset_wireframe_shaders()
         do_reset_caster_shaders()

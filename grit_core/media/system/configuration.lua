@@ -401,7 +401,6 @@ local function commit(c, p, flush, partial)
 
     local reset_shaders = false or flush
     local reset_materials = false or flush
-    local reset_deferred_shaders = false or flush
 
     for k,v in pairs(p) do
         if c[k] ~= v then
@@ -415,7 +414,6 @@ local function commit(c, p, flush, partial)
             elseif k == "shadowReceive" then
                 gfx_option("SHADOW_RECEIVE",v)
                 reset_materials = true
-                reset_deferred_shaders = true
             elseif k == "shadowEmulatePCF" then
                 gfx_option("SHADOW_EMULATE_PCF", v)
                 reset_shaders = true
@@ -595,10 +593,6 @@ local function commit(c, p, flush, partial)
     gfx_option("AUTOUPDATE",true)
 
     if partial then return end
-
-    if reset_deferred_shaders then
-        do_reset_deferred_shaders()
-    end
 
     if reset_shaders then
         do_reset_shaders()

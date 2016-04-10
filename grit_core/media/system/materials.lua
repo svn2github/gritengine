@@ -114,43 +114,6 @@ local function paint_mode_from_tab(tab)
         return paint_mode
 end
 
-local function material_bloom (name, horz)
-        local mat = get_material(name)
-        if mat==nil then
-                mat = Material(name)
-        else
-                mat:removeAllTechniques()
-                mat:createTechnique()
-                mat:createPass(0)
-        end
-
-        local namepart = horz and "horz" or "vert_recombine"
-        local fname, vname = "bloom_"..namepart.."_f", "bloom_"..namepart.."_v"
-
-        mat:setVertexProgram(0,0,vname)
-        mat:setFragmentProgram(0,0,fname)
-
-        if horz then
-                mat:createTextureUnitState(0,0)
-                mat:setTextureName(0,0,0, "")
-                mat:setTextureFiltering(0,0,0,"LINEAR","LINEAR","NONE")
-        else
-                mat:createTextureUnitState(0,0)
-                mat:setTextureName(0,0,0, "")
-                mat:setTextureFiltering(0,0,0,"LINEAR","LINEAR","NONE")
-                mat:createTextureUnitState(0,0)
-                mat:setTextureName(0,0,1, "")
-                mat:setTextureFiltering(0,0,1,"LINEAR","LINEAR","NONE")
-        end
-
-        mat:setLightingEnabled(0,0,false)
-        mat:setDepthFunction(0,0,"TRUE")
-
-        return mat
-end
-
-
-
 local function material_wireframe (name, original, world, tab)
 
         local shf, shv = shader_wireframe_names_ensure_created(tab.overlayOffset, tab.blendedBones, world)
@@ -606,9 +569,3 @@ function do_reset_materials()
 
         reprocess_all_registered_materials(do_create_material)
 end
-
-
-function do_reset_deferred()
-        do_reset_deferred_shaders()
-end
-
