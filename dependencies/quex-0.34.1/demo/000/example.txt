@@ -1,9 +1,0 @@
-struct example {
-  int    x;
-  double y;
-};
-
-if ConfigOk {
-  send number 4711 hello world;
-  expect number 0815 handshake acknowledged;
-}

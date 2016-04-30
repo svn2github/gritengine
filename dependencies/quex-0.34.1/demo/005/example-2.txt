@@ -1,3 +1,0 @@
-Avant la premiere 'include'
-include auxiliary/hello.txt
-Apres la premiere 'include'

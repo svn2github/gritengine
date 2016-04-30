@@ -1,3 +1,0 @@
-include auxiliary/bonjour.txt
-Hello World
-

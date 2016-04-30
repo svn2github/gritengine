@@ -1,3 +1,0 @@
-var texel = sample(mat.tex, vert.coord0.xy);
-out.colour = texel.rgb * mat.colour;
-out.alpha = texel.a * mat.alpha;
