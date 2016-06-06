@@ -561,10 +561,6 @@ function do_reset_materials()
                 end
         end
 
-        --BaseWhite is the only material without a leading / so we do it directly
-        --do_create_material("BaseWhite",{})
-        --register_material("BaseWhite",{})
-
         material "/system/FallbackMaterial" { }
 
         reprocess_all_registered_materials(do_create_material)
