@@ -233,34 +233,39 @@ FlyingCar = extends (ColClass) {
         end
     end;
 
-    setPush = function (persistent, v)
+    setForwards = function (persistent, v)
         if not persistent.activated then error("Not activated: "..persistent.name) end
         persistent.instance.forward = v
     end;
 
-    setPull = function (persistent, v)
+    setBackwards = function (persistent, v)
         if not persistent.activated then error("Not activated: "..persistent.name) end
         persistent.instance.backward = v
     end;
 
-    setShouldSteerLeft = function (persistent, v)
+    setLeft = function (persistent, v)
         if not persistent.activated then error("Not activated: "..persistent.name) end
         persistent.instance.steerLeft = v
     end;
 
-    setShouldSteerRight = function (persistent, v)
+    setRight = function (persistent, v)
         if not persistent.activated then error("Not activated: "..persistent.name) end
         persistent.instance.steerRight = v
-    end;
-
-    setBoost = function (persistent, v)
-        if not persistent.activated then error("Not activated: "..persistent.name) end
-        persistent.instance.lower = v
     end;
 
     setHandbrake = function (persistent, v)
         if not persistent.activated then error("Not activated: "..persistent.name) end
         persistent.instance.higher = v
+    end;
+
+    setSpecialUp = function (persistent, v)
+        if not persistent.activated then error("Not activated: "..persistent.name) end
+        persistent.instance.higher = v
+    end;
+
+    setSpecialDown = function (persistent, v)
+        if not persistent.activated then error("Not activated: "..persistent.name) end
+        persistent.instance.lower = v
     end;
 
     setSpecialLeft = function (persistent, v)
@@ -274,8 +279,6 @@ FlyingCar = extends (ColClass) {
     end;
 
     setSpecial = do_nothing;
-    setSpecialUp = do_nothing;
-    setSpecialDown = do_nothing;
     setAltUp = do_nothing;
     setAltDown = do_nothing;
     setAltLeft = do_nothing;
