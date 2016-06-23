@@ -42,7 +42,7 @@ function wm_callback()
 	local _, b = physics_cast(main.camPos, ray, true, 0)
 
 	-- mouse over
-	if b ~= nil then
+	if b ~= nil and b.owner ~= nil then
 		if b.owner.wc ~= nil then
 			-- widget_manager.lastobj.instance.gfx:setMaterial(`../arrows/line`, widget_manager.lastobj.instance.defmat)
 		end
