@@ -136,7 +136,9 @@ function explosion (pos, radius, force, num_flames)
         if dist ~= nil then
             local hit_pos = pos + dist * (radius/5 * dir)
             victim = victim.owner -- from rbody to object
-            victim:ignite(`Flame`, hit_pos, physmat, 30)
+            if victim ~= nil then
+                victim:ignite(`Flame`, hit_pos, physmat, 30)
+            end
         end
     end
 
