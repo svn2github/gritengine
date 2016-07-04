@@ -266,7 +266,12 @@ end
 
 function GED:setDebugMode(v)
     -- Detach any object we may be controlling
-    if not v then
+    
+	if widget_manager then
+		widget_manager:unselectAll()
+	end
+	
+	if not v then
         if self.controlObj ~= nil then
             self:toggleBoard()
         end
@@ -298,7 +303,6 @@ function GED:setDebugMode(v)
 	end
 	
     if not v then
-
         if self.controlObj ~= nil then
             self:toggleBoard()
         end

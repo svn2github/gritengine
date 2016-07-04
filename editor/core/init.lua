@@ -59,6 +59,7 @@ editor = {
     init = function (self)
 		navigation_reset()
 	
+		gfx_option("WIREFRAME_SOLID", true) -- i don't know why but when selecting a object it just shows wireframe, so TEMPORARY?
 		-- fix glow in the arrows
 		gfx_option("BLOOM_THRESHOLD", 3)
 	
@@ -98,7 +99,6 @@ editor = {
 		end
 		
 		notify("The editor is very unstable, we are working on it", vec(1, 0, 0))
-        notify("You need to toggle physics to move an object :(", vec(1, 0, 0), vec(1, 1, 1), 5)
         GED:setDebugMode(false)
 		
 		ticker.text.enabled = false
