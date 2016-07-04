@@ -9,37 +9,34 @@ hud_class `.` {
 	flare = {};
 	
     init = function (self)
-		self.needsFrameCallbacks = true;
-
-		-- used for keep actual size of screen, updates only when resizes the window
-		self.needsParentResizedCallbacks = true;
-		self.win_size = gfx_window_size();
+		self.needsFrameCallbacks = true
 
 		self.flare = {}
 
-		self.flare[0] = gfx_hud_object_add(`/common/hud/Rect`, {texture=`Flare6.png`, size=vec(16, 16), parent = self, colour = vector3(0.085, 1, 0.15)})
+		self.flare[0] = gfx_hud_object_add(`/common/hud/Rect`, { texture=`Flare6.png`, size=vec(16, 16), parent = self, colour = vec(0.085, 1, 0.15)*2 })
 		
-		self.flare[1] = gfx_hud_object_add(`/common/hud/Rect`, {texture=`Flare6.png`, size=vec(40, 40), parent = self, colour = vector3(0.085, 0.7, 1)})
+		self.flare[1] = gfx_hud_object_add(`/common/hud/Rect`, { texture=`Flare6.png`, size=vec(40, 40), parent = self, colour = vec(0.085, 0.7, 1)*2 })
 		
-        self.flare[2] = gfx_hud_object_add(`/common/hud/Rect`, {texture=`Flare5.png`, size=vec(2048, 2048), parent = self})
+        self.flare[2] = gfx_hud_object_add(`/common/hud/Rect`, { texture=`Flare5.png`, size=vec(2048, 2048), parent = self, colour = V_ID * 2 })
 		
-		self.flare[3] = gfx_hud_object_add(`/common/hud/Rect`, {texture=`Flare4.png`, size=vec(400, 400), parent = self})
+		self.flare[3] = gfx_hud_object_add(`/common/hud/Rect`, { texture=`Flare4.png`, size=vec(400, 400), parent = self, colour = V_ID * 2 })
 		
-		self.flare[4] = gfx_hud_object_add(`/common/hud/Rect`, {texture=`Flare3.png`, size=vec(300, 300), parent = self, colour = vector3(0, 0.75, 0.65)})
+		self.flare[4] = gfx_hud_object_add(`/common/hud/Rect`, { texture=`Flare3.png`, size=vec(300, 300), parent = self, colour = vec(0, 0.75, 0.65)*2 })
 		
-		self.flare[5] = gfx_hud_object_add(`/common/hud/Rect`, {texture=`Flare2.png`, size=vec(230, 230), parent = self, colour = vector3(1, 0, 0.85)})
+		self.flare[5] = gfx_hud_object_add(`/common/hud/Rect`, { texture=`Flare2.png`, size=vec(230, 230), parent = self, colour = vec(1, 0, 0.85)*2 })
 		
-		self.flare[6] = gfx_hud_object_add(`/common/hud/Rect`, {texture=`Flare2.png`, size=vec(200, 200), parent = self, colour = vector3(1, 0, 0.85)})
+		self.flare[6] = gfx_hud_object_add(`/common/hud/Rect`, { texture=`Flare2.png`, size=vec(200, 200), parent = self, colour = vec(1, 0, 0.85)*2 })
 
-        self.flare[7] = gfx_hud_object_add(`/common/hud/Rect`, {texture=`Flare1.png`, needsAlpha = true, size=vec(2048, 256), parent = self})	
+        self.flare[7] = gfx_hud_object_add(`/common/hud/Rect`, { texture=`Flare1.png`, needsAlpha = true, size=vec(2048, 256), parent = self, colour = V_ID * 2 })	
 		
-        self.flare[8] = gfx_hud_object_add(`/common/hud/Rect`, {texture=`Flare0.png`, size=self.size, parent = self})
-		self.flare[0].enabled =false
-		self.flare[1].enabled =false
-		self.flare[2].enabled =false
-		self.flare[4].enabled =false
-		self.flare[5].enabled =false
-		self.flare[6].enabled =false
+        self.flare[8] = gfx_hud_object_add(`/common/hud/Rect`, { texture=`Flare0.png`, size=self.size, parent = self, colour = V_ID * 2 })
+		
+		self.flare[0].enabled = false
+		self.flare[1].enabled = false
+		self.flare[2].enabled = false
+		self.flare[4].enabled = false
+		self.flare[5].enabled = false
+		self.flare[6].enabled = false
     end;
     destroy = function (self)
 		self.needsFrameCallbacks = false
@@ -54,7 +51,7 @@ hud_class `.` {
         --
 		local sun_pos = main.camPos + (gfx_sun_falloff_distance() * gfx_sun_direction() * -1)	
 
-        local screen_pos = gfx_world_to_screen(main.camPos, main.camQuat, sun_pos) - vector3(self.win_size.x/2, self.win_size.y/2, 0)
+        local screen_pos = gfx_world_to_screen(main.camPos, main.camQuat, sun_pos) - vec(gfx_window_size().x/2, gfx_window_size().y/2, 0)
 
 		local s_pos = screen_pos.xy
 		
@@ -80,23 +77,23 @@ hud_class `.` {
 			end
 			
 			-- colours
-			self.flare[8].colour = gfx_sun_colour()
-			self.flare[7].colour = gfx_sun_colour()
+			self.flare[8].colour = gfx_sun_colour()*2
+			self.flare[7].colour = gfx_sun_colour()*2
 			
 			-- positions
-			self.flare[0].position =  s_pos  * vec2(0.5, 0.5)
-			self.flare[1].position =  s_pos  * vec2(0.4, 0.4)
-			self.flare[2].position =  s_pos  * vec2(0.4, 0.4)			
-			self.flare[3].position =  s_pos  * vec2(0.3, 0.3)			
-			self.flare[4].position =  s_pos  * vec2(0.8, 0.8)
-			self.flare[5].position =  s_pos  / vec2(0.98, 0.98)
-			self.flare[6].position =  s_pos  / vec2(0.95, 0.95)
+			self.flare[0].position =  s_pos  * vec(0.5, 0.5)
+			self.flare[1].position =  s_pos  * vec(0.4, 0.4)
+			self.flare[2].position =  s_pos  * vec(0.4, 0.4)			
+			self.flare[3].position =  s_pos  * vec(0.3, 0.3)			
+			self.flare[4].position =  s_pos  * vec(0.8, 0.8)
+			self.flare[5].position =  s_pos  / vec(0.98, 0.98)
+			self.flare[6].position =  s_pos  / vec(0.95, 0.95)
 			self.flare[7].position = s_pos		
 			self.flare[8].position = s_pos
 
 			-- increase size with distance
 			local dsize = math.min(math.sqrt((self.flare[0].position.x - s_pos.x) ^ 2 + (self.flare[0].position.y - s_pos.y) ^ 2) * 0.07, 16)			
-			self.flare[0].size = vec2(dsize*0.85, dsize)			
+			self.flare[0].size = vec(dsize*0.85, dsize)			
 			dsize = math.min(#(self.flare[1].position - s_pos) * 0.2, 200)			
 			self.flare[1].size = vec2(dsize*0.7, dsize)
 			
@@ -117,9 +114,5 @@ hud_class `.` {
         for i = 0, 8 do
             self.flare[i].alpha = self.alp
         end	
-    end;
-	
-	parentResizedCallback = function (self, psize)
-		self.win_size = gfx_window_size()
     end;
 }
