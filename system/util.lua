@@ -797,6 +797,8 @@ function map_ghost_spawn(pos, quat)
     end
 end
 
+function valid_object(obj) if obj and obj.instance and not obj.destroyed then return true else return false end end
+
 okDialogWindow = nil
 okDialogText = nil
 okDialogButton = nil
