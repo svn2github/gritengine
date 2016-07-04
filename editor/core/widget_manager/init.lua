@@ -175,7 +175,7 @@ class `widget` {} {
 			
 		end
 
-		if valid_object(inst.dragged) then
+		if inst.dragged ~= nil then
 			for i = 1, #inst.dragged do
 				if inst.dragged[i] ~= nil and inst.dragged[i].instance ~= nil and not inst.dragged[i].destroyed then
 					local new_pos = vec(
