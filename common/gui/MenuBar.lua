@@ -111,7 +111,7 @@ hud_class `Menu` {
 	menu_hoverTextColour = _current_theme.colours.menu.text_hover;
 	
 	init = function (self)
-		self.needsInputCallbacks = true;
+		self.needsInputCallbacks = true
 		self.menuitems = {}
 		
 		if self.items ~= nil then

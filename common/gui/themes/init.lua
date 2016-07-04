@@ -234,6 +234,11 @@ editor_themes['light'] =
 		{
 			default = V_ZERO;
 		};
+		floating_panel = {
+			background = V_ZERO;
+			alpha = 0.7;
+			texture = `/common/hud/CornerTextures/Filled08.png`;
+		};
 	};
 	fonts =
 	{
@@ -267,8 +272,8 @@ editor_themes['dark'] =
 		-- Menu bar
 		menu_bar =
 		{
-			background = V_ID * 0.35;
-			background_alpha = 1;
+			background = V_ID * 0;
+			background_alpha = 0.5;
 			button = V_ID * 0.4;
 			button_hover = V_ID * 0.6;
 			button_pressed = V_ID * 0.8;
@@ -296,8 +301,8 @@ editor_themes['dark'] =
 		-- Tool bar
 		tool_bar =
 		{
-			background = V_ID * 0.35;
-			alpha = 1;
+			background = V_ID * 0;
+			alpha = 0.5;
 			separator = V_ID * 0.9;
 			separator_alpha = 0.3;
 			icon = V_ID;
@@ -312,8 +317,8 @@ editor_themes['dark'] =
 		};
 		status_bar =
 		{
-			background = V_ID * 0.35;
-			alpha = 1;
+			background = V_ID * 0;
+			alpha = 0.5;
 			text = V_ID;
 			line = vec(1, 0.5, 0);
 		};
@@ -322,12 +327,12 @@ editor_themes['dark'] =
 		{
 			background = V_ID * 0.4;
 			background_alpha = 0.7;
-			titlebar_background = V_ID;
+			titlebar_background = V_ID*0.2;
 			titlebar_background_alpha = 1;
-			titlebar_background_inactive = V_ID * 0.2;
+			titlebar_background_inactive = V_ID * 0.3;
 			titlebar_background_inactive_alpha = 1;
-			titlebar_text = V_ZERO;
-			titlebar_text_inactive = V_ID;
+			titlebar_text = V_ID;
+			titlebar_text_inactive = V_ID*0.7;
 			border = V_ID * 0.6;
 			border_alpha = 1;
 			closebtn_base = V_ID * 0.3;
@@ -409,8 +414,8 @@ editor_themes['dark'] =
 		};		
 		window_notebook = 
 		{
-			background = V_ID * 0.3;
-			alpha = 1;
+			background = V_ID * 0;
+			alpha = 0.5;
 		
 			texture = `/common/gui/icons/window_notebook_dark.png`;
 		
@@ -493,6 +498,11 @@ editor_themes['dark'] =
 		{
 			default = V_ID;
 		};
+		floating_panel = {
+			background = V_ZERO;
+			alpha = 0.7;
+			texture = `/common/hud/CornerTextures/Filled08.png`;
+		};	
 	};
 	fonts =
 	{
@@ -516,19 +526,18 @@ editor_themes['dark'] =
 			button_selected = `/common/fonts/ArialBold14`;
 		};
 	};
-};
+}
 
 
-editor_themes['Dark Magenta'] = 
-{
+editor_themes['Dark Magenta'] = {
 	name = 'Dark Magenta';
 	colours =
 	{
 		-- Menu bar
 		menu_bar =
 		{
-			background = V_ID * 0.35;
-			background_alpha = 1;
+			background = V_ID * 0;
+			background_alpha = 0.5;
 			button = V_ID * 0.3;
 			button_hover = V_ID * 0.6;
 			button_pressed = vec(1, 0.5, 1);
@@ -556,8 +565,8 @@ editor_themes['Dark Magenta'] =
 		-- Tool bar
 		tool_bar =
 		{
-			background = V_ID * 0.35;
-			alpha = 1;
+			background = V_ID * 0;
+			alpha = 0.5;
 			separator = V_ID * 0.9;
 			separator_alpha = 0.3;
 			icon = V_ID;
@@ -582,12 +591,12 @@ editor_themes['Dark Magenta'] =
 		{
 			background = V_ID * 0.4;
 			background_alpha = 0.7;
-			titlebar_background = V_ID;
+			titlebar_background = V_ID*0.2;
 			titlebar_background_alpha = 1;
-			titlebar_background_inactive = V_ID * 0.2;
+			titlebar_background_inactive = V_ID * 0.7;
 			titlebar_background_inactive_alpha = 1;
-			titlebar_text = V_ZERO;
-			titlebar_text_inactive = V_ID;
+			titlebar_text = V_ID;
+			titlebar_text_inactive = V_ID*0.3;
 			border = V_ID * 0.6;
 			border_alpha = 1;
 			closebtn_base = V_ID * 0.3;
@@ -669,8 +678,8 @@ editor_themes['Dark Magenta'] =
 		};		
 		window_notebook = 
 		{
-			background = V_ID * 0.3;
-			alpha = 1;
+			background = V_ID * 0;
+			alpha = 0.5;
 		
 			texture = `/common/gui/icons/window_notebook_dark.png`;
 		
@@ -740,12 +749,12 @@ editor_themes['Dark Magenta'] =
 		};
 		browser_icon = 
 		{
-			hover = vec(1, 0.5, 0);
-			click = vec(1, 0, 0);
-			default = vec(0.5, 0.5, 0.5);
-			selected = vec(1, 0.8, 0);
+			hover = V_ID*0.7;
+			click = V_ID*0.9;
+			default = V_ID*0.5;
+			selected = V_ID*0.6;
 			text_hover = V_ID * 1;
-			text_click = V_ID * 1;
+			text_click = V_ID * 0;
 			text_selected = V_ID * 1;
 			text_default = V_ID * 1;
 		};
@@ -753,6 +762,11 @@ editor_themes['Dark Magenta'] =
 		{
 			default = V_ID;
 		};
+		floating_panel = {
+			background = V_ZERO;
+			alpha = 0.7;
+			texture = `/common/hud/CornerTextures/Filled08.png`;
+		};		
 	};
 	fonts =
 	{
@@ -776,7 +790,7 @@ editor_themes['Dark Magenta'] =
 			button_selected = `/common/fonts/ArialBold14`;
 		};
 	};
-};
+}
 
 -- it's a handwritten file
 safe_include `/editor/config/custom_themes.lua`
