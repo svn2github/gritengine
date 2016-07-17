@@ -190,7 +190,9 @@ WeaponCreate = {
     rotation = 'ALIGNED';  -- Or 'FIXED' or 'RANDOM'
     fireSpeed = 40;
     fireSpin = 0;
-
+	lastPlaced = nil;
+	additionalOffset = 0;
+	
     getRotation = function (self, q)
         if self.rotation == 'ALIGNED' then
             local no_z = vec(1, 1, 0) * (q * V_FORWARDS)
@@ -213,7 +215,7 @@ WeaponCreate = {
         local x, y, z = unpack(p)
 
         local rot = self:getRotation(q)
-        object (self.class) (x,y,z+height) {rot=rot, debugObject=true}
+        self.lastPlaced = object (self.class) (x,y,z+height+self.additionalOffset) {rot=rot, debugObject=true}
     end;
     primaryStepCallback = function (self, elapsed_secs, src, quat)
     end;

@@ -105,21 +105,22 @@ function editor_receive_button(button, state)
         elseif state == '-' then
             GED:stopDraggingObj()
         end
-
     elseif button == "weaponPrimary" then
-        if state == '+' then
-            WeaponEffectManager:primaryEngage(main.camPos, main.camQuat)
-        elseif state == '-' then
-            WeaponEffectManager:primaryDisengage()
-        end
-
+        if not mouse_inside_any_window() then
+			if state == '+' then
+				WeaponEffectManager:primaryEngage(main.camPos, main.camQuat)
+			elseif state == '-' then
+				WeaponEffectManager:primaryDisengage()
+			end
+		end
     elseif button == "weaponSecondary" then
-        if state == '+' then
-            WeaponEffectManager:secondaryEngage(main.camPos, main.camQuat)
-        elseif state == '-' then
-            WeaponEffectManager:secondaryDisengage()
-        end
-
+		if not mouse_inside_any_window() then
+			if state == '+' then
+				WeaponEffectManager:secondaryEngage(main.camPos, main.camQuat)
+			elseif state == '-' then
+				WeaponEffectManager:secondaryDisengage()
+			end
+		end
     elseif button == "weaponSwitchUp" then
         if state == '+' then
             WeaponEffectManager:select(WeaponEffectManager:getNext())

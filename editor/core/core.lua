@@ -261,6 +261,13 @@ function GED:toggleMouseCapture()
     self:setMouseCapture(not self.mouseCapture)
     if self.mouseCapture then
         -- Various other nice GUI things
+		if self.debugModeSettingsWindow ~= nil and not self.debugModeSettingsWindow.destroyed then
+			self.debugModeSettingsWindow.enabled = false
+		end
+	else
+		if self.debugModeSettingsWindow ~= nil and not self.debugModeSettingsWindow.destroyed then
+			self.debugModeSettingsWindow.enabled = true
+		end
     end
 end
 
@@ -317,14 +324,38 @@ function GED:setDebugMode(v)
                 obj.skipNextActivation = false
             end
         end
-
-    end
-	
-	if v then
+		if self.debugModeSettingsWindow ~= nil and not self.debugModeSettingsWindow.destroyed then
+			self.debugModeSettingsWindow.enabled = false
+		end
+	else
 		notify("Press F5 to return to the editor", vec(1, 0.5, 0), vec(1, 1, 1))
-	end
-	
+		if self.debugModeSettingsWindow == nil or self.debugModeSettingsWindow.destroyed then
+			self:createDebugModeSettingsWindow()
+			self.debugModeSettingsWindow.enabled = false
+		end
+    end
 end;
+
+include`/editor/core/windows/debug_mode/settings.lua`
+
+function GED:createDebugModeSettingsWindow()
+	if self.debugModeSettingsWindow ~= nil and not self.debugModeSettingsWindow.destroyed then
+		self.debugModeSettingsWindow:destroy()
+	end
+
+	self.debugModeSettingsWindow = gfx_hud_object_add(`/editor/core/windows/debug_mode/Settings`, {
+		title = "Debug Mode Settings";
+		parent = hud_center;
+		position = vec(0, 0);
+		resizeable = true;
+		size = vec(570, 270);
+		min_size = vec2(570, 270);
+		-- colour = _current_theme.colours.window.background;
+		alpha = 1;	
+	})
+
+	_windows[#_windows+1] = self.debugModeSettingsWindow
+end
 
 function GED:toggleDebugMode()
     self:setDebugMode(not self.debugMode)
