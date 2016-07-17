@@ -33,6 +33,7 @@ hud_class `window_editbox` (extends(table_concat_copy(GuiClass, EditBox))
 	end;
 
     setEditting = function (self, editting, no_callback)
+		if not editting then self:enterCallback() end
 		EditBox.setEditting(self, editting, no_callback)
 		editor_core_move_binds.enabled = not editting
     end;
