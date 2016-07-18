@@ -39,7 +39,7 @@ hud_class `Settings` (extends(WindowClass)
 			end;
 			size = vec(50, 20);
 			align = vec(-1, 1);
-			offset = vec(5, -45);
+			offset = vec(10, -45);
 			expand_x = false;
 			expand_offset = vec(-20, 0);
 			colour = vec(1, 0, 0);
@@ -53,7 +53,7 @@ hud_class `Settings` (extends(WindowClass)
 			end;
 			size = vec(50, 20);
 			align = vec(-1, 1);
-			offset = vec(5+55, -45);
+			offset = vec(10+55, -45);
 			expand_x = false;
 			expand_offset = vec(-20, 0);
 			colour = vec(0, 1, 0);
@@ -67,7 +67,7 @@ hud_class `Settings` (extends(WindowClass)
 			end;
 			size = vec(50, 20);
 			align = vec(-1, 1);
-			offset = vec(5+110, -45);
+			offset = vec(10+110, -45);
 			expand_x = false;
 			expand_offset = vec(-20, 0);
 			colour = vec(0, 0, 1);
@@ -75,7 +75,7 @@ hud_class `Settings` (extends(WindowClass)
 		self.content.general_panel.button = create_button({
 			caption = "Teleport";
 			parent = self.content.general_panel;
-			offset = vec(5+165, -45);
+			offset = vec(10+165, -45);
 			align = vec(-1, 1);
 			expand_x = false;
 			expand_offset = vec(-20, 0);
@@ -478,7 +478,7 @@ hud_class `Settings` (extends(WindowClass)
 			end;
 			size = vec(50, 20);
 			align = vec(-1, 1);
-			offset = vec(5, -25);
+			offset = vec(10, -25);
 			expand_x = true;
 			expand_offset = vec(-20, 0);
 		})		
@@ -497,12 +497,12 @@ hud_class `Settings` (extends(WindowClass)
 			end;
 			size = vec(50, 20);
 			align = vec(-1, 1);
-			offset = vec(5, -65);
+			offset = vec(10, -65);
 		})
 		self.content.placement_panel.button1 = create_button({
 			caption = "Clear last placed object";
 			parent = self.content.placement_panel;
-			offset = vec(5, -95);
+			offset = vec(10, -95);
 			align = vec(-1, 1);
 			pressedCallback = function(self)
 				if WeaponCreate.lastPlaced then
@@ -515,7 +515,7 @@ hud_class `Settings` (extends(WindowClass)
 		self.content.placement_panel.button2 = create_button({
 			caption = "Clear all placed obejcts";
 			parent = self.content.placement_panel;
-			offset = vec(5, -130);
+			offset = vec(10, -130);
 			align = vec(-1, 1);
 			pressedCallback = function(self)
 				clearAllPlaced()
@@ -539,7 +539,7 @@ hud_class `Settings` (extends(WindowClass)
 			end;
 			size = vec(50, 20);
 			align = vec(-1, 1);
-			offset = vec(5, -25);
+			offset = vec(10, -25);
 			expand_x = true;
 			expand_offset = vec(-20, 0);
 		})		
@@ -558,7 +558,7 @@ hud_class `Settings` (extends(WindowClass)
 			end;
 			size = vec(50, 20);
 			align = vec(-1, 1);
-			offset = vec(5, -65);
+			offset = vec(10, -65);
 		})
 		self.content.object_panel.teleport = create_guitext({
 			value = "Spin: ",
@@ -576,7 +576,7 @@ hud_class `Settings` (extends(WindowClass)
 			end;
 			size = vec(50, 20);
 			align = vec(-1, 1);
-			offset = vec(5, -110);
+			offset = vec(10, -110);
 			expand_x = false;
 			expand_offset = vec(-20, 0);
 			colour = vec(1, 0, 0);
@@ -591,7 +591,7 @@ hud_class `Settings` (extends(WindowClass)
 			end;
 			size = vec(50, 20);
 			align = vec(-1, 1);
-			offset = vec(5+55, -110);
+			offset = vec(10+55, -110);
 			expand_x = false;
 			expand_offset = vec(-20, 0);
 			colour = vec(0, 1, 0);
@@ -606,7 +606,7 @@ hud_class `Settings` (extends(WindowClass)
 			end;
 			size = vec(50, 20);
 			align = vec(-1, 1);
-			offset = vec(5+110, -110);
+			offset = vec(10+110, -110);
 			expand_x = false;
 			expand_offset = vec(-20, 0);
 			colour = vec(0, 0, 1);
@@ -614,7 +614,7 @@ hud_class `Settings` (extends(WindowClass)
 		self.content.object_panel.button1 = create_button({
 			caption = "Clear last placed object";
 			parent = self.content.object_panel;
-			offset = vec(5, -140);
+			offset = vec(10, -140);
 			align = vec(-1, 1);
 			pressedCallback = function(self)
 				if WeaponCreate.lastPlaced then
@@ -626,7 +626,7 @@ hud_class `Settings` (extends(WindowClass)
 		self.content.object_panel.button2 = create_button({
 			caption = "Clear all placed obejcts";
 			parent = self.content.object_panel;
-			offset = vec(5, -175);
+			offset = vec(10, -175);
 			align = vec(-1, 1);
 			pressedCallback = function(self)
 				clearAllPlaced()
@@ -649,20 +649,19 @@ hud_class `Settings` (extends(WindowClass)
 			end;
 			size = vec(50, 20);
 			align = vec(-1, 1);
-			offset = vec(5, -25);
+			offset = vec(10, -25);
 			expand_x = true;
 			expand_offset = vec(-20, 0);
 		})		
 		self.content.particles_panel.button1 = create_button({
 			caption = "Clear all particles";
 			parent = self.content.particles_panel;
-			offset = vec(5, -55);
+			offset = vec(10, -55);
 			align = vec(-1, 1);
 			pressedCallback = function(self)
 				print(GREEN.."TODO")
 			end;
 		})		
-		
 		
 		
 		self.content.prod_panel = create_panel()
@@ -713,7 +712,7 @@ hud_class `Settings` (extends(WindowClass)
 			end;
 			size = vec(50, 20);
 			align = vec(-1, 1);
-			offset = vec(5, -45);
+			offset = vec(10, -45);
 			expand_x = false;
 			expand_offset = vec(-20, 0);
 			colour = vec(1, 0, 0);
@@ -728,7 +727,7 @@ hud_class `Settings` (extends(WindowClass)
 			end;
 			size = vec(50, 20);
 			align = vec(-1, 1);
-			offset = vec(5+55, -45);
+			offset = vec(10+55, -45);
 			expand_x = false;
 			expand_offset = vec(-20, 0);
 			colour = vec(0, 1, 0);
@@ -743,7 +742,7 @@ hud_class `Settings` (extends(WindowClass)
 			end;
 			size = vec(50, 20);
 			align = vec(-1, 1);
-			offset = vec(5+110, -45);
+			offset = vec(10+110, -45);
 			expand_x = false;
 			expand_offset = vec(-20, 0);
 			colour = vec(0, 0, 1);
