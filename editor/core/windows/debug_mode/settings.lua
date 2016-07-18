@@ -84,6 +84,34 @@ hud_class `Settings` (extends(WindowClass)
 			end;
 			padding = vec(5, 2);
 		})
+		self.content.general_panel.pe = create_checkbox({
+			caption = "Physics enabled",
+			checked = main.physicsEnabled,
+			parent = self.content.general_panel,
+			align = vec(-1, 1);
+			offset = vec(10, -70),
+			onCheck = function(self)
+				main.physicsEnabled = true
+			end,
+			onUncheck = function(self)
+				main.physicsEnabled = false
+			end,
+		})
+		self.content.general_panel.poto = create_checkbox({
+			caption = "Physics one-to-one",
+			checked = main.physicsOneToOne,
+			parent = self.content.general_panel,
+			align = vec(-1, 1);
+			offset = vec(10, -90),
+			onCheck = function(self)
+				main.physicsOneToOne = true
+			end,
+			onUncheck = function(self)
+				main.physicsOneToOne = false
+			end,
+		})
+
+
 		
 		-- DEBUG
 		self.content.debug_panel = create_panel()
