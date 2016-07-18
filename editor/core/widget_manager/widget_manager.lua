@@ -7,6 +7,15 @@
 --  http://www.opensource.org/licenses/mit-license.php
 ------------------------------------------------------------------------------
 
+-- TODO:
+-- use plane intersection while moving in two directions
+-- find a more precise way to move in one single direction (line intersection?). Use arrow directions, also useful when it's rotated
+-- Fix movent when it's rotated
+-- Finish snap to grid
+-- Select objects without collision
+-- Select sounds, particles
+-- Global/local movent/rotation
+
 -- return an object list from a physics_cast
 local function get_pc_ol(...)
 	local t = {...}
@@ -100,7 +109,7 @@ function wm_callback()
 					end
 				end
 
-				-- TODO: 1 or -1 depends of camera angle
+				-- TODO: 1 or -1 depends on camera angle
 				if widget_manager.strdrag == "y" then
 					rotate(0,1,0)
 				elseif widget_manager.strdrag == "z" then

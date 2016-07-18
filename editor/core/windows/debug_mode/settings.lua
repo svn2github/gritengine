@@ -483,7 +483,7 @@ hud_class `Settings` (extends(WindowClass)
 			expand_offset = vec(-20, 0);
 		})		
 		self.content.placement_panel.offsett = create_guitext({
-			value = "Additional offset from ground: ",
+			value = "Additional ground offset: ",
 			parent = self.content.placement_panel,
 			align = vec(-1, 1);
 			offset = vec(10, -45);		
