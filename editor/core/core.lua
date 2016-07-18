@@ -348,8 +348,8 @@ function GED:createDebugModeSettingsWindow()
 		parent = hud_center;
 		position = vec(0, 0);
 		resizeable = true;
-		size = vec(570, 270);
-		min_size = vec2(570, 270);
+		size = vec(620, 500);
+		min_size = vec2(620, 500);
 		-- colour = _current_theme.colours.window.background;
 		alpha = 1;	
 	})

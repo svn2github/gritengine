@@ -9,8 +9,8 @@ hud_class `Settings` (extends(WindowClass)
 		
 		self.content = create_notebook(self)
 
+		-- GENERAL
 		self.content.general_panel = create_panel()
-		
 		self.content.general_panel.warp = create_checkbox({
 			caption = "Walk through walls",
 			checked = editor_cfg.warp,
@@ -24,14 +24,12 @@ hud_class `Settings` (extends(WindowClass)
 				print(GREEN.."TODO")
 			end,
 		})
-
 		self.content.general_panel.teleport = create_guitext({
 			value = "Teleport to: ",
 			parent = self.content.general_panel,
 			align = vec(-1, 1);
 			offset = vec(10, -25);		
 		})
-
 		self.content.general_panel.X = gfx_hud_object_add(`/common/gui/window_editbox`, {
 			parent = self.content.general_panel;
 			value = "0";
@@ -46,7 +44,6 @@ hud_class `Settings` (extends(WindowClass)
 			expand_offset = vec(-20, 0);
 			colour = vec(1, 0, 0);
 		})
-
 		self.content.general_panel.Y = gfx_hud_object_add(`/common/gui/window_editbox`, {
 			parent = self.content.general_panel;
 			value = "0";
@@ -61,7 +58,6 @@ hud_class `Settings` (extends(WindowClass)
 			expand_offset = vec(-20, 0);
 			colour = vec(0, 1, 0);
 		})		
-		
 		self.content.general_panel.Z = gfx_hud_object_add(`/common/gui/window_editbox`, {
 			parent = self.content.general_panel;
 			value = "0";
@@ -76,7 +72,6 @@ hud_class `Settings` (extends(WindowClass)
 			expand_offset = vec(-20, 0);
 			colour = vec(0, 0, 1);
 		})
-		
 		self.content.general_panel.button = create_button({
 			caption = "Teleport";
 			parent = self.content.general_panel;
@@ -90,6 +85,369 @@ hud_class `Settings` (extends(WindowClass)
 			padding = vec(5, 2);
 		})
 		
+		-- DEBUG
+		self.content.debug_panel = create_panel()
+		
+		self.content.debug_panel.fov = create_guitext({
+			value = "FOV: ",
+			parent = self.content.debug_panel,
+			align = vec(-1, 1);
+			offset = vec(10, -5);		
+		})		
+		
+		self.content.debug_panel.foved = gfx_hud_object_add(`/common/gui/window_editbox`, {
+			parent = self.content.debug_panel;
+			value = tostring(gfx_option("FOV"));
+			alignment = "LEFT";
+			enterCallback = function(self)
+				gfx_option("FOV", tonumber(self.value))
+			end;
+			size = vec(50, 20);
+			align = vec(-1, 1);
+			offset = vec(50, -5);
+		})		
+		self.content.debug_panel.cmaps = create_checkbox({
+			caption = "Use colour maps",
+			checked = debug_cfg.colourMaps,
+			parent = self.content.debug_panel,
+			align = vec(-1, 1);
+			offset = vec(10, -30),
+			onCheck = function(self)
+				debug_cfg.colourMaps = true
+			end,
+			onUncheck = function(self)
+				debug_cfg.colourMaps = false
+			end,
+		})
+		self.content.debug_panel.dmaps = create_checkbox({
+			caption = "Use diffuse maps",
+			checked = debug_cfg.diffuseMaps,
+			parent = self.content.debug_panel,
+			align = vec(-1, 1);
+			offset = vec(10, -50),
+			onCheck = function(self)
+				debug_cfg.diffuseMaps = true
+			end,
+			onUncheck = function(self)
+				debug_cfg.diffuseMaps = false
+			end,
+		})
+		
+		self.content.debug_panel.theme = create_guitext({
+			value = "False Colour: ",
+			parent = self.content.debug_panel,
+			align = vec(-1, 1);
+			offset = vec(10, -70);		
+		})
+
+		self.content.debug_panel.fc_selectbox = create_selectbox({
+			parent = self.content.debug_panel;
+			choices = {
+				"false";
+				"UV";
+				"UV_STRETCH";
+				"UV_STRETCH_BANDS";
+				"NORMAL";
+				"OBJECT_NORMAL";
+				"NORMAL_MAP";
+				"TANGENT";
+				"BINORMAL";
+				"UNSHADOWYNESS";
+				"GLOSS";
+				"SPECULAR";
+				"SPECULAR_TERM";
+				"SPECULAR_COMPONENT";
+				"HIGHLIGHT";
+				"FRESNEL";
+				"FRESNEL_HIGHLIGHT";
+				"DIFFUSE_COLOUR";
+				"DIFFUSE_TERM";
+				"DIFFUSE_COMPONENT";
+				"VERTEX_COLOUR";
+				"ENV_DIFFUSE_COMPONENT";
+				"ENV_SPECULAR_COMPONENT";
+				"ENV_DIFFUSE_LIGHT";
+				"ENV_SPECULAR_LIGHT";
+			};
+			selection = 0;
+			align = vec(-1, 1);
+			offset = vec(100, -70);
+			size = vec(200, 22);
+		})
+		self.content.debug_panel.fc_selectbox:select(tostring(debug_cfg.falseColour))
+
+		self.content.debug_panel.fc_selectbox.onSelect = function(self)
+			if self.selected.name == "false" then
+				debug_cfg.falseColour = false
+			elseif self.value == "true" then
+				debug_cfg.falseColour = true
+			else
+				debug_cfg.falseColour = self.selected.name
+			end
+		end;		
+		
+		self.content.debug_panel.farc = create_guitext({
+			value = "Far Clip: ",
+			parent = self.content.debug_panel,
+			align = vec(-1, 1);
+			offset = vec(10, -95);		
+		})		
+		
+		self.content.debug_panel.farced = gfx_hud_object_add(`/common/gui/window_editbox`, {
+			parent = self.content.debug_panel;
+			value = tostring(gfx_option("FAR_CLIP"));
+			alignment = "LEFT";
+			enterCallback = function(self)
+				gfx_option("FAR_CLIP", tonumber(self.value))
+			end;
+			size = vec(50, 20);
+			align = vec(-1, 1);
+			offset = vec(70, -95);
+		})			
+		
+		self.content.debug_panel.fcol = create_checkbox({
+			caption = "Distance Fog",
+			checked = debug_cfg.fog,
+			parent = self.content.debug_panel,
+			align = vec(-1, 1);
+			offset = vec(10, -120),
+			onCheck = function(self)
+				debug_cfg.fog = true
+			end,
+			onUncheck = function(self)
+				debug_cfg.fog = false
+			end,
+		})
+		self.content.debug_panel.fpro = create_checkbox({
+			caption = "Fragment processing",
+			checked = debug_cfg.fragmentProcessing,
+			parent = self.content.debug_panel,
+			align = vec(-1, 1);
+			offset = vec(10, -140),
+			onCheck = function(self)
+				debug_cfg.fragmentProcessing = true
+			end,
+			onUncheck = function(self)
+				debug_cfg.fragmentProcessing = false
+			end,
+		})		
+		self.content.debug_panel.gmaps = create_checkbox({
+			caption = "Gloss maps",
+			checked = debug_cfg.glossMaps,
+			parent = self.content.debug_panel,
+			align = vec(-1, 1);
+			offset = vec(10, -160),
+			onCheck = function(self)
+				debug_cfg.glossMaps = true
+			end,
+			onUncheck = function(self)
+				debug_cfg.glossMaps = false
+			end,
+		})			
+		self.content.debug_panel.hbl = create_checkbox({
+			caption = "Heightmap blending",
+			checked = debug_cfg.heightmapBlending,
+			parent = self.content.debug_panel,
+			align = vec(-1, 1);
+			offset = vec(10, -180),
+			onCheck = function(self)
+				debug_cfg.heightmapBlending = true
+			end,
+			onUncheck = function(self)
+				debug_cfg.heightmapBlending = false
+			end,
+		})
+		self.content.debug_panel.nmps = create_checkbox({
+			caption = "Normal maps",
+			checked = debug_cfg.normalMaps,
+			parent = self.content.debug_panel,
+			align = vec(-1, 1);
+			offset = vec(10, -200),
+			onCheck = function(self)
+				debug_cfg.normalMaps = true
+			end,
+			onUncheck = function(self)
+				debug_cfg.normalMaps = false
+			end,
+		})		
+		self.content.debug_panel.pdw = create_checkbox({
+			caption = "Physics debug world",
+			checked = debug_cfg.physicsDebugWorld,
+			parent = self.content.debug_panel,
+			align = vec(-1, 1);
+			offset = vec(10, -220),
+			onCheck = function(self)
+				debug_cfg.physicsDebugWorld = true
+			end,
+			onUncheck = function(self)
+				debug_cfg.physicsDebugWorld = false
+			end,
+		})
+		self.content.debug_panel.pw = create_checkbox({
+			caption = "Physics wireframe",
+			checked = debug_cfg.physicsWireFrame,
+			parent = self.content.debug_panel,
+			align = vec(-1, 1);
+			offset = vec(10, -240),
+			onCheck = function(self)
+				debug_cfg.physicsWireFrame = true
+			end,
+			onUncheck = function(self)
+				debug_cfg.physicsWireFrame = false
+			end,
+		})		
+
+		self.content.debug_panel.plmod = create_guitext({
+			value = "Polygon Mode: ",
+			parent = self.content.debug_panel,
+			align = vec(-1, 1);
+			offset = vec(10, -260);		
+		})
+		self.content.debug_panel.plmodsel = create_selectbox({
+			parent = self.content.debug_panel;
+			choices = {
+				"SOLID";
+				"SOLID_WIREFRAME";
+				"WIREFRAME";
+			};
+			selection = 0;
+			align = vec(-1, 1);
+			offset = vec(110, -260);
+			size = vec(200, 22);
+		})
+		self.content.debug_panel.plmodsel:select(tostring(debug_cfg.polygonMode))
+		self.content.debug_panel.plmodsel.onSelect = function(self)
+			debug_cfg.polygonMode = self.selected.name
+		end;
+		
+		self.content.debug_panel.smmod = create_guitext({
+			value = "Shading Model: ";
+			parent = self.content.debug_panel;
+			align = vec(-1, 1);
+			offset = vec(10, -285);		
+		})
+		self.content.debug_panel.smmodsel = create_selectbox({
+			parent = self.content.debug_panel;
+			choices = {
+				"SHARP";
+				"HALF_LAMBERT";
+				"WASHED_OUT";
+			};
+			selection = 0;
+			align = vec(-1, 1);
+			offset = vec(110, -285);
+			size = vec(200, 22);
+		})
+		self.content.debug_panel.smmodsel:select(tostring(debug_cfg.shadingModel))
+		self.content.debug_panel.smmodsel.onSelect = function(self)
+			debug_cfg.shadingModel = self.selected.name
+		end;		
+		
+		self.content.debug_panel.sc = create_checkbox({
+			caption = "Shadow cast",
+			checked = debug_cfg.shadowCast,
+			parent = self.content.debug_panel,
+			align = vec(-1, 1);
+			offset = vec(10, -310),
+			onCheck = function(self)
+				debug_cfg.shadowCast = true
+			end,
+			onUncheck = function(self)
+				debug_cfg.shadowCast = false
+			end,
+		})
+		self.content.debug_panel.sr = create_checkbox({
+			caption = "Shadow receive",
+			checked = debug_cfg.shadowReceive,
+			parent = self.content.debug_panel,
+			align = vec(-1, 1);
+			offset = vec(10, -330),
+			onCheck = function(self)
+				debug_cfg.shadowReceive = true
+			end,
+			onUncheck = function(self)
+				debug_cfg.shadowReceive = false
+			end,
+		})
+		self.content.debug_panel.ta = create_checkbox({
+			caption = "Texture animation",
+			checked = debug_cfg.textureAnimation,
+			parent = self.content.debug_panel,
+			align = vec(-1, 1);
+			offset = vec(10, -350),
+			onCheck = function(self)
+				debug_cfg.textureAnimation = true
+			end,
+			onUncheck = function(self)
+				debug_cfg.textureAnimation = false
+			end,
+		})
+		self.content.debug_panel.tf = create_checkbox({
+			caption = "Texture fetches",
+			checked = debug_cfg.textureFetches,
+			parent = self.content.debug_panel,
+			align = vec(-1, 1);
+			offset = vec(10, -370),
+			onCheck = function(self)
+				debug_cfg.textureFetches = true
+			end,
+			onUncheck = function(self)
+				debug_cfg.textureFetches = false
+			end,
+		})
+		self.content.debug_panel.ts = create_checkbox({
+			caption = "Texture scale",
+			checked = debug_cfg.textureScale,
+			parent = self.content.debug_panel,
+			align = vec(-1, 1);
+			offset = vec(10, -390),
+			onCheck = function(self)
+				debug_cfg.textureScale = true
+			end,
+			onUncheck = function(self)
+				debug_cfg.textureScale = false
+			end,
+		})
+		self.content.debug_panel.tm = create_checkbox({
+			caption = "Translucency maps",
+			checked = debug_cfg.translucencyMaps,
+			parent = self.content.debug_panel,
+			align = vec(-1, 1);
+			offset = vec(10, -410),
+			onCheck = function(self)
+				debug_cfg.translucencyMaps = true
+			end,
+			onUncheck = function(self)
+				debug_cfg.translucencyMaps = false
+			end,
+		})
+		self.content.debug_panel.vd = create_checkbox({
+			caption = "Vertex diffuse",
+			checked = debug_cfg.vertexDiffuse,
+			parent = self.content.debug_panel,
+			align = vec(-1, 1);
+			offset = vec(10, -430),
+			onCheck = function(self)
+				debug_cfg.vertexDiffuse = true
+			end,
+			onUncheck = function(self)
+				debug_cfg.vertexDiffuse = false
+			end,
+		})
+		self.content.debug_panel.vp = create_checkbox({
+			caption = "Vertex processing",
+			checked = debug_cfg.vertexProcessing,
+			parent = self.content.debug_panel,
+			align = vec(-1, 1);
+			offset = vec(10, -450),
+			onCheck = function(self)
+				debug_cfg.vertexProcessing = true
+			end,
+			onUncheck = function(self)
+				debug_cfg.vertexProcessing = false
+			end,
+		})		
+
 		local function clearAllPlaced()
 			for _, obj in ipairs(object_all()) do
 				if obj.destroyed then 
@@ -413,6 +771,7 @@ hud_class `Settings` (extends(WindowClass)
 		-- self.content.grab_panel = create_panel()
 		
 		self.content:addPage(self.content.general_panel, "General")
+		self.content:addPage(self.content.debug_panel, "Debug Config")
 		self.content:addPage(self.content.placement_panel, "Placement Gun")
 		self.content:addPage(self.content.object_panel, "Object Firing Gun")
 		-- self.content:addPage(self.content.delete_panel, "Delete Gun")
