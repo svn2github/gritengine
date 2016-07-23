@@ -303,7 +303,7 @@ hud_class `FileDialog` (extends(WindowClass)
 			expand_offset = vec(-130, 0);
 			
 		})
-		self.file_edbox:setEditting(true)
+		self.file_edbox:setEditing(true)
 		
 		self.scrollarea = gfx_hud_object_add(`/common/gui/ScrollArea`, {
 			parent = self;
