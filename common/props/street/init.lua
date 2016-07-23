@@ -28,9 +28,10 @@ class `floodlight` (ColClass) {
 local streetlamp_light_colour=vector3(1,0.81,0.45)
 material `Lamp` { diffuseMap=`Lamp.dds` }
 material `LampBulb` {
-    diffuseMap=`Lamp.dds`,
-    emissiveMap=`Lamp.dds`,
-    emissiveColour=10*streetlamp_light_colour
+    diffuseMap = `Lamp.dds`,
+    emissiveMap = `Lamp.dds`,
+    emissiveMask = 10 * streetlamp_light_colour,
+    additionalLighting = true,
 }
 
 local lamp_light =  {   

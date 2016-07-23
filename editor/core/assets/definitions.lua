@@ -1,6 +1,7 @@
 material `spawn_point` {
-	diffuseColour=vector3(0, 1, 0),
-	emissiveColour=vector3(0, 1, 0),
+	diffuseColour = vec(0, 1, 0),
+	emissiveMask = vec(0, 1, 0),
+    additionalLighting = true,
 }
 
 class `spawn_point` (ColClass) {

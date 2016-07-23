@@ -16,7 +16,8 @@ material `mat_batteryCoreEffect` {
     specular = 0,
     gloss = 0,
     emissiveMap = `batteryCoreEffect.dds`,
-    emissiveColour = vec(0, 3, 0),
+    emissiveMask = vec(0, 3, 0),
+    additionalLighting = true;
     diffuseColour = vec(0, 1, 0),
     textureAnimation = { 0.5, 0.15 },
 }
@@ -26,7 +27,8 @@ material `mat_batteryCoreEffect_space` {
     gloss = 0,
     diffuseMap = `batteryCoreEffect.dds`,
     emissiveMap = `batteryCoreEffect.dds`,
-    emissiveColour = vec(3, 3, 3),
+    emissiveMask = vec(3, 3, 3),
+    additionalLighting = true;
     textureAnimation = { 0.5, 0.15 },
 }
 
@@ -34,7 +36,8 @@ material `mat_batteryCoreEffect_red` {
     specular = 0,
     gloss = 0,
     emissiveMap = `batteryCoreEffect.dds`,
-    emissiveColour = vec(3, 0, 0),
+    emissiveMask = vec(3, 0, 0),
+    additionalLighting = true;
     diffuseColour = vec(1, 1, 0),
     textureAnimation = { 0.5, 0.15 },
 }
@@ -43,7 +46,8 @@ material `mat_batteryCoreEffect_yellow` {
     specular = 0,
     gloss = 0,
     emissiveMap = `batteryCoreEffect.dds`,
-    emissiveColour = vec(3, 3, 0),
+    emissiveMask = vec(3, 3, 0),
+    additionalLighting = true;
     diffuseColour = vec(1, 1, 0),
     textureAnimation = { 0.5, 0.15 },
 }

@@ -14,7 +14,8 @@ material `robot_heavy` {
 	diffuseMap=`../../textures/robot_heavy.tga`;
 	diffuseColour= {1,1,1};
 	emissiveMap=`../../textures/robot_heavy_em.tga`;
-	emissiveColour = {1.0,2.5,4};
+	emissiveMask = vec(1.0, 2.5, 4);
+    additionalLighting = true;
 	glossMap= `../../textures/robot_heavy_spec.tga`;
 	shadowBias = 0.1;
 	blendedBones = 3;

@@ -6,7 +6,8 @@ material `robot_scout` {
 	diffuseMap=`../../textures/robot_scout.tga`;
 	diffuseColour= {1,1,1};
 	emissiveMap=`../../textures/robot_scout_em.tga`;
-	emissiveColour = {1.0,2.5,4};
+	emissiveMask = vec(1.0,2.5,4);
+    additionalLighting = true;
 	glossMap= `../../textures/robot_scout_spec.tga`;
 	shadowBias = 0.1;
     blendedBones = 3;

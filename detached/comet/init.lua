@@ -13,7 +13,8 @@ material `car_generic_a` {
     paintColour = 1,
 
     emissiveMap=`../textures/car_generic_a_em.tga`,
-    emissiveColour = {4,4,4},
+    emissiveMask = vec(4,4,4),
+    additionalLighting = true,
 
     shadowBias = 0.1,
     vertexDiffuse = true

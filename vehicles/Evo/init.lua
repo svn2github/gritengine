@@ -100,11 +100,11 @@ class `.` (Vehicle) {
 }
 
 material `Body` { blendedBones=1, diffuseMap = `Body.dds`; paintByDiffuseAlpha = true; paintColour = `Body_c.dds`; microFlakes=true }
-material `LightBrakeOn` { blendedBones=1, emissiveMap = `Body.dds`; emissiveColour={20,0,0}; diffuseMap = `Body.dds`  }
-material `LightBrakeDim` { blendedBones=1, emissiveMap = `Body.dds`; emissiveColour={3,0,0}; diffuseMap = `Body.dds`  }
-material `LightOn` { blendedBones=1, emissiveMap = `Body.dds`; emissiveColour={8,8,8}; diffuseMap = `Body.dds`  }
+material `LightBrakeOn` { blendedBones=1, emissiveMap = `Body.dds`; emissiveMask=vec(20,0,0); diffuseMap = `Body.dds`; additionalLighting=true  }
+material `LightBrakeDim` { blendedBones=1, emissiveMap = `Body.dds`; emissiveMask=vec(3,0,0); diffuseMap = `Body.dds`; additionalLighting=true  }
+material `LightOn` { blendedBones=1, emissiveMap = `Body.dds`; emissiveMask=vec(8,8,8); diffuseMap = `Body.dds`; additionalLighting=true  }
 material `LightOff` { blendedBones=1, diffuseMap = `Body.dds`  }
-material `LightOnGlass` { blendedBones=1, emissiveColour={0.3,0.3,0.3}; diffuseMap = `Body.dds`; alpha = 0;  }
+material `LightOnGlass` { blendedBones=1, emissiveMask=vec(0.3,0.3,0.3); diffuseMap = `Body.dds`; alpha = 0; additionalLighting=true }
 material `LightOffGlass` { blendedBones=1, diffuseMap = `Body.dds`; alpha = true;  }
 
 --[[

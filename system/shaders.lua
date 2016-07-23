@@ -63,6 +63,7 @@ end
 -- {{{ EMISSIVE SHADERS
 
 
+--[[
 local function shader_emissive_names (...)
         local function shader_emissive_names_aux (prefix, em, overlay, blended_bones, world)
                 return string.format("%s:%s_%s_%01d_%s",
@@ -153,11 +154,13 @@ function do_reset_emissive_shaders ()
         end --overlay
         end --em
 end
+]]
 
 -- }}}
 
 -- {{{ WIREFRAME SHADERS
 
+--[[
 local function shader_wireframe_names (...)
         local function shader_wireframe_names_aux (prefix, overlay, blended_bones, world)
                 return string.format("%s:%s_%01d_%s",
@@ -234,6 +237,7 @@ function do_reset_wireframe_shaders ()
         end --bones
         end --overlay
 end
+]]
 
 -- }}}
 
@@ -696,8 +700,8 @@ end
 -- }}}
 
 function do_reset_shaders ()
-        do_reset_emissive_shaders()
-        do_reset_wireframe_shaders()
+        --do_reset_emissive_shaders()
+        --do_reset_wireframe_shaders()
         do_reset_caster_shaders()
         do_reset_receiver_shaders()
 end

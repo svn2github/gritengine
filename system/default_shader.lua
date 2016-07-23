@@ -15,6 +15,7 @@ shader `Default` {
     glossMap = uniform_texture_2d(1, 1, 1);
     glossMask = uniform_float(1);
     specularMask = uniform_float(1);
+    premultipliedAlpha = static_float(0);  -- TODO(dcunnin): Add boolean support
 
     emissiveMap = uniform_texture_2d(1, 1, 1);
     emissiveMask = uniform_float(0, 0, 0);
@@ -28,8 +29,7 @@ shader `Default` {
 
     dangsCode = [[
         var diff_texel = sample(mat.diffuseMap, vert.coord0.xy);
-        // TODO(dcunnin): Support enumerations
-        //if (mat.premultipliedAlpha) diff_texel = pma_decode(diff_texel);
+        //if (mat.premultipliedAlpha > 0) diff_texel = pma_decode(diff_texel);
         out.diffuse = gamma_decode(diff_texel.rgb) * mat.diffuseMask;
         out.alpha = diff_texel.a * mat.alphaMask;
         if (out.alpha < mat.alphaRejectThreshold) discard;
@@ -45,7 +45,7 @@ shader `Default` {
     colourCode = [[
         var c = sample(mat.emissiveMap, vert.coord0.xy);
         out.colour = gamma_decode(c.rgb) * mat.emissiveMask;
-    ]]
+    ]],
 }
 
 --[=[

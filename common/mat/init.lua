@@ -11,7 +11,7 @@ material `Black` { diffuseColour=vector3(.1,.1,.1), specular=plastic_spec, gloss
 material `White` { diffuseColour=vector3(.7,.7,.7), specular=plastic_spec, gloss=.25 }
 material `Grey` { diffuseColour=vector3(.5,.5,.5), specular=plastic_spec, gloss=.0 }
 
-material `Emissive` { diffuseColour=vector3(.7,.7,.7), specular=plastic_spec, gloss=.25, emissiveColour=vec(3,3,3) }
+material `Emissive` { diffuseColour=vector3(.7,.7,.7), specular=plastic_spec, gloss=.25, emissiveMask=vec(3,3,3), additionalLighting=true }
 
 material `Chrome` { diffuseColour=V_ZERO, specular=1, gloss=1 }
 

@@ -17,43 +17,51 @@ material `dragging_face` {
 -- dummy_plane line 1
 material `line_1` {
 	diffuseColour=vec(0, 1, 0),
-	emissiveColour=vec(0, 1, 0),
+	emissiveMask=vec(0, 1, 0),
+    additionalLighting=true,
 	depthSort=false,
 }
 -- dummy_plane line 2
 material `line_2` {
 	diffuseColour=vec(1, 0, 0),
-	emissiveColour=vec(1, 0, 0),
+	emissiveMask=vec(1, 0, 0),
+    additionalLighting=true,
 }
 -- all arrows line material
 material `line` {
 	diffuseColour=vec(0, 1, 0),
-	emissiveColour=vec(0, 1, 0),
+	emissiveMask=vec(0, 1, 0),
+    additionalLighting=true,
 }
 -- line selected (when you are dragging, only the line turns yellow)
 material `line_dragging` {
 	diffuseColour=vec(1, 0.5, 0),
-	emissiveColour=vec(1, 0.5, 0),
+	emissiveMask=vec(1, 0.5, 0),
+    additionalLighting=true,
 }
 -- all arrows `arrow` material
 material `arrow` {
 	diffuseColour=vec(0, 1, 0),
-	emissiveColour=vec(0, 1, 0),
+	emissiveMask=vec(0, 1, 0),
+    additionalLighting=true,
 }
 
 material `green` {
 	diffuseColour=vec(0, 1, 0),
-	emissiveColour=vec(0, 1, 0),
+	emissiveMask=vec(0, 1, 0),
+    additionalLighting=true,
 }
 
 material `red` {
 	diffuseColour=vec(1, 0, 0),
-	emissiveColour=vec(1, 0, 0),
+	emissiveMask=vec(1, 0, 0),
+    additionalLighting=true,
 }
 
 material `blue` {
 	diffuseColour=vec(0, 0, 1),
-	emissiveColour=vec(0, 0, 1),
+	emissiveMask=vec(0, 0, 1),
+    additionalLighting=true,
 }
 -- CLASSES
 class `dummy_plane` (BaseClass) {

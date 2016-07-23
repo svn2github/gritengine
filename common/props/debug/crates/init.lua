@@ -6,7 +6,7 @@ material `Small` { diffuseMap = `side.dds` }
 
 material `Big` { diffuseMap = `red_side.dds`, normalMap = `red_side_N.dds` }
 
-material `Long` { diffuseMap = `Panel.dds`, normalMap = `PanelN.dds`, emissiveMap = `PanelE.dds`, emissiveColour={6,6,6} }
+material `Long` { diffuseMap = `Panel.dds`, normalMap = `PanelN.dds`, emissiveMap = `PanelE.dds`, emissiveMask=vec(6, 6, 6), additionalLighting=true }
 
 class `Wall` (ProcPileClass) {
     spawnObjects = function(persistent, spawn)

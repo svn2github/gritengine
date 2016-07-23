@@ -33,13 +33,13 @@ material `leaks` { filterMip=filter_mip, filterMag=filter_mag, diffuseMap=`textu
 
 -- Platforms Materials -- 
 
-material `platforms` { filterMip=filter_mip, filterMag=filter_mag, diffuseMap=`textures/platforms.dds`, glossMap=`textures/platforms_spec.dds`, emissiveMap=`textures/platforms_em.dds` , emissiveColour = {5,5,5},vertexDiffuse=true}
+material `platforms` { filterMip=filter_mip, filterMag=filter_mag, diffuseMap=`textures/platforms.dds`, glossMap=`textures/platforms_spec.dds`, emissiveMap=`textures/platforms_em.dds` , emissiveMask=vec(5, 5, 5), additionalLighting=true, vertexDiffuse=true}
 material `platform_tiles_a` { filterMip=filter_mip, filterMag=filter_mag, diffuseMap=`textures/platform_tiles_a.dds`,glossMap=`textures/platform_tiles_a_spec.dds` ,vertexDiffuse=true}
 material `plaform_panels_a` { filterMip=filter_mip, filterMag=filter_mag, diffuseMap=`textures/platform_panels_a.dds`,glossMap=`textures/platform_panels_a_spec.dds` ,vertexDiffuse=true}
 material `platform_stairs_a` { filterMip=filter_mip, filterMag=filter_mag, diffuseMap=`textures/platform_stairs_a.dds`,vertexDiffuse=true, glossMap=`textures/platform_stairs_a_spec.dds` }
 material `wood_bench` { filterMip=filter_mip, filterMag=filter_mag, diffuseMap=`textures/wood_bench.dds`,vertexDiffuse=true}
-material `energy_field` { filterMip=filter_mip, filterMag=filter_mag, emissiveMap= `textures/energy_field.dds`, emissiveColour = {0,.5,2},  textureAnimation={0,-.5}, alpha=0, backfaces=true,vertexDiffuse=true} 
-material `sustainment_unit` { filterMip=filter_mip, filterMag=filter_mag, diffuseMap=`textures/sustainment_unit.dds`, glossMap=`textures/sustainment_unit_spec.dds`, emissiveMap=`textures/sustainment_unit_em.dds` , emissiveColour = {5,5,5},vertexDiffuse=true}
+material `energy_field` { filterMip=filter_mip, filterMag=filter_mag, emissiveMap= `textures/energy_field.dds`, emissiveMask = vec(0,.5,2), additionalLighting=true,  textureAnimation={0,-.5}, alpha=0, backfaces=true,vertexDiffuse=true} 
+material `sustainment_unit` { filterMip=filter_mip, filterMag=filter_mag, diffuseMap=`textures/sustainment_unit.dds`, glossMap=`textures/sustainment_unit_spec.dds`, emissiveMap=`textures/sustainment_unit_em.dds`, emissiveMask = vec(5, 5, 5), additionalLighting=true, vertexDiffuse=true}
 material `door_maintenance` { filterMip=filter_mip, filterMag=filter_mag, diffuseMap=`textures/door_maintenance.dds`, glossMap=`textures/door_maintenance_spec.dds` ,vertexDiffuse=true}
 
 -- Props Materials --
@@ -48,5 +48,5 @@ material `cardboard_a` { filterMip=filter_mip, filterMag=filter_mag, diffuseMap=
 material `foliage_tree_a` { filterMip=filter_mip, filterMag=filter_mag, grassLighting = true, diffuseMap=`textures/foliage_tree_a.dds`, glossMap=`textures/foliage_tree_a_spec.dds`, backfaces=true, clamp = true, alphaReject = 0.33, vertexDiffuse=true}
 material `trunk_a` { filterMip=filter_mip, filterMag=filter_mag, diffuseMap=`textures/trunk_a.dds`,vertexDiffuse=true}
 material `dumpster` { filterMip=filter_mip, filterMag=filter_mag, diffuseMap=`textures/dumpster.dds`,vertexDiffuse=true, glossMap=`textures/dumpster_spec.dds`}
-material `tube_station` { filterMip=filter_mip, filterMag=filter_mag, diffuseMap=`textures/tube_station.tga`, glossMap=`textures/tube_station_spec.tga`, emissiveMap=`textures/tube_station_em.tga`, emissiveColour = {5,5,5}, vertexDiffuse=true}
+material `tube_station` { filterMip=filter_mip, filterMag=filter_mag, diffuseMap=`textures/tube_station.tga`, glossMap=`textures/tube_station_spec.tga`, emissiveMap=`textures/tube_station_em.tga`, emissiveMask = vec(5,5,5), additionalLighting=true, vertexDiffuse=true}
 material `tube` { filterMip=filter_mip, filterMag=filter_mag, diffuseMap=`textures/tube.tga`,vertexDiffuse=true, glossMap=`textures/tube_spec.tga`, alpha = 0.8}

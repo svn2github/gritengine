@@ -184,6 +184,14 @@ function uniform_float(...)
     return tab
 end
 
+function static_float(...)
+    local tab = { ... }
+    tab.static = true
+    tab.uniformKind = "PARAM"
+    tab.valueKind = "FLOAT"
+    return tab
+end
+
 local function material2(tab)
     local name = curried_name
     tab = tab or {}

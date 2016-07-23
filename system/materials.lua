@@ -114,6 +114,7 @@ local function paint_mode_from_tab(tab)
         return paint_mode
 end
 
+--[[
 local function material_wireframe (name, original, world, tab)
 
         local shf, shv = shader_wireframe_names_ensure_created(tab.overlayOffset, tab.blendedBones, world)
@@ -144,8 +145,10 @@ local function material_wireframe (name, original, world, tab)
 
         return mat
 end
+]]
 
 
+--[[
 local function material_emissive (name, original, world, tab)
 
         local vcols = 0
@@ -210,6 +213,7 @@ local function material_emissive (name, original, world, tab)
 
         return mat
 end
+]]
 
 
 local function material_internal (name, original, shadow_mat, fade, world, tab)
@@ -475,12 +479,11 @@ end
 -- curry to avoid parentheses
 function do_create_material(name, tab)
 
-        local emissive_needed = false
-        if tab.emissiveMap then emissive_needed = true end
-        if tab.emissiveColour then 
-                local r,g,b = get_colour(tab.emissiveColour)
-                if r > 0 or g > 0 or b > 0 then emissive_needed = true end
-                tab.emissiveColour = vector3(r,g,b)
+        if tab.emissiveMap and not tab.emissiveMask then
+            error "You need to set a non-zero emissiveMask as well as giving the emissiveMap."
+        end
+        if tab.emissiveMask and not tab.additionalLighting then
+            error "You need to set additionalLighting = true."
         end
 
         if tab.diffuseColour then
@@ -522,14 +525,14 @@ function do_create_material(name, tab)
         if not tab.stipple then
                 material_internal(name.."'", name, caster, true, false, tab)
         end
-        if emissive_needed then
-                material_emissive(name.."^", name, false, tab)
-                material_emissive(name.."^&", name, true, tab)
+        if true or emissive_needed then
+                --material_emissive(name.."^", name, false, tab)
+                --material_emissive(name.."^&", name, true, tab)
         end
         material_internal(name,      name,  caster, false, false, tab)
         material_internal(name.."&", name, wcaster, false, true,  tab)
-        material_wireframe(name.."|", name, false, tab)
-        material_wireframe(name.."|&", name, true, tab)
+        --material_wireframe(name.."|", name, false, tab)
+        --material_wireframe(name.."|&", name, true, tab)
 
         -- no prefix: ordinary material, stipple
         -- & base (world)
