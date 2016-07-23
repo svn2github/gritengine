@@ -122,14 +122,13 @@ hud_class `Settings` (extends(WindowClass)
 			align = vec(-1, 1);
 			offset = vec(10, -5);		
 		})		
-		
+		local fovcb = function(self) gfx_option("FOV", tonumber(self.value)) end
 		self.content.debug_panel.foved = gfx_hud_object_add(`/common/gui/window_editbox`, {
 			parent = self.content.debug_panel;
 			value = tostring(gfx_option("FOV"));
 			alignment = "LEFT";
-			enterCallback = function(self)
-				gfx_option("FOV", tonumber(self.value))
-			end;
+			enterCallback = fovcb;
+			onStopEditing = fovcb;
 			size = vec(50, 20);
 			align = vec(-1, 1);
 			offset = vec(50, -5);
@@ -221,13 +220,13 @@ hud_class `Settings` (extends(WindowClass)
 			offset = vec(10, -95);		
 		})		
 		
+		local fccb =  function(self) gfx_option("FAR_CLIP", tonumber(self.value)) end
 		self.content.debug_panel.farced = gfx_hud_object_add(`/common/gui/window_editbox`, {
 			parent = self.content.debug_panel;
 			value = tostring(gfx_option("FAR_CLIP"));
 			alignment = "LEFT";
-			enterCallback = function(self)
-				gfx_option("FAR_CLIP", tonumber(self.value))
-			end;
+			enterCallback = fccb;
+			onStopEditing = fccb;
 			size = vec(50, 20);
 			align = vec(-1, 1);
 			offset = vec(70, -95);
@@ -497,13 +496,15 @@ hud_class `Settings` (extends(WindowClass)
 			align = vec(-1, 1);
 			offset = vec(10, -5);		
 		})
+		
+		local cbcb = function(self) WeaponCreate.class = self.value end;
+		
 		self.content.placement_panel.classb = gfx_hud_object_add(`/common/gui/window_editbox`, {
 			parent = self.content.placement_panel;
 			value = `/common/veg/Tree_aelm`;
 			alignment = "LEFT";
-			enterCallback = function(self)
-				WeaponCreate.class = self.value
-			end;
+			enterCallback = cbcb;
+			onStopEditing = cbcb;
 			size = vec(50, 20);
 			align = vec(-1, 1);
 			offset = vec(10, -25);
@@ -515,18 +516,19 @@ hud_class `Settings` (extends(WindowClass)
 			parent = self.content.placement_panel,
 			align = vec(-1, 1);
 			offset = vec(10, -45);		
-		})		
+		})
+		local ofcb =  function(self) WeaponCreate.additionalOffset = tonumber(self.value) or 0 end
 		self.content.placement_panel.offset = gfx_hud_object_add(`/common/gui/window_editbox`, {
 			parent = self.content.placement_panel;
 			value = "0";
 			alignment = "LEFT";
-			enterCallback = function(self)
-				WeaponCreate.additionalOffset = tonumber(self.value) or 0
-			end;
+			enterCallback = ofcb;
+			onStopEditing = ofcb;
 			size = vec(50, 20);
 			align = vec(-1, 1);
 			offset = vec(10, -65);
 		})
+		
 		self.content.placement_panel.button1 = create_button({
 			caption = "Clear last placed object";
 			parent = self.content.placement_panel;
@@ -538,16 +540,13 @@ hud_class `Settings` (extends(WindowClass)
 					WeaponCreate.lastPlaced = nil
 				end
 			end;
-
 		})
 		self.content.placement_panel.button2 = create_button({
 			caption = "Clear all placed obejcts";
 			parent = self.content.placement_panel;
 			offset = vec(10, -130);
 			align = vec(-1, 1);
-			pressedCallback = function(self)
-				clearAllPlaced()
-			end;
+			pressedCallback = clearAllPlaced;
 		})
 
 		-- OBJECT FIRING GUN
@@ -558,13 +557,13 @@ hud_class `Settings` (extends(WindowClass)
 			align = vec(-1, 1);
 			offset = vec(10, -5);		
 		})
+		local cbcb2 = function(self) WeaponCreate.class = self.value end
 		self.content.object_panel.classb = gfx_hud_object_add(`/common/gui/window_editbox`, {
 			parent = self.content.object_panel;
 			value = `/common/veg/Tree_aelm`;
 			alignment = "LEFT";
-			enterCallback = function(self)
-				WeaponCreate.class = self.value
-			end;
+			enterCallback = cbcb2;
+			onStopEditing = cbcb2;
 			size = vec(50, 20);
 			align = vec(-1, 1);
 			offset = vec(10, -25);
@@ -581,9 +580,7 @@ hud_class `Settings` (extends(WindowClass)
 			parent = self.content.object_panel;
 			value = "1";
 			alignment = "LEFT";
-			enterCallback = function(self)
-				
-			end;
+			enterCallback = do_nothing;
 			size = vec(50, 20);
 			align = vec(-1, 1);
 			offset = vec(10, -65);
@@ -594,14 +591,16 @@ hud_class `Settings` (extends(WindowClass)
 			align = vec(-1, 1);
 			offset = vec(10, -90);		
 		})
+		local wpscbx = function(self)
+				WeaponCreate.spin = self.value
+				print(GREEN.."TODO")
+			end
 		self.content.object_panel.X = gfx_hud_object_add(`/common/gui/window_editbox`, {
 			parent = self.content.object_panel;
 			value = "0";
 			alignment = "LEFT";
-			enterCallback = function(self)
-				WeaponCreate.spin = self.value
-				print(GREEN.."TODO")
-			end;
+			enterCallback = wpscbx;
+			onStopEditing = wpscbx;
 			size = vec(50, 20);
 			align = vec(-1, 1);
 			offset = vec(10, -110);
@@ -609,14 +608,16 @@ hud_class `Settings` (extends(WindowClass)
 			expand_offset = vec(-20, 0);
 			colour = vec(1, 0, 0);
 		})
+		local wpscby = function(self)
+				WeaponCreate.spin = self.value
+				print(GREEN.."TODO")
+			end		
 		self.content.object_panel.Y = gfx_hud_object_add(`/common/gui/window_editbox`, {
 			parent = self.content.object_panel;
 			value = "0";
 			alignment = "LEFT";
-			enterCallback = function(self)
-				WeaponCreate.spin = self.value
-				print(GREEN.."TODO")
-			end;
+			enterCallback = wpscby;
+			onStopEditing = wpscby;
 			size = vec(50, 20);
 			align = vec(-1, 1);
 			offset = vec(10+55, -110);
@@ -624,14 +625,16 @@ hud_class `Settings` (extends(WindowClass)
 			expand_offset = vec(-20, 0);
 			colour = vec(0, 1, 0);
 		})		
+		local wpscbz = function(self)
+				WeaponCreate.spin = self.value
+				print(GREEN.."TODO")
+			end		
 		self.content.object_panel.Z = gfx_hud_object_add(`/common/gui/window_editbox`, {
 			parent = self.content.object_panel;
 			value = "0";
 			alignment = "LEFT";
-			enterCallback = function(self)
-				WeaponCreate.spin = self.value
-				print(GREEN.."TODO")
-			end;
+			enterCallback = wpscbz;
+			onStopEditing = wpscbz;
 			size = vec(50, 20);
 			align = vec(-1, 1);
 			offset = vec(10+110, -110);
@@ -668,13 +671,15 @@ hud_class `Settings` (extends(WindowClass)
 			align = vec(-1, 1);
 			offset = vec(10, -5);		
 		})
+		local cbcb3 = function(self)
+				WeaponFlame.class = self.value
+		end
 		self.content.particles_panel.classb = gfx_hud_object_add(`/common/gui/window_editbox`, {
 			parent = self.content.particles_panel;
 			value = `/common/particles/Flame`;
 			alignment = "LEFT";
-			enterCallback = function(self)
-				WeaponFlame.class = self.value
-			end;
+			enterCallback = cbcb3;
+			onStopEditing = cbcb3;
 			size = vec(50, 20);
 			align = vec(-1, 1);
 			offset = vec(10, -25);
@@ -738,6 +743,9 @@ hud_class `Settings` (extends(WindowClass)
 			enterCallback = function(self)
 				print(GREEN.."TODO")
 			end;
+			onStopEditing = function(self)
+				print(GREEN.."TODO")
+			end;
 			size = vec(50, 20);
 			align = vec(-1, 1);
 			offset = vec(10, -45);
@@ -753,6 +761,9 @@ hud_class `Settings` (extends(WindowClass)
 			enterCallback = function(self)
 				print(GREEN.."TODO")
 			end;
+			onStopEditing = function(self)
+				print(GREEN.."TODO")
+			end;			
 			size = vec(50, 20);
 			align = vec(-1, 1);
 			offset = vec(10+55, -45);
@@ -768,6 +779,10 @@ hud_class `Settings` (extends(WindowClass)
 			enterCallback = function(self)
 				print(GREEN.."TODO")
 			end;
+			onStopEditing = function(self)
+				print(GREEN.."TODO")
+			end;
+			
 			size = vec(50, 20);
 			align = vec(-1, 1);
 			offset = vec(10+110, -45);

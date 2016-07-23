@@ -263,8 +263,6 @@ function GED:toggleMouseCapture()
         -- Various other nice GUI things
 		if self.debugModeSettingsWindow ~= nil and not self.debugModeSettingsWindow.destroyed then
 			self.debugModeSettingsWindow.enabled = false
-			-- i don't know why, but otherwise the controls stuck when back to debug mode (TEMPORARY, please find where it actually happens)
-			editor_core_move_binds.enabled = false
 		end
 	else
 		if self.debugModeSettingsWindow ~= nil and not self.debugModeSettingsWindow.destroyed then
@@ -300,6 +298,8 @@ function GED:setDebugMode(v)
     stats.enabled = v
     editor_edit_binds.enabled = not v
     editor_core_move_binds.enabled = not v
+	print(editor_edit_binds.enabled)
+	print( editor_core_move_binds.enabled)
     editor_debug_binds.enabled = v
     editor_debug_ghost_binds.enabled = v
 
