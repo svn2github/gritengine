@@ -32,8 +32,8 @@ hud_class `window_editbox` (extends(table_concat_copy(GuiClass, EditBox))
 
 	end;
 
-    setEditting = function (self, editting, no_callback)
-		EditBox.setEditting(self, editting, no_callback)
+    setEditing = function (self, editing, no_callback)
+		EditBox.setEditing(self, editing, no_callback)
     end;
 })
 
