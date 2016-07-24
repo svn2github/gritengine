@@ -91,6 +91,7 @@ hud_class `SystemLayer` {
         if self.consoleEnabled then
             hud_focus_grab(console)
         end
+		if not v then hud_focus = nil end
     end;
 
     destroy = function (self)
