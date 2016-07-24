@@ -1,4 +1,5 @@
 -- (c) David Cunningham 2014, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
+-- Improved by Augusto P. Moura - 2016
 
 -- What character index corresponds to the given pixel position?
 -- Returns between 0 and #text inclusive
@@ -40,8 +41,6 @@ EditBox = {
 	clickedInside = false;
 	
     init = function (self)
-
-
         self.needsInputCallbacks = true
         self.text = gfx_hud_text_add(self.font)
         self.text.parent = self
@@ -61,7 +60,7 @@ EditBox = {
         })
 
 		self.selectionBG = gfx_hud_object_add(`Rect`, {
-            colour = 1 - self.textColour;
+            colour = self.textColour-0.5;
             parent = self;
         })
 		self.selectionBG.enabled = false
@@ -98,12 +97,17 @@ EditBox = {
 
     mouseMoveCallback = function (self, local_pos, screen_pos, inside)
         self.inside = inside and local_pos
-		if inside then
-			if self.clickPos then
-				local pos = text_char_pos(self.font, self.value, self.inside.x + self.size.x/2 - self.padding)
+		
+		if self.clickPos then
+			-- print("clpos "..self.clickPos.." localpos "..local_pos.x-self.text.position.x)
+			if (self.clickPos == #self.value and local_pos.x-self.text.position.x > self.text.size.x/2) or 
+			(self.clickPos == 0 and local_pos.x-self.text.position.x < -self.text.size.x/2) then
+				self:unselectAll()
+			else
+				local pos = text_char_pos(self.font, self.value, local_pos.x + self.size.x/2 - self.padding)
 				if pos ~= self.clickPos then
 					self:select(self.clickPos, pos)
-					-- print("second pos: "..pos)
+					-- print("pos: "..pos)
 				end
 			end
 		end
@@ -131,16 +135,17 @@ EditBox = {
         if ev == "+left" then
             if not self.inside then
 				if self.editing then
+					self:unselectAll()
 					self:setEditing(false)
-					-- self.clickPos = nil
 				end
             else
+				self:setFocus(true)
                 self:setEditing(true)
                 local txt = self.value
                 local pos = text_char_pos(self.font, txt, self.inside.x + self.size.x/2 - self.padding)
 				if not self.clickPos then
 					self.clickPos = pos
-					self.selection = vec(0, 0)
+					self:unselectAll()
 					-- print("init pos: "..pos)
 				end
                 self.before = txt:sub(1, pos)
@@ -154,33 +159,63 @@ EditBox = {
                 self:setEditing(false)
 				self:enterCallback()
             elseif ev == "+BackSpace" or ev == "=BackSpace" then
-                self.before = self.before:sub(1, -2)
-                self:updateText()
-                self:onChange(self)
+				if #self.selection > 0 then
+					self:removeSelectedText()
+				else
+					self.before = self.before:sub(1, -2)
+					self:updateText()
+					self:onChange(self)
+				end
             elseif ev == "+Delete" or ev == "=Delete" then
-                self.after = self.after:sub(2)
-                self:updateText()
-                self:onChange(self)
+				if #self.selection > 0 then
+					self:removeSelectedText()
+				else
+					self.after = self.after:sub(2)
+					self:updateText()
+					self:onChange(self)
+				end
             elseif ev == "+Left" or ev == "=Left" then
-                if #self.before > 0 then
-                    local char = self.before:sub(-1, -1)
-                    self.before = self.before:sub(1, -2)
-                    self.after = char .. self.after
-                    self:updateText()
-                end
+				if #self.selection > 0 then
+					self:putCaretAt(self.selection.x)
+					self:unselectAll()
+				else
+					if #self.before > 0 then
+						local char = self.before:sub(-1, -1)
+						self.before = self.before:sub(1, -2)
+						self.after = char .. self.after
+						self:updateText()
+					end
+				end
             elseif ev == "+Right" or ev == "=Right" then
-                if #self.after > 0 then
-                    local char = self.after:sub(1, 1)
-                    self.after = self.after:sub(2)
-                    self.before = self.before .. char
-                    self:updateText()
-                end
-			-- TODO: implement copy, paste and cut for selection
+				if #self.selection > 0 then
+					self:putCaretAt(self.selection.y)
+					self:unselectAll()
+				else
+					if #self.after > 0 then
+						local char = self.after:sub(1, 1)
+						self.after = self.after:sub(2)
+						self.before = self.before .. char
+						self:updateText()
+					end
+				end
 			elseif input_filter_pressed("Ctrl") and ev == "+v" then
-				-- local str = get_clipboard()
-				-- self.promptBefore = self.promptBefore..str
+				local str = get_clipboard()
+				if #self.selection > 0 then
+					self:removeSelectedText()
+				end
+				self.before = self.before..str
+				self:updateText()
 			elseif input_filter_pressed("Ctrl") and ev == "+c" then
-				set_clipboard(self:getSelectedText())
+				if #self.selection > 0 then
+					set_clipboard(self:getSelectedText())
+				end
+			elseif input_filter_pressed("Ctrl") and ev == "+x" then
+				if #self.selection > 0 then
+					set_clipboard(self:getSelectedText())
+					self:removeSelectedText()
+				end
+			elseif input_filter_pressed("Ctrl") and ev == "+a" then
+				self:selectAll()
             elseif ev:sub(1,1) == ":" then
                 if self.maxLength == nil or #self.value < self.maxLength then
                     local key = ev:sub(2)
@@ -228,14 +263,42 @@ EditBox = {
         self.caret.position = vec(self.text.position.x -self.text.size.x/2 + tw, 0)
     end;
 
+    putCaretAt = function (self, pos)
+		self.before = self.value:sub(0, pos)
+		self.after =  self.value:sub(pos+1, #self.value)
+		self:updateChildrenSize()
+    end;		
+	
+    selectAll = function (self)
+		self.before = self.value
+		self.after = ""
+		self:select(#self.value, 0)
+    end;		
+	
+    unselectAll = function (self)
+		self:setFocus(true)
+		self.selection = vec(0, 0)
+		self.selectionBG.enabled = false
+    end;	
+	
     select = function (self, a, b)
-		-- TODO: set selection background
-		-- self.selectionBG:setRect(vec(self.caret.position.x, self.text.position.y-self.text.size.y), vec(, self.text.position.y+self.text.size.y))
+		self:setFocus(false)
+		self.selectionBG.enabled = true
+		local tw
+		local crposx = self.text.position.x -self.text.size.x/2+gfx_font_text_width(self.font, self.before)
+		
 		if a < b then
+			self.selectiontype = 'r'
 			self.selection = vec(a, b)
+			tw = gfx_font_text_width(self.font, self:getSelectedText())
+			self.selectionBG.position = vec(crposx+tw/2, 0)
 		else
+			self.selectiontype = 'l'
 			self.selection = vec(b, a)
+			tw = gfx_font_text_width(self.font, self:getSelectedText())
+			self.selectionBG.position = vec(crposx-tw/2, 0)
 		end
+		self.selectionBG.size = vec(tw, self.text.size.y)
 		-- print(self:getSelectedText())
     end;
 	
@@ -244,8 +307,15 @@ EditBox = {
     end;
 	
     removeSelectedText = function (self)
-		self.selection = vec(0, 0)
-    end;	
+		if self.selectiontype == "l" then
+			self.before = self.before:sub(1, #self.before-#self:getSelectedText())
+		else
+			self.after = self.after:sub(#self:getSelectedText()+1, #self.after)
+		end
+		
+		self:updateText()
+		self:unselectAll()
+    end;
 	
 	-- called when anything is typed
     onChange = function (self)
