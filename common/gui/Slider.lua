@@ -196,18 +196,22 @@ hud_class `Slider` {
 	end;
 }
 
--- TODO: replace parameters by a single table
-function create_slider(s_caption, s_position, s_defaultvalue, s_parent, s_minvalue, s_maxvalue, s_stepsize, s_onclick, s_onclickend)
-	local sld = gfx_hud_object_add(`Slider`, {
-		caption = s_caption or "",
-		position = s_position or vec(0, 0),
-		value = s_defaultvalue or 0,
-		parent = s_parent or hud_center,
-		maxValue = s_maxvalue or 1,
-		minValue = s_minvalue or 0,
-		step = s_stepsize or 0,
-		onClick = s_onclick or do_nothing,
-		onClickEnd = s_onclickend or do_nothing
-	})
+function create_slider(s_caption_ortab, s_position, s_defaultvalue, s_parent, s_minvalue, s_maxvalue, s_stepsize, s_onclick, s_onclickend)
+	local sld
+	if type(s_caption_ortab) == "table" then
+		sld = gfx_hud_object_add(`Slider`, s_caption_ortab)	
+	else
+		sld = gfx_hud_object_add(`Slider`, {
+			caption = s_caption_ortab or "",
+			position = s_position or vec(0, 0),
+			value = s_defaultvalue or 0,
+			parent = s_parent or hud_center,
+			maxValue = s_maxvalue or 1,
+			minValue = s_minvalue or 0,
+			step = s_stepsize or 0,
+			onClick = s_onclick or do_nothing,
+			onClickEnd = s_onclickend or do_nothing
+		})
+	end
 	return sld
 end
