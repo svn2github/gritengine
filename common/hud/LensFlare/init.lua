@@ -3,7 +3,7 @@
 hud_class `.` {
     alpha = 0;
 	size = vec(1500, 1024);
-	alp = 1;
+	alp = 0;
     zOrder = 0;
 	
 	flare = {};
