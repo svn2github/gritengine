@@ -190,7 +190,7 @@ end
 hud_class `content_browser_floating_object` {
 	alpha = 1;
 	size = vec(64, 64);
-	texture = `/editor/core/icons/icons/objecticon.png`;
+	texture = file_icons.objecticon;
 	id = 0;
 	obclass = "";
 	positioning = false;
@@ -328,7 +328,7 @@ hud_class `ContentBrowser` (extends(WindowClass)
 		self.scrollarea:setContent(self.file_explorer)
 		
 		self.file_explorer.addItem = function(self, m_name, icon, pc, dpc, ccb)
-			if icon == nil then icon = `/common/gui/icons/icons/foldericon.png`end
+			if icon == nil then icon = `/common/gui/icons/foldericon.png` end
 			self.items[#self.items+1] = gfx_hud_object_add(`browser_icon2`, {
 				icon_texture = icon;
 				position = vec2(0, 0);
@@ -414,7 +414,7 @@ hud_class `ContentBrowser` (extends(WindowClass)
 		for i = 1, #m_folders do
 			local nit = nil
 			
-			nit = self.file_explorer:addItem(m_folders[i], `/common/gui/icons/foldericon.png`)
+			nit = self.file_explorer:addItem(m_folders[i], file_icons.foldericon)
 			nit.doubleClick = function(self)
 				if string.sub(self.parent.parent.parent.currentdir, -1) ~= "/" then
 					self.parent.parent.parent.currentdir = self.parent.parent.parent.currentdir.."/"..self.name
@@ -428,7 +428,7 @@ hud_class `ContentBrowser` (extends(WindowClass)
 
 		for i = 1, #m_files do
 				local nit = nil
-				nit = self.file_explorer:addItem(m_files[i], `/editor/core/icons/icons/objecticon.png`)
+				nit = self.file_explorer:addItem(m_files[i], file_icons.objecticon)
 				nit.pressedCallback = function (self)
 					-- self. adding = true
 					-- create_floating(self.lp, self.parent.parent.parent.currentdir.."/"..self.name)

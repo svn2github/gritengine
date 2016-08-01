@@ -125,7 +125,7 @@ hud_class `Notebook` {
 			position = vec2(0, -self.size.y+self.pageButtonSize.y),
 			size = vec(self.size.x, self.pageButtonSize.y),
 			colour = self.menuBackgroundColour,
-			texture = `/editor/core/icons/gradients/invgrad.png`
+			texture = _gui_textures.invgrad
 		})
 		self.content_area = create_rect({
 			parent = self,

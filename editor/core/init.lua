@@ -15,16 +15,11 @@ include `defaultconfig/recent.lua`
 safe_include `../config/recent.lua`
 
 -- [dcunnin] We should put all this stuff in /common, thereby building a reusable asset library.
-include `defaultmap/init.lua`
-
 include`default_game_mode.lua`
 
-include `icons/init.lua`
-
-include `widget_manager/init.lua`
-include `GritMap/init.lua`
+include `widget_manager.lua`
+include `GritMapManager.lua`
 include `directory_list.lua`
-include `assets/init.lua`
 include `Pickle.lua`
 include `util.lua`
 include `core.lua`

@@ -361,7 +361,7 @@ hud_class `FileDialog` (extends(WindowClass)
 
 		self.iconsize_btn = create_imagebutton({
 			pressedCallback = do_nothing;
-			icon_texture = `/editor/core/icons/map_editor/content_browser.png`;-- TODO: replace by a specific icon
+			icon_texture = `/editor/assets/icons/map_editor/content_browser.png`;-- TODO: replace by a specific icon
 			parent = self;
 			colour = V_ID*0.5;
 			defaultColour = V_ID*0.5;
@@ -430,9 +430,9 @@ hud_class `FileDialog` (extends(WindowClass)
 				local nit = nil
 				if selext == "lua" then
 					-- TODO: this is not a good place to declare these editor icons
-					nit = self.file_explorer:addItem(m_files[i], `/editor/core/icons/icons/luaicon.png`)
+					nit = self.file_explorer:addItem(m_files[i], `/editor/assets/icons/files/luaicon.png`)
 				elseif selext == "gmap" then
-					nit = self.file_explorer:addItem(m_files[i], `/editor/core/icons/icons/worldicon.png`)
+					nit = self.file_explorer:addItem(m_files[i], `/editor/assets/icons/files/worldicon.png`)
 				else
 					nit = self.file_explorer:addItem(m_files[i], `/common/gui/icons/fileicon.png`)
 				end

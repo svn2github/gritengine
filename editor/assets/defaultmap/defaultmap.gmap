@@ -18,9 +18,11 @@ gritmap =
     env_cycle_file = "/editor/core/edenv.lua";
     time           = 50189.961888999;
   };
-  include     = {};
+  include     = {
+    `/editor/assets/defaultmap/init.lua`;
+  };
   objects     = {   {
-    class       = "/editor/core/defaultmap/Cube";
+    class       = "/editor/assets/defaultmap/Cube";
     name        = "mycube";
     orientation = quat(1, 0, 0, 0);
     position    = vector3(0, 0, -20);

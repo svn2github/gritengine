@@ -474,12 +474,12 @@ editor_interface.navigation_editor =
 			alpha = 0;
 		})
 		
-		self.toolbar:addTool("Crowd Tool", `/editor/core/icons/navigation_editor/agent.png`, (function(self) editor_interface.navigation_editor.windows.tools:show_crowd_tool() end), "Crowd Tool")
-		self.toolbar:addTool("Create Offmesh Links", `/editor/core/icons/navigation_editor/offmeshcon.png`, (function(self) editor_interface.navigation_editor.windows.tools:show_offmesh_tool() end), "Create Offmesh Links")
-		self.toolbar:addTool("Create Convex Volumes", `/editor/core/icons/navigation_editor/convexvolume.png`, (function(self) editor_interface.navigation_editor.windows.tools:show_convex_tool() end), "Create Convex Volumes")
-		self.toolbar:addTool("Create Temporary Obstacles", `/editor/core/icons/navigation_editor/obstacle.png`, (function(self) editor_interface.navigation_editor.windows.tools:show_temp_obstacle_tool() end), "Create Temporary Obstacles")
+		self.toolbar:addTool("Crowd Tool", nav_editor_icons.agent, (function(self) editor_interface.navigation_editor.windows.tools:show_crowd_tool() end), "Crowd Tool")
+		self.toolbar:addTool("Create Offmesh Links", nav_editor_icons.offmeshcon, (function(self) editor_interface.navigation_editor.windows.tools:show_offmesh_tool() end), "Create Offmesh Links")
+		self.toolbar:addTool("Create Convex Volumes", nav_editor_icons.convexvolume, (function(self) editor_interface.navigation_editor.windows.tools:show_convex_tool() end), "Create Convex Volumes")
+		self.toolbar:addTool("Create Temporary Obstacles", nav_editor_icons.obstacle, (function(self) editor_interface.navigation_editor.windows.tools:show_temp_obstacle_tool() end), "Create Temporary Obstacles")
 		self.toolbar:addSeparator()
-		self.toolbar:addTool("Tool", `/editor/core/icons/navigation_editor/tool.png`, (function(self) editor_interface.navigation_editor.windows.tools.enabled = not editor_interface.navigation_editor.windows.tools.enabled end), "Tool")
+		self.toolbar:addTool("Tool", nav_editor_icons.tool, (function(self) editor_interface.navigation_editor.windows.tools.enabled = not editor_interface.navigation_editor.windows.tools.enabled end), "Tool")
 		self.toolbar:addTool("Debug", map_editor_icons.view_mode, (function(self) editor_interface.navigation_editor.windows.debug.enabled = not editor_interface.navigation_editor.windows.debug.enabled end), "Debug")
 
 		self.toolbar:addTool("Toggle Properties Panel", map_editor_icons.config, (function(self) editor_interface.navigation_editor.propertiesToolpanel.enabled = not editor_interface.navigation_editor.propertiesToolpanel.enabled end), "Toggle Properties Panel")

@@ -57,4 +57,5 @@ _gui_textures =
 	{
 		button_border = `/common/hud/CornerTextures/SquareBorderWhite.png`;
 	};
+	invgrad = `/common/gui/icons/invgrad.png`;
 };

@@ -13,9 +13,9 @@ hud_class `ColourWheel` {
 	alpha = 1;
 	size = vec(128, 128);
 	colour = V_ID;
-	texture = `ColourWheel.png`;
+	texture = `icons/ColourWheel.png`;
 	
-	hsv = V_ID;
+	hsv = vec(0.5, 0, 1);
 
 	dragging = false;
 
@@ -24,7 +24,23 @@ hud_class `ColourWheel` {
 		
 		self.point = create_rect({ size = vec(8, 8), parent = self, texture = `/common/hud/CornerTextures/FilledWhiteBorder04.png` })
 	
-		self.debug_rect = create_rect({ parent = self, position = vec(self.size.x/2+30, 0), size = vec(30, 30) })
+		self.debug_rect = create_rect({ parent = self, position = vec(self.size.x/2+30+50, 0), size = vec(30, 30) })
+		-- self.debug_rect.enabled= false
+		
+		self.controlv = gfx_hud_object_add(`/common/hud/Scale`, {
+			onChange = function(self)
+				self.parent.hsv = vec(self.parent.hsv.x, self.parent.hsv.y, math.abs(self.value-1))
+				local hsv = self.parent.hsv
+				self.sliderBackground.colour = HSVtoRGB(vec(hsv.x, hsv.y, 1))
+				self.parent.debug_rect.colour = self.parent:getColour()
+			end,
+			size = vec(200, 20),
+			bgTexture=`icons/alphagrad.png`, 
+			bgColour=vec(1,1,1), parent = self,
+			orientation = 90,
+			position = vec(90, 0)
+		})
+		-- self.controlv.editBox.enabled = false
 	end;
 	destroy = function (self)
 		self.needsInputCallbacks = false
@@ -48,6 +64,9 @@ hud_class `ColourWheel` {
 			self.hsv = vec(angle, sat, self.hsv.z)
 			
 			self.debug_rect.colour = self:getColour()
+
+			local hsv = self.hsv
+			self.controlv.sliderBackground.colour = HSVtoRGB(vec(hsv.x, hsv.y, 1))			
 		end		
 	end;
 	
@@ -72,3 +91,7 @@ hud_class `ColourWheel` {
 		return HSVtoRGB(self.hsv)
 	end;
 }
+
+function create_colour_wheel(tab)
+	return gfx_hud_object_add(`ColourWheel`, tab)
+end
