@@ -362,7 +362,7 @@ ColClass = extends (BaseClass) {
                 local damage = #impulse
                 if damage > persistent.impulseDamageThreshold then
                     local volume = damage / persistent.impulseDamageThreshold - 1
-                    audio_play("/common/sounds/collision.wav", volume, 1+math.random()*0.3, wpos, 3, 1)
+                    audio_play("/common/sounds/collisions/collision_soft.wav", volume, 1+math.random()*0.3, wpos, 3, 1)
                     persistent:receiveDamage(damage)
                 end
             end
