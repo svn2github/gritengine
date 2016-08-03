@@ -378,21 +378,21 @@ editor_interface.map_editor_page =
 		self.toolbar:addTool("Redo", map_editor_icons.redo, (function(self) GED:redo() end), "Redo")
 		self.toolbar:addSeparator()
 		
-		self.toolbar:addTool("Local, global", map_editor_icons.w_global, (function(self)
+		self.toolbar:addTool("Local, World", map_editor_icons.w_global, (function(self)
 			if self.mode == nil then
-				self.mode = "global"
+				self.mode = "world"
 			end
 			
-			if self.mode == "global" then
+			if self.mode == "world" then
 				self.texture = map_editor_icons.w_local
 				self.mode = "local"
-				widget_manager.translate_mode = "local"
+				widget_manager:setSpaceMode("local")
 			else
 				self.texture = map_editor_icons.w_global
-				self.mode = "global"
-				widget_manager.translate_mode = "global"
+				self.mode = "world"
+				widget_manager:setSpaceMode("world")
 			end
-		end), "Set Widget Mode Global/Local")
+		end), "Set Widget Mode World/Local")
 
 		-- self.toolbar:addSeparator()
 		-- self.toolbar:addTool("Pivot", `../icons/pivot_centre.png`, (function(self)  end), "")
@@ -443,19 +443,19 @@ editor_interface.map_editor_page =
 		self.widget_menu = {}
 
 		self.widget_menu[0] = self.mlefttoolbar:addTool("Select", map_editor_icons.select, (function(self)
-			 GED:setWidgetMode(0)
+			 GED:setWidgetMode("select")
 			editor_interface.map_editor_page:unselectAllWidgets()
 			self:select(true)
 		end), "Selection Mode")
 
 		self.widget_menu[1] = self.mlefttoolbar:addTool("Translate", map_editor_icons.translate, (function(self)
-			GED:setWidgetMode(1)
+			GED:setWidgetMode("translate")
 			editor_interface.map_editor_page:unselectAllWidgets()
 			self:select(true)
 		end), "Translate")
 
 		self.widget_menu[2] = self.mlefttoolbar:addTool("Rotate", map_editor_icons.rotate, (function(self)
-			GED:setWidgetMode(2)
+			GED:setWidgetMode("rotate")
 			editor_interface.map_editor_page:unselectAllWidgets()
 			self:select(true)
 		end), "Rotate")
@@ -466,7 +466,7 @@ editor_interface.map_editor_page =
 			-- self:select(true)
 		-- end), "Scale")
 
-		GED:setWidgetMode(1)
+		GED:setWidgetMode("translate")
         self.widget_menu[1]:select(true)
 		
 		self.mlefttoolbar:addSeparator()
@@ -540,7 +540,6 @@ editor_interface.map_editor_page =
 		-- not working tools
 		self.toolbar.tools[5].alpha = 0.3
 		self.toolbar.tools[6].alpha = 0.3
-		self.toolbar.tools[7].alpha = 0.3
 
 		self.mlefttoolbar.tools[4].alpha = 0.3
 		self.mlefttoolbar.tools[6].alpha = 0.3

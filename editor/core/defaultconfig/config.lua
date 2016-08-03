@@ -9,5 +9,5 @@ editor_cfg = {
 	load_startup_map = false;
 	startup_map = `/editor/core/defaultmap/defaultmap.gmap`;
 	default_game_mode = "fpsgame";
-	grid_size = 0.1;
+	step_size = 0.1;
 }

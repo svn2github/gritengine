@@ -1,28 +1,28 @@
 -- (c) Augusto P. Moura 2014, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
 -- MATERIALS
--- the dummy_plane
+-- the plane
 material `face` {
 	diffuseColour=vec(1, 0.5, 0),
 	backfaces=true,
 	alpha=0.0,
 	depthWrite=false,
 }
--- the dummy_plane dragging
+-- the plane dragging
 material `dragging_face` {
 	diffuseColour=vec(1, 0.5, 0),
 	backfaces=true,
 	depthWrite=false,
 	alpha=0.5
 }
--- dummy_plane line 1
+-- plane line 1
 material `line_1` {
 	diffuseColour=vec(0, 1, 0),
 	emissiveMask=vec(0, 1, 0),
     additionalLighting=true,
 	depthSort=false,
 }
--- dummy_plane line 2
+-- plane line 2
 material `line_2` {
 	diffuseColour=vec(1, 0, 0),
 	emissiveMask=vec(1, 0, 0),
@@ -137,101 +137,111 @@ class `widget` {} {
 
 		if widget_manager.dragged ~= nil then instance.dragged = widget_manager.dragged end
 
-		
-		if widget_manager.mode == 1 then
-			instance.mode = "translate"
-		elseif widget_manager.mode == 2 then
-			instance.mode = "rotate"
-		elseif widget_manager.mode == 3 then
-			instance.mode = "scale"
-		end
-		
-		if valid_object(instance.x_a) then
-			instance.x_a:destroy()
-		end
-		
-		instance.x_a = object (`arrow_`..instance.mode) (0, 0, 0) {name="widget_x"}
-		instance.x_a:activate()
-		instance.x_a.instance.gfx.localOrientation = pivot_or * euler(0, 0, -90)
-		instance.x_a.instance.gfx:setMaterial(`arrow`, `red`)
-		instance.x_a.instance.gfx:setMaterial(`line`, `red`)
-		instance.x_a.instance.defmat = `red`
-		instance.x_a.wc = "x"
+		instance.mode = widget_manager.mode
 
-		if valid_object(instance.y_a) then
-			instance.y_a:destroy()
+		if valid_object(instance.x) then
+			instance.x:destroy()
 		end
 		
-		instance.y_a = object (`arrow_`..instance.mode) (0, 0, 0) {name="widget_y"}
-		instance.y_a:activate()
-		instance.y_a.instance.gfx:setMaterial(`arrow`, `green`)
-		instance.y_a.instance.gfx:setMaterial(`line`, `green`)
-		instance.y_a.instance.defmat = `green`
-		instance.y_a.wc = "y"
+		instance.x = object (`arrow_`..instance.mode) (0, 0, 0) {name="widget_x"}
+		instance.x:activate()
+		instance.x.instance.gfx.localOrientation = pivot_or * euler(0, 0, -90)
+		instance.x.instance.gfx:setMaterial(`arrow`, `red`)
+		instance.x.instance.gfx:setMaterial(`line`, `red`)
+		instance.x.instance.defmat = `red`
+		instance.x.wc = "x"
 
-		if valid_object(instance.z_a) then
-			instance.z_a:destroy()
+		if valid_object(instance.y) then
+			instance.y:destroy()
 		end
 		
-		instance.z_a = object (`arrow_`..instance.mode) (0, 0, 0) {name="widget_z"}
-		instance.z_a:activate()
-		instance.z_a.instance.gfx.localOrientation = pivot_or * euler(90, 0, -90)
-		instance.z_a.instance.gfx:setMaterial(`arrow`, `blue`)
-		instance.z_a.instance.gfx:setMaterial(`line`, `blue`)
-		instance.z_a.instance.defmat = `blue`
-		instance.z_a.wc = "z"
+		instance.y = object (`arrow_`..instance.mode) (0, 0, 0) {name="widget_y"}
+		instance.y:activate()
+		instance.y.instance.gfx:setMaterial(`arrow`, `green`)
+		instance.y.instance.gfx:setMaterial(`line`, `green`)
+		instance.y.instance.defmat = `green`
+		instance.y.wc = "y"
 
-		if valid_object(instance.dummy_xy) then
-			instance.dummy_xy:destroy()
+		if valid_object(instance.z) then
+			instance.z:destroy()
+		end
+		
+		instance.z = object (`arrow_`..instance.mode) (0, 0, 0) {name="widget_z"}
+		instance.z:activate()
+		instance.z.instance.gfx.localOrientation = pivot_or * euler(90, 0, -90)
+		instance.z.instance.gfx:setMaterial(`arrow`, `blue`)
+		instance.z.instance.gfx:setMaterial(`line`, `blue`)
+		instance.z.instance.defmat = `blue`
+		instance.z.wc = "z"
+
+		if valid_object(instance.xy) then
+			instance.xy:destroy()
 		end
 
-		if valid_object(instance.dummy_xz) then
-			instance.dummy_xz:destroy()
+		if valid_object(instance.xz) then
+			instance.xz:destroy()
 		end
 		
-		if valid_object(instance.dummy_yz) then
-			instance.dummy_yz:destroy()
+		if valid_object(instance.yz) then
+			instance.yz:destroy()
 		end
 
 		if instance.mode == "translate" or instance.mode == "scale" then
-			instance.dummy_xy = object `dummy_plane` (0, 0, 0) {name="widget_xy"}
-			instance.dummy_xy:activate()
-			instance.dummy_xy.instance.gfx.localOrientation = pivot_or
-			instance.dummy_xy.instance.defmat = `green`
-			instance.dummy_xy.wc = "xy"
+			instance.xy = object `dummy_plane` (0, 0, 0) {name="widget_xy"}
+			instance.xy:activate()
+			instance.xy.instance.gfx.localOrientation = pivot_or
+			instance.xy.instance.defmat = `green`
+			instance.xy.wc = "xy"
 
-			instance.dummy_xz = object `dummy_plane` (0, 0, 0) {name="widget_xz"}
-			instance.dummy_xz:activate()
-			instance.dummy_xz.instance.gfx.localOrientation = pivot_or * euler(0, -90, -90)
-			instance.dummy_xz.instance.gfx:setMaterial(`line_1`, `red`)
-			instance.dummy_xz.instance.gfx:setMaterial(`line_2`, `blue`)
-			instance.dummy_xz.instance.defmat = `green`
-			instance.dummy_xz.wc = "xz"
+			instance.xz = object `dummy_plane` (0, 0, 0) {name="widget_xz"}
+			instance.xz:activate()
+			instance.xz.instance.gfx.localOrientation = pivot_or * euler(0, -90, -90)
+			instance.xz.instance.gfx:setMaterial(`line_1`, `red`)
+			instance.xz.instance.gfx:setMaterial(`line_2`, `blue`)
+			instance.xz.instance.defmat = `green`
+			instance.xz.wc = "xz"
 	
-			instance.dummy_yz = object `dummy_plane` (0, 0, 0) {name="widget_yz"}
-			instance.dummy_yz:activate()
-			instance.dummy_yz.instance.gfx.localOrientation = pivot_or * euler(90, 0, 90)
-			instance.dummy_yz.instance.gfx:setMaterial(`line_1`, `blue`)
-			instance.dummy_yz.instance.gfx:setMaterial(`line_2`, `green`)
-			instance.dummy_yz.instance.defmat = `green`
-			instance.dummy_yz.wc = "yz"
-		end		
+			instance.yz = object `dummy_plane` (0, 0, 0) {name="widget_yz"}
+			instance.yz:activate()
+			instance.yz.instance.gfx.localOrientation = pivot_or * euler(90, 0, 90)
+			instance.yz.instance.gfx:setMaterial(`line_1`, `blue`)
+			instance.yz.instance.gfx:setMaterial(`line_2`, `green`)
+			instance.yz.instance.defmat = `green`
+			instance.yz.wc = "yz"
+		end
 	end;
 
     deactivate = function (persistent)
 		persistent.needsFrameCallbacks = false
 		local instance = persistent.instance
-		instance.x_a:destroy()
-		instance.y_a:destroy()
-		instance.z_a:destroy()
+		instance.x:destroy()
+		instance.y:destroy()
+		instance.z:destroy()
 		if instance.mode == "translate" or instance.mode == "scale" then
-			instance.dummy_xy:destroy()
-			instance.dummy_xz:destroy()
-			instance.dummy_yz:destroy()
+			instance.xy:destroy()
+			instance.xz:destroy()
+			instance.yz:destroy()
 		end
 		instance.pivot:destroy()
     end;	
 
+	setOrientation = function(self, orientation)
+		local inst = self.instance
+		inst.pivot.localOrientation = orientation
+		
+		if inst.x.instance and inst.y.instance and inst.z.instance then
+			inst.x.instance.gfx.localOrientation = orientation * euler(0, 0, -90)
+			inst.y.instance.gfx.localOrientation = orientation
+			inst.z.instance.gfx.localOrientation = orientation * euler(90, 0, -90)
+		end
+		if (inst.mode == "translate" or inst.mode == "scale") and
+		(inst.xy.instance and inst.xz.instance and inst.yz.instance) then
+			inst.xy.instance.gfx.localOrientation = orientation
+			inst.xz.instance.gfx.localOrientation = orientation * euler(0, -90, -90)
+			inst.yz.instance.gfx.localOrientation = orientation * euler(90, 0, 90)				
+		end
+	end;
+	
     frameCallback = function (persistent, elapsed)
         -- if persistent.destroyed or not persistent.instance.pivot or not persistent.instance.pivot.destroyed then return end
 		
@@ -245,39 +255,38 @@ class `widget` {} {
 		local pivot_pos = inst.pivot.localPosition
 		local new_orientation = inst.pivot.localOrientation
 		
-		if inst.x_a.instance and inst.y_a.instance and inst.z_a.instance then
-			inst.x_a.instance.gfx.localPosition = pivot_pos
-			inst.y_a.instance.gfx.localPosition = pivot_pos
-			inst.z_a.instance.gfx.localPosition = pivot_pos
+		if inst.x.instance and inst.y.instance and inst.z.instance then
+			inst.x.instance.gfx.localPosition = pivot_pos
+			inst.y.instance.gfx.localPosition = pivot_pos
+			inst.z.instance.gfx.localPosition = pivot_pos
 			
-			inst.x_a.instance.gfx.localOrientation = new_orientation * euler(0, 0, -90)
-			inst.y_a.instance.gfx.localOrientation = new_orientation
-			inst.z_a.instance.gfx.localOrientation = new_orientation * euler(90, 0, -90)
+			inst.x.instance.gfx.localOrientation = new_orientation * euler(0, 0, -90)
+			inst.y.instance.gfx.localOrientation = new_orientation
+			inst.z.instance.gfx.localOrientation = new_orientation * euler(90, 0, -90)
 			
-			inst.x_a.instance.gfx.localScale = vecsize
-			inst.y_a.instance.gfx.localScale = vecsize
-			inst.z_a.instance.gfx.localScale = vecsize
+			inst.x.instance.gfx.localScale = vecsize
+			inst.y.instance.gfx.localScale = vecsize
+			inst.z.instance.gfx.localScale = vecsize
 		end
 		
 		if (inst.mode == "translate" or inst.mode == "scale") and
-		(inst.dummy_xy.instance and inst.dummy_xz.instance and inst.dummy_yz.instance) then
-			inst.dummy_xy.instance.gfx.localPosition = pivot_pos
-			inst.dummy_xz.instance.gfx.localPosition = pivot_pos
-			inst.dummy_yz.instance.gfx.localPosition = pivot_pos
+		(inst.xy.instance and inst.xz.instance and inst.yz.instance) then
+			inst.xy.instance.gfx.localPosition = pivot_pos
+			inst.xz.instance.gfx.localPosition = pivot_pos
+			inst.yz.instance.gfx.localPosition = pivot_pos
 			
-			inst.dummy_xy.instance.gfx.localScale = vecsize
-			inst.dummy_xz.instance.gfx.localScale = vecsize
-			inst.dummy_yz.instance.gfx.localScale = vecsize			
-			
+			inst.xy.instance.gfx.localScale = vecsize
+			inst.xz.instance.gfx.localScale = vecsize
+			inst.yz.instance.gfx.localScale = vecsize
 		end
 
 		if inst.dragged ~= nil then
 			for i = 1, #inst.dragged do
 				if inst.dragged[i] ~= nil and inst.dragged[i].instance ~= nil and not inst.dragged[i].destroyed then
 					local new_pos = vec(
-						math.floor((pivot_pos.x + widget_manager.offsets[i].x) / nonzero(widget_manager.grid_size) + 0.5 ) * widget_manager.grid_size,
-						math.floor((pivot_pos.y + widget_manager.offsets[i].y) / nonzero(widget_manager.grid_size) + 0.5 ) * widget_manager.grid_size,
-						math.floor((pivot_pos.z + widget_manager.offsets[i].z) / nonzero(widget_manager.grid_size) + 0.5 ) * widget_manager.grid_size
+						math.floor((pivot_pos.x + widget_manager.offsets[i].x) / nonzero(widget_manager.step_size) + 0.5 ) * widget_manager.step_size,
+						math.floor((pivot_pos.y + widget_manager.offsets[i].y) / nonzero(widget_manager.step_size) + 0.5 ) * widget_manager.step_size,
+						math.floor((pivot_pos.z + widget_manager.offsets[i].z) / nonzero(widget_manager.step_size) + 0.5 ) * widget_manager.step_size
 					)
 					
 					inst.dragged[i].spawnPos = new_pos
@@ -337,6 +346,5 @@ class `widget` {} {
 				inst.initialOrientations[#inst.initialOrientations+1] = initialorientation
 			end
 		end
-	end;	
-	
+	end;
 }
