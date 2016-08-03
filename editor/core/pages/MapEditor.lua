@@ -408,8 +408,8 @@ editor_interface.map_editor_page =
 			end
 		), "Toggle Postprocessing")
 		self.toolbar:addTool("Solid mode", map_editor_icons.solid, (function(self) gfx_option("WIREFRAME", false) gfx_option("RENDER_SKY", true) end), "View Mode: Solid")
-		self.toolbar:addTool("Wireframe mode", map_editor_icons.wireframe, (function(self) gfx_option("WIREFRAME_SOLID", true) gfx_option("WIREFRAME", true) gfx_option("RENDER_SKY", false) end), "View Mode: Wireframe")
-		self.toolbar:addTool("Solid Wireframe Mode", map_editor_icons.solid_wireframe, (function(self) gfx_option("WIREFRAME_SOLID", false) gfx_option("WIREFRAME", true) gfx_option("RENDER_SKY", true) end), "View Mode: Solid Wireframe")
+		self.toolbar:addTool("Wireframe mode", map_editor_icons.wireframe, (function(self) gfx_option("WIREFRAME_SOLID", false) gfx_option("WIREFRAME", true) gfx_option("RENDER_SKY", false) end), "View Mode: Wireframe")
+		self.toolbar:addTool("Solid Wireframe Mode", map_editor_icons.solid_wireframe, (function(self) gfx_option("WIREFRAME_SOLID", true) gfx_option("WIREFRAME", true) gfx_option("RENDER_SKY", true) end), "View Mode: Solid Wireframe")
 		self.toolbar:addSeparator()
 		-- self.toolbar:addTool("Object properties", `../icons/properties.png`, (function(self) open_window(editor_interface.map_editor_page.windows.object_properties) end), "")
 		-- self.toolbar:addTool("Content Browser", `../icons/content_browser.png`, (function(self) open_window(editor_interface.map_editor_page.windows.content_browser) end), "")
