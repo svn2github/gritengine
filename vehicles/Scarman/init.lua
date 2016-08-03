@@ -145,8 +145,8 @@ local g, s = 0.6, 0.04
 material `Carpaint` { paintColour = 1; specular=1; gloss = 1; microFlakes=true; shadowBias=0.05 }
 material `LightPlastic` { diffuseColour=vec(0.2, 0.2, 0.2); specular=0.04; gloss=0.5; }
 material `Chrome` { diffuseColour=0.09*vec(1,1,1); specular=0.15; gloss = 1; }
-material `Pattern` { diffuseColour=vec(0.2, 0.2, 0.2), specular=0.04, gloss=0.25 }
-material `Interior` { diffuseColour=vec(0.2, 0.2, 0.2), specular=0.04, gloss=0.2 }
+material `Pattern` { diffuseColour=vec(0.1, 0.1, 0.1), specular=0.04, gloss=0.25 }
+material `Interior` { diffuseColour=vec(0.1, 0.1, 0.1), specular=0.04, gloss=0.2 }
 material `Rubber` { diffuseColour=vec(0.05, 0.05, 0.05), specular=0.04, gloss=0  }
 material `Headlight` { gloss = g; specular=s; alpha=0.7 }
 material `Brakelight` { diffuseColour=vec(1,0,0), gloss = g; specular=s; alpha=0.7 }
