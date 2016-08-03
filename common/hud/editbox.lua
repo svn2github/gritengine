@@ -218,6 +218,7 @@ EditBox = {
 				self:selectAll()
             elseif ev:sub(1,1) == ":" then
                 if self.maxLength == nil or #self.value < self.maxLength then
+					self:removeSelectedText()
                     local key = ev:sub(2)
                     local text = self.value
                     if not self.number or
