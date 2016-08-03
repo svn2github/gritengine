@@ -7,7 +7,7 @@ editor_cfg = {
 	mode_selected = "translate";
 	directory = "./editor";
 	load_startup_map = false;
-	startup_map = `/maps/defaultmap/defaultmap.gmap`;
-	default_game_mode = "fpsgame";
+	startup_map = `/maps/default_map/defaultmap.gmap`;
+	default_game_mode = "First Person";
 	step_size = 0.1;
 }

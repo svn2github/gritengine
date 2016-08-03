@@ -1,65 +1,3 @@
-class `navmeshtest` (ColClass) {
-	renderingDistance = 1000.0;
-	castShadows = true;
-}
-material `Material` {
-	diffuseMap=`tex.png`,
-	shadowBias=0.15,
-	filterMip = "NONE",
-	filterMag="NONE",
-}
-
-class `RobotMed` (AICharacter) {
-
-	gfxMesh = `/detached/characters/robot_med/robot_med.mesh`;
-	colMesh = `/detached/characters/robot_med/robot_med.gcol`;
-
-	mass = 90;	
-    radius = 0.3;
-	height = 2.2;
-
-    stepHeight = 0.3;
-    pushForce = 5000;
-    runPushForce = 10000;
-
-    placementZOffset = 1.112;
-	health = 1000;
-}	
-
-class `RobotScout` (AICharacter) {
-
-	gfxMesh = `/detached/characters/robot_scout/robot_scout.mesh`;
-	colMesh = `/detached/characters/robot_scout/robot_scout.gcol`;
-
-	mass = 90;	
-    radius = 0.3;
-	height = 2.2;
-
-    stepHeight = 0.3;
-    pushForce = 5000;
-    runPushForce = 10000;
-	
-    placementZOffset = 1.112;
-	health = 1000;
-}
-
-class `RobotHeavy` (AICharacter) {
-
-	gfxMesh = `/detached/characters/robot_heavy/robot_heavy.mesh`;
-	colMesh = `/detached/characters/robot_heavy/robot_heavy.gcol`;
-
-	mass = 90;	
-    radius = 0.3;
-	height = 2.2;
-
-    stepHeight = 0.3;
-    pushForce = 5000;
-    runPushForce = 10000;
-	
-    placementZOffset = 1.112;
-	health = 5000;
-}
-
 navigation_demo = navigation_demo or {
     camYaw = 0;
     camPitch = 0;
@@ -123,7 +61,7 @@ function navigation_demo:playerRespawn()
 	env.clockRate = 0
 	
 	if current_map ~= nil then
-		if navigation_load_navmesh("./navigation_demo/navmap.navmesh") then
+		if navigation_load_navmesh("./maps/navigation_demo/navmap.navmesh") then
 			for i = 1, #current_map.aicharacters do
 				if not current_map.aicharacters[i].destroyed then
 					current_map.aicharacters[i]:activate()
@@ -163,7 +101,7 @@ function navigation_demo:init()
 	include `/editor/core/edenv.lua`
 	env_recompute()
 
-	self:openMap(`/navigation_demo/navmap.gmap`)
+	self:openMap(`/maps/navigation_demo/navmap.gmap`)
 	
     playing_binds.enabled = true
 	playing_actor_binds.enabled = true

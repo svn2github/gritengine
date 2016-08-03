@@ -25,7 +25,7 @@ gritmap =
     orientation = quat(1, 0, 0, 0);
     position    = vector3(-4.488408, -8.886621, 0.2066899);
   },   {
-    class       = "/navigation_demo/RobotScout";
+    class       = "/maps/navigation_demo/RobotScout";
     name        = "Unnamed:/navigation_demo/RobotScout:8705";
     orientation = quat(1, 0, 0, 0);
     position    = vector3(-11.4, -12.6, 0.8);
@@ -37,7 +37,7 @@ gritmap =
     position    = vector3(-7.129782, -8.875875, -0.07081008);
     properties  = {};
   },   {
-    class       = "/navigation_demo/navmeshtest";
+    class       = "/maps/navigation_demo/navmeshtest";
     name        = "Unnamed:/navigation_demo/navmeshtest:35525";
     orientation = quat(1, 0, 0, 0);
     position    = vector3(0, 0, 0);
@@ -54,7 +54,7 @@ gritmap =
     orientation = quat(1, 0, 0, 0);
     position    = vector3(-6.560123, -10.40107, 0.2066899);
   },   {
-    class       = "/navigation_demo/RobotMed";
+    class       = "/maps/navigation_demo/RobotMed";
     name        = "Unnamed:/navigation_demo/RobotMed:15200";
     orientation = quat(1, 0, 0, 0);
     position    = vector3(-9.224091, -13.07049, 1.890617);
@@ -78,7 +78,7 @@ gritmap =
     position    = vector3(-5.851483, -8.689445, -0.07081008);
     properties  = {};
   },   {
-    class       = "/navigation_demo/RobotHeavy";
+    class       = "/maps/navigation_demo/RobotHeavy";
     name        = "Unnamed:/navigation_demo/RobotHeavy:25677";
     orientation = quat(1, 0, 0, 0);
     position    = vector3(-5.8, -13.4, 0.9);

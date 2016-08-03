@@ -113,6 +113,8 @@ end
 function GritMap:open(mapfile)
 	--object_all_del()
 
+	local fdir = mapfile:match("(.*/)")
+	
 	object_all_del()
 	safe_include (mapfile)
 	if gritmap == nil then
@@ -146,6 +148,8 @@ function GritMap:open(mapfile)
 	if gritmap.include ~= nil then
 		self.include = table.clone(gritmap.include)
 	end
+	
+	include(fdir.."init.lua")
 	
 	if self.include ~= nil and #self.include > 0 then
 		for i = 1, #self.include do

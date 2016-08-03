@@ -6,5 +6,15 @@ class `Terrain` (ColClass) {
     castShadows = false;
     placementZOffset = false;
     placementRandomRotation = false;
+	gfxMesh = `meshes/Terrain.mesh`;
+	colMesh = `meshes/Terrain.gcol`;
 }
 
+class `Cube` (ColClass) {
+    renderingDistance = 25000.0;
+    castShadows = true;
+    placementZOffset = false;
+    placementRandomRotation = false;
+	gfxMesh = `meshes/Cube.mesh`;
+	colMesh = `meshes/Cube.gcol`;
+}

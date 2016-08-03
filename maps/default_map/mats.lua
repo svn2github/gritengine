@@ -1,4 +1,4 @@
-material `default_material` {
+material `meshes/default_material` {
 	diffuseMap = `/editor/assets/default_texture.png`;
 	diffuseColour = V_ID * 1.7;
 	normalMap = `/editor/assets/default_texture_nm.png`;

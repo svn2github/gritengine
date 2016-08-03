@@ -314,8 +314,14 @@ include `/editor/init.lua`   -- TODO(dcunnin):  This must be moved to /system
 include `/vehicles/init.lua` 
 
 -- Game modes
-include `/playground/init.lua`
-include `/navigation_demo/init.lua`
+local fls, _ = get_dir_list("./gamemodes")
+if fls then
+	for i = 1, #fls do
+		if fls[i] ~= nil and fls[i]:_match("^.+(%..+)$") == ".lua" then
+			include("/gamemodes/"..fls[i])
+		end
+	end
+end
 
 include `welcome_msg.lua`
 
