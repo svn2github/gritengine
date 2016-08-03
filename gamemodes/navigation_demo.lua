@@ -124,6 +124,8 @@ function navigation_demo:init()
 
     self:playerRespawn()
 	gfx_option("RENDER_SKY", false)
+	
+	gfx_option("BLOOM_THRESHOLD", 1.5)
 
 	self.info = create_guitext({value = "Left Mouse: Move Crowd", parent = hud_bottom_left, position = vec(150, 20)})
 	
