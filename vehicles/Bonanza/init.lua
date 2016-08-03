@@ -140,13 +140,13 @@ material `grey`     { blendedBones=2, diffuseColour={.3, .3, .3} }
 material `white`     { blendedBones=2, diffuseColour = {0,1,0}; }
 material `anthracite`     { blendedBones=2, diffuseColour = {0.0980392, 0.0980392, 0.0980392}; }
 material `red`         { blendedBones=2, diffuseColour={.3, .0, .0} }
-material `grey`     { blendedBones=2, diffuseColour = {0.552941, 0.552941, 0.552941}; }
+material `grey`     { blendedBones=2, diffuseColour = {0.1, 0.1, 0.1}; }
 material `tyre`     { blendedBones=2, diffuseColour = {0.1, 0.1, 0.1}; }
-material `trans`     { blendedBones=2, alpha=0.3; backfaces=true; diffuseColour = {0.0980392, 0.0980392, 0.0980392}; }
-material `fin`         { blendedBones=2, diffuseMap = `fin.png`;  diffuseColour={.3, .3, .3} }
-material `nose`     { blendedBones=2, diffuseMap = `nose.png`;  diffuseColour={.3, .3, .3} }
-material `fus`         { blendedBones=2, diffuseMap = `fus.png`;  diffuseColour={.3, .3, .3} }
+material `trans`     { blendedBones=2, alpha=0.5; backfaces=true; diffuseColour = {0.0980392, 0.0980392, 0.0980392}; specular = 0.3; gloss=1; }
+material `fin`         { blendedBones=2, diffuseMap = `fin.png`;  diffuseColour={.3, .3, .3}, gloss=0.7  }
+material `nose`     { blendedBones=2, diffuseMap = `nose.png`;  diffuseColour={.3, .3, .3}, gloss=0.7  }
+material `fus`         { blendedBones=2, diffuseMap = `fus.png`;  diffuseColour={.3, .3, .3}, gloss=0.7 }
 material `panel`     { blendedBones=2, diffuseMap = `panel.png`;  diffuseColour={.3, .3, .3} }
-material `tail`     { blendedBones=2, diffuseMap = `tail.png`;  diffuseColour={.3, .3, .3} }
-material `lwin`     { blendedBones=2, diffuseMap = `lwin.png`;  diffuseColour={.3, .3, .3} }
-material `rwin`     { blendedBones=2, diffuseMap = `rwin.png`;  diffuseColour={.3, .3, .3} }
+material `tail`     { blendedBones=2, diffuseMap = `tail.png`;  diffuseColour={.3, .3, .3}, gloss=0.7  }
+material `lwin`     { blendedBones=2, diffuseMap = `lwin.png`;  diffuseColour={.3, .3, .3}, gloss=0.7  }
+material `rwin`     { blendedBones=2, diffuseMap = `rwin.png`;  diffuseColour={.3, .3, .3}, gloss=0.7  }
