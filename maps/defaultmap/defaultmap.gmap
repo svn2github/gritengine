@@ -19,10 +19,10 @@ gritmap =
     time           = 50189.961888999;
   };
   include     = {
-    `/editor/assets/defaultmap/init.lua`;
+    `/maps/defaultmap/init.lua`;
   };
   objects     = {   {
-    class       = "/editor/assets/defaultmap/Cube";
+    class       = "/maps/defaultmap/Cube";
     name        = "mycube";
     orientation = quat(1, 0, 0, 0);
     position    = vector3(0, 0, -20);

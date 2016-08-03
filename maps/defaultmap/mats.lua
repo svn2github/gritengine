@@ -17,9 +17,9 @@ material `Terrain` {
 			-- shadowBias=0.05;
 		-- },
 		-- {
-			diffuseMap=`../../../playground/img/textures/grass.dds`;
-			normalMap=`../../../playground/img/textures/grass_N.dds`;
-			glossMap=`../../../playground/img/textures/grass_S.tga`;
+			diffuseMap=`../../playground/img/textures/grass.dds`;
+			normalMap=`../../playground/img/textures/grass_N.dds`;
+			glossMap=`../../playground/img/textures/grass_S.tga`;
 			textureScale={0.015, 0.015},
 			shadowBias=0.05;
 		-- },	
