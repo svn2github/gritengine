@@ -50,7 +50,9 @@ hud_class `Main` {
 					edgeColour = vec(0, 1, 0);
 					edgePosition = vec2(-(210 / 2) + 5, 0);
 					pressedCallback = function() 
-						debug_mode()
+						menu.activeGuis = {}
+						menu.activeMenu = "project"
+						game_manager:enter("Debug Mode")
 					end
 				})
 				ypos = ypos - 50
@@ -136,7 +138,7 @@ hud_class `Main` {
 				local currentPosition = 0 --Starting Y position of game modes buttons
 				local first = 0
 				for key,value in pairs(game_manager.gameModes) do
-					if key ~= "Map Editor" then
+					if key ~= "Map Editor" and key ~= "Debug Mode" then
 						print("The gamemode: ".. key .." was loaded!") --Used for debugging
 						menu.activeGuis[key] = gfx_hud_object_add(`GameModeButton`, {
 							size = vec(200,40);

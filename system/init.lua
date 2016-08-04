@@ -311,11 +311,21 @@ include`navigation_system.lua`
 
 include `weapon_effect_manager.lua`
 
-safe_include `/common/init.lua` 
+include `debug_mode.lua`
+
+minimal = minimal or false
+if not minimal then
+	safe_include `/common/init.lua` 
+else
+	safe_include `/common/fonts/init.lua`
+	safe_include `/common/hud/init.lua`
+	safe_include `/common/gui/init.lua`
+	safe_include `/common/map_classes.lua`
+	safe_include `/common/pmat/init.lua`
+	safe_include `/vehicles/init.lua`
+end
 
 safe_include `/editor/init.lua`   -- TODO(dcunnin):  This must be moved to /system
-
-safe_include `/vehicles/init.lua` 
 
 -- Game modes
 local fls, _ = get_dir_list("./gamemodes")
