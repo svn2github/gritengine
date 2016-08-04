@@ -86,29 +86,31 @@ hud_class `Settings` (extends(WindowClass)
 		})
 
 		local gamemodes_items = {}
+		
 		for k in pairs(game_manager.gameModes) do
 			if k ~= "Map Editor" then
 				gamemodes_items[#gamemodes_items+1] = k
 			end
 		end
 		
-		self.content.system_panel.game_mode_selectbox = gui.selectbox({
-			parent = self.content.system_panel;
-			choices = gamemodes_items;
-			selection = 0;
-			align = vec(-1, 1);
-			offset = vec(10, -25);
-			size = vec(200, 22);
-		})
-		
-		self.content.system_panel.game_mode_selectbox:select(editor_cfg.default_game_mode)
-		
-		self.content.system_panel.game_mode_selectbox.onSelect = function(self)
-			editor_cfg.default_game_mode = self.selected.name
-			GED:saveEditorConfig()
-			-- GED.playGameMode = self.selected.name
-		end;		
-		
+		if next(gamemodes_items) then
+			self.content.system_panel.game_mode_selectbox = gui.selectbox({
+				parent = self.content.system_panel;
+				choices = gamemodes_items;
+				selection = 0;
+				align = vec(-1, 1);
+				offset = vec(10, -25);
+				size = vec(200, 22);
+			})
+			
+			self.content.system_panel.game_mode_selectbox:select(editor_cfg.default_game_mode)
+			
+			self.content.system_panel.game_mode_selectbox.onSelect = function(self)
+				editor_cfg.default_game_mode = self.selected.name
+				GED:saveEditorConfig()
+				-- GED.playGameMode = self.selected.name
+			end;
+		end
 		self.content:addPage(self.content.general_panel, "General")
 		self.content:addPage(self.content.themes_panel, "Themes")
 		self.content:addPage(self.content.system_panel, "System")

@@ -1,3 +1,5 @@
+include `/detached/characters/init.lua`
+
 fpsgame = fpsgame or {
     camYaw = 0;
     camPitch = 0;

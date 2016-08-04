@@ -311,11 +311,11 @@ include`navigation_system.lua`
 
 include `weapon_effect_manager.lua`
 
-include `/common/init.lua` 
+safe_include `/common/init.lua` 
 
 safe_include `/editor/init.lua`   -- TODO(dcunnin):  This must be moved to /system
 
-include `/vehicles/init.lua` 
+safe_include `/vehicles/init.lua` 
 
 -- Game modes
 local fls, _ = get_dir_list("./gamemodes")
@@ -363,14 +363,16 @@ game_manager:exit()
 safe_include `/user_script.lua`
 
 -- only loads menu if no game mode is defined on user_script
-if game_manager.currentMode == nil then
-	create_main_menu()
-else
-	if game_manager.currentMode.pause_menu == nil then
-		create_pause_menu(false)
+create_main_menu = create_main_menu or nil
+if create_main_menu then
+	if game_manager.currentMode == nil then
+		create_main_menu()
+	else
+		if game_manager.currentMode.pause_menu == nil then
+			create_pause_menu(false)
+		end
 	end
 end
-
 -- TODO: Why? (camera doesn't work properly, debug_mode() as command line argument still not working)
 -- system_binds.modal = true
 -- system_binds.modal = false

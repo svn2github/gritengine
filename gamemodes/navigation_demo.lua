@@ -1,3 +1,5 @@
+include `/detached/characters/init.lua`
+
 navigation_demo = navigation_demo or {
     camYaw = 0;
     camPitch = 0;

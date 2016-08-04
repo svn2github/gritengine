@@ -22,6 +22,8 @@ playing_vehicle_binds.enabled = false
 
 playing_binds.mouseCapture = true
 
+system_layer = system_layer or nil
+
 game_manager = {
     gameModes = { };
     currentMode = nil;
@@ -52,9 +54,10 @@ game_manager = {
             self.currentMode:destroy();
             self.currentMode = nil
         end
-        system_layer:setEnabled(false)
-		
-		create_main_menu(true)
+		if system_layer then
+			system_layer:setEnabled(false)
+			create_main_menu(true)
+		end
     end;
 
     frameUpdate = function (self, elapsed_secs)
