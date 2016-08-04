@@ -27,6 +27,8 @@ function fpsgame:editorDebug(v)
 	end
 end;
 
+current_map = current_map or nil
+
 function fpsgame:openMap(map_file)
 	self.currentMap = nil
 	self.currentMap = GritMap.new()

@@ -30,5 +30,3 @@ include `Slider.lua`
 include `ToolPanel.lua`
 include `FileDialog.lua`
 include `TreeView.lua`
-
-include `/editor/core/util.lua`

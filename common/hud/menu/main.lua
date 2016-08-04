@@ -1,5 +1,7 @@
 -- (c) Al-x Spiker 2015, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
+GED = GED or nil
+
 hud_class `Main` {
 	colour = vec(1, 1, 1)*0.2;
 	texture = `background.dds`;
@@ -24,61 +26,69 @@ hud_class `Main` {
 					parent = self;
 					position = vec2(0, (gfx_window_size().y / 2) - 250);
 				})
+				
+				local ypos = 0
 				self.activeGuis["projectsButton"] = gfx_hud_object_add(`Button`, {
 					size = vec(210,40);
 					font = `/common/fonts/Impact24`;
 					caption = "Projects";
 					parent = self;
-					position = vec2(0, 0);
+					position = vec2(0, ypos);
 					edgeColour = vec(1, 102/255, 0)*1.0;
 					edgePosition = vec2(-(210 / 2) + 5, 0);
 					pressedCallback = function() 
 						menu.menu.projects()
 					end
 				})
+				ypos = ypos - 50
 				self.activeGuis["debugmodeButton"] = gfx_hud_object_add(`Button`, {
 					size = vec(210,40);
 					font = `/common/fonts/Impact24`;
 					caption = "Debug Mode";
 					parent = self;
-					position = vec2(0, -50);
+					position = vec2(0, ypos);
 					edgeColour = vec(0, 1, 0);
 					edgePosition = vec2(-(210 / 2) + 5, 0);
 					pressedCallback = function() 
 						debug_mode()
 					end
-				})				
-				self.activeGuis["editorButton"] = gfx_hud_object_add(`Button`, {
-					size = vec(210,40);
-					font = `/common/fonts/Impact24`;
-					caption = "Editor";
-					parent = self;
-					position = vec2(0, -100);
-					edgeColour = vec(0, 102/255, 1)*1.0;
-					edgePosition = vec2(-(210 / 2) + 5, 0);
-					pressedCallback = function() 
-						menu.activeMenu = "editor"
-						game_manager:enter("Map Editor")
-					end
 				})
+				ypos = ypos - 50
+				if GED then
+					self.activeGuis["editorButton"] = gfx_hud_object_add(`Button`, {
+						size = vec(210,40);
+						font = `/common/fonts/Impact24`;
+						caption = "Editor";
+						parent = self;
+						position = vec2(0, -100);
+						edgeColour = vec(0, 102/255, 1)*1.0;
+						edgePosition = vec2(-(210 / 2) + 5, 0);
+						pressedCallback = function() 
+							menu.activeMenu = "editor"
+							game_manager:enter("Map Editor")
+						end
+					})
+					ypos = ypos - 50
+				end
 				self.activeGuis["settingsButton"] = gfx_hud_object_add(`Button`, {
 					size = vec(210,40);
 					font = `/common/fonts/Impact24`;
 					caption = "Settings";
 					parent = self;
-					position = vec2(0, -150);
+					position = vec2(0, ypos);
 					edgeColour = vec(1, 1, 0);
 					edgePosition = vec2(-(210 / 2) + 5, 0);
 					pressedCallback = function() 
 						menu.menu.settings()
 					end
 				})
+				ypos = ypos - 50
 				self.activeGuis["exitButton"] = gfx_hud_object_add(`Button`, {
 					size = vec(210,40);
 					font = `/common/fonts/Impact24`;
 					caption = "Exit";
 					parent = self;
-					position = vec2(0, -200);
+					position = vec2(0, ypos);
 					edgeColour = vec(1, 0, 1)*1.0;
 					edgePosition = vec2(-(210 / 2) + 5, 0);
 					pressedCallback = quit

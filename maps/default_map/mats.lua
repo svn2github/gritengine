@@ -1,8 +1,8 @@
 material `meshes/default_material` {
-	diffuseMap = `/editor/assets/default_texture.png`;
+	diffuseMap = `/common/textures/default_texture.png`;
 	diffuseColour = V_ID * 1.7;
-	normalMap = `/editor/assets/default_texture_nm.png`;
-	glossMap = `/editor/assets/default_texture_gm.png`;
+	normalMap = `/common/textures/default_texture_nm.png`;
+	glossMap = `/common/textures/default_texture_gm.png`;
 	specular = 1;
 	gloss = 1.2;
 	shadowBias = 0.05;

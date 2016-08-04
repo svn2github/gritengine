@@ -114,9 +114,6 @@ function playground:init()
     self.coinsTotal = 1
 
     playing_binds.enabled = true
-    editor_core_binds.enabled = false
-    editor_edit_binds.enabled = false
-    editor_debug_binds.enabled = false
 
     self.centreNotify = gfx_hud_text_add(`/common/fonts/Impact50`)
     self.centreNotify.text = ''
@@ -400,9 +397,6 @@ function playground:destroy()
     playing_binds.enabled = false
     playing_actor_binds.enabled = false
     playing_vehicle_binds.enabled = false
-    editor_core_binds.enabled = false
-    editor_edit_binds.enabled = false
-    editor_debug_binds.enabled = false
 end
 
 game_manager:define("Playground", playground)

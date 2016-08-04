@@ -7,8 +7,6 @@
 --  http://www.opensource.org/licenses/mit-license.php
 ------------------------------------------------------------------------------
 
-include`/editor/core/util.lua`
-
 hud_class `window_editbox` (extends(table_concat_copy(GuiClass, EditBox))
 {
 	alpha = 1;
@@ -361,7 +359,7 @@ hud_class `FileDialog` (extends(WindowClass)
 
 		self.iconsize_btn = gui.imagebutton({
 			pressedCallback = do_nothing;
-			icon_texture = `/editor/assets/icons/map_editor/content_browser.png`;-- TODO: replace by a specific icon
+			icon_texture = `/common/gui/icons/help.png`;-- TODO: replace by a proper icon
 			parent = self;
 			colour = V_ID*0.5;
 			defaultColour = V_ID*0.5;
@@ -428,14 +426,9 @@ hud_class `FileDialog` (extends(WindowClass)
 		for i = 1, #m_files do
 			if get_extension(m_files[i]) == selext then
 				local nit = nil
-				if selext == "lua" then
-					-- TODO: this is not a good place to declare these editor icons
-					nit = self.file_explorer:addItem(m_files[i], `/editor/assets/icons/files/luaicon.png`)
-				elseif selext == "gmap" then
-					nit = self.file_explorer:addItem(m_files[i], `/editor/assets/icons/files/worldicon.png`)
-				else
-					nit = self.file_explorer:addItem(m_files[i], `/common/gui/icons/fileicon.png`)
-				end
+				
+				nit = self.file_explorer:addItem(m_files[i], "/common/gui/icons/files/"..selext..".png")
+				
 				nit.type = "file"
 				nit.pressedCallback = function (self)
 					self.parent.parent.parent.file_edbox:setValue(self.name)

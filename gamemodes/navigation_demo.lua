@@ -78,6 +78,8 @@ function navigation_demo:playerRespawn()
 
 end
 
+current_map = current_map or nil
+
 function navigation_demo:openMap(map_file)
 	self.currentMap = nil
 	self.currentMap = GritMap.new()
@@ -98,18 +100,13 @@ function navigation_demo:init()
 	navigation_debug_option("navmesh_use_tile_colours", true)
 	navigation_debug_option("enabled", true)
 
-	include `/editor/core/edenv.lua`
 	env_recompute()
 
 	self:openMap(`/maps/navigation_demo/navmap.gmap`)
 	
     playing_binds.enabled = true
 	playing_actor_binds.enabled = true
-    editor_core_binds.enabled = false
-    editor_edit_binds.enabled = false
-    editor_debug_binds.enabled = false
 
-	
 	playing_binds:bind("right", function() playing_binds.mouseCapture = true end, function() playing_binds.mouseCapture = false end)
 	
 	playing_binds:bind("left", function() local pos = mouse_pick_pos() if pos then pos = navigation_nearest_point_on_navmesh(pos) end if pos then crowd_move(pos) end end)
@@ -127,7 +124,7 @@ function navigation_demo:init()
 	
 	gfx_option("BLOOM_THRESHOLD", 1.5)
 
-	self.info = create_guitext({value = "Left Mouse: Move Crowd", parent = hud_bottom_left, position = vec(150, 20)})
+	self.info = gui.text({value = "Left Mouse: Move Crowd", parent = hud_bottom_left, position = vec(150, 20)})
 	
 end
 
@@ -229,10 +226,7 @@ function navigation_demo:destroy()
     playing_binds.enabled = false
     playing_actor_binds.enabled = false
     playing_vehicle_binds.enabled = false
-    editor_core_binds.enabled = false
-    editor_edit_binds.enabled = false
-    editor_debug_binds.enabled = false
-	
+
 	playing_binds:unbind("right")
 	playing_binds:unbind("left")
 	

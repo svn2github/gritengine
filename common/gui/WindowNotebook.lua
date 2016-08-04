@@ -119,7 +119,7 @@ hud_class `window_page_button` {
 	selectedColour = _current_theme.colours.window_notebook.btn_selected;
     
 	font = _current_theme.fonts.window_notebook.button;	
-    caption = "Map Editor";
+    caption = "Text";
     captionColour = _current_theme.colours.window_notebook.btn_caption;
 	captionHoverColour = _current_theme.colours.window_notebook.btn_caption_hover;
 	captionPressedColour = _current_theme.colours.window_notebook.btn_caption_pressed;

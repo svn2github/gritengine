@@ -285,7 +285,11 @@ include `default_shader.lua`
 
 include `materials.lua` 
 
-include `/editor/bindings.lua`  -- TODO(dcunnin):  This must be moved to /system
+safe_include `/editor/bindings.lua`  -- TODO(dcunnin):  This must be moved to /system
+
+include `grit_map.lua`
+
+include `directory_list.lua`
 
 include `configuration.lua` 
 
@@ -309,7 +313,7 @@ include `weapon_effect_manager.lua`
 
 include `/common/init.lua` 
 
-include `/editor/init.lua`   -- TODO(dcunnin):  This must be moved to /system
+safe_include `/editor/init.lua`   -- TODO(dcunnin):  This must be moved to /system
 
 include `/vehicles/init.lua` 
 

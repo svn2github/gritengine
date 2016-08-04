@@ -15,13 +15,10 @@ include `defaultconfig/recent.lua`
 safe_include `../config/recent.lua`
 
 include `widget_manager.lua`
-include `GritMapManager.lua`
-include `directory_list.lua`
 include `Pickle.lua`
-include `util.lua`
 include `core.lua`
 
-current_map = nil
+current_map = current_map or nil
 
 in_editor = false
 

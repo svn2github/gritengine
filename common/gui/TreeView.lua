@@ -18,7 +18,7 @@ hud_class `TreeViewNode` (extends(GuiClass)
 	colour = vec(1, 0.5, 0.5);
 	align = LEFT;
 	
-	icon = `/editor/core/icons/map_editor/open_15.png`;
+	icon = `/common/gui/icons/open_15.png`;
 	
 	isRealNode = false; -- if all objects are attached to this node
 	

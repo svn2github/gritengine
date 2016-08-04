@@ -110,6 +110,8 @@ function GritMap:generateEnvCube(pos)
 	env.clockRate = current_clockRate
 end
 
+in_editor = in_editor or false
+
 function GritMap:open(mapfile)
 	--object_all_del()
 
@@ -198,9 +200,10 @@ function GritMap:setCamera()
 	
 	main.camPos = self.editor.cam_pos
 	main.camQuat = self.editor.cam_quat
-
-	GED.camPitch = quatPitch(main.camQuat)
-	GED.camYaw = cam_yaw_angle()
+	if in_editor then
+		GED.camPitch = quatPitch(main.camQuat)
+		GED.camYaw = cam_yaw_angle()
+	end
 end
 
 function GritMap:findClassID(name)

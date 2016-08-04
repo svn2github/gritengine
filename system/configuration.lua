@@ -7,11 +7,15 @@ safe_include `/user_cfg.lua`
 user_cfg = user_cfg or { }
 debug_cfg = debug_cfg or { }
 user_system_bindings = user_system_bindings or { }
-user_editor_core_bindings = user_editor_core_bindings or { }
-user_editor_core_move_bindings = user_editor_core_move_bindings or { }
-user_editor_edit_bindings = user_editor_edit_bindings or { }
-user_editor_debug_bindings = user_editor_debug_bindings or { }
-user_editor_debug_ghost_bindings = user_editor_debug_ghost_bindings or { }
+
+editor_core_binds = editor_core_binds or nil
+if editor_core_binds then
+	user_editor_core_bindings = user_editor_core_bindings or { }
+	user_editor_core_move_bindings = user_editor_core_move_bindings or { }
+	user_editor_edit_bindings = user_editor_edit_bindings or { }
+	user_editor_debug_bindings = user_editor_debug_bindings or { }
+	user_editor_debug_ghost_bindings = user_editor_debug_ghost_bindings or { }
+end
 user_drive_bindings = user_drive_bindings or { }
 user_foot_bindings = user_foot_bindings or { }
 
@@ -269,46 +273,45 @@ local default_user_foot_bindings = {
 }
 
 local default_user_editor_core_bindings = {
-    debug = "F5";
+	debug = "F5";
 }
 
 local default_user_editor_core_move_bindings = {
-    forwards = "w";
-    backwards = "s";
-    strafeLeft = "a";
-    strafeRight = "d";
-    ascend = "Space";
+	forwards = "w";
+	backwards = "s";
+	strafeLeft = "a";
+	strafeRight = "d";
+	ascend = "Space";
 	descend = "c";
 	faster = "Shift";
 }
 
 local default_user_editor_edit_bindings = {
-    ghost = "right";
-    delete = "Delete";
-    duplicate = "C+v";
-    select = "left";
+	ghost = "right";
+	delete = "Delete";
+	duplicate = "C+v";
+	select = "left";
 }
 
 local default_user_editor_debug_bindings = {
-    toggleGhost = "F1";
-    pausePhysics = "F2";
+	toggleGhost = "F1";
+	pausePhysics = "F2";
 }
 
 local default_user_editor_debug_ghost_bindings = {
-    board = "f";
-    weaponPrimary = "left";
-    weaponSecondary = "right";
-    weaponSwitchUp = {"e", "up"};
-    weaponSwitchDown = {"q", "down"};
-    forwards = "w";
-    backwards = "s";
-    strafeLeft = "a";
-    strafeRight = "d";
-    ascend = "Space";
+	board = "f";
+	weaponPrimary = "left";
+	weaponSecondary = "right";
+	weaponSwitchUp = {"e", "up"};
+	weaponSwitchDown = {"q", "down"};
+	forwards = "w";
+	backwards = "s";
+	strafeLeft = "a";
+	strafeRight = "d";
+	ascend = "Space";
 	descend = "c";
 	faster = "Shift";
 }
-
 
 local function process_user_table(name, given, default)
     for k, v in pairs(given) do
@@ -327,11 +330,13 @@ end
 process_user_table("user_cfg", user_cfg, user_cfg_default)
 process_user_table("debug_cfg", debug_cfg, debug_cfg_default)
 process_user_table("user_system_bindings", user_system_bindings, default_user_system_bindings)
-process_user_table("user_editor_core_bindings", user_editor_core_bindings, default_user_editor_core_bindings)
-process_user_table("user_editor_core_move_bindings", user_editor_core_move_bindings, default_user_editor_core_move_bindings)
-process_user_table("user_editor_edit_bindings", user_editor_edit_bindings, default_user_editor_edit_bindings)
-process_user_table("user_editor_debug_bindings", user_editor_debug_bindings, default_user_editor_debug_bindings)
-process_user_table("user_editor_debug_ghost_bindings", user_editor_debug_ghost_bindings, default_user_editor_debug_ghost_bindings)
+if editor_core_binds then
+	process_user_table("user_editor_core_bindings", user_editor_core_bindings, default_user_editor_core_bindings)
+	process_user_table("user_editor_core_move_bindings", user_editor_core_move_bindings, default_user_editor_core_move_bindings)
+	process_user_table("user_editor_edit_bindings", user_editor_edit_bindings, default_user_editor_edit_bindings)
+	process_user_table("user_editor_debug_bindings", user_editor_debug_bindings, default_user_editor_debug_bindings)
+	process_user_table("user_editor_debug_ghost_bindings", user_editor_debug_ghost_bindings, default_user_editor_debug_ghost_bindings)
+end
 process_user_table("user_drive_bindings", user_drive_bindings, default_user_drive_bindings)
 process_user_table("user_foot_bindings", user_foot_bindings, default_user_foot_bindings)
 
@@ -374,11 +379,13 @@ local function system_receive_button(button, state)
 end
 
 process_bindings2(user_system_bindings, system_receive_button, system_binds)
-process_bindings2(user_editor_core_bindings, editor_receive_button, editor_core_binds)
-process_bindings2(user_editor_core_move_bindings, editor_receive_button, editor_core_move_binds)
-process_bindings2(user_editor_edit_bindings, editor_receive_button, editor_edit_binds)
-process_bindings2(user_editor_debug_bindings, editor_receive_button, editor_debug_binds)
-process_bindings2(user_editor_debug_ghost_bindings, editor_receive_button, editor_debug_ghost_binds)
+if editor_core_binds then
+	process_bindings2(user_editor_core_bindings, editor_receive_button, editor_core_binds)
+	process_bindings2(user_editor_core_move_bindings, editor_receive_button, editor_core_move_binds)
+	process_bindings2(user_editor_edit_bindings, editor_receive_button, editor_edit_binds)
+	process_bindings2(user_editor_debug_bindings, editor_receive_button, editor_debug_binds)
+	process_bindings2(user_editor_debug_ghost_bindings, editor_receive_button, editor_debug_ghost_binds)
+end
 
 local function play_receive_button(button, state)
     game_manager:receiveButton(button, state)
@@ -665,11 +672,13 @@ print('Reading user_cfg.lua')
     write_table("user_cfg", user_cfg.p, user_cfg_default, user_cfg_doc)
     write_table("debug_cfg", debug_cfg.p, debug_cfg_default, debug_cfg_doc)
     write_table("user_system_bindings", user_system_bindings, default_user_system_bindings, {})
-    write_table("user_editor_core_bindings", user_editor_core_bindings, default_user_editor_core_bindings, {})
-    write_table("user_editor_core_move_bindings", user_editor_core_move_bindings, default_user_editor_core_move_bindings, {})
-    write_table("user_editor_edit_bindings", user_editor_edit_bindings, default_user_editor_edit_bindings, {})
-    write_table("user_editor_debug_bindings", user_editor_debug_bindings, default_user_editor_debug_bindings, {})
-    write_table("user_editor_debug_ghost_bindings", user_editor_debug_ghost_bindings, default_user_editor_debug_ghost_bindings, {})
+	if editor_core_binds then
+		write_table("user_editor_core_bindings", user_editor_core_bindings, default_user_editor_core_bindings, {})
+		write_table("user_editor_core_move_bindings", user_editor_core_move_bindings, default_user_editor_core_move_bindings, {})
+		write_table("user_editor_edit_bindings", user_editor_edit_bindings, default_user_editor_edit_bindings, {})
+		write_table("user_editor_debug_bindings", user_editor_debug_bindings, default_user_editor_debug_bindings, {})
+		write_table("user_editor_debug_ghost_bindings", user_editor_debug_ghost_bindings, default_user_editor_debug_ghost_bindings, {})
+	end
     write_table("user_drive_bindings", user_drive_bindings, default_user_drive_bindings, {})
     write_table("user_foot_bindings", user_foot_bindings, default_user_foot_bindings, {})
 

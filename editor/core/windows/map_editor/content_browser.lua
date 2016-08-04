@@ -190,7 +190,7 @@ end
 hud_class `content_browser_floating_object` {
 	alpha = 1;
 	size = vec(64, 64);
-	texture = file_icons.objecticon;
+	texture = `/common/gui/icons/files/object.png`;
 	id = 0;
 	obclass = "";
 	positioning = false;
@@ -414,7 +414,7 @@ hud_class `ContentBrowser` (extends(WindowClass)
 		for i = 1, #m_folders do
 			local nit = nil
 			
-			nit = self.file_explorer:addItem(m_folders[i], file_icons.foldericon)
+			nit = self.file_explorer:addItem(m_folders[i], `/common/gui/icons/foldericon.png`)
 			nit.doubleClick = function(self)
 				if string.sub(self.parent.parent.parent.currentdir, -1) ~= "/" then
 					self.parent.parent.parent.currentdir = self.parent.parent.parent.currentdir.."/"..self.name
@@ -428,7 +428,7 @@ hud_class `ContentBrowser` (extends(WindowClass)
 
 		for i = 1, #m_files do
 				local nit = nil
-				nit = self.file_explorer:addItem(m_files[i], file_icons.objecticon)
+				nit = self.file_explorer:addItem(m_files[i], `/common/gui/icons/files/object.png`)
 				nit.pressedCallback = function (self)
 					-- self. adding = true
 					-- create_floating(self.lp, self.parent.parent.parent.currentdir.."/"..self.name)
