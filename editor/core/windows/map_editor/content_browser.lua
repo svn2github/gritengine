@@ -295,7 +295,7 @@ hud_class `ContentBrowser` (extends(WindowClass)
 			-- safe_destroy(self.parent.parent.parent)
 		-- end;
 		
-		self.dir_tree = create_gui_object({
+		self.dir_tree = gui.object({
 			colour = vec(0.2, 0.2, 0.2);
 			alpha = 1;
 			parent = self;
@@ -354,7 +354,7 @@ hud_class `ContentBrowser` (extends(WindowClass)
 			return self.items[#self.items]
 		end;
 
-		self.updir_btn = create_imagebutton({
+		self.updir_btn = gui.imagebutton({
 			pressedCallback = function(self)
 				if self.parent.currentdir == "/" or self.parent.currentdir == "" then return end
 				self.parent.currentdir = self.parent.currentdir:reverse():sub(self.parent.currentdir:reverse():find("/", 2)+1):reverse()

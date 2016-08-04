@@ -7,11 +7,11 @@ hud_class `Settings` (extends(WindowClass)
 			-- safe_destroy(self.parent.parent.parent)
 		-- end;
 		
-		self.content = create_notebook(self)
+		self.content = gui.notebook(self)
 
-		self.content.general_panel = create_panel()
+		self.content.general_panel = gui.notebookpanel()
 		
-		self.content.general_panel.openstartupmap_checkbox = create_checkbox({
+		self.content.general_panel.openstartupmap_checkbox = gui.checkbox({
 			caption = "Load startup map",
 			checked = editor_cfg.load_startup_map,
 			parent = self.content.general_panel,
@@ -42,8 +42,8 @@ hud_class `Settings` (extends(WindowClass)
 		})
 		self.content.general_panel.openstartupmap_editbox:setGreyed(not editor_cfg.load_startup_map)
 
-		self.content.themes_panel = create_panel()
-		self.content.themes_panel.theme = create_guitext({
+		self.content.themes_panel = gui.notebookpanel()
+		self.content.themes_panel.theme = gui.text({
 			value = "Theme: ",
 			parent = self.content.themes_panel,
 			align = vec(-1, 1);
@@ -55,7 +55,7 @@ hud_class `Settings` (extends(WindowClass)
 			theme_items[#theme_items+1] = k
 		end
 		
-		self.content.themes_panel.theme_selectbox = create_selectbox({
+		self.content.themes_panel.theme_selectbox = gui.selectbox({
 			parent = self.content.themes_panel;
 			choices = theme_items;
 			selection = 0;
@@ -76,9 +76,9 @@ hud_class `Settings` (extends(WindowClass)
 			notify("Restart Editor to take full effect", vec(0, 1, 0))
 		end;
 		
-		self.content.system_panel = create_panel()
+		self.content.system_panel = gui.notebookpanel()
 
-		self.content.system_panel.game_mode = create_guitext({
+		self.content.system_panel.game_mode = gui.text({
 			value = "Default Game Mode: ",
 			parent = self.content.system_panel,
 			align = vec(-1, 1);
@@ -92,7 +92,7 @@ hud_class `Settings` (extends(WindowClass)
 			end
 		end
 		
-		self.content.system_panel.game_mode_selectbox = create_selectbox({
+		self.content.system_panel.game_mode_selectbox = gui.selectbox({
 			parent = self.content.system_panel;
 			choices = gamemodes_items;
 			selection = 0;

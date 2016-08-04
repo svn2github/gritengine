@@ -5,9 +5,9 @@
 -- 1:
 -- hudobj = gfx_hud_object_add(`/common/gui/Draggable`, { parent = hud_center, size=vec(64, 64), colour=vec(0, 0, 1), position=vec(100, -50) })
 -- hudobj2 = gfx_hud_object_add(`/common/gui/Draggable`, { parent = hud_center, size=vec(64, 64), colour=vec(1, 0, 0), position=vec(50, -100)})
--- myLine = create_connectline({ parent = hud_center; p1 = hudobj; p2 = hudobj2 })
+-- myLine = gui.connectline({ parent = hud_center; p1 = hudobj; p2 = hudobj2 })
 -- 2:
--- myLine = create_connectline({ parent = hud_center; p1 = vec(0, 0); p2 = vec(10, -50) })
+-- myLine = gui.connectline({ parent = hud_center; p1 = vec(0, 0); p2 = vec(10, -50) })
 --
 --
 --  (c) 2015 Augusto P. Moura (augustomoura94@hotmail.com)
@@ -63,6 +63,6 @@ hud_class `ConnectLine` {
 	end;
 }
 
-function create_connectline(options)
-	return gfx_hud_object_add(`ConnectLine`, options)
+function gui.connectline(tab)
+	return gfx_hud_object_add(`ConnectLine`, tab)
 end

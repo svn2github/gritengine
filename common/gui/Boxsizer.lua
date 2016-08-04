@@ -1,5 +1,5 @@
 ------------------------------------------------------------------------------
---  Box Sizer
+--  Box Sizer: Distribute objects equally on parent
 --
 --  (c) 2015 Augusto P. Moura (augustomoura94@hotmail.com)
 --
@@ -10,7 +10,7 @@
 hud_class `Boxsizer` {
 	alpha = 1;
 	size = vec(256, 256);
-	orient = "v"; -- v = vertical, h = horizontal
+	orient = "vertical";
 	expand = true;
 	expandType = function(self)end;
 	type = "boxsizer";
@@ -20,7 +20,7 @@ hud_class `Boxsizer` {
 		
 		self.childs = {}
 		
-		if self.orient == "v" then
+		if self.orient == "vertical" then
 			self.update = self.updateChildsV
 		else
 			self.update = self.updateChildsH
@@ -75,11 +75,11 @@ hud_class `Boxsizer` {
 		if self.expand then
 			if self.parent.type ~= nil and #self.parent.childs > 0 then
 				if self.parent.type == "boxsizer" then
-					if self.parent.orient == "h" then
+					if self.parent.orient == "horizontal" then
 						self.expandType = function(self, psize)
 							self.size = vec(self.parent.size.x / #self.parent.childs, self.parent.size.y)
 						end
-					elseif self.parent.orient == "v" then
+					elseif self.parent.orient == "vertical" then
 						self.expandType = function(self, psize)
 							self.size = vec(self.parent.size.x, self.parent.size.y/#self.parent.childs)
 						end
@@ -92,7 +92,7 @@ hud_class `Boxsizer` {
 	end;
 }
 
-function create_box_sizer(g_expand, g_orient, p, g_size, g_colour, g_alpha)
+function gui.boxsizer(g_expand, g_orient, p, g_size, g_colour, g_alpha)
 	local bs = gfx_hud_object_add(`Boxsizer`, { parent = p, orient = g_orient or "h", expand = g_expand or false, colour = g_colour or vec(0.3, 0.3, 0.3), alpha = g_alpha or 0, size = g_size })
 	if p then
 		bs:updateExpandType()
@@ -106,7 +106,7 @@ end
 -- safe_destroy(it3)
 -- safe_destroy(it4)
 
--- bxsz = create_box_sizer(true, "h", editor_interface.windows.object_properties)
+-- bxsz = gui.boxsizer(true, "h", editor_interface.windows.object_properties)
 
 -- it1 = gfx_hud_object_add(`/editor/core/hud/boxsizer`, { colour = vec(1, 0, 0), size = vec(50, 50), alpha = 1 })
 -- it2 = gfx_hud_object_add(`/editor/core/hud/boxsizer`, { colour = vec(0, 1, 0), size = vec(50, 50), alpha = 1, expand = false })

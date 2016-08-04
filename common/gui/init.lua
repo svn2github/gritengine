@@ -1,6 +1,8 @@
 include `themes/init.lua`
 include `icons/init.lua`
 
+gui = gui or {}
+
 include `GUIClass.lua`
 include `GUIText.lua`
 include `GUIButton.lua`

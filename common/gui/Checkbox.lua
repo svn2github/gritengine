@@ -107,6 +107,6 @@ hud_class `Checkbox` (extends(GuiClass)
 	
 })
 
-function create_checkbox(r_tab)
-	return gfx_hud_object_add(`Checkbox`, r_tab)
+function gui.checkbox(tab)
+	return gfx_hud_object_add(`Checkbox`, tab)
 end

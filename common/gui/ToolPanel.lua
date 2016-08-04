@@ -62,10 +62,10 @@ hud_class `ToolPanel` (extends(GuiClass)
 	end;
 })
 
-function create_toolpanel(options)
+function gui.toolpanel(options)
 	return gfx_hud_object_add(`ToolPanel`, options)
 end
 
 -- safe_destroy(mtlpn)
 
--- mtlpn = create_toolpanel({ size = vec(150, 786), parent = hud_center, offset = vec(0, 20), expand_offset = vec(0, -75), expand_y = true })
+-- mtlpn = gui.toolpanel({ size = vec(150, 786), parent = hud_center, offset = vec(0, 20), expand_offset = vec(0, -75), expand_y = true })

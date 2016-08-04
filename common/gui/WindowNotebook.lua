@@ -424,6 +424,6 @@ hud_class `windownotebook` (extends(GuiClass)
 	end;	
 })
 
-create_window_notebook = function(options)
+gui.windownotebook = function(options)
 	return gfx_hud_object_add(`windownotebook`, options)
 end

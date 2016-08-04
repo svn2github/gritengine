@@ -13,7 +13,7 @@ hud_class `ToolBar` (extends(GuiClass)
 	alpha = _current_theme.colours.tool_bar.alpha;
     toolPadding = vec(16, 4);
 	lastTool = 0;
-	orient = "h";
+	orient = "horizontal";
 	
     init = function (self)
 		GuiClass.init(self)
@@ -22,32 +22,31 @@ hud_class `ToolBar` (extends(GuiClass)
         self.tools = {}
 		self.separators = {}
 
-		self.positioner = create_gui_object({
+		self.positioner = gui.object({
 			parent = self,
-			align = vec(self.orient == "h" and -1 or 0, self.orient == "v" and 1 or 0),
+			align = vec(self.orient == "horizontal" and -1 or 0, self.orient == "vertical" and 1 or 0),
 			alpha = 0,
-			--offset = vec(self.orient == "h" and 16 or 0, self.orient == "v" and -16 or 0)
+			--offset = vec(self.orient == "horizontal" and 16 or 0, self.orient == "vertical" and -16 or 0)
 		})
-		
     end;
 
 	addTool = function(self, name, icon, cb, ttip)
 		local pos = vec(0, 0)
 		
-		if self.orient == "h" then
+		if self.orient == "horizontal" then
 			pos = vec2(self.lastTool, 0)
 		else
 			pos = vec2(0, self.lastTool)
 		end
 		
-		self.tools[#self.tools + 1] = create_imagebutton({
+		self.tools[#self.tools + 1] = gui.imagebutton({
 			pressedCallback = cb;
 			texture = icon;
 			tip = ttip;
 			position = pos;
 			parent = self.positioner;
 		})
-		if self.orient == "h" then
+		if self.orient == "horizontal" then
 			self.lastTool = self.lastTool + self.tools[#self.tools].size.x + 4
 			self.size = vec(math.abs(self.lastTool), self.size.y)
 		else
@@ -64,7 +63,7 @@ hud_class `ToolBar` (extends(GuiClass)
 		local pos = vec(0, 0)
 		local sz = vec(0, 0)
 		
-		if self.orient == "h" then
+		if self.orient == "horizontal" then
 			pos = vec2(self.lastTool - (self.tools[#self.tools].size.x/2), 0)
 			sz = vec2(2, self.size.y -14)
 		else
@@ -79,7 +78,7 @@ hud_class `ToolBar` (extends(GuiClass)
 			alpha = _current_theme.colours.tool_bar.separator_alpha,
 			size = sz
 		})
-		if self.orient == "h" then
+		if self.orient == "horizontal" then
 			self.lastTool = self.lastTool + self.separators[#self.separators].size.x + 4
 			self.size = vec(math.abs(self.lastTool), self.size.y)
 		else
@@ -99,6 +98,6 @@ hud_class `ToolBar` (extends(GuiClass)
     end;
 })
 
-function create_toolbar(options)
-	return gfx_hud_object_add(`ToolBar`, options)
+function gui.toolbar(tab)
+	return gfx_hud_object_add(`ToolBar`, tab)
 end

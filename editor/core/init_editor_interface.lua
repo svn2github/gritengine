@@ -1,5 +1,5 @@
 safe_destroy(editor_interface)
-editor_interface = create_window_notebook({})
+editor_interface = gui.windownotebook({})
 
 include`pages/MapEditor.lua`
 include`pages/NavigationEditor.lua`

@@ -46,7 +46,7 @@ hud_class `TreeViewNode` (extends(GuiClass)
 		self.childs = {}
 		
 		if self.canHaveNodeChilds or self.canHaveObjectChilds then
-			self.iconcolapse = create_imagebutton({
+			self.iconcolapse = gui.imagebutton({
 				parent = self,
 				align= LEFT,
 				offset = vec(3, 0),
@@ -67,7 +67,7 @@ hud_class `TreeViewNode` (extends(GuiClass)
 			self.iconcolapse.enabled = false
 		end
 		
-		self.iconx = create_gui_object({
+		self.iconx = gui.object({
 			parent = self,
 			texture = self.icon,
 			align = LEFT,
@@ -76,7 +76,7 @@ hud_class `TreeViewNode` (extends(GuiClass)
 			offset = vec(20, 0),
 			colour=vec(1, 0.8, 0.5)
 		})
-		self.text = create_guitext({
+		self.text = gui.text({
 			parent = self,
 			align = LEFT,
 			offset = vec(self.iconx.size.x + 20, 0),
@@ -538,6 +538,6 @@ hud_class `TreeView` (extends(TreeView)
 	end;
 })
 
-function create_treeview(options)
+function gui.treeview(options)
 	return gfx_hud_object_add(`TreeView`, options)
 end

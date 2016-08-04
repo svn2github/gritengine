@@ -10,7 +10,7 @@
 hud_class `FlexBoxsizer` {
 	alpha = 1;
 	size = vec(256, 256);
-	orient = "v"; -- v = vertical, h = horizontal
+	orient = "vertical"; -- v = vertical, h = horizontal
 	expand = true;
 	expandType = function(self)end;
 	type = "boxsizer";
@@ -25,7 +25,7 @@ hud_class `FlexBoxsizer` {
 		
 		self.child_settled = {}
 		
-		if self.orient == "v" then
+		if self.orient == "vertical" then
 			self.update = self.updateChildsV
 		else
 			self.update = self.updateChildsH
@@ -99,7 +99,7 @@ hud_class `FlexBoxsizer` {
 		end
 		
 		if settled then
-			if self.orient == "v" then
+			if self.orient == "vertical" then
 				self.settled_size = self.settled_size + self.childs[#self.childs].size.y
 			else
 				self.settled_size = self.settled_size + self.childs[#self.childs].size.x
@@ -116,9 +116,9 @@ hud_class `FlexBoxsizer` {
 		if self.expand then
 			if self.parent.type ~= nil and #self.parent.childs > 0 then
 				if self.parent.type == "boxsizer" then
-					if self.parent.orient == "h" then
+					if self.parent.orient == "horizontal" then
 						self.expandType = function(self, psize) self.size = vec(self.parent.size.x / #self.parent.childs, self.parent.size.y) end
-					elseif self.parent.orient == "v" then
+					elseif self.parent.orient == "vertical" then
 						self.expandType = function(self, psize) self.size = vec(self.parent.size.x, self.parent.size.y/#self.parent.childs) end
 					end
 				-- elseif self.parent.type == "grid" then
@@ -129,8 +129,8 @@ hud_class `FlexBoxsizer` {
 	end;
 }
 
-function create_flex_box_sizer(g_expand, g_orient, p, g_size, g_colour, g_alpha)
-	local bs = gfx_hud_object_add(`FlexBoxsizer`, { parent = p, orient = g_orient or "h", expand = g_expand or false, colour = g_colour or vec(0.3, 0.3, 0.3), alpha = g_alpha or 1, size = g_size })
+function gui.flexboxsizer(g_expand, g_orient, p, g_size, g_colour, g_alpha)
+	local bs = gfx_hud_object_add(`FlexBoxsizer`, { parent = p, orient = g_orient or "horizontal", expand = g_expand or false, colour = g_colour or vec(0.3, 0.3, 0.3), alpha = g_alpha or 1, size = g_size })
 	if p then
 		bs:updateExpandType()
 	end

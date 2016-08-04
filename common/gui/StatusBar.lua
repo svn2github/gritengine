@@ -86,6 +86,6 @@ hud_class `StatusBar` {
 	end;	
 }
 
-function create_statusbar(options)
+function gui.statusbar(options)
 	return gfx_hud_object_add(`StatusBar`, options)
 end

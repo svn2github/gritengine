@@ -3,13 +3,13 @@ hud_class `Debug` (extends(WindowClass)
 {
 	init = function (self)
 		WindowClass.init(self)
-		self.toolsel = create_box_sizer(true, "v", self)
+		self.toolsel = gui.boxsizer(true, "vertical", self)
 		self.toolsel.zOrder = 5
 		self.toolsel.alpha = 0
 
 		self.checkboxes = {}
 
-		self.checkboxes[0] = create_checkbox({ caption = "Enable debug",
+		self.checkboxes[0] = gui.checkbox({ caption = "Enable debug",
 			parent = self.toolsel,
 			onCheck = function(self) navigation_debug_option("enabled", true) end,
 			onUncheck= function(self) navigation_debug_option("enabled", false) end,
@@ -19,7 +19,7 @@ hud_class `Debug` (extends(WindowClass)
 		})
 		self.toolsel:addChild(self.checkboxes[0])
 		
-		self.checkboxes[1] = create_checkbox({ caption = "Show navmesh",
+		self.checkboxes[1] = gui.checkbox({ caption = "Show navmesh",
 			parent = self.toolsel,
 			onCheck = function(self) navigation_debug_option("navmesh", true) end,
 			onUncheck= function(self) navigation_debug_option("navmesh", false) end,
@@ -29,7 +29,7 @@ hud_class `Debug` (extends(WindowClass)
 		})
 		self.toolsel:addChild(self.checkboxes[1])
 		
-		self.checkboxes[2] = create_checkbox({ caption = "Navmesh use tile colours",
+		self.checkboxes[2] = gui.checkbox({ caption = "Navmesh use tile colours",
 			parent = self.toolsel,
 			onCheck = function(self) navigation_debug_option("navmesh_use_tile_colours", true) end,
 			onUncheck= function(self) navigation_debug_option("navmesh_use_tile_colours", false) end,
@@ -39,7 +39,7 @@ hud_class `Debug` (extends(WindowClass)
 		})
 		self.toolsel:addChild(self.checkboxes[2])
 		
-		self.checkboxes[3] = create_checkbox({ caption = "Show agent cylinder",
+		self.checkboxes[3] = gui.checkbox({ caption = "Show agent cylinder",
 			parent = self.toolsel,
 			onCheck = function(self) navigation_debug_option("agent", true) end,
 			onUncheck= function(self) navigation_debug_option("agent", false) end,
@@ -49,7 +49,7 @@ hud_class `Debug` (extends(WindowClass)
 		})
 		self.toolsel:addChild(self.checkboxes[3])
 		
-		self.checkboxes[4] = create_checkbox({ caption = "Show agent speed",
+		self.checkboxes[4] = gui.checkbox({ caption = "Show agent speed",
 			parent = self.toolsel,
 			onCheck = function(self) navigation_debug_option("agent_arrows", true) end,
 			onUncheck= function(self) navigation_debug_option("agent_arrows", false) end,
@@ -59,7 +59,7 @@ hud_class `Debug` (extends(WindowClass)
 		})
 		self.toolsel:addChild(self.checkboxes[4])
 		
-		self.checkboxes[5] = create_checkbox({ caption = "Show bounds",
+		self.checkboxes[5] = gui.checkbox({ caption = "Show bounds",
 			parent = self.toolsel,
 			onCheck = function(self) navigation_debug_option("bounds", true) end,
 			onUncheck= function(self) navigation_debug_option("bounds", false) end,
@@ -69,7 +69,7 @@ hud_class `Debug` (extends(WindowClass)
 		})
 		self.toolsel:addChild(self.checkboxes[5])
 		
-		self.checkboxes[6] = create_checkbox({ caption = "Show tiling grid",
+		self.checkboxes[6] = gui.checkbox({ caption = "Show tiling grid",
 			parent = self.toolsel,
 			onCheck = function(self) navigation_debug_option("tiling_grid", true) end,
 			onUncheck= function(self) navigation_debug_option("tiling_grid", false) end,
@@ -79,7 +79,7 @@ hud_class `Debug` (extends(WindowClass)
 		})
 		self.toolsel:addChild(self.checkboxes[6])
 		
-		self.checkboxes[7] = create_checkbox({ caption = "Show obstacles",
+		self.checkboxes[7] = gui.checkbox({ caption = "Show obstacles",
 			parent = self.toolsel,
 			onCheck = function(self) navigation_debug_option("obstacles", true) end,
 			onUncheck= function(self) navigation_debug_option("obstacles", false) end,
@@ -89,7 +89,7 @@ hud_class `Debug` (extends(WindowClass)
 		})
 		self.toolsel:addChild(self.checkboxes[7])
 		
-		self.checkboxes[8] = create_checkbox({ caption = "Show Offmesh connections",
+		self.checkboxes[8] = gui.checkbox({ caption = "Show Offmesh connections",
 			parent = self.toolsel,
 			onCheck = function(self) navigation_debug_option("offmesh_connections", true) end,
 			onUncheck= function(self) navigation_debug_option("offmesh_connections", false) end,
@@ -99,7 +99,7 @@ hud_class `Debug` (extends(WindowClass)
 		})
 		self.toolsel:addChild(self.checkboxes[8])
 		
-		self.checkboxes[9] = create_checkbox({ caption = "Show convex volumes",
+		self.checkboxes[9] = gui.checkbox({ caption = "Show convex volumes",
 			parent = self.toolsel,
 			onCheck = function(self) navigation_debug_option("convex_volumes", true) end,
 			onUncheck= function(self) navigation_debug_option("convex_volumes", false) end,

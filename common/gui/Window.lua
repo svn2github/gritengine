@@ -91,7 +91,7 @@ WindowClass = {
 			parent = self;
 		})
 
-		self.close_btn = create_button({				
+		self.close_btn = gui.button({				
 				caption = "X";
 				padding = vec(15, 2);
 				cornered = true;
@@ -130,7 +130,7 @@ WindowClass = {
 		
 		self:setTitle(self.title)
 
-		self.border = create_gui_object({
+		self.border = gui.object({
 			size = vec2(self.size.x, self.size.y);
 			colour = _current_theme.colours.window.border;
 			alpha = _current_theme.colours.window.border_alpha;
@@ -235,18 +235,23 @@ _windows = {}
 _current_window = _current_window
 
 -- TODO: replace parameters by a single table
-function create_window(w_title, pos, res, w_size, w_min_size, w_max_size, w_bk_colour, w_bk_alpha)
+function gui.window(w_title, pos, res, w_size, w_min_size, w_max_size, w_bk_colour, w_bk_alpha)
 	local t_window = {}
-	t_window = gfx_hud_object_add(`Window`, {
-		title = w_title;
-		parent = hud_center;
-		position = pos;
-		resizeable = res;
-		size = w_size;
-		min_size = w_min_size;
-		colour = w_bk_colour or _current_theme.colours.window.background;
-		alpha = w_bk_alpha or 1;
-	})
+	
+	if type(w_title) == "table" then
+		t_window = gfx_hud_object_add(`Window`, w_title)
+	else
+		t_window = gfx_hud_object_add(`Window`, {
+			title = w_title;
+			parent = hud_center;
+			position = pos;
+			resizeable = res;
+			size = w_size;
+			min_size = w_min_size;
+			colour = w_bk_colour or _current_theme.colours.window.background;
+			alpha = w_bk_alpha or 1;
+		})
+	end
 	-- t_window.enabled = false
 	_windows[#_windows+1] = t_window
 	return t_window

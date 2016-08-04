@@ -196,7 +196,7 @@ hud_class `Slider` {
 	end;
 }
 
-function create_slider(s_caption_ortab, s_position, s_defaultvalue, s_parent, s_minvalue, s_maxvalue, s_stepsize, s_onclick, s_onclickend)
+function gui.slider(s_caption_ortab, s_position, s_defaultvalue, s_parent, s_minvalue, s_maxvalue, s_stepsize, s_onclick, s_onclickend)
 	local sld
 	if type(s_caption_ortab) == "table" then
 		sld = gfx_hud_object_add(`Slider`, s_caption_ortab)	

@@ -14,12 +14,13 @@ hud_class `GuiText` (extends(GuiClass)
 	size = vec(0, 0);
 	alpha = 0;
 	value = "";
+	textColour = _current_theme.colours.text.default;
 	
 	init = function (self)
 		GuiClass.init(self)
 		self.text = gfx_hud_text_add(self.font)
 		self.text.parent = self
-		self.text.colour = self.colour
+		self.text.colour = self.textColour
 		self:setValue(self.value)
 	end;
 	
@@ -38,6 +39,6 @@ hud_class `GuiText` (extends(GuiClass)
 	end;
 })
 
-function create_guitext(options)
+function gui.text(options)
 	return gfx_hud_object_add(`GuiText`, options)
 end

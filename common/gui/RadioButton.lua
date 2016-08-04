@@ -108,6 +108,6 @@ hud_class `RadioButton` (extends(GuiClass)
 	end;
 })
 
-function create_radiobutton(options)
-	return gfx_hud_object_add(`RadioButton`, options)
+function gui.radiobutton(tab)
+	return gfx_hud_object_add(`RadioButton`, tab)
 end

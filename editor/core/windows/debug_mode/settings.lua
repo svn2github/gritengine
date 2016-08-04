@@ -7,11 +7,11 @@ hud_class `Settings` (extends(WindowClass)
 			-- safe_destroy(self.parent.parent.parent)
 		-- end;
 		
-		self.content = create_notebook(self)
+		self.content = gui.notebook(self)
 
 		-- GENERAL
-		self.content.general_panel = create_panel()
-		self.content.general_panel.warp = create_checkbox({
+		self.content.general_panel = gui.notebookpanel()
+		self.content.general_panel.warp = gui.checkbox({
 			caption = "Walk through walls",
 			checked = editor_cfg.warp,
 			parent = self.content.general_panel,
@@ -24,7 +24,7 @@ hud_class `Settings` (extends(WindowClass)
 				print(GREEN.."TODO")
 			end,
 		})
-		self.content.general_panel.teleport = create_guitext({
+		self.content.general_panel.teleport = gui.text({
 			value = "Teleport to: ",
 			parent = self.content.general_panel,
 			align = vec(-1, 1);
@@ -72,7 +72,7 @@ hud_class `Settings` (extends(WindowClass)
 			expand_offset = vec(-20, 0);
 			colour = vec(0, 0, 1);
 		})
-		self.content.general_panel.button = create_button({
+		self.content.general_panel.button = gui.button({
 			caption = "Teleport";
 			parent = self.content.general_panel;
 			offset = vec(10+165, -45);
@@ -84,7 +84,7 @@ hud_class `Settings` (extends(WindowClass)
 			end;
 			padding = vec(5, 2);
 		})
-		self.content.general_panel.pe = create_checkbox({
+		self.content.general_panel.pe = gui.checkbox({
 			caption = "Physics enabled",
 			checked = main.physicsEnabled,
 			parent = self.content.general_panel,
@@ -97,7 +97,7 @@ hud_class `Settings` (extends(WindowClass)
 				main.physicsEnabled = false
 			end,
 		})
-		self.content.general_panel.poto = create_checkbox({
+		self.content.general_panel.poto = gui.checkbox({
 			caption = "Physics one-to-one",
 			checked = main.physicsOneToOne,
 			parent = self.content.general_panel,
@@ -114,9 +114,9 @@ hud_class `Settings` (extends(WindowClass)
 
 		
 		-- DEBUG
-		self.content.debug_panel = create_panel()
+		self.content.debug_panel = gui.notebookpanel()
 		
-		self.content.debug_panel.fov = create_guitext({
+		self.content.debug_panel.fov = gui.text({
 			value = "FOV: ",
 			parent = self.content.debug_panel,
 			align = vec(-1, 1);
@@ -133,7 +133,7 @@ hud_class `Settings` (extends(WindowClass)
 			align = vec(-1, 1);
 			offset = vec(50, -5);
 		})		
-		self.content.debug_panel.cmaps = create_checkbox({
+		self.content.debug_panel.cmaps = gui.checkbox({
 			caption = "Use colour maps",
 			checked = debug_cfg.colourMaps,
 			parent = self.content.debug_panel,
@@ -146,7 +146,7 @@ hud_class `Settings` (extends(WindowClass)
 				debug_cfg.colourMaps = false
 			end,
 		})
-		self.content.debug_panel.dmaps = create_checkbox({
+		self.content.debug_panel.dmaps = gui.checkbox({
 			caption = "Use diffuse maps",
 			checked = debug_cfg.diffuseMaps,
 			parent = self.content.debug_panel,
@@ -160,14 +160,14 @@ hud_class `Settings` (extends(WindowClass)
 			end,
 		})
 		
-		self.content.debug_panel.theme = create_guitext({
+		self.content.debug_panel.theme = gui.text({
 			value = "False Colour: ",
 			parent = self.content.debug_panel,
 			align = vec(-1, 1);
 			offset = vec(10, -70);		
 		})
 
-		self.content.debug_panel.fc_selectbox = create_selectbox({
+		self.content.debug_panel.fc_selectbox = gui.selectbox({
 			parent = self.content.debug_panel;
 			choices = {
 				"false";
@@ -213,7 +213,7 @@ hud_class `Settings` (extends(WindowClass)
 			end
 		end;		
 		
-		self.content.debug_panel.farc = create_guitext({
+		self.content.debug_panel.farc = gui.text({
 			value = "Far Clip: ",
 			parent = self.content.debug_panel,
 			align = vec(-1, 1);
@@ -232,7 +232,7 @@ hud_class `Settings` (extends(WindowClass)
 			offset = vec(70, -95);
 		})			
 		
-		self.content.debug_panel.fcol = create_checkbox({
+		self.content.debug_panel.fcol = gui.checkbox({
 			caption = "Distance Fog",
 			checked = debug_cfg.fog,
 			parent = self.content.debug_panel,
@@ -245,7 +245,7 @@ hud_class `Settings` (extends(WindowClass)
 				debug_cfg.fog = false
 			end,
 		})
-		self.content.debug_panel.fpro = create_checkbox({
+		self.content.debug_panel.fpro = gui.checkbox({
 			caption = "Fragment processing",
 			checked = debug_cfg.fragmentProcessing,
 			parent = self.content.debug_panel,
@@ -258,7 +258,7 @@ hud_class `Settings` (extends(WindowClass)
 				debug_cfg.fragmentProcessing = false
 			end,
 		})		
-		self.content.debug_panel.gmaps = create_checkbox({
+		self.content.debug_panel.gmaps = gui.checkbox({
 			caption = "Gloss maps",
 			checked = debug_cfg.glossMaps,
 			parent = self.content.debug_panel,
@@ -271,7 +271,7 @@ hud_class `Settings` (extends(WindowClass)
 				debug_cfg.glossMaps = false
 			end,
 		})			
-		self.content.debug_panel.hbl = create_checkbox({
+		self.content.debug_panel.hbl = gui.checkbox({
 			caption = "Heightmap blending",
 			checked = debug_cfg.heightmapBlending,
 			parent = self.content.debug_panel,
@@ -284,7 +284,7 @@ hud_class `Settings` (extends(WindowClass)
 				debug_cfg.heightmapBlending = false
 			end,
 		})
-		self.content.debug_panel.nmps = create_checkbox({
+		self.content.debug_panel.nmps = gui.checkbox({
 			caption = "Normal maps",
 			checked = debug_cfg.normalMaps,
 			parent = self.content.debug_panel,
@@ -297,7 +297,7 @@ hud_class `Settings` (extends(WindowClass)
 				debug_cfg.normalMaps = false
 			end,
 		})		
-		self.content.debug_panel.pdw = create_checkbox({
+		self.content.debug_panel.pdw = gui.checkbox({
 			caption = "Physics debug world",
 			checked = debug_cfg.physicsDebugWorld,
 			parent = self.content.debug_panel,
@@ -310,7 +310,7 @@ hud_class `Settings` (extends(WindowClass)
 				debug_cfg.physicsDebugWorld = false
 			end,
 		})
-		self.content.debug_panel.pw = create_checkbox({
+		self.content.debug_panel.pw = gui.checkbox({
 			caption = "Physics wireframe",
 			checked = debug_cfg.physicsWireFrame,
 			parent = self.content.debug_panel,
@@ -324,13 +324,13 @@ hud_class `Settings` (extends(WindowClass)
 			end,
 		})		
 
-		self.content.debug_panel.plmod = create_guitext({
+		self.content.debug_panel.plmod = gui.text({
 			value = "Polygon Mode: ",
 			parent = self.content.debug_panel,
 			align = vec(-1, 1);
 			offset = vec(10, -260);		
 		})
-		self.content.debug_panel.plmodsel = create_selectbox({
+		self.content.debug_panel.plmodsel = gui.selectbox({
 			parent = self.content.debug_panel;
 			choices = {
 				"SOLID";
@@ -347,13 +347,13 @@ hud_class `Settings` (extends(WindowClass)
 			debug_cfg.polygonMode = self.selected.name
 		end;
 		
-		self.content.debug_panel.smmod = create_guitext({
+		self.content.debug_panel.smmod = gui.text({
 			value = "Shading Model: ";
 			parent = self.content.debug_panel;
 			align = vec(-1, 1);
 			offset = vec(10, -285);		
 		})
-		self.content.debug_panel.smmodsel = create_selectbox({
+		self.content.debug_panel.smmodsel = gui.selectbox({
 			parent = self.content.debug_panel;
 			choices = {
 				"SHARP";
@@ -370,7 +370,7 @@ hud_class `Settings` (extends(WindowClass)
 			debug_cfg.shadingModel = self.selected.name
 		end;		
 		
-		self.content.debug_panel.sc = create_checkbox({
+		self.content.debug_panel.sc = gui.checkbox({
 			caption = "Shadow cast",
 			checked = debug_cfg.shadowCast,
 			parent = self.content.debug_panel,
@@ -383,7 +383,7 @@ hud_class `Settings` (extends(WindowClass)
 				debug_cfg.shadowCast = false
 			end,
 		})
-		self.content.debug_panel.sr = create_checkbox({
+		self.content.debug_panel.sr = gui.checkbox({
 			caption = "Shadow receive",
 			checked = debug_cfg.shadowReceive,
 			parent = self.content.debug_panel,
@@ -396,7 +396,7 @@ hud_class `Settings` (extends(WindowClass)
 				debug_cfg.shadowReceive = false
 			end,
 		})
-		self.content.debug_panel.ta = create_checkbox({
+		self.content.debug_panel.ta = gui.checkbox({
 			caption = "Texture animation",
 			checked = debug_cfg.textureAnimation,
 			parent = self.content.debug_panel,
@@ -409,7 +409,7 @@ hud_class `Settings` (extends(WindowClass)
 				debug_cfg.textureAnimation = false
 			end,
 		})
-		self.content.debug_panel.tf = create_checkbox({
+		self.content.debug_panel.tf = gui.checkbox({
 			caption = "Texture fetches",
 			checked = debug_cfg.textureFetches,
 			parent = self.content.debug_panel,
@@ -422,7 +422,7 @@ hud_class `Settings` (extends(WindowClass)
 				debug_cfg.textureFetches = false
 			end,
 		})
-		self.content.debug_panel.ts = create_checkbox({
+		self.content.debug_panel.ts = gui.checkbox({
 			caption = "Texture scale",
 			checked = debug_cfg.textureScale,
 			parent = self.content.debug_panel,
@@ -435,7 +435,7 @@ hud_class `Settings` (extends(WindowClass)
 				debug_cfg.textureScale = false
 			end,
 		})
-		self.content.debug_panel.tm = create_checkbox({
+		self.content.debug_panel.tm = gui.checkbox({
 			caption = "Translucency maps",
 			checked = debug_cfg.translucencyMaps,
 			parent = self.content.debug_panel,
@@ -448,7 +448,7 @@ hud_class `Settings` (extends(WindowClass)
 				debug_cfg.translucencyMaps = false
 			end,
 		})
-		self.content.debug_panel.vd = create_checkbox({
+		self.content.debug_panel.vd = gui.checkbox({
 			caption = "Vertex diffuse",
 			checked = debug_cfg.vertexDiffuse,
 			parent = self.content.debug_panel,
@@ -461,7 +461,7 @@ hud_class `Settings` (extends(WindowClass)
 				debug_cfg.vertexDiffuse = false
 			end,
 		})
-		self.content.debug_panel.vp = create_checkbox({
+		self.content.debug_panel.vp = gui.checkbox({
 			caption = "Vertex processing",
 			checked = debug_cfg.vertexProcessing,
 			parent = self.content.debug_panel,
@@ -489,8 +489,8 @@ hud_class `Settings` (extends(WindowClass)
 		end
 		
 		-- PLACEMENT GUN
-		self.content.placement_panel = create_panel()
-		self.content.placement_panel.theme = create_guitext({
+		self.content.placement_panel = gui.notebookpanel()
+		self.content.placement_panel.theme = gui.text({
 			value = "Class: ",
 			parent = self.content.placement_panel,
 			align = vec(-1, 1);
@@ -511,7 +511,7 @@ hud_class `Settings` (extends(WindowClass)
 			expand_x = true;
 			expand_offset = vec(-20, 0);
 		})		
-		self.content.placement_panel.offsett = create_guitext({
+		self.content.placement_panel.offsett = gui.text({
 			value = "Additional ground offset: ",
 			parent = self.content.placement_panel,
 			align = vec(-1, 1);
@@ -529,7 +529,7 @@ hud_class `Settings` (extends(WindowClass)
 			offset = vec(10, -65);
 		})
 		
-		self.content.placement_panel.button1 = create_button({
+		self.content.placement_panel.button1 = gui.button({
 			caption = "Clear last placed object";
 			parent = self.content.placement_panel;
 			offset = vec(10, -95);
@@ -541,7 +541,7 @@ hud_class `Settings` (extends(WindowClass)
 				end
 			end;
 		})
-		self.content.placement_panel.button2 = create_button({
+		self.content.placement_panel.button2 = gui.button({
 			caption = "Clear all placed obejcts";
 			parent = self.content.placement_panel;
 			offset = vec(10, -130);
@@ -550,8 +550,8 @@ hud_class `Settings` (extends(WindowClass)
 		})
 
 		-- OBJECT FIRING GUN
-		self.content.object_panel = create_panel()
-		self.content.object_panel.theme = create_guitext({
+		self.content.object_panel = gui.notebookpanel()
+		self.content.object_panel.theme = gui.text({
 			value = "Class: ",
 			parent = self.content.object_panel,
 			align = vec(-1, 1);
@@ -570,7 +570,7 @@ hud_class `Settings` (extends(WindowClass)
 			expand_x = true;
 			expand_offset = vec(-20, 0);
 		})		
-		self.content.object_panel.vel = create_guitext({
+		self.content.object_panel.vel = gui.text({
 			value = "Velocity (m/s): ",
 			parent = self.content.object_panel,
 			align = vec(-1, 1);
@@ -585,7 +585,7 @@ hud_class `Settings` (extends(WindowClass)
 			align = vec(-1, 1);
 			offset = vec(10, -65);
 		})
-		self.content.object_panel.teleport = create_guitext({
+		self.content.object_panel.teleport = gui.text({
 			value = "Spin: ",
 			parent = self.content.object_panel,
 			align = vec(-1, 1);
@@ -642,7 +642,7 @@ hud_class `Settings` (extends(WindowClass)
 			expand_offset = vec(-20, 0);
 			colour = vec(0, 0, 1);
 		})
-		self.content.object_panel.button1 = create_button({
+		self.content.object_panel.button1 = gui.button({
 			caption = "Clear last placed object";
 			parent = self.content.object_panel;
 			offset = vec(10, -140);
@@ -654,7 +654,7 @@ hud_class `Settings` (extends(WindowClass)
 				end
 			end;
 		})
-		self.content.object_panel.button2 = create_button({
+		self.content.object_panel.button2 = gui.button({
 			caption = "Clear all placed obejcts";
 			parent = self.content.object_panel;
 			offset = vec(10, -175);
@@ -664,8 +664,8 @@ hud_class `Settings` (extends(WindowClass)
 			end;
 		})
 
-		self.content.particles_panel = create_panel()
-		self.content.particles_panel.theme = create_guitext({
+		self.content.particles_panel = gui.notebookpanel()
+		self.content.particles_panel.theme = gui.text({
 			value = "Class: ",
 			parent = self.content.particles_panel,
 			align = vec(-1, 1);
@@ -686,7 +686,7 @@ hud_class `Settings` (extends(WindowClass)
 			expand_x = true;
 			expand_offset = vec(-20, 0);
 		})		
-		self.content.particles_panel.button1 = create_button({
+		self.content.particles_panel.button1 = gui.button({
 			caption = "Clear all particles";
 			parent = self.content.particles_panel;
 			offset = vec(10, -55);
@@ -697,9 +697,9 @@ hud_class `Settings` (extends(WindowClass)
 		})		
 		
 		
-		self.content.prod_panel = create_panel()
+		self.content.prod_panel = gui.notebookpanel()
 		
-		self.content.prod_panel.warp = create_checkbox({
+		self.content.prod_panel.warp = gui.checkbox({
 			caption = "Push away",
 			checked = true,
 			parent = self.content.prod_panel,
@@ -729,7 +729,7 @@ hud_class `Settings` (extends(WindowClass)
 			end,
 		})		
 		
-		self.content.prod_panel.direction = create_guitext({
+		self.content.prod_panel.direction = gui.text({
 			value = "Direction:",
 			parent = self.content.prod_panel,
 			align = vec(-1, 1);
@@ -800,7 +800,7 @@ hud_class `Settings` (extends(WindowClass)
 		self.content.prod_panel.Z:setGreyed(true)
 
 		
-		self.content.prod_panel.force = create_guitext({
+		self.content.prod_panel.force = gui.text({
 			value = "Force to push at:",
 			parent = self.content.prod_panel,
 			align = vec(-1, 1);
@@ -810,7 +810,7 @@ hud_class `Settings` (extends(WindowClass)
 		-- TODO
 		
 		
-		-- self.content.grab_panel = create_panel()
+		-- self.content.grab_panel = gui.notebookpanel()
 		
 		self.content:addPage(self.content.general_panel, "General")
 		self.content:addPage(self.content.debug_panel, "Debug Config")

@@ -2,7 +2,7 @@ include`/editor/core/windows/navigation_editor/tools.lua`
 include`/editor/core/windows/navigation_editor/debug.lua`
 
 function open_navmesh_dialog()
-	open_file_dialog = create_openfiledialog({
+	gui.open_file_dialog({
 		title = "Open navmesh";
 		parent = hud_center;
 		position = vec(0, 0);
@@ -29,7 +29,7 @@ function open_navmesh_dialog()
 end
 
 function save_navmesh_dialog()
-	save_file_dialog = create_savefiledialog({
+	gui.save_file_dialog({
 		title = "Save navmesh";
 		parent = hud_center;
 		position = vec(0, 0);
@@ -105,10 +105,10 @@ editor_interface.navigation_editor =
 	init = function(self)
 		local _ = nil
 
-		self.propertiesToolpanel = create_toolpanel({ size = vec(200, 786), parent = hud_center, offset = vec(0, 20), expand_offset = vec(0, -75), expand_y = true })
+		self.propertiesToolpanel = gui.toolpanel({ size = vec(200, 786), parent = hud_center, offset = vec(0, 20), expand_offset = vec(0, -75), expand_y = true })
 		self.propertiesToolpanel.icon.alpha = 0
 		
-		self.propertiesToolpanel.bxsz = create_box_sizer(true, "v", self.propertiesToolpanel)
+		self.propertiesToolpanel.bxsz = gui.boxsizer(true, "vertical", self.propertiesToolpanel)
 		self.propertiesToolpanel.bxsz.zOrder = 5
 		self.propertiesToolpanel.bxsz.colour = vec(0.2, 0.2, 0.2)
 		self.propertiesToolpanel.bxsz.alpha = 0
@@ -121,7 +121,7 @@ editor_interface.navigation_editor =
 		self.propertiesToolpanel.buttons = {}
 		
 		-- Rasterization
-		self.propertiesToolpanel.titles[0] = create_guitext({
+		self.propertiesToolpanel.titles[0] = gui.text({
 			colour = V_ID;
 			value = "Rasterization:";
 			font = `/common/fonts/ArialBold12`;
@@ -129,13 +129,13 @@ editor_interface.navigation_editor =
 		self.propertiesToolpanel.titles[0].text.shadow = vec(1, -1)
 		self.propertiesToolpanel.bxsz:addChild(self.propertiesToolpanel.titles[0])
 
-		self.propertiesToolpanel.sliders[0] = create_slider("Cell Size", _, 0.3, _, 0.1, 1, 0, _, function(self) nav_builder_params.cellSize = self.value end)
-		self.propertiesToolpanel.sliders[1] = create_slider("Cell Height", _, 0.2, _, 0.1, 1, 0, _, function(self) nav_builder_params.cellHeight = self.value end)
+		self.propertiesToolpanel.sliders[0] = gui.slider("Cell Size", _, 0.3, _, 0.1, 1, 0, _, function(self) nav_builder_params.cellSize = self.value end)
+		self.propertiesToolpanel.sliders[1] = gui.slider("Cell Height", _, 0.2, _, 0.1, 1, 0, _, function(self) nav_builder_params.cellHeight = self.value end)
 		self.propertiesToolpanel.bxsz:addChild(self.propertiesToolpanel.sliders[0])
 		self.propertiesToolpanel.bxsz:addChild(self.propertiesToolpanel.sliders[1])
 
 		-- Agent:
-		self.propertiesToolpanel.titles[1] = create_guitext({
+		self.propertiesToolpanel.titles[1] = gui.text({
 			colour = V_ID;
 			value = "Agent:";
 			font = `/common/fonts/ArialBold12`;
@@ -143,17 +143,17 @@ editor_interface.navigation_editor =
 		self.propertiesToolpanel.titles[1].text.shadow = vec(1, -1)
 		self.propertiesToolpanel.bxsz:addChild(self.propertiesToolpanel.titles[1])
 
-		self.propertiesToolpanel.sliders[2] = create_slider("Height", _, 2, _, 0.1, 5, 0.1, _, function(self) nav_builder_params.agentHeight = self.value end)
-		self.propertiesToolpanel.sliders[3] = create_slider("Radius", _, 0.6, _, 0, 5, 0.1, _, function(self) nav_builder_params.agentRadius = self.value end)
-		self.propertiesToolpanel.sliders[4] = create_slider("Max Climb", _, 0.9, _, 0.1, 5, 0.1, _, function(self) nav_builder_params.agentMaxClimb = self.value end)
-		self.propertiesToolpanel.sliders[5] = create_slider("Max Slope", _, 45, _, 0, 90, 1, _, function(self) nav_builder_params.agentMaxSlope = self.value end)
+		self.propertiesToolpanel.sliders[2] = gui.slider("Height", _, 2, _, 0.1, 5, 0.1, _, function(self) nav_builder_params.agentHeight = self.value end)
+		self.propertiesToolpanel.sliders[3] = gui.slider("Radius", _, 0.6, _, 0, 5, 0.1, _, function(self) nav_builder_params.agentRadius = self.value end)
+		self.propertiesToolpanel.sliders[4] = gui.slider("Max Climb", _, 0.9, _, 0.1, 5, 0.1, _, function(self) nav_builder_params.agentMaxClimb = self.value end)
+		self.propertiesToolpanel.sliders[5] = gui.slider("Max Slope", _, 45, _, 0, 90, 1, _, function(self) nav_builder_params.agentMaxSlope = self.value end)
 		self.propertiesToolpanel.bxsz:addChild(self.propertiesToolpanel.sliders[2])
 		self.propertiesToolpanel.bxsz:addChild(self.propertiesToolpanel.sliders[3])
 		self.propertiesToolpanel.bxsz:addChild(self.propertiesToolpanel.sliders[4])
 		self.propertiesToolpanel.bxsz:addChild(self.propertiesToolpanel.sliders[5])
 
 		-- Region:
-		self.propertiesToolpanel.titles[2] = create_guitext({
+		self.propertiesToolpanel.titles[2] = gui.text({
 			colour = V_ID;
 			value = "Region:";
 			font = `/common/fonts/ArialBold12`;
@@ -161,13 +161,13 @@ editor_interface.navigation_editor =
 		self.propertiesToolpanel.titles[2].text.shadow = vec(1, -1)
 		self.propertiesToolpanel.bxsz:addChild(self.propertiesToolpanel.titles[2])
 
-		self.propertiesToolpanel.sliders[6] = create_slider("Min Region Size", _, 8, _, 0, 150, 1, _, function(self) nav_builder_params.regionMinSize = self.value end)
+		self.propertiesToolpanel.sliders[6] = gui.slider("Min Region Size", _, 8, _, 0, 150, 1, _, function(self) nav_builder_params.regionMinSize = self.value end)
 		self.propertiesToolpanel.bxsz:addChild(self.propertiesToolpanel.sliders[6])
-		self.propertiesToolpanel.sliders[7] = create_slider("Merged Region Size", _, 20, _, 0, 150, 1, _, function(self) nav_builder_params.regionMergeSize = self.value end)
+		self.propertiesToolpanel.sliders[7] = gui.slider("Merged Region Size", _, 20, _, 0, 150, 1, _, function(self) nav_builder_params.regionMergeSize = self.value end)
 		self.propertiesToolpanel.bxsz:addChild(self.propertiesToolpanel.sliders[7])
 
 		-- Partitioning:
-		self.propertiesToolpanel.titles[3] = create_guitext({
+		self.propertiesToolpanel.titles[3] = gui.text({
 			colour = V_ID;
 			value = "Partitioning:";
 			font = `/common/fonts/ArialBold12`;
@@ -175,16 +175,16 @@ editor_interface.navigation_editor =
 		self.propertiesToolpanel.titles[3].text.shadow = vec(1, -1)
 		self.propertiesToolpanel.bxsz:addChild(self.propertiesToolpanel.titles[3])
 
-		self.propertiesToolpanel.radiobuttons[0] = create_radiobutton({ caption = "Watershed", textColour = V_ID, parent = self.propertiesToolpanel.bxsz, onSelect = function(self) nav_builder_params.partitionType = SAMPLE_PARTITION_WATERSHED end, align = vec(-1, 0), offset =  vec(10, 0) })
+		self.propertiesToolpanel.radiobuttons[0] = gui.radiobutton({ caption = "Watershed", textColour = V_ID, parent = self.propertiesToolpanel.bxsz, onSelect = function(self) nav_builder_params.partitionType = SAMPLE_PARTITION_WATERSHED end, align = vec(-1, 0), offset =  vec(10, 0) })
 		self.propertiesToolpanel.bxsz:addChild(self.propertiesToolpanel.radiobuttons[0])
 		self.propertiesToolpanel.radiobuttons[0]:select()
-		self.propertiesToolpanel.radiobuttons[1] = create_radiobutton({ caption = "Monotone", textColour = V_ID, parent = self.propertiesToolpanel.bxsz, onSelect = function(self) nav_builder_params.partitionType = SAMPLE_PARTITION_MONOTONE end, align = vec(-1, 0), offset =  vec(10, 0) })
+		self.propertiesToolpanel.radiobuttons[1] = gui.radiobutton({ caption = "Monotone", textColour = V_ID, parent = self.propertiesToolpanel.bxsz, onSelect = function(self) nav_builder_params.partitionType = SAMPLE_PARTITION_MONOTONE end, align = vec(-1, 0), offset =  vec(10, 0) })
 		self.propertiesToolpanel.bxsz:addChild(self.propertiesToolpanel.radiobuttons[1])
-		self.propertiesToolpanel.radiobuttons[2] = create_radiobutton({ caption = "Layers", textColour = V_ID, parent = self.propertiesToolpanel.bxsz, onSelect = function(self) nav_builder_params.partitionType = SAMPLE_PARTITION_LAYERS end, align = vec(-1, 0), offset =  vec(10, 0) })
+		self.propertiesToolpanel.radiobuttons[2] = gui.radiobutton({ caption = "Layers", textColour = V_ID, parent = self.propertiesToolpanel.bxsz, onSelect = function(self) nav_builder_params.partitionType = SAMPLE_PARTITION_LAYERS end, align = vec(-1, 0), offset =  vec(10, 0) })
 		self.propertiesToolpanel.bxsz:addChild(self.propertiesToolpanel.radiobuttons[2])
 
 		-- Poligonization:
-		self.propertiesToolpanel.titles[4] = create_guitext({
+		self.propertiesToolpanel.titles[4] = gui.text({
 			colour = V_ID;
 			value = "Poligonization:";
 			font = `/common/fonts/ArialBold12`;
@@ -192,15 +192,15 @@ editor_interface.navigation_editor =
 		self.propertiesToolpanel.titles[4].text.shadow = vec(1, -1)
 		self.propertiesToolpanel.bxsz:addChild(self.propertiesToolpanel.titles[4])
 
-		self.propertiesToolpanel.sliders[8] = create_slider("Max Edge Length", _, 12, _, 0, 50, 1, _, function(self) nav_builder_params.edgeMaxLen = self.value end)
+		self.propertiesToolpanel.sliders[8] = gui.slider("Max Edge Length", _, 12, _, 0, 50, 1, _, function(self) nav_builder_params.edgeMaxLen = self.value end)
 		self.propertiesToolpanel.bxsz:addChild(self.propertiesToolpanel.sliders[8])
-		self.propertiesToolpanel.sliders[9] = create_slider("Max Edge Error", _, 1.3, _, 0.1, 3, 0.1, _, function(self) nav_builder_params.edgeMaxError = self.value end)
+		self.propertiesToolpanel.sliders[9] = gui.slider("Max Edge Error", _, 1.3, _, 0.1, 3, 0.1, _, function(self) nav_builder_params.edgeMaxError = self.value end)
 		self.propertiesToolpanel.bxsz:addChild(self.propertiesToolpanel.sliders[9])
-		self.propertiesToolpanel.sliders[10] = create_slider("Verts Per Poly", _, 6, _, 3, 12, 1, _, function(self) nav_builder_params.vertsPerPoly = self.value end)
+		self.propertiesToolpanel.sliders[10] = gui.slider("Verts Per Poly", _, 6, _, 3, 12, 1, _, function(self) nav_builder_params.vertsPerPoly = self.value end)
 		self.propertiesToolpanel.bxsz:addChild(self.propertiesToolpanel.sliders[10])
 
 		-- Detail Mesh:
-		self.propertiesToolpanel.titles[5] = create_guitext({
+		self.propertiesToolpanel.titles[5] = gui.text({
 			colour = V_ID;
 			value = "Detail Mesh:";
 			font = `/common/fonts/ArialBold12`;
@@ -208,12 +208,12 @@ editor_interface.navigation_editor =
 		self.propertiesToolpanel.titles[5].text.shadow = vec(1, -1)
 		self.propertiesToolpanel.bxsz:addChild(self.propertiesToolpanel.titles[5])
 
-		self.propertiesToolpanel.sliders[11] = create_slider("Sample Distance", _, 6, _, 0, 16, 1, _, function(self) nav_builder_params.detailSampleDist = self.value end)
+		self.propertiesToolpanel.sliders[11] = gui.slider("Sample Distance", _, 6, _, 0, 16, 1, _, function(self) nav_builder_params.detailSampleDist = self.value end)
 		self.propertiesToolpanel.bxsz:addChild(self.propertiesToolpanel.sliders[11])
-		self.propertiesToolpanel.sliders[12] = create_slider("Max Sample Error", _, 1, _, 0, 16, 1, _, function(self) nav_builder_params.detailSampleMaxError = self.value end)
+		self.propertiesToolpanel.sliders[12] = gui.slider("Max Sample Error", _, 1, _, 0, 16, 1, _, function(self) nav_builder_params.detailSampleMaxError = self.value end)
 		self.propertiesToolpanel.bxsz:addChild(self.propertiesToolpanel.sliders[12])
 
-		self.propertiesToolpanel.checkboxes[1] = create_checkbox({
+		self.propertiesToolpanel.checkboxes[1] = gui.checkbox({
 			caption = "Keep Intermediate Results",
 			textColour = V_ID;
 			checked = false,
@@ -226,7 +226,7 @@ editor_interface.navigation_editor =
 		self.propertiesToolpanel.bxsz:addChild(self.propertiesToolpanel.checkboxes[1])
 
 		-- Tiling:
-		self.propertiesToolpanel.titles[6] = create_guitext({
+		self.propertiesToolpanel.titles[6] = gui.text({
 			colour = V_ID;
 			value = "Tiling:";
 			font = `/common/fonts/ArialBold12`;
@@ -234,11 +234,11 @@ editor_interface.navigation_editor =
 		self.propertiesToolpanel.titles[6].text.shadow = vec(1, -1)
 		self.propertiesToolpanel.bxsz:addChild(self.propertiesToolpanel.titles[6])
 
-		self.propertiesToolpanel.sliders[13] = create_slider("Tile Size", _, 48, _, 16, 128, 8, _, function(self) nav_builder_params.tileSize = self.value end)
+		self.propertiesToolpanel.sliders[13] = gui.slider("Tile Size", _, 48, _, 16, 128, 8, _, function(self) nav_builder_params.tileSize = self.value end)
 		self.propertiesToolpanel.bxsz:addChild(self.propertiesToolpanel.sliders[13])
 
 		-- Tile Cache:
-		-- self.propertiesToolpanel.titles[7] = create_guitext({
+		-- self.propertiesToolpanel.titles[7] = gui.text({
 			-- value = "Tile Cache:";
 			-- font = `/common/fonts/ArialBold12`;
 		-- })	
@@ -249,7 +249,7 @@ editor_interface.navigation_editor =
 		self.propertiesToolpanel.txx3.size = vec(0, 0)
 		self.propertiesToolpanel.bxsz:addChild(self.propertiesToolpanel.txx3)
 
-		self.propertiesToolpanel.buttons[1] = create_button({
+		self.propertiesToolpanel.buttons[1] = gui.button({
 			caption = "Save",
 			parent = self.propertiesToolpanel.bxsz,
 			offset = vec(10, 0),
@@ -261,7 +261,7 @@ editor_interface.navigation_editor =
 		})
 		self.propertiesToolpanel.bxsz:addChild(self.propertiesToolpanel.buttons[1])
 
-		self.propertiesToolpanel.buttons[2] = create_button({
+		self.propertiesToolpanel.buttons[2] = gui.button({
 			caption = "Load",
 			parent = self.propertiesToolpanel.bxsz,
 			offset = vec(10, 0),
@@ -278,7 +278,7 @@ editor_interface.navigation_editor =
 		self.propertiesToolpanel.txx4.size = vec(0, 0)
 		self.propertiesToolpanel.bxsz:addChild(self.propertiesToolpanel.txx4)
 
-		self.propertiesToolpanel.buttons[3] = create_button({
+		self.propertiesToolpanel.buttons[3] = gui.button({
 			caption = "Build",
 			parent = self.propertiesToolpanel.bxsz,
 			offset = vec(0, 0),
@@ -310,7 +310,7 @@ editor_interface.navigation_editor =
 		self:create_tools()
 		self:create_debug()
 		
-		self.menubar = create_menubar({
+		self.menubar = gui.menubar({
 			parent = hud_center;
 			size = vec(20, 26);
 			offset = vec(0, -29);
@@ -322,7 +322,7 @@ editor_interface.navigation_editor =
 		self.menubar.enabled = false
 		
 		self.menus = {}
-		self.menus.fileMenu = create_menubar_menu({
+		self.menus.fileMenu = gui.menubar_menu({
 			items = {
 				{
 					callback = function()  end;
@@ -346,7 +346,7 @@ editor_interface.navigation_editor =
 			};
 		})
 		
-		self.menus.editMenu = create_menubar_menu({
+		self.menus.editMenu = gui.menubar_menu({
 			items = {
 				{
 					callback = function()  end;
@@ -379,7 +379,7 @@ editor_interface.navigation_editor =
 			};
 		})
 
-		self.menus.viewMenu = create_menubar_menu({
+		self.menus.viewMenu = gui.menubar_menu({
 			items = {
 				{
 					callback = function(self)
@@ -422,7 +422,7 @@ editor_interface.navigation_editor =
 			};
 		})
 
-		self.menus.helpMenu = create_menubar_menu({
+		self.menus.helpMenu = gui.menubar_menu({
 			items = {
 				{
 					callback = function() os.execute("start http://gritengine.com/grit_book/") end;
@@ -466,7 +466,7 @@ editor_interface.navigation_editor =
 		self.menubar:append(self.menus.viewMenu, "View")
 		self.menubar:append(self.menus.helpMenu, "Help")
 		
-		self.toolbar = create_toolbar({
+		self.toolbar = gui.toolbar({
 			parent = self.menubar;
 			zOrder = 5;
 			align = vec(-1, 0);
@@ -484,7 +484,7 @@ editor_interface.navigation_editor =
 
 		self.toolbar:addTool("Toggle Properties Panel", map_editor_icons.config, (function(self) editor_interface.navigation_editor.propertiesToolpanel.enabled = not editor_interface.navigation_editor.propertiesToolpanel.enabled end), "Toggle Properties Panel")
 		
-		self.statusbar = create_statusbar({ parent = hud_bottom_left, size = vec(0, 20) })
+		self.statusbar = gui.statusbar({ parent = hud_bottom_left, size = vec(0, 20) })
 
 		self.statusbar:setText("Navigation Mesh Editor")
 		

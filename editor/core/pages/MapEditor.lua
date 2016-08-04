@@ -1,5 +1,5 @@
 function open_map_dialog()
-	open_file_dialog = create_openfiledialog({
+	gui.open_file_dialog({
 		title = "Open Map";
 		parent = hud_center;
 		position = vec(0, 0);
@@ -26,7 +26,7 @@ function open_map_dialog()
 end
 
 function save_map_dialog()
-	save_file_dialog = create_savefiledialog({
+	gui.save_file_dialog({
 		title = "Save Map";
 		parent = hud_center;
 		position = vec(0, 0);
@@ -97,7 +97,7 @@ editor_interface.map_editor_page =
 	end;
 	
 	init = function(self)
-		self.menubar = create_menubar({
+		self.menubar = gui.menubar({
 			parent = hud_center;
 			size = vec(20, 26);
 			offset = vec(0, -29);
@@ -109,7 +109,7 @@ editor_interface.map_editor_page =
 		self.menubar.enabled = false
 		
 		self.menus = {}
-		self.menus.fileMenu = create_menubar_menu({
+		self.menus.fileMenu = gui.menubar_menu({
 			items = {
 				{
 					callback = function()
@@ -152,7 +152,7 @@ editor_interface.map_editor_page =
 			};
 		})
 		
-		self.menus.editMenu = create_menubar_menu({
+		self.menus.editMenu = gui.menubar_menu({
 			items = {
 				{
 					callback = function() GED:undo() end;
@@ -204,7 +204,7 @@ editor_interface.map_editor_page =
 			};
 		})
 
-		self.menus.viewMenu = create_menubar_menu({
+		self.menus.viewMenu = gui.menubar_menu({
 			items = {
 				{
 					callback = function(self)
@@ -287,7 +287,7 @@ editor_interface.map_editor_page =
 			};
 		})
 
-		self.menus.gameMenu = create_menubar_menu({
+		self.menus.gameMenu = gui.menubar_menu({
 			items = {
 				{
 					callback = function() --GED:play()
@@ -312,7 +312,7 @@ editor_interface.map_editor_page =
 			};
 		})
 
-		self.menus.helpMenu = create_menubar_menu({
+		self.menus.helpMenu = gui.menubar_menu({
 			items = {
 				{
 					callback = function() os.execute("start http://gritengine.com/grit_book/") end;
@@ -361,7 +361,7 @@ editor_interface.map_editor_page =
 		self.menubar:append(self.menus.gameMenu, "Game")
 		self.menubar:append(self.menus.helpMenu, "Help")
 		
-		self.toolbar = create_toolbar({
+		self.toolbar = gui.toolbar({
 			parent = self.menubar;
 			zOrder = 5;
 			align = vec(-1, 0);
@@ -430,14 +430,14 @@ editor_interface.map_editor_page =
 		self.toolbar:addSeparator()
 		self.toolbar:addTool("Editor Settings", map_editor_icons.config, (function(self) open_window(editor_interface.map_editor_page.windows.settings) end), "Editor Settings")
 
-		self.mlefttoolbar = create_toolbar({
+		self.mlefttoolbar = gui.toolbar({
 			parent = hud_center;
 			zOrder = 5;
 			offset = vec(0, 20);
 			expand_offset = vec(0, -75);
 			expand_y = true;
 			align = vec(-1, -1);
-			orient = "v";
+			orient = "vertical";
 		})
 		
 		self.widget_menu = {}
@@ -479,7 +479,7 @@ editor_interface.map_editor_page =
 		self.mlefttoolbar:addSeparator()
 		
 		-- Status bar
-		self.statusbar = create_statusbar({ parent = hud_bottom_left, size = vec(0, 20), needsFrameCallbacks = true })
+		self.statusbar = gui.statusbar({ parent = hud_bottom_left, size = vec(0, 20), needsFrameCallbacks = true })
 		self.statusbar.needsFrameCallbacks = true
 		
 		local fid1, fsz1, fid2, fsz2
@@ -499,18 +499,18 @@ editor_interface.map_editor_page =
 
 		-- Windows
 		-- TODO: replace all these windows to dynamic windows (properly declared as a class)
-		-- self.windows.content_browser = create_window('Content Browser', vec2(editor_interface_cfg.content_browser.position[1], editor_interface_cfg.content_browser.position[2]), true, vec2(editor_interface_cfg.content_browser.size[1], editor_interface_cfg.content_browser.size[2]), vec2(640, 400), vec2(800, 600))
+		-- self.windows.content_browser = gui.window('Content Browser', vec2(editor_interface_cfg.content_browser.position[1], editor_interface_cfg.content_browser.position[2]), true, vec2(editor_interface_cfg.content_browser.size[1], editor_interface_cfg.content_browser.size[2]), vec2(640, 400), vec2(800, 600))
 		include`../windows/map_editor/content_browser.lua`
 		
 		self.windows.content_browser = create_content_browser()
 		
-		self.windows.event_editor = create_window('Event Editor', vec2(editor_interface_cfg.event_editor.position[1], editor_interface_cfg.event_editor.position[2]), true, vec2(editor_interface_cfg.event_editor.size[1], editor_interface_cfg.event_editor.size[2]), vec2(350, 200), vec2(800, 600))
-		self.windows.level_properties = create_window('Map Properties', vec2(editor_interface_cfg.level_properties.position[1], editor_interface_cfg.level_properties.position[2]), true, vec2(editor_interface_cfg.level_properties.size[1], editor_interface_cfg.level_properties.size[2]), vec2(380, 225), vec2(800, 600))
+		self.windows.event_editor = gui.window('Event Editor', vec2(editor_interface_cfg.event_editor.position[1], editor_interface_cfg.event_editor.position[2]), true, vec2(editor_interface_cfg.event_editor.size[1], editor_interface_cfg.event_editor.size[2]), vec2(350, 200), vec2(800, 600))
+		self.windows.level_properties = gui.window('Map Properties', vec2(editor_interface_cfg.level_properties.position[1], editor_interface_cfg.level_properties.position[2]), true, vec2(editor_interface_cfg.level_properties.size[1], editor_interface_cfg.level_properties.size[2]), vec2(380, 225), vec2(800, 600))
 		include`../windows/map_editor/map_properties.lua`
-		self.windows.material_editor = create_window('Material Editor', vec2(editor_interface_cfg.material_editor.position[1], editor_interface_cfg.material_editor.position[2]), true, vec2(editor_interface_cfg.material_editor.size[1], editor_interface_cfg.material_editor.size[2]), vec2(350, 200), vec2(800, 600))
-		self.windows.object_properties = create_window('Properties', vec2(editor_interface_cfg.object_properties.position[1], editor_interface_cfg.object_properties.position[2]), true, vec2(editor_interface_cfg.object_properties.size[1], editor_interface_cfg.object_properties.size[2]), vec2(350, 200), vec2(800, 600))
-		self.windows.outliner = create_window('Outliner', vec2(editor_interface_cfg.outliner.position[1], editor_interface_cfg.outliner.position[2]), true, vec2(editor_interface_cfg.outliner.size[1], editor_interface_cfg.outliner.size[2]), vec2(350, 200), vec2(800, 600))
-		-- self.windows.settings = create_window('Editor Settings', vec2(editor_interface_cfg.settings.position[1], editor_interface_cfg.settings.position[2]), true, vec2(editor_interface_cfg.settings.size[1], editor_interface_cfg.settings.size[2]), vec2(350, 200), vec2(800, 600))
+		self.windows.material_editor = gui.window('Material Editor', vec2(editor_interface_cfg.material_editor.position[1], editor_interface_cfg.material_editor.position[2]), true, vec2(editor_interface_cfg.material_editor.size[1], editor_interface_cfg.material_editor.size[2]), vec2(350, 200), vec2(800, 600))
+		self.windows.object_properties = gui.window('Properties', vec2(editor_interface_cfg.object_properties.position[1], editor_interface_cfg.object_properties.position[2]), true, vec2(editor_interface_cfg.object_properties.size[1], editor_interface_cfg.object_properties.size[2]), vec2(350, 200), vec2(800, 600))
+		self.windows.outliner = gui.window('Outliner', vec2(editor_interface_cfg.outliner.position[1], editor_interface_cfg.outliner.position[2]), true, vec2(editor_interface_cfg.outliner.size[1], editor_interface_cfg.outliner.size[2]), vec2(350, 200), vec2(800, 600))
+		-- self.windows.settings = gui.window('Editor Settings', vec2(editor_interface_cfg.settings.position[1], editor_interface_cfg.settings.position[2]), true, vec2(editor_interface_cfg.settings.size[1], editor_interface_cfg.settings.size[2]), vec2(350, 200), vec2(800, 600))
 
 		include`../windows/map_editor/settings.lua`
 		

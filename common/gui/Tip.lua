@@ -45,7 +45,7 @@ hud_class `Tip` {
 }
 
 _tip = {}
-function show_tip(text)
+function gui.showtip(text)
 	if _tip ~= nil and _tip.destroyed ~= nil then
 		_tip:destroy()
 	end

@@ -423,12 +423,12 @@ hud_class `MenuBar` (extends(GuiClass)
 
 _menus = {}
 
-function create_menubar_menu(options)
+function gui.menubar_menu(options)
 	local mn = gfx_hud_object_add(`Menu`, options)
 	_menus[#_menus+1] = mn
 	return mn
 end
 
-function create_menubar(options)
+function gui.menubar(options)
 	return gfx_hud_object_add(`MenuBar`, options)
 end

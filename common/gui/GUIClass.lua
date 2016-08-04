@@ -87,7 +87,7 @@ hud_class `GuiClass` (extends(GuiClass)
 	end;
 })
 
-function create_gui_object(options)
+function gui.object(options)
 	return gfx_hud_object_add(`GuiClass`, options)
 end
 

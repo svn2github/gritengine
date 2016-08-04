@@ -248,7 +248,7 @@ hud_class `FileDialog` (extends(WindowClass)
 		
 		self.currentdir = "/";
 		
-		self.ok_button = create_button({
+		self.ok_button = gui.button({
 			caption = "OK";
 			parent = self;
 			pressedCallback = function (self)
@@ -261,7 +261,7 @@ hud_class `FileDialog` (extends(WindowClass)
 			padding = vec(30, 4);
 			size = self.btn_size;
 		})		
-		self.cancel_button = create_button({
+		self.cancel_button = gui.button({
 			caption = "Cancel";
 			parent = self;
 			pressedCallback = function (self)
@@ -274,7 +274,7 @@ hud_class `FileDialog` (extends(WindowClass)
 			padding = vec(30, 4);
 			size = self.btn_size;
 		})		
-		self.selectbox = create_selectbox({
+		self.selectbox = gui.selectbox({
 			parent = self;
 			choices = self.choices;
 			selection = 0;
@@ -325,7 +325,7 @@ hud_class `FileDialog` (extends(WindowClass)
 		--self.file_explorer.enabled = false
 		self.scrollarea:setContent(self.file_explorer)
 		
-		self.updir_btn = create_imagebutton({
+		self.updir_btn = gui.imagebutton({
 			pressedCallback = function(self)
 				if self.parent.currentdir == "/" or self.parent.currentdir == "" then return end
 				self.parent.currentdir = self.parent.currentdir:reverse():sub(self.parent.currentdir:reverse():find("/", 2)+1):reverse()
@@ -346,7 +346,7 @@ hud_class `FileDialog` (extends(WindowClass)
 			zOrder = 4;
 		})
 
-		self.newfolder_btn = create_imagebutton({
+		self.newfolder_btn = gui.imagebutton({
 			pressedCallback = do_nothing;
 			icon_texture = _gui_textures.new_folder;
 			parent = self;
@@ -359,7 +359,7 @@ hud_class `FileDialog` (extends(WindowClass)
 			align = vec(1, 1);
 		})
 
-		self.iconsize_btn = create_imagebutton({
+		self.iconsize_btn = gui.imagebutton({
 			pressedCallback = do_nothing;
 			icon_texture = `/editor/assets/icons/map_editor/content_browser.png`;-- TODO: replace by a specific icon
 			parent = self;
@@ -489,28 +489,28 @@ hud_class `FileDialog` (extends(WindowClass)
 	end;
 })
 
-open_file_dialog = nil
-save_file_dialog = nil
+local _open_file_dialog = nil
+local _save_file_dialog = nil
 
-function create_filedialog(options)
+function gui.file_dialog(options)
 	local t_window = {}
 	t_window = gfx_hud_object_add(`FileDialog`, options)
 	_windows[#_windows+1] = t_window
 	return t_window
 end
 
-function create_openfiledialog(options)
-	if open_file_dialog ~= nil and not open_file_dialog.destroyed then
-		open_file_dialog:destroy()
+function gui.open_file_dialog(options)
+	if _open_file_dialog ~= nil and not _open_file_dialog.destroyed then
+		_open_file_dialog:destroy()
 	end
 	
-	return create_filedialog(options)
+	return gui.file_dialog(options)
 end
 
-function create_savefiledialog(options)
-	if save_file_dialog ~= nil and not save_file_dialog.destroyed then
-		save_file_dialog:destroy()
+function gui.save_file_dialog(options)
+	if _save_file_dialog ~= nil and not _save_file_dialog.destroyed then
+		_save_file_dialog:destroy()
 	end
 
-	return create_filedialog(options)
+	return gui.file_dialog(options)
 end

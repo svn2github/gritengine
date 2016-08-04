@@ -133,7 +133,7 @@ hud_class `Notebook` {
 			colour = self.contentAreaColour
 		})
 		self.current_page_content = {}
-		self.page_menu_list = create_objectlist({ parent = self.page_menu, alpha = 0, type = "h", border = 0, cellspacing = 0.5 })
+		self.page_menu_list = gui.list({ parent = self.page_menu, alpha = 0, orient = "horizontal", border = 0, cellSpacing = 0.5 })
 	end;
 	
 	destroy = function (self)
@@ -205,10 +205,10 @@ hud_class `Notebook` {
 	end;	
 }
 
-function create_notebook(t_parent)
+function gui.notebook(t_parent)
 	return gfx_hud_object_add(`Notebook`, { parent = t_parent })
 end
 
-function create_panel()
-	return create_box_sizer({ parent = hud_center, position = vec2(0, 0), size = vec(0, 0), colour = random_colour(), enabled = false })
+function gui.notebookpanel()
+	return gui.boxsizer({ parent = hud_center, position = vec2(0, 0), size = vec(0, 0), colour = random_colour(), enabled = false })
 end

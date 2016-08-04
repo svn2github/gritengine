@@ -92,6 +92,6 @@ hud_class `ColourWheel` {
 	end;
 }
 
-function create_colour_wheel(tab)
+function gui.colourwheel(tab)
 	return gfx_hud_object_add(`ColourWheel`, tab)
 end

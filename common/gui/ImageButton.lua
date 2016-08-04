@@ -16,9 +16,9 @@ hud_class `ImageButton` (extends(GuiClass)
 	activeColour = _current_theme.colours.image_button.active;
 	defaultColour = _current_theme.colours.image_button.base;
 	selected = false;
-	hoverTime = 0;
-	
 	colour = _current_theme.colours.image_button.base;
+	
+	hoverTime = 0;
 	
 	init = function (self)
 		GuiClass.init(self)
@@ -30,7 +30,9 @@ hud_class `ImageButton` (extends(GuiClass)
 		if self.icon_texture ~= nil then
 			self.icon = create_rect({ texture = self.icon_texture, size = self.size*0.8, parent = self })
 			self.cornered = true;
-			self.texture = _gui_textures.button;			
+			if self.texture == nil then
+				self.texture = _gui_textures.button;
+			end
 		end
 	end;
 
@@ -46,7 +48,7 @@ hud_class `ImageButton` (extends(GuiClass)
 	frameCallback = function (self, elapsed)
 		self.hoverTime = self.hoverTime + elapsed
 		if self.hoverTime >= 0.9 then
-			show_tip(self.tip)
+			gui.showtip(self.tip)
 			self.hoverTime = -1
 			self.needsFrameCallbacks = false
 		end
@@ -112,6 +114,6 @@ hud_class `ImageButton` (extends(GuiClass)
     end;	
 })
 
-function create_imagebutton(options)
-	return gfx_hud_object_add(`ImageButton`, options)
+function gui.imagebutton(tab)
+	return gfx_hud_object_add(`ImageButton`, tab)
 end

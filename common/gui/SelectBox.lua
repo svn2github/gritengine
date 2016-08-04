@@ -92,7 +92,7 @@ hud_class `selectmenu` {
 	size = vec(256, 256);
 	zOrder = 1;
 	lastItem = 0;
-	border = 2;
+	padding = 2;
 	colour = _current_theme.colours.selectbox.menu_base;
 	
 	init = function (self)
@@ -117,7 +117,7 @@ hud_class `selectmenu` {
 		
 		-- menu item and text position
 		for i = 1, #self.menuitems do
-			self.menuitems[i].position = vec2(0,  self.size.y/2 - ((i-1) * self.menuitems[i].size.y) -self.border -self.menuitems[i].size.y/2)
+			self.menuitems[i].position = vec2(0,  self.size.y/2 - ((i-1) * self.menuitems[i].size.y) -self.padding -self.menuitems[i].size.y/2)
 			if(self.menuitems[i].item ~= nil) then
 				self.menuitems[i].item.text.position = vec2(-self.menuitems[i].item.size.x/2 + self.menuitems[i].item.text.size.x/2+5, self.menuitems[i].item.text.position.y)
 			end
@@ -197,7 +197,7 @@ hud_class `Selectbox` (extends(GuiClass)
 	iconHoverColour = _current_theme.colours.selectbox.icon_hover;
 	iconPressedColour = _current_theme.colours.selectbox.icon_pressed;
 	
-	defaulttext = "";
+	defaultText = "";
 	selected = {};
 	choices = {};
 	cornered = true;
@@ -226,7 +226,7 @@ hud_class `Selectbox` (extends(GuiClass)
 		})
 		self.caption = gfx_hud_text_add(`/common/fonts/Arial12`)
 		self.caption.parent = self.caption_pos
-		self:setTitle(self.defaulttext)
+		self:setTitle(self.defaultText)
 		
 		self.menu = gfx_hud_object_add(`selectmenu`, { parent = self })
 		
@@ -330,6 +330,6 @@ hud_class `Selectbox` (extends(GuiClass)
     end;
 })
 
-function create_selectbox(options)
-	return gfx_hud_object_add(`Selectbox`, options)
+function gui.selectbox(tab)
+	return gfx_hud_object_add(`Selectbox`, tab)
 end
