@@ -26,32 +26,15 @@ function GritMap.new()
 			env_cube_dusk = '';
 			env_cube_dark = '';		
 		};
-		editor =
-		{
-			cam_pos = vec(0, 0, 0);
-			cam_quat = quat(1, 0, 0, 0);
-		};
-		environment =
-		{
-			time = 0;
-			clock_rate = 0;
-			env_cycle_file = "";
-		};
-		include = {};
-		objects = {};
-		object_properties = {};	
+
+		env_cycle_file = "";
+
+		version = 4;
 	}
 
 	make_instance(self, GritMap)
 	return self
 end;
-
-function GritMap:registerObject(obj)
-	if obj ~= nil and not obj.destroyed then
-		self.objects[obj.name] = obj
-		-- self.object_properties[obj.name] = {}
-	end
-end
 
 function GritMap:applyEnvCube()
 	if self.env_cubes.env_cube ~= nil and self.env_cubes.env_cube ~= "" then
@@ -112,80 +95,59 @@ end
 
 in_editor = in_editor or false
 
-function GritMap:open(mapfile)
-	--object_all_del()
+gritmap = gritmap or nil
 
-	local fdir = mapfile:match("(.*/)")
-	
+function GritMap:open(mapfile)
 	object_all_del()
-	safe_include (mapfile)
-	if gritmap == nil then
+	
+	local mapreturn = safe_include (mapfile)
+	
+	if gritmap == nil and not mapreturn then
 		print(RED.."This file is not a Grit Map File")
 		return false
 	end
-	
-	if type(gritmap) == "string" then
-		gritmap = unpickle(gritmap)
-	end
-	
-	if gritmap.properties.name ~= nil then
-		self.name = gritmap.properties.name
-	end
-	if gritmap.author ~= nil then
-		self.author = gritmap.properties.author
-	end
-	if gritmap.properties.description ~= nil then
-		self.description = gritmap.properties.description
-	end
-	if gritmap.environment ~= nil then
-		self.environment = table.clone(gritmap.environment)
-	end
-	
-	self.env_cubes.env_cube = gritmap.env_cubes.env_cube or gfx_env_cube(0)
-	self.env_cubes = table.clone(gritmap.env_cubes)
-	
-	self.environment.time = gritmap.environment.time or (12 * 60 * 60)
-	self.file_name = mapfile:sub(2)
-	
-	if gritmap.include ~= nil then
-		self.include = table.clone(gritmap.include)
-	end
-	
-	include(fdir.."init.lua")
-	
-	if self.include ~= nil and #self.include > 0 then
-		for i = 1, #self.include do
-			safe_include(self.include[i])
-		end
-	end
-	
-	for i = 1, #gritmap.objects do
-		self.object_properties[gritmap.objects[i].name] = table.clone(gritmap.objects[i].properties)
-	end
 
+	safe_include(mapfile:match("(.*/)").."init.lua")
+
+	 -- gritmap = mapreturn
 	for i = 1, #gritmap.objects do
-		if(class_has(gritmap.objects[i].class)) then
-			self.objects[gritmap.objects[i].name] = object (gritmap.objects[i].class) (gritmap.objects[i].position) (table_concat(gritmap.objects[i].properties, { name = gritmap.objects[i].name, orientation = gritmap.objects[i].orientation }))
+		local randomname = math.random(10000)
+		if(class_has(gritmap.objects[i][1])) then
+			object (gritmap.objects[i][1]) (gritmap.objects[i][2]) (gritmap.objects[i][3] or {})
 		else
 			print(RED.."Class: "..gritmap.objects[i].class.." not declared.")
 		end
-	end	
+	end
 
-	-- if(pcall(gritmap.map) ~= true) then
-		-- print(RED.."ERROR LOADING MAP")
-		-- return false
-	-- end
-	-- self.objects = object_all()
+	if gritmap.properties then
+		if gritmap.properties.name ~= nil then
+			self.name = gritmap.properties.name
+		end
+		if gritmap.properties.author ~= nil then
+			self.author = gritmap.properties.author
+		end
+		if gritmap.properties.description ~= nil then
+			self.description = gritmap.properties.description
+		end
+	end
+	self.env_cubes = table.clone(gritmap.env_cubes)
+	self.env_cubes.env_cube = gritmap.env_cubes.env_cube or gfx_env_cube(0)
 	
-	-- self.spawn_point.instance.body.ghost = true
+	self.file_name = mapfile:sub(2)
+
 	if in_editor then
-		self:setCamera()
+		self:setCamera(gritmap.editor.cam_pos, gritmap.editor.cam_quat)
 	end
 	
-	env.secondsSinceMidnight = self.environment.time
-	
-	if self.environment.env_cycle_file ~= nil and self.environment.env_cycle_file ~= "" then
-		safe_include(self.environment.env_cycle_file)
+	if gritmap.environment then
+		env.secondsSinceMidnight = gritmap.environment.time or (12 * 60 * 60)
+		env.clockRate = gritmap.environment.clockRate or 0	
+		if gritmap.environment.env_cycle_file ~= nil then
+			self.env_cycle_file = gritmap.environment.env_cycle_file
+			if self.env_cycle_file ~= "" then
+				safe_include(self.env_cycle_file)
+			end
+		end
 	end
 	
 	self:applyEnvCube()
@@ -194,12 +156,9 @@ function GritMap:open(mapfile)
 	return true
 end
 
-function GritMap:setCamera()
-	self.editor.cam_pos = gritmap.editor.cam_pos or vector3(0, 0, 0)
-	self.editor.cam_quat = gritmap.editor.cam_quat or quat(1, 0, 0, 0)
-	
-	main.camPos = self.editor.cam_pos
-	main.camQuat = self.editor.cam_quat
+function GritMap:setCamera(pos, orient)
+	main.camPos = pos
+	main.camQuat = orient
 	if in_editor then
 		GED.camPitch = quatPitch(main.camQuat)
 		GED.camYaw = cam_yaw_angle()
@@ -217,95 +176,138 @@ end
 
 function GritMap:save()
 	local file = io.open(self.file_name, "w")
-
 	if file == nil then print(RED.."Could not open file", 1) return false end
 	
-	local tmap = {}
+	local tmap = {
+		version = self.version;
+		properties = {
+			name = self.name;
+			author = self.author;
+			description = self.description;
+		};
+		editor = {
+			cam_pos = main.camPos;
+			cam_quat = main.camQuat;
+		};
+		env_cubes = self.env_cubes;
+		environment = {
+			time = env.secondsSinceMidnight;
+			clock_rate = env.clockRate;
+			env_cycle_file = self.env_cycle_file;
+		};
+		objects = {};
+	}
 	
+	local objects = object_all()
+
+	for k, v in pairs(objects) do
+		if not objects[k].destroyed and not objects[k].editorObject then
+			local cnt = {}
+			--local id = self:findClassID(self.objects[k].className:gsub("_LOD", "", 1))
+			--if id ~= 0 then
+				cnt[1] = objects[k].className:gsub("_LOD", "", 1)
+				cnt[2] = objects[k].spawnPos or V_ZERO
+				cnt[3] = get_object_properties(objects[k])
+
+				tmap.objects[#tmap.objects+1] = cnt
+			--end
+		end
+	end	
+
 	file:write(
 [[
 -- Map file generated by Grit Editor.
 
 gritmap =
-[[ ]])
-	tmap.properties = {}
-	tmap.properties.name = self.name
-	tmap.properties.author = self.author
-	tmap.properties.description = self.description
+]])	
 	
-	self.editor.cam_pos = main.camPos
-	self.editor.cam_quat = main.camQuat
-	
-	tmap.editor = self.editor
-	tmap.env_cubes = self.env_cubes
-	
-	self.environment.time = env.secondsSinceMidnight
-	
-	tmap.environment = self.environment
-	tmap.include = self.include
-
-	self.objects = object_all()
-	
-	local map_objects = {}
-	
-	for k, v in pairs(self.objects) do
-		if not self.objects[k].destroyed then
-			local cnt = {}
-			--local id = self:findClassID(self.objects[k].className:gsub("_LOD", "", 1))
-			--if id ~= 0 then
-				cnt.class = self.objects[k].className:gsub("_LOD", "", 1)
-				cnt.name = self.objects[k].name
-				cnt.position = self.objects[k].spawnPos or V_ZERO
-				cnt.orientation = self.objects[k].rot or quat(1, 0, 0, 0)
-				-- cnt[5] = self.objects[i].scale
-				cnt.properties = self.object_properties[k]
-			
-				map_objects[#map_objects+1] = cnt
-			--end
-		end
-	end	
-	
-	tmap.objects = map_objects
-
-	file:write(pickle(tmap).."]]")
-
-	--file:write(dump(tmap, false))
+	file:write(table.serialize(tmap, false))
 	return file:close()
 end
 
+function get_object_properties(obj)
+	if obj and not obj.destroyed then
+		local obj_prop = obj.dump or {}
+		obj_prop.spawnPos = nil
+		obj_prop.orientation = nil
+		obj_prop.skipNextActivation = nil
+		obj_prop.name = obj.name
+		obj_prop.rot = obj.orientation
+		return obj_prop
+	end
+end
+
+-- reference: http://stackoverflow.com/questions/6075262/lua-table-tostringtablename-and-table-fromstringstringtable-functions by Henrik Ilgen
+-- keeps array order and omit functions and userdata
+function table.serialize(val, name, skipnewlines, depth)
+    skipnewlines = skipnewlines or false
+    depth = depth or 0
+	if type(val) == "function" or type(val) == "userdata" then return nil end
+    local tmp = string.rep("	", depth)
+
+    if name then
+		if tonumber(name) then
+			tmp = tmp .. "["..name .. "] = "
+		else
+			if not string.match(name, '^[a-zA-z_][a-zA-Z0-9_]*$') then
+				name = string.gsub(name, "'", "\\'")
+				name = "['".. name .. "']"
+			end
+			tmp = tmp .. name .. " = "
+		end
+	end
+
+    if type(val) == "table" then
+        tmp = tmp .. "{" .. (not skipnewlines and "\n" or "")
+
+        for k, v in pairs(val) do
+			local st = table.serialize(v, k, skipnewlines, depth + 1)
+			if st ~= nil then
+				tmp =  tmp .. st .. ";" .. (not skipnewlines and "\n" or "")
+			end
+        end
+
+        tmp = tmp .. string.rep("	", depth) .. "}"
+    elseif type(val) == "string" then
+        tmp = tmp .. string.format("%q", val)
+    else
+		 tmp = tmp .. tostring(val)
+    end
+
+    return tmp
+end
+
 function GritMap:export(file_name)
+	-- maybe will be removed, but for now save all objects
+	local objects = object_all()
+	if objects == nil or not next(objects) then return end
+	
 	local file = io.open(file_name, "w")
 	print(file_name)
 	if file == nil then print(RED.."Could not open file", 1) return false end
 	
-	-- maybe will be removed, but for now save all objects
-	self.objects = object_all()
-	
 	file:write(
 [[
 -- Lua file generated by Grit Editor.
--- WARNING: If you modify this file, your changes will be lost if it is subsequently re-saved from editor]]
+-- WARNING: If you modify this file, your changes will be lost if it is subsequently re-exported from editor]]
 )
 	file:write("\n")
-	for i = 1, #self.objects do
-		-- to save deactivated objects too
-		self.objects[i]:activate()
+	for i = 1, #objects do
+		if objects[i] ~= nil and not objects[i].destroyed and objects[i].editorObject == nil then
+			-- to save deactivated objects too
+			objects[i]:activate()
 		
-		if self.objects[i].editorObject == nil then
 			-- reset class name for objects using LOD
-			local class_name = self.objects[i].className:gsub("_LOD", "", 1)
+			local class_name = objects[i].className:gsub("_LOD", "", 1)
 			
 			file:write("\n")
 			-- dump_object_line() not used only because LOD object fix
-			-- objects with collision
-			if self.objects[i].instance.body ~= nil then
-				file:write("object \""..class_name.."\" ("..self.objects[i].instance.body.worldPosition..") {".."rot="..self.objects[i].instance.body.worldOrientation..", name=\""..self.objects[i].name.."\" }")
-			-- objects without collision
-			elseif self.objects[i].instance.gfx ~= nil then
-				file:write("object \""..class_name.."\" ("..self.objects[i].instance.gfx.localPosition..") {".."rot="..self.objects[i].instance.gfx.localOrientation..", name=\""..self.objects[i].name.."\" }")
+
+			if objects[i].instance.body ~= nil or objects[i].instance.gfx ~= nil then
+				file:write("object \""..class_name.."\" ("..(objects[i].spawnPos or V_ZERO)..") "..table.serialize(get_object_properties(objects[i])))
 			-- sounds
-			elseif self.objects[i].instance.audio then
-				file:write("object \""..class_name.."\" ("..self.objects[i].instance.audio.position..") {".."orientation="..self.objects[i].instance.audio.orientation..", name=\""..self.objects[i].name.."\" }")
+			elseif objects[i].instance.audio then
+				file:write("object \""..class_name.."\" ("..objects[i].instance.audio.position..") { orientation = "..objects[i].instance.audio.orientation..", name = \""..objects[i].name.."\" }")
 			end
 		end
 	end

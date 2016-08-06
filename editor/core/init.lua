@@ -15,7 +15,6 @@ include `defaultconfig/recent.lua`
 safe_include `../config/recent.lua`
 
 include `widget_manager.lua`
-include `Pickle.lua`
 include `core.lua`
 
 current_map = current_map or nil

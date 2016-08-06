@@ -2,141 +2,100 @@
 
 gritmap =
 {
-  editor      =   {
-    cam_pos  = vector3(-17.1811, -14.60945, 12.75512);
-    cam_quat = quat(0.8154584, -0.3283081, 0.1780342, -0.4422051);
-  };
-  env_cubes   =   {
-    env_cube      = "";
-    env_cube_dark = "";
-    env_cube_dawn = "";
-    env_cube_dusk = "";
-    env_cube_noon = "";
-  };
-  environment =   {
-    clock_rate     = 0;
-    env_cycle_file = "";
-    time           = 43200;
-  };
-  include     = {};
-  objects     = {   {
-    class       = "/common/props/industry/BoringBarrel";
-    name        = "Unnamed:/common/props/industry/BoringBarrel:25994";
-    orientation = quat(1, 0, 0, 0);
-    position    = vector3(-4.488408, -8.886621, 0.2066899);
-  },   {
-    class       = "/maps/navigation_demo/RobotScout";
-    name        = "Unnamed:/navigation_demo/RobotScout:8705";
-    orientation = quat(1, 0, 0, 0);
-    position    = vector3(-11.4, -12.6, 0.8);
-    properties  = {};
-  },   {
-    class       = "/common/props/bowling/Pin";
-    name        = "Unnamed:/common/props/bowling/Pin:42948";
-    orientation = quat(1, 0, 0, 0);
-    position    = vector3(-7.129782, -8.875875, -0.07081008);
-    properties  = {};
-  },   {
-    class       = "/maps/navigation_demo/navmeshtest";
-    name        = "Unnamed:/navigation_demo/navmeshtest:35525";
-    orientation = quat(1, 0, 0, 0);
-    position    = vector3(0, 0, 0);
-    properties  = {};
-  },   {
-    class       = "/common/props/bowling/Pin";
-    name        = "Unnamed:/common/props/bowling/Pin:15200";
-    orientation = quat(1, 0, 0, 0);
-    position    = vector3(-8.078918, -7.278009, -0.07081103);
-    properties  = {};
-  },   {
-    class       = "/common/props/industry/BoringBarrel";
-    name        = "Unnamed:/common/props/industry/BoringBarrel:30358";
-    orientation = quat(1, 0, 0, 0);
-    position    = vector3(-6.560123, -10.40107, 0.2066899);
-  },   {
-    class       = "/maps/navigation_demo/RobotMed";
-    name        = "Unnamed:/navigation_demo/RobotMed:15200";
-    orientation = quat(1, 0, 0, 0);
-    position    = vector3(-9.224091, -13.07049, 1.890617);
-    properties  = {};
-  },   {
-    class       = "/common/props/bowling/Pin";
-    name        = "Unnamed:/common/props/bowling/Pin:8705";
-    orientation = quat(1, 0, 0, 0);
-    position    = vector3(-6.481492, -9.56488, -0.07081008);
-    properties  = {};
-  },   {
-    class       = "/common/props/bowling/Pin";
-    name        = "Unnamed:/common/props/bowling/Pin:749";
-    orientation = quat(1, 0, 0, 0);
-    position    = vector3(-5.972525, -6.577824, -0.07081008);
-    properties  = {};
-  },   {
-    class       = "/common/props/bowling/Pin";
-    name        = "Unnamed:/common/props/bowling/Pin:25677";
-    orientation = quat(1, 0, 0, 0);
-    position    = vector3(-5.851483, -8.689445, -0.07081008);
-    properties  = {};
-  },   {
-    class       = "/maps/navigation_demo/RobotHeavy";
-    name        = "Unnamed:/navigation_demo/RobotHeavy:25677";
-    orientation = quat(1, 0, 0, 0);
-    position    = vector3(-5.8, -13.4, 0.9);
-    properties  = {};
-  },   {
-    class       = "/common/props/bowling/Pin";
-    name        = "Unnamed:/common/props/bowling/Pin:8295";
-    orientation = quat(1, 0, 0, 0);
-    position    = vector3(-6.427202, -4.376955, -0.07081008);
-    properties  = {};
-  },   {
-    class       = "/common/props/industry/BoringBarrel";
-    name        = "Unnamed:/common/props/industry/BoringBarrel:30384";
-    orientation = quat(1, 0, 0, 0);
-    position    = vector3(-6.609487, -7.78679, 0.2066899);
-  },   {
-    class       = "/common/props/industry/BoringBarrel";
-    name        = "Unnamed:/common/props/industry/BoringBarrel:36334";
-    orientation = quat(1, 0, 0, 0);
-    position    = vector3(-3.854669, -6.877392, 0.2066909);
-  },   {
-    class       = "/common/props/industry/BoringBarrel";
-    name        = "Unnamed:/common/props/industry/BoringBarrel:26968";
-    orientation = quat(1, 0, 0, 0);
-    position    = vector3(-6.144365, -5.004786, 0.2066899);
-  },   {
-    class       = "/common/props/industry/BoringBarrel";
-    name        = "Unnamed:/common/props/industry/BoringBarrel:22539";
-    orientation = quat(1, 0, 0, 0);
-    position    = vector3(-8.391824, -8.727271, 0.206689);
-  },   {
-    class       = "/common/props/bowling/Pin";
-    name        = "Unnamed:/common/props/bowling/Pin:7365";
-    orientation = quat(1, 0, 0, 0);
-    position    = vector3(-3.753361, -5.930708, -0.07081103);
-    properties  = {};
-  },   {
-    class       = "/common/props/bowling/Pin";
-    name        = "Unnamed:/common/props/bowling/Pin:35525";
-    orientation = quat(1, 0, 0, 0);
-    position    = vector3(-5.49661, -9.913546, -0.07080913);
-    properties  = {};
-  },   {
-    class       = "/common/props/bowling/Pin";
-    name        = "Unnamed:/common/props/bowling/Pin:4570";
-    orientation = quat(1, 0, 0, 0);
-    position    = vector3(-7.162292, -5.557843, -0.07081008);
-    properties  = {};
-  },   {
-    class       = "/common/props/bowling/Pin";
-    name        = "Unnamed:/common/props/bowling/Pin:18222";
-    orientation = quat(1, 0, 0, 0);
-    position    = vector3(-5.372951, -5.242907, -0.07081008);
-    properties  = {};
-  } };
-  properties  =   {
-    author      = "";
-    description = "";
-    name        = "Map_0.85894344920194";
-  };
+	editor = {
+		cam_pos = vector3(-17.1811, -14.60945, 12.75512);
+		cam_quat = quat(0.8154584, -0.3283081, 0.1780342, -0.4422051);
+	};
+	env_cubes = {
+		env_cube = "";
+		env_cube_dark = "";
+		env_cube_dawn = "";
+		env_cube_dusk = "";
+		env_cube_noon = "";
+	};
+	environment = {
+		clock_rate = 0;
+		env_cycle_file = "";
+		time = 43200;
+	};
+	objects = {	 {
+		"/common/props/industry/BoringBarrel";
+		vector3(-4.488408, -8.886621, 0.2066899);
+	},	 {
+		"/maps/navigation_demo/RobotScout";
+		vector3(-11.4, -12.6, 0.8);
+		properties	= {};
+	},	 {
+		"/common/props/bowling/Pin";
+		vector3(-7.129782, -8.875875, -0.07081008);
+		properties	= {};
+	},	 {
+		"/maps/navigation_demo/navmeshtest";
+		vector3(0, 0, 0);
+		properties	= {};
+	},	 {
+		"/common/props/bowling/Pin";
+		vector3(-8.078918, -7.278009, -0.07081103);
+		properties	= {};
+	},	 {
+		"/common/props/industry/BoringBarrel";
+		vector3(-6.560123, -10.40107, 0.2066899);
+	},	 {
+		"/maps/navigation_demo/RobotMed";
+		vector3(-9.224091, -13.07049, 1.890617);
+		properties	= {};
+	},	 {
+		"/common/props/bowling/Pin";
+		vector3(-6.481492, -9.56488, -0.07081008);
+		properties	= {};
+	},	 {
+		"/common/props/bowling/Pin";
+		vector3(-5.972525, -6.577824, -0.07081008);
+		properties	= {};
+	},	 {
+		"/common/props/bowling/Pin";
+		vector3(-5.851483, -8.689445, -0.07081008);
+		properties	= {};
+	},	 {
+		"/maps/navigation_demo/RobotHeavy";
+		vector3(-5.8, -13.4, 0.9);
+		properties	= {};
+	},	 {
+		"/common/props/bowling/Pin";
+		vector3(-6.427202, -4.376955, -0.07081008);
+		properties	= {};
+	},	 {
+		"/common/props/industry/BoringBarrel";
+		vector3(-6.609487, -7.78679, 0.2066899);
+	},	 {
+		"/common/props/industry/BoringBarrel";
+		vector3(-3.854669, -6.877392, 0.2066909);
+	},	 {
+		"/common/props/industry/BoringBarrel";
+		vector3(-6.144365, -5.004786, 0.2066899);
+	},	 {
+		"/common/props/industry/BoringBarrel";
+		vector3(-8.391824, -8.727271, 0.206689);
+	},	 {
+		"/common/props/bowling/Pin";
+		vector3(-3.753361, -5.930708, -0.07081103);
+		properties	= {};
+	},	 {
+		"/common/props/bowling/Pin";
+		vector3(-5.49661, -9.913546, -0.07080913);
+		properties	= {};
+	},	 {
+		"/common/props/bowling/Pin";
+		vector3(-7.162292, -5.557843, -0.07081008);
+		properties	= {};
+	},	 {
+		"/common/props/bowling/Pin";
+		vector3(-5.372951, -5.242907, -0.07081008);
+		properties	= {};
+	} };
+	properties = {
+		author = "";
+		description = "";
+		name	= "Map_0.85894344920194";
+	};
 }
