@@ -496,14 +496,14 @@ function gui.open_file_dialog(options)
 	if _open_file_dialog ~= nil and not _open_file_dialog.destroyed then
 		_open_file_dialog:destroy()
 	end
-	
-	return gui.file_dialog(options)
+	_open_file_dialog = gui.file_dialog(options)
+	return _open_file_dialog
 end
 
 function gui.save_file_dialog(options)
 	if _save_file_dialog ~= nil and not _save_file_dialog.destroyed then
 		_save_file_dialog:destroy()
 	end
-
-	return gui.file_dialog(options)
+	_save_file_dialog = gui.file_dialog(options)
+	return _save_file_dialog
 end

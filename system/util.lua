@@ -805,7 +805,7 @@ okDialogButton = nil
 
 function okDialogcreation(subject, message, functioncall)
 if okDialogWindow == nil then
-	okDialogWindow = create_window(subject, vec2(-1000,-1000), false, vec2(600, 200))
+	okDialogWindow = gui.window(subject, vec2(-1000,-1000), false, vec2(600, 200))
 	okDialogText = gfx_hud_object_add(`../common/hud/Label`, {
 		value = message;
 		size = vec(600, 150);
@@ -841,7 +841,7 @@ noDialogButton = nil
 
 function yesnoDialogcreation(subject, message, functioncall)
 if yesnoDialogWindow == nil then
-	yesnoDialogWindow = create_window(subject, vec2(-1000,-1000), false, vec2(600, 200))
+	yesnoDialogWindow = gui.window(subject, vec2(-1000,-1000), false, vec2(600, 200))
 	yesnoDialogText = gfx_hud_object_add(`../common/hud/Label`, {
 		value = message;
 		size = vec(600, 150);
@@ -888,7 +888,7 @@ cancelCDialogButton = nil
 
 function yesnocancelDialogcreation(subject, message, functioncall)
 if yesnocancelDialogWindow == nil then
-	yesnocancelDialogWindow = create_window(subject, vec2(-1000,-1000), false, vec2(600, 200))
+	yesnocancelDialogWindow = gui.window(subject, vec2(-1000,-1000), false, vec2(600, 200))
 	yesnocancelDialogText = gfx_hud_object_add(`../common/hud/Label`, {
 		value = message;
 		size = vec(600, 150);
