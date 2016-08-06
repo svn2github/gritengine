@@ -29,6 +29,7 @@ hud_class `MenuItem` {
 			value = self.value;
 			alpha = 0;
 			colour = self.colour;
+			font = _current_theme.fonts.menu_bar.menu;
 		})
 		self.icon = create_rect({
 			parent = self.item,
@@ -322,14 +323,15 @@ hud_class `MenuBar` (extends(GuiClass)
 {
     colour = _current_theme.colours.menu_bar.background;
 	alpha = _current_theme.colours.menu_bar.background_alpha;
-	buttonPadding = vec(16, 4);
-	lastButton = 0;
+	buttonPadding = vec(8, 4);
+	lastButton = -35;
 	selected = nil;
 	selecting = false;
 	spacing = 1;
 	size = vec(2, 26);
 	-- texture = `../icons/menubar.png`;
 	distanceToUnselect = 200;
+	zOrder = 6;
 	
     init = function (self)
 		GuiClass.init(self)

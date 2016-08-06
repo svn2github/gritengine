@@ -4,10 +4,15 @@ hud_class `browser_icon2` {
 	size = vec(80, 80);
 	colour=vec(1, 0, 0);
 	zOrder = 0;
-	hoverColour = vec(1, 0.5, 0);
-	clickColour = vec(1, 0, 0);
-	normalColour = vec(0.5, 0.5, 0.5);
-	selectedColour = vec(1, 0.8, 0);
+	hoverColour = _current_theme.colours.browser_icon.hover;
+	clickColour = _current_theme.colours.browser_icon.click;
+	defaultColour = _current_theme.colours.browser_icon.default;
+	selectedColour = _current_theme.colours.browser_icon.selected;
+	textHoverColour = _current_theme.colours.browser_icon.text_hover;
+	textClickColour = _current_theme.colours.browser_icon.text_click;
+	textSelectedColour = _current_theme.colours.browser_icon.text_selected;
+	textDefaultColour = _current_theme.colours.browser_icon.text_default;
+	
 	name = "Default";
 	
 	init = function (self)
@@ -22,6 +27,7 @@ hud_class `browser_icon2` {
 		end
 		self.text.position = vec2(0, -self.icon.size.y/2+5)
 		self.text.parent = self
+		self.text.colour = self.textDefaultColour
 	end;
 	
 	destroy = function (self)

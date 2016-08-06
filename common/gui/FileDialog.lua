@@ -10,6 +10,14 @@
 hud_class `window_editbox` (extends(table_concat_copy(GuiClass, EditBox))
 {
 	alpha = 1;
+	
+    textColour = _current_theme.colours.editbox.text;
+    borderColour = _current_theme.colours.editbox.border;
+
+    colour = _current_theme.colours.editbox.background;
+    font = _current_theme.colours.editbox.font;
+	texture = _current_theme.colours.editbox.texture;
+	
 	init = function (self)
 		GuiClass.init(self)
 		EditBox.init(self)
@@ -35,9 +43,13 @@ hud_class `window_editbox` (extends(table_concat_copy(GuiClass, EditBox))
     end;
 })
 
+function break_line(str, maxchar)
+	return str:gsub('(\\s)', '\n')
+end
+
 hud_class `browser_icon` {
 	alpha = 0;
-	size = vec(80, 80);
+	size = vec(64, 64);
 	colour = vec(1, 0, 0);
 	zOrder = 0;
 	
@@ -55,12 +67,13 @@ hud_class `browser_icon` {
 	
 	init = function (self)
 		self.needsInputCallbacks = true
-		self.icon = create_rect({ texture = self.icon_texture, size = vec2(64, 64), parent = self, position = vec(0, 8) })
-		self.text = gfx_hud_text_add(`/common/fonts/Verdana12`)
+		self.icon = create_rect({ texture = self.icon_texture, size = vec2(42, 42), parent = self, position = vec(0, 8) })
+		self.text = gfx_hud_text_add(`/common/fonts/TinyFont`)
 		self.text.text = self.name
 		if self.text.size.x >= self.size.x then
 			-- print("long name: "..self.name)
-			self.text.text = self.name:reverse():sub(-9):reverse().."..."
+			-- self.text.text = self.name:reverse():sub(-9):reverse().."..."
+			self.text.text = break_line(self.name)
 			--self.name:reverse():gsub(".....", "...", 1):reverse()
 		end
 		self.text.position = vec2(0, -self.icon.size.y/2+5)
@@ -139,7 +152,7 @@ hud_class `file_list` (extends(GuiClass)
 {
 	size = vec(0, 0);
 	alpha = 1;
-	icons_size = vec2(80, 80);
+	icons_size = vec2(64, 64);
     icons_spacing = 4;
 	selected = {};
 	colour = _current_theme.colours.file_explorer.background;
@@ -482,8 +495,8 @@ hud_class `FileDialog` (extends(WindowClass)
 	end;
 })
 
-local _open_file_dialog = nil
-local _save_file_dialog = nil
+_open_file_dialog = nil
+_save_file_dialog = nil
 
 function gui.file_dialog(options)
 	local t_window = {}

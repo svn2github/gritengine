@@ -73,7 +73,6 @@ hud_class `Settings` (extends(WindowClass)
 			_current_theme = editor_themes[self.selected.name]
 			GED:saveEditorInterface()
 			restart_editor_gui()
-			notify("Restart Editor to take full effect", vec(0, 1, 0))
 		end;
 		
 		self.content.system_panel = gui.notebookpanel()

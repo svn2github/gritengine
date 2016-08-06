@@ -2,7 +2,7 @@ _gui_textures =
 {
 	arrow_up = `/common/gui/icons/arrow_icon.png`;
 	asterisk = `/common/gui/icons/asterisk_icon.png`;
-	button = `/common/hud/CornerTextures/Filled04.png`;
+	button = nil; -- `/common/hud/CornerTextures/Filled04.png`;
 	checkbox = 
 	{
 		background = `/common/gui/icons/checkbox_background.png`;
@@ -13,7 +13,7 @@ _gui_textures =
 	grad_notebook = `/common/gui/icons/grad_notebook.png`;
 	help_icon = `/common/gui/icons/help_icon.png`;
 	line = `/common/gui/icons/line.png`;
-	menu = `/common/hud/CornerTextures/Filled02.png`;
+	menu = nil; -- `/common/hud/CornerTextures/Filled02.png`;
 	notebook_button = `/common/gui/icons/notebook_button.png`;
 	radio_button =
 	{

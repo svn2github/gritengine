@@ -224,8 +224,10 @@ hud_class `Selectbox` (extends(GuiClass)
 			offset = vec2(10, 0);
 			factor = vec2(-0.5, 0);
 		})
-		self.caption = gfx_hud_text_add(`/common/fonts/Arial12`)
+		self.caption = gfx_hud_text_add(_current_theme.fonts.default)
 		self.caption.parent = self.caption_pos
+		self.caption.colour = self.captionBaseColour
+		
 		self:setTitle(self.defaultText)
 		
 		self.menu = gfx_hud_object_add(`selectmenu`, { parent = self })
@@ -320,12 +322,15 @@ hud_class `Selectbox` (extends(GuiClass)
 		if self.dragging and self.inside then
 			self.icon.colour = self.iconPressedColour
 			self.colour = self.pressedColour
+			self.caption.colour = self.captionPressedColour
 		elseif self.inside then
 			self.icon.colour = self.iconHoverColour
 			self.colour = self.hoverColour
+			self.caption.colour = self.captionHoverColour
 		elseif not self.menu.enabled then
 			self.icon.colour = self.iconColour
 			self.colour = self.baseColour
+			self.caption.colour = self.captionBaseColour
 		end
     end;
 })

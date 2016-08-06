@@ -112,7 +112,7 @@ hud_class `ScrollArea` (extends(GuiClass)
 	size = vec(0, 0);
 	alpha = 1;
 
-	colour = V_ID*0.5;
+	colour = _current_theme.colours.file_explorer.background;
 	
 	expand = true;
 	

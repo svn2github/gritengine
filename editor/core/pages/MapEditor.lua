@@ -4,7 +4,7 @@ function open_map_dialog()
 		parent = hud_center;
 		position = vec(0, 0);
 		resizeable = true;
-		size = vec2(560, 375);
+		size = vec2(560, 390);
 		min_size = vec2(470, 290);
 		colour = _current_theme.colours.window.background;
 		alpha = 1;
@@ -31,7 +31,7 @@ function save_map_dialog()
 		parent = hud_center;
 		position = vec(0, 0);
 		resizeable = true;
-		size = vec2(560, 375);
+		size = vec2(560, 390);
 		min_size = vec2(470, 290);
 		colour = _current_theme.colours.window.background;
 		alpha = 1;
@@ -620,6 +620,7 @@ function restart_editor_gui()
 	editor_interface.map_editor_page:destroy()
 	editor_interface.map_editor_page:init()
 	editor_interface.map_editor_page:select()
+	editor_interface:reloadTheme()
 	restart_editor_tools()
 end
 

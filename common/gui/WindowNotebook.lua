@@ -107,6 +107,24 @@ hud_class `roundbutton` (extends(GuiClass)
 		GuiClass.parentResizedCallback(self, psize)
 	end;	
 	
+	reloadTheme = function(self)
+		local class = gfx_hud_class_get(self.className)
+		self.alpha = class.alpha
+		self.colour = class.colour
+		self.texture = class.texture
+		
+		self.baseColour = class.baseColour
+		self.hoverColour = class.hoverColour
+		self.pressedColour = class.pressedColour
+		self.selectedColour = class.selectedColour
+		
+		self.text.font = class.font
+		self.captionColour = class.captionColour
+		self.captionHoverColour = class.captionHoverColour
+		self.captionPressedColour = class.captionPressedColour
+		self.captionSelectedColour = class.captionSelectedColour
+	end;
+	
     pressedCallback = function (self)
 		
     end;
@@ -283,7 +301,29 @@ hud_class `window_page_button` {
 		self:refreshState()
 		self:onSelect()		
 	end;	
-	
+
+	reloadTheme = function(self)
+		local class = gfx_hud_class_get(self.className)
+		self.alpha = class.alpha
+		self.colour = class.colour or V_ID
+		self.texture = class.texture
+		
+		self.baseColour = class.baseColour
+		self.hoverColour = class.hoverColour
+		self.pressedColour = class.pressedColour
+		self.selectedColour = class.selectedColour
+		
+		self.text.font = class.font
+		self.captionColour = class.captionColour
+		self.captionHoverColour = class.captionHoverColour
+		self.captionPressedColour = class.captionPressedColour
+		self.captionSelectedColour = class.captionSelectedColour
+		
+		if self.close_btn then
+			self.close_btn:reloadTheme()
+		end
+	end;
+
 	onSelect = function (self)
 		
 	end;
@@ -421,7 +461,18 @@ hud_class `windownotebook` (extends(GuiClass)
 			safe_destroy(self.buttons[id])
 			self.buttons[id] = nil
 		end
-	end;	
+	end;
+	reloadTheme = function(self)
+		local class = gfx_hud_class_get(self.className)
+		self.alpha = class.alpha
+		self.colour = class.colour
+		
+		for i = 1, #self.buttons do
+			if self.buttons[i] and not self.buttons[i].destroyed then
+				self.buttons[i]:reloadTheme()
+			end
+		end
+	end;
 })
 
 gui.windownotebook = function(options)

@@ -1,5 +1,7 @@
 editor_themes = {}
 
+-- local light_base = V_ID * 0.95
+local light_base = V_ID * vec(0.97, 0.97, 0.95)
 editor_themes['light'] =
 {
 	name = 'light';
@@ -8,14 +10,14 @@ editor_themes['light'] =
 		-- Menu bar
 		menu_bar =
 		{
-			background = V_ID * 1;
+			background = V_ID * light_base;
 			background_alpha = 1;
 			button = V_ID * 0.95;
 			button_hover = V_ID * 1;
 			button_pressed = V_ID * 0.3;
-			button_border = V_ID * 0.5;
+			button_border = V_ID * light_base;
 			button_alpha = 0.5;
-			button_caption = V_ID * 0.1;
+			button_caption = V_ID * 0.3;
 			button_caption_greyed = V_ID * 0.9;
 			button_caption_hover = V_ZERO;
 			button_caption_pressed = V_ID;
@@ -23,26 +25,26 @@ editor_themes['light'] =
 		-- Menu bar: menu
 		menu =
 		{
-			background = V_ID * 0.4;
+			background = V_ID;
 			background_alpha = 1;
 			item_background = V_ID;
-			item_hover = V_ID * 0.5;
-			item_text = V_ID;
+			item_hover = V_ID * vec(0.7, 0.9, 1);
+			item_text = V_ID*0.3;
 			item_text_hover = V_ID;
 			item_alpha = 0;
 			line = V_ID * 0.8;
-			icon = V_ID;
+			icon = V_ID*0.5;
 			icon_alpha = 0;
 		};
 		-- Tool bar
 		tool_bar =
 		{
-			background = V_ID * 1;
+			background = V_ID * light_base;
 			alpha = 1;
 			separator = V_ID * 0.1;
 			separator_alpha = 0.3;
 			icon = V_ID;
-			icon_hover = vec(1, 0.7, 0.4);
+			icon_hover = vec(1, 0.8, 0.5);
 			icon_pressed = vec(1, 0.5, 0);
 		};
 		tip =
@@ -53,7 +55,7 @@ editor_themes['light'] =
 		};
 		status_bar =
 		{
-			background = V_ID * 1;
+			background = V_ID * light_base;
 			alpha = 1;
 			text = V_ZERO;
 			line = vec(1, 0.5, 0);
@@ -61,9 +63,9 @@ editor_themes['light'] =
 		-- Window
 		window =
 		{
-			background = V_ID * 1;
+			background = V_ID * light_base;
 			background_alpha = 0.7;
-			titlebar_background = V_ID * 0.6;
+			titlebar_background = V_ID * 0.3;
 			titlebar_background_alpha = 1;
 			titlebar_background_inactive = V_ID * 1;
 			titlebar_background_inactive_alpha = 1;
@@ -89,20 +91,20 @@ editor_themes['light'] =
 		};		
 		context_menu = 
 		{
-			background = V_ID;
+			background = V_ID * light_base;
 			alpha = 1;
 		};
 		button = 
 		{
-			base = V_ID*0.3;
-			hover = V_ID * 0.45;
-			pressed = V_ID * 0.15;
+			base = V_ID * light_base*0.9;
+			hover = V_ID * light_base*0.85;
+			pressed = V_ID * light_base*0.75;
 			greyed = V_ID * 0.5;
 			
-			caption_base = V_ID * 0.9;
+			caption_base = V_ID * 0.1;
 			caption_hover = V_ID * 0;
-			caption_pressed = V_ID * 1;
-			caption_greyed = V_ID * 0.1;
+			caption_pressed = V_ID * 0;
+			caption_greyed = V_ID * 0.5;
 			
 			alpha = 1;
 		};
@@ -124,15 +126,15 @@ editor_themes['light'] =
 		};		
 		selectbox = 
 		{
-			base = V_ID* 0.9;
-			hover = V_ID * 1;
-			pressed = V_ID * 0.3;
+			base = V_ID* 1.5;
+			hover = V_ID * 1.3;
+			pressed = V_ID * 1;
 			greyed = V_ID * 0.5;
 			
-			caption_base = V_ID * 0;
+			caption_base = V_ID * 0.3;
 			caption_hover = V_ID * 1;
-			caption_pressed = V_ID * 1;
-			caption_greyed = V_ID * 0.1;
+			caption_pressed = V_ID * 0;
+			caption_greyed = V_ID * 0.9;
 			
 			alpha = 1;
 			
@@ -141,16 +143,16 @@ editor_themes['light'] =
 			icon_hover = vec(1, 0.7, 0.2);
 			icon_pressed = vec(1, 0.5, 0);			
 			
-			menu_base = V_ID * 0.4;
+			menu_base = V_ID * 1;
 			menu_alpha = 0;
-			menu_hover =  V_ID * 0.5;
+			menu_hover =  V_ID * vec(0.7, 0.9, 1);
 			menu_hover_alpha = 1;
-			menu_text = V_ID;
+			menu_text = V_ID*0;
 			
 		};		
 		window_notebook = 
 		{
-			background = V_ID * 0.98;
+			background = V_ID * light_base *  0.98;
 			alpha = 1;
 			
 			texture = `/common/gui/icons/window_notebook_light.png`;
@@ -182,7 +184,7 @@ editor_themes['light'] =
 		};
 		notebook = 
 		{
-			background = V_ID * 1;
+			background = V_ID * light_base;
 			alpha = 0;
 		
 			-- button
@@ -191,7 +193,7 @@ editor_themes['light'] =
 			btn_base = V_ID * 0.9;
 			btn_hover = V_ID * 0.95;
 			btn_pressed = V_ID * 0.8;
-			btn_selected = V_ID * 1;
+			btn_selected = V_ID * light_base;
 			
 			btn_caption = V_ID * 0;
 			btn_caption_hover = V_ID * 0.5;
@@ -208,23 +210,24 @@ editor_themes['light'] =
 			hover = vec(1, 0.8, 0.5);
 			alpha = 1;
 		};
-		edit_box = 
+		editbox = 
 		{
+			background = V_ID * light_base*0.95;
 			text = V_ID*0;
-			border = V_ID * 0.2;
-			background = V_ID * 0.9;
+			border = V_ID * 0.7;
+			font = `/common/fonts/Verdana12`;
 			texture = `/common/hud/CornerTextures/Filled02.png`;
 		};
 		file_explorer = 
 		{
-			background = V_ID * 0.9;
+			background = V_ID * light_base*0.95;
 		};
 		browser_icon = 
 		{
-			hover = vec(1, 0.5, 0);
-			click = vec(1, 0, 0);
-			default = vec(0.5, 0.5, 0.5);
-			selected = vec(1, 0.8, 0);
+			hover = V_ID*0.7;
+			click = V_ID*0.9;
+			default = V_ID*0.5;
+			selected = V_ID*0.6;
 			text_hover = V_ID * 0;
 			text_click = V_ID * 0;
 			text_selected = V_ID * 0;
@@ -232,7 +235,7 @@ editor_themes['light'] =
 		};
 		text = 
 		{
-			default = V_ZERO;
+			default = V_ID*0.3;
 		};
 		floating_panel = {
 			background = V_ZERO;
@@ -242,11 +245,12 @@ editor_themes['light'] =
 	};
 	fonts =
 	{
-		default = `/common/fonts/Verdana12`;
+		default = `/common/fonts/Arial12`;
 		
 		menu_bar =
 		{
-			button = `/common/fonts/Verdana12`;
+			button = `/common/fonts/Arial12`;
+			menu = `/common/fonts/Arial12`;
 		};
 		
 		checkbox = `/common/fonts/Arial12`;
@@ -277,7 +281,7 @@ editor_themes['dark'] =
 			button = V_ID * 0.4;
 			button_hover = V_ID * 0.6;
 			button_pressed = V_ID * 0.8;
-			button_border = V_ID * 0.5;
+			button_border = V_ID * 0.4;
 			button_alpha = 0.5;
 			button_caption = V_ID * 0.85;
 			button_caption_greyed = V_ID * 0.4;
@@ -291,7 +295,7 @@ editor_themes['dark'] =
 			background_alpha = 1;
 			item_background = V_ID;
 			item_hover = V_ID * 0.95;
-			item_text = V_ID * 0;
+			item_text = V_ID * 0.3;
 			item_text_hover = V_ID * 0;
 			item_alpha = 0;
 			line = V_ID * 0;
@@ -393,7 +397,7 @@ editor_themes['dark'] =
 			pressed = V_ID * 0.3;
 			greyed = V_ID * 0.5;
 			
-			caption_base = V_ID * 0;
+			caption_base = V_ID * 0.9;
 			caption_hover = V_ID * 1;
 			caption_pressed = V_ID * 1;
 			caption_greyed = V_ID * 0.1;
@@ -472,25 +476,26 @@ editor_themes['dark'] =
 			hover = vec(1, 0.8, 0.5);
 			alpha = 1;
 		};
-		edit_box = 
+		editbox = 
 		{
+			background = V_ID * 0.3;
 			text = V_ID;
-			border = V_ID * 0.5;
-			background = V_ID * 0.25;
+			border = V_ID * 0.2;
+			font = `/common/fonts/Verdana12`;
 			texture = `/common/hud/CornerTextures/Filled02.png`;
 		};
 		file_explorer = 
 		{
-			background = V_ID * 0.4;
+			background = V_ID * 0.5;
 		};
 		browser_icon = 
 		{
-			hover = vec(1, 0.5, 0);
-			click = vec(1, 0, 0);
-			default = vec(0.5, 0.5, 0.5);
-			selected = vec(1, 0.8, 0);
+			hover = V_ID*0.7;
+			click = V_ID*0.9;
+			default = V_ID*0.5;
+			selected = V_ID*0.6;
 			text_hover = V_ID * 1;
-			text_click = V_ID * 1;
+			text_click = V_ID * 0;
 			text_selected = V_ID * 1;
 			text_default = V_ID * 1;
 		};
@@ -510,7 +515,8 @@ editor_themes['dark'] =
 		
 		menu_bar =
 		{
-			button = `/common/fonts/Verdana12`;
+			button = `/common/fonts/Arial12`;
+			menu = `/common/fonts/Arial12`;
 		};
 		
 		checkbox = `/common/fonts/Arial12`;
@@ -657,7 +663,7 @@ editor_themes['Dark Magenta'] = {
 			pressed = V_ID * 0.3;
 			greyed = V_ID * 0.5;
 			
-			caption_base = V_ID * 0;
+			caption_base = V_ID * 0.9;
 			caption_hover = V_ID * 1;
 			caption_pressed = V_ID * 1;
 			caption_greyed = V_ID * 0.1;
@@ -736,16 +742,17 @@ editor_themes['Dark Magenta'] = {
 			hover = vec(1, 0.8, 0.5);
 			alpha = 1;
 		};
-		edit_box = 
+		editbox = 
 		{
+			background = V_ID * 0.3;
 			text = V_ID;
-			border = V_ID * 0.5;
-			background = V_ID * 0.25;
+			border = V_ID * 0.2;
+			font = `/common/fonts/Verdana12`;
 			texture = `/common/hud/CornerTextures/Filled02.png`;
 		};
 		file_explorer = 
 		{
-			background = V_ID * 0.4;
+			background = V_ID * 0.5;
 		};
 		browser_icon = 
 		{
@@ -775,6 +782,7 @@ editor_themes['Dark Magenta'] = {
 		menu_bar =
 		{
 			button = `/common/fonts/Verdana12`;
+			menu = `/common/fonts/Arial12`;
 		};
 		
 		checkbox = `/common/fonts/Arial12`;
