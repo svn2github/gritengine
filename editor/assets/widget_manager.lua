@@ -283,12 +283,14 @@ class `widget` {} {
 		if inst.dragged ~= nil then
 			for i = 1, #inst.dragged do
 				if inst.dragged[i] ~= nil and inst.dragged[i].instance ~= nil and not inst.dragged[i].destroyed then
-					local new_pos = vec(
-						math.floor((pivot_pos.x + widget_manager.offsets[i].x) / nonzero(widget_manager.step_size) + 0.5 ) * widget_manager.step_size,
-						math.floor((pivot_pos.y + widget_manager.offsets[i].y) / nonzero(widget_manager.step_size) + 0.5 ) * widget_manager.step_size,
-						math.floor((pivot_pos.z + widget_manager.offsets[i].z) / nonzero(widget_manager.step_size) + 0.5 ) * widget_manager.step_size
-					)
-					
+					local pos = pivot_pos + widget_manager.offsets[i]
+					local spwnpos = inst.dragged[i].spawnPos
+
+					local new_pos = spwnpos
+					if #(pos - spwnpos) >= widget_manager.step_size then
+						new_pos = pos
+					end
+
 					inst.dragged[i].spawnPos = new_pos
 					
 					if inst.dragged[i].instance.body ~= nil then

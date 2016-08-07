@@ -8,7 +8,6 @@
 ------------------------------------------------------------------------------
 
 -- TODO:
--- Finish snap to grid
 -- Select objects without collision
 -- Select sounds, particles
 -- Fix world/local movent/rotation
@@ -40,7 +39,7 @@ widget_manager = {
 	strdrag = nil;
 	space_mode = "local"; -- "world", "local"
 	pivot_center = "active object"; -- "individual origins", "active object" or "center point"
-	step_size = 0.1;
+	step_size = 0.5;
 	highlight_widget = false;
 };
 

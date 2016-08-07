@@ -45,7 +45,7 @@ hud_class `browser_icon2` {
 				self.colour = self.hoverColour
 				self.alpha = 0.5
 			else
-				self.colour=self.normalColour
+				self.colour=self.defaultColour
 				self.alpha = 0
 			end
 		end
@@ -80,7 +80,7 @@ hud_class `browser_icon2` {
 					end
 				
 					if self.parent.parent.selected ~= self and self.parent.parent.selected ~= nil and self.parent.parent.selected.destroyed ~= true then
-						self.parent.parent.selected.colour = self.parent.parent.selected.normalColour
+						self.parent.parent.selected.colour = self.parent.parent.selected.defaultColour
 						self.parent.parent.selected.alpha = 0
 					end
 					self.parent.parent.selected = self
@@ -88,7 +88,7 @@ hud_class `browser_icon2` {
 
 					self:pressedCallback()
 				else
-					self.colour=self.normalColour
+					self.colour=self.defaultColour
 					self.alpha = 0
 				end
 			end
@@ -258,7 +258,7 @@ hud_class `content_browser_floating_object` {
 				self.obj = nil
 			end
 			if self.obj ~= nil and not self.obj.destroyed then
-				current_map:registerObject(self.obj)
+				-- current_map:registerObject(self.obj)
 			end
 			-- if insidew() then
 				-- local cast_ray = 1000 * gfx_screen_to_world(main.camPos, main.camQuat, mouse_pos_abs)
