@@ -195,8 +195,6 @@ end
 local function material2(tab)
     local name = curried_name
     tab = tab or {}
-    -- paint colour
-    do_create_material(name, tab)
     register_material(name,tab)
 end
 function material(name)

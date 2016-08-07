@@ -2,12 +2,6 @@
 -- must have particle definition check material exists
 -- OR do not use regular materials for particles
 
-
-
-
-
-
-
 flame_alpha = flame_alpha or 1
 
 flame_counter = 0

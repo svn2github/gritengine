@@ -283,8 +283,6 @@ include `game_manager.lua`
 
 include `default_shader.lua` 
 
-include `materials.lua` 
-
 safe_include `/editor/bindings.lua`  -- TODO(dcunnin):  This must be moved to /system
 
 include `grit_map.lua`

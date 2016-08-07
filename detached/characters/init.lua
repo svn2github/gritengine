@@ -6,6 +6,15 @@
     *   attach rpg to R_Hand euler(172,172,90)
 ]]
 
+function point_tex(name)
+    local T = {
+        image = name,
+        filterMax = "POINT",
+        filterMip = "LINEAR",
+    }
+    return T
+end
+
 local function actor_cast (pos, ray, radius, height, body)
         --return physics_sweep_sphere(radius, pos, ray, true, 0, body)
         return physics_sweep_cylinder(radius, height, quat(1,0,0,0), pos, ray, true, 0, body)

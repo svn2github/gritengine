@@ -1,6 +1,8 @@
+-- TODO: there is no such thing as a specularMap
+
 --materials
 --development/in developtment textures
-material "decaltest" { diffuseMap="materials/decaltest.dds", alpha=true}
+material "decaltest" { diffuseMap="materials/decaltest.dds", sceneBlend = "ALPHA" }
 material "CnrStrSign" { diffuseMap="materials/cornermap.dds", normalMap="materials/cornermap_n.png" }
 material "devtex5m" { diffuseMap="materials/devtex5m.png" }
 material "lot_test" { diffuseMap="materials/lot_test.dds", normalMap="materials/lot_test_n.png", specularMap="materials/lot_test_s.dds" }
@@ -14,7 +16,9 @@ material "roadmap_var1" { diffuseMap="materials/roadmap_var1.png", normalMap="ma
 material "lod_roads1" { diffuseMap="materials/lod_roads1.png" }
 material "SchoolStreet" { diffuseMap="materials/SchoolStreet.dds", normalMap="materials/SchoolStreet_n.png", specularMap="materials/SchoolStreet_s.dds" }
 material "lod_roads" { diffuseMap="materials/lod_roads.png"}
-material "RoadBarrel" { diffuseMap="materials/RoadBarrel.png", specularMap="materials/RoadBarrel_s.dds", specularColour=vector3(2,2,2), glossFromSpecularAlpha=true; specularity=30 }
+-- TODO: glossFromSpecularAlpha no-longer exists, figure out what to do.  Maybe use a special shader
+-- to reflect headlights?
+material "RoadBarrel" { diffuseMap="materials/RoadBarrel.png", specularMap="materials/RoadBarrel_s.dds", specularColour=vector3(2,2,2), glossFromSpecularAlpha=true; gloss=0.3 }
 material "bigpropane" { diffuseMap="materials/bigpropane.dds", normalMap="materials/bigpropane_n.png", specularMap="materials/bigpropane_s.dds", shadowBias=.1 }
 material "indus_lod1" { diffuseMap="materials/indus_lod1.png" }
 material "streetlamp" { diffuseMap="materials/streetlamp.png", specularMap="materials/streetlamp_s.png" }

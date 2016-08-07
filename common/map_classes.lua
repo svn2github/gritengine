@@ -200,8 +200,9 @@ BaseClass = {
                     end
                     local diff = colour_ensure_vector3(col[1])
                     local met = col[2] or 0.5
-                    local spec = colour_ensure_vector3(col[3]) or vector3(1,1,1)
-                    persistent.instance.gfx:setPaintColour(i-1, diff, met, spec)
+                    local gloss = col[3] or 1
+                    local spec = col[4] or 1
+                    persistent.instance.gfx:setPaintColour(i-1, diff, met, gloss, spec)
                 end
             end
         end;

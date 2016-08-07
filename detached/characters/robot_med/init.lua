@@ -2,15 +2,16 @@
 -- Art (c) Vincent Mayeur 2013, Licenced under Creative Commons License BY-NC-SA: http://creativecommons.org/licenses/by-nc-sa/3.0/
 
 material `robot_med` { 
-	filterMip = "NONE",filterMag="NONE";
-	diffuseMap=`../../textures/robot_med.tga`;
-	diffuseColour= {1,1,1};
-	emissiveMap=`../../textures/robot_med_em.tga`;
-	emissiveMask = vec(1.0, 2.5, 4);
-    additionalLighting=true;
-	glossMap= `../../textures/robot_med_spec.tga`;
-	shadowBias = 0.1;
-    blendedBones = 3;
+    additionalLighting = true,
+	shadowBias = 0.1,
+    blendedBones = 3,
+
+	diffuseMap = point_tex(`../../textures/robot_med.tga`),
+	diffuseMask = vec(1, 1, 1),
+	emissiveMap = point_tex(`../../textures/robot_med_em.tga`),
+	emissiveMask = vec(1.0, 2.5, 4),
+	glossMap = point_tex(`../../textures/robot_med_spec.tga`),
+    glossMask = 1,
 }
 
 class `.` (DetachedCharacterClass) {

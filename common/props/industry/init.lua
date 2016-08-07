@@ -1,12 +1,21 @@
 -- (c) David Cunningham 2011, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
-material `BoringBarrel` { diffuseMap=`BoringBarrel.dds`, diffuseColour=V_ID*2.5, paintColour=1, gloss = 0.5, specular=0.05, paintByDiffuseAlpha=true, specularMap=`BoringBarrel_s.dds`, normalMap=`BoringBarrel_n.png`, shadowBias=0.1 }
+material `BoringBarrel` {
+    shadowBias = 0.1,
+    shader = `/common/Paint`,
+
+    diffuseMap = `BoringBarrel.dds`,
+    paintSelectionMask = vec(1, 0, 0, 0),
+    paintByDiffuseAlpha = 1,
+    -- specularMap = `BoringBarrel_s.dds`,
+    normalMap = `BoringBarrel_n.png`,
+}
 
 class `BoringBarrel` (ColClass) {
-    renderingDistance=60;
-    castShadows=true;
-    placementZOffset=0.4255;
-    placementRandomRotation=true;
+    renderingDistance = 60,
+    castShadows = true,
+    placementZOffset = 0.4255,
+    placementRandomRotation = true,
 
     colourSpec = {
         { {
@@ -18,16 +27,23 @@ class `BoringBarrel` (ColClass) {
     }
 }
 
-material `RedBarrel` { diffuseMap=`OilBarrel.dds`, diffuseColour=V_ID*2.5, gloss = 0.5, specular=0.05, specularMap=`OilBarrel_s.dds`, normalMap=`OilBarrel_n.png`, shadowBias=0.1 }
+material `RedBarrel` {
+    shadowBias = 0.1,
+
+    diffuseMap = `OilBarrel.dds`,
+    diffuseMask = V_ID * 2.5,
+    -- specularMap = `OilBarrel_s.dds`,
+    normalMap = `OilBarrel_n.png`,
+}
 
 class `OilBarrel` (ColClass) {
-    renderingDistance=60;
-    castShadows=true;
-    placementZOffset=0.4255;
-    placementRandomRotation=true;
+    renderingDistance = 60,
+    castShadows = true,
+    placementZOffset = 0.4255,
+    placementRandomRotation = true,
 
-    health = 1000;
-    impulseDamageThreshold = 200;
+    health = 1000,
+    impulseDamageThreshold = 200,
     explodeInfo = { radius=10; deactivate=true; }
 
 }

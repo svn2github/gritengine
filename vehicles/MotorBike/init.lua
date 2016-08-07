@@ -45,6 +45,15 @@ class `.` (Bike) {
 }
 
 
-material `Body` { blendedBones=1, diffuseColour = {1, .8, 0} }
-material `FrontWheel` { blendedBones=1, diffuseColour = 0xFF3F3F3F }
-material `RearWheel` { blendedBones=1, diffuseColour = 0xFF3F3F3F }
+material `Body` {
+    blendedBones=1,
+    diffuseMask = vec(1, .8, 0)
+}
+material `FrontWheel` {
+    blendedBones=1,
+    diffuseMask = srgb(63, 63, 63),
+}
+material `RearWheel` {
+    blendedBones=1,
+    diffuseMask = srgb(63, 63, 63),
+}

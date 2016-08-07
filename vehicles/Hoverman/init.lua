@@ -49,11 +49,11 @@ class `.` (Hover) {
 }
 
 -- most materials are temporal and will probably joined
-material `Carpaint` { paintColour = 1; specular=.04; gloss = .75; microFlakes=true; }
-material `LightPlastic` { diffuseColour=vec(0.2, 0.2, 0.2); specular=0.04; gloss = .5; }
-material `Chrome` { diffuseColour =V_ZERO; specular=1; gloss = 1; }
-material `Pattern` { diffuseColour=vec(0.05, 0.05, 0.05); specular=0.04; gloss = .5; }
-material `Blacky` { diffuseColour =V_ZERO; specular=0.5; gloss = 1; }
-material `Headlight` { gloss = .75; specular=0.04; alpha =0.7 }
-material `Brakelight` { diffuseColour=vec(1,0,0), gloss = .75; specular=0.04; alpha =0.7 }
-material `Turnlight` { diffuseColour=vec(1.0,0.597,0), gloss = .75; specular=0.04; alpha =0.7 }
+material `Carpaint` { shader = `/common/Paint`, paintSelectionMask = vec(1, 0, 0, 0), specularMask = 1, glossMask = 1, microFlakesMap = `/common/MicroFlakes.dds`, }
+material `LightPlastic` { diffuseMask = vec(0.2, 0.2, 0.2), specularMask = 0.04, glossMask = .5, }
+material `Chrome` { diffuseMask = V_ZERO, specularMask = 1, glossMask = 1, }
+material `Pattern` { diffuseMask = vec(0.05, 0.05, 0.05), specularMask = 0.04, glossMask = .5, }
+material `Blacky` { diffuseMask = V_ZERO, specularMask = 0.5, glossMask = 1, }
+material `Headlight` { glossMask = .75, specularMask = 0.04, alphaMask =0.7, sceneBlend = "ALPHA" }
+material `Brakelight` { diffuseMask = vec(1,0,0), glossMask = .75, specularMask = 0.04, alphaMask = 0.7, sceneBlend = "ALPHA", }
+material `Turnlight` { diffuseMask = vec(1.0,0.597,0), glossMask = .75, specularMask = 0.04, alphaMask = 0.7, sceneBlend = "ALPHA" }

@@ -2,8 +2,17 @@
 
 include `classes.lua`
 
-material `Pin` { diffuseMap=`Pin.dds`, specular=.25, gloss=.5 }
-material `Ball` { diffuseMap=`Ball.dds`, specular=.25, gloss=.75 }
+material `Pin` {
+    diffuseMap=`Pin.dds`,
+    specularMask=.08,
+    glossMask=.5,
+}
+
+material `Ball` {
+    diffuseMap=`Ball.dds`,
+    specularMask=.08,
+    glossMask=.75,
+}
 
 -- TODO: This should be cleaned up, I think there is no need for extends() in this case.
 class `Deck` (extends(ProcPileClass) {

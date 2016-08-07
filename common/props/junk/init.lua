@@ -1,14 +1,38 @@
 -- (c) David Cunningham 2009, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
-material `PizzaBox` { diffuseMap = `PizzaBox.dds`, }
-material `TrashCanShite` {diffuseMap=`TrashCanShite_d.dds`, specularFromDiffuseAlpha=true, }
-material `WineBottle` {diffuseMap = `WineBottle_d.dds`, clamp = true, specularFromDiffuseAlpha=true, }
+material `PizzaBox` {
+    diffuseMap = `PizzaBox.dds`,
+}
+
+-- TODO: make a proper pbr map for these
+
+material `TrashCanShite` {
+    diffuseMap=`TrashCanShite_d.dds`,
+    -- specularFromDiffuseAlpha=true,
+}
+
+-- TODO: Needs to clamp the diffuseMap
+material `WineBottle` {
+
+    diffuseMap = `WineBottle_d.dds`,
+    -- specularFromDiffuseAlpha=true,
+}
 
 material `Money` { diffuseMap = `Money_d.dds` }
-material `Brick` { diffuseColour = srgb(128,0,0) }
+material `Brick` { diffuseMask = srgb(128,0,0) }
 
-class `TrashCanShiteBody` (ColClass) {renderingDistance=90,castShadows=true, placementZOffset=0.36, placementRandomRotation=true}
-class `TrashCanShiteLid` (ColClass) {renderingDistance=90,castShadows=true, placementZOffset=0.05, placementRandomRotation=true}
+class `TrashCanShiteBody` (ColClass) {
+    renderingDistance = 90,
+    castShadows = true,
+    placementZOffset = 0.36,
+    placementRandomRotation = true
+}
+class `TrashCanShiteLid` (ColClass) {
+    renderingDistance = 90,
+    castShadows = true,
+    placementZOffset = 0.05, 
+    placementRandomRotation = true
+}
 
 include `classes.lua`
 
@@ -24,7 +48,7 @@ class `Money` (ColClass) {
     placementZOffset = 0.014999999664723873;
     placementRandomRotation = true;
     lights={
-        { range=.3, diff=7*vector3(.65,1,.4)}
+        { range=.3, diff=7 * vec(.65, 1, .4) }
     }
 }
 
@@ -44,10 +68,10 @@ class `BrickWall` (ProcPileClass) {
                 spawn(brick_class, pos, {rot=Q_EAST})
             end
         end
-    end;
-    renderingDistance=110;
-    xMin = -16;
-    xMax = 16;
-    height = 30;
-    brickClass = `Brick`
+    end,
+    renderingDistance = 110,
+    xMin = -16,
+    xMax = 16,
+    height = 30,
+    brickClass = `Brick`,
 }

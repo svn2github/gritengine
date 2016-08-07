@@ -156,76 +156,33 @@ local user_cfg_spec = {
 local debug_cfg_default = {
     shadowCast = true;
     shadowReceive = true;
-    vertexProcessing = true;
-    textureFetches = true;
-    fragmentProcessing = true;
-    heightmapBlending = true;
-    falseColour = false;
-    normalMaps = true;
-    diffuseMaps = true;
-    glossMaps = true;
-    translucencyMaps = true;
-    colourMaps = true;
-    vertexDiffuse = true;
     fog = true;
     FOV = 55;
     farClip = 800;
     polygonMode = "SOLID";
     physicsWireFrame = false;
     physicsDebugWorld = true;
-    textureAnimation = true;
-    textureScale = true;
-    shadingModel = "SHARP";
 }
 
 local debug_cfg_doc = {
     shadowCast = "enable casting phase";
     shadowReceive = "enable receiving phase";
-    vertexProcessing = "for eliminating vertex shader work";
-    textureFetches = "use proper fetches instead of procedural placeholders";
-    fragmentProcessing = "for eliminating fragment shader work";
-    heightmapBlending = "whether to use the heightmap when blending";
-    falseColour = "various debug displays";
-    normalMaps = "whether to use normal maps";
-    diffuseMaps = "whether to use diffuse maps";
-    glossMaps = "whether to use gloss maps";
-    translucencyMaps = "whether to use translucency maps";
-    colourMaps = "whether to use colour maps";
-    vertexDiffuse = "whether to use the diffuse channel in the meshes";
     fog = "enable distance fog";
     FOV = "field of view in degrees";
     farClip = "how far away is maximum depth";
     polygonMode = "wireframe, etc";
     physicsWireFrame = "show physics meshes";
     physicsDebugWorld = "don't limit debug display to moving objects";
-    textureAnimation = "whether or not to animate textures";
-    textureScale = "enable support for texture scaling from materials";
-    shadingModel = "the way lighting is calculated";
 }
 
 local debug_cfg_spec = {
     shadowCast = { "one of", false, true };
     shadowReceive = { "one of", false, true };
-    vertexProcessing = { "one of", false, true };
-    textureFetches = { "one of", false, true };
-    fragmentProcessing = { "one of", false, true };
-    heightmapBlending = { "one of", false, true };
-    falseColour = { "one of", false, "UV", "UV_STRETCH", "UV_STRETCH_BANDS", "NORMAL", "OBJECT_NORMAL", "NORMAL_MAP", "TANGENT", "BINORMAL", "UNSHADOWYNESS", "GLOSS", "SPECULAR", "SPECULAR_TERM", "SPECULAR_COMPONENT", "HIGHLIGHT", "FRESNEL", "FRESNEL_HIGHLIGHT", "DIFFUSE_COLOUR", "DIFFUSE_TERM", "DIFFUSE_COMPONENT", "VERTEX_COLOUR", "ENV_DIFFUSE_COMPONENT", "ENV_SPECULAR_COMPONENT", "ENV_DIFFUSE_LIGHT", "ENV_SPECULAR_LIGHT" };
-    polygonMode = { "one of", "SOLID", "SOLID_WIREFRAME", "WIREFRAME" };
-    normalMaps = { "one of", false, true };
-    diffuseMaps = { "one of", false, true };
-    glossMaps = { "one of", false, true };
-    translucencyMaps = { "one of", false, true };
-    colourMaps = { "one of", false, true };
-    vertexDiffuse = { "one of", false, true };
     fog = { "one of", false, true };
     FOV = { "range", 0, 120 };
     farClip = { "range", 1, 10000 };
     physicsWireFrame = { "one of", false, true };
     physicsDebugWorld = { "one of", false, true };
-    textureAnimation = { "one of", false, true };
-    textureScale = { "one of", false, true };
-    shadingModel = { "one of", "SHARP", "HALF_LAMBERT", "WASHED_OUT" };
 }
 
 
@@ -406,51 +363,36 @@ local function commit(c, p, flush, partial)
 
     gfx_option("AUTOUPDATE",false)
 
-    local reset_shaders = false or flush
-    local reset_materials = false or flush
-
     for k,v in pairs(p) do
         if c[k] ~= v then
             c[k] = v
     
             if k == "shadowRes" then
                 gfx_option("SHADOW_RES",v)
-                reset_shaders = true
             elseif k == "shadowCast" then
                 gfx_option("SHADOW_CAST",v)
             elseif k == "shadowReceive" then
                 gfx_option("SHADOW_RECEIVE",v)
-                reset_materials = true
             elseif k == "shadowEmulatePCF" then
                 gfx_option("SHADOW_EMULATE_PCF", v)
-                reset_shaders = true
             elseif k == "shadowFilterTaps" then
                 gfx_option("SHADOW_FILTER_TAPS",v)
-                reset_shaders = true
             elseif k == "shadowFilterSize" then
                 gfx_option("SHADOW_FILTER_SIZE",v)
-                reset_shaders = true
             elseif k == "shadowFilterNoise" then
                 gfx_option("SHADOW_FILTER_DITHER_TEXTURE",v)
-                reset_shaders = true
-                reset_materials = true
             elseif k == "shadowFilterDither" then
                 gfx_option("SHADOW_FILTER_DITHER",v)
-                reset_shaders = true
             elseif k == "shadowPCSSPadding" then
                 gfx_option("SHADOW_PADDING",v)
-                reset_shaders = true
             elseif k == "shadowPCSSStart" then
                 gfx_option("SHADOW_START",v)
             elseif k == "shadowPCSSEnd0" then
                 gfx_option("SHADOW_END0",v)
-                reset_shaders = true
             elseif k == "shadowPCSSEnd1" then
                 gfx_option("SHADOW_END1",v)
-                reset_shaders = true
             elseif k == "shadowPCSSEnd2" then
                 gfx_option("SHADOW_END2",v)
-                reset_shaders = true
             elseif k == "shadowPCSSAdj0" then
                 gfx_option("SHADOW_OPTIMAL_ADJUST0",v)
             elseif k == "shadowPCSSAdj1" then
@@ -459,16 +401,12 @@ local function commit(c, p, flush, partial)
                 gfx_option("SHADOW_OPTIMAL_ADJUST2",v)
             elseif k == "shadowPCSSSpreadFactor0" then
                 gfx_option("SHADOW_SPREAD_FACTOR0", v)
-                reset_shaders = true
             elseif k == "shadowPCSSSpreadFactor1" then
                 gfx_option("SHADOW_SPREAD_FACTOR1", v)
-                reset_shaders = true
             elseif k == "shadowPCSSSpreadFactor2" then
                 gfx_option("SHADOW_SPREAD_FACTOR2", v)
-                reset_shaders = true
             elseif k == "shadowFadeStart" then
                 gfx_option("SHADOW_FADE_START",v)
-                reset_shaders = true
 
             elseif k == "FOV" then
                 gfx_option("FOV",v)
@@ -481,32 +419,6 @@ local function commit(c, p, flush, partial)
                 gfx_option("FAR_CLIP",v)
             elseif k == "visibility" then
                 core_option("VISIBILITY",v)
-            elseif k == "vertexProcessing" then
-                reset_materials = true
-                reset_shaders = true
-            elseif k == "textureFetches" then
-                reset_shaders = true
-            elseif k == "fragmentProcessing" then
-                reset_materials = true
-                reset_shaders = true
-            elseif k == "heightmapBlending" then
-                reset_shaders = true
-            elseif k == "falseColour" then
-                reset_shaders = true
-                reset_materials = true
-                if v == false then
-                    gfx_option("RENDER_PARTICLES", true)
-                    gfx_option("RENDER_SKY", true)
-                    gfx_option("POINT_LIGHTS", true)
-                    gfx_option("POST_PROCESSING", true)
-                    gfx_option("DEBUG_MODE", 0)
-                else
-                    gfx_option("RENDER_PARTICLES", false)
-                    gfx_option("RENDER_SKY", false)
-                    gfx_option("POINT_LIGHTS", false)
-                    gfx_option("POST_PROCESSING", false)
-                    gfx_option("DEBUG_MODE", 1)
-                end
         
             elseif k == "graphicsRAM" then
                 gfx_option("RAM",v)
@@ -518,25 +430,8 @@ local function commit(c, p, flush, partial)
             elseif k == "polygonMode" then
                 gfx_option("WIREFRAME", v~="SOLID")
                 gfx_option("WIREFRAME_SOLID", v=="SOLID_WIREFRAME")
-            elseif k == "normalMaps" then
-                reset_materials = true
-            elseif k == "diffuseMaps" then
-                reset_materials = true
-            elseif k == "glossMaps" then
-                reset_materials = true
-            elseif k == "translucencyMaps" then
-                reset_materials = true
-            elseif k == "colourMaps" then
-                reset_materials = true
-            elseif k == "vertexDiffuse" then
-                reset_shaders = true
-            elseif k == "textureAnimation" then
-                reset_materials = true
-            elseif k == "textureScale" then
-                reset_materials = true
             elseif k == "fog" then
                 gfx_option("FOG",v)
-                reset_shaders = true
             elseif k == "physicsWireFrame" then
                 print("Physics wire frame: "..(v and "on" or "off"))
                 physics_option("DEBUG_WIREFRAME", v)
@@ -551,8 +446,6 @@ local function commit(c, p, flush, partial)
                 gfx_option("VSYNC",v)
             elseif k == "screenshotFormat" then
                 -- nothing to do, next screenshot will pick this up
-            elseif k == "shadingModel" then
-                reset_shaders = true
             elseif k == "anaglyph" then
                 gfx_option("ANAGLYPH",v)
             elseif k == "crossEye" then
@@ -601,13 +494,6 @@ local function commit(c, p, flush, partial)
 
     if partial then return end
 
-    if reset_shaders then
-        do_reset_shaders()
-    end
-
-    if reset_materials then
-        do_reset_materials()
-    end
     
 end
 

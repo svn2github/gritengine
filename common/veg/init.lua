@@ -1,15 +1,15 @@
 material `TropGroup1` {
-    backfaces=true,
+    backfaces = true,
+    -- clamp = true,  // TODO: clamp
+    shadowBias=.03,
+
     diffuseMap = `textures/TropGroup1.dds`,
-    clamp = true,
-    alphaReject = 0.5,
+    alphaRejectThreshold = 0.5,
     shadowAlphaReject = true,
     normalMap = `textures/TropGroup1_N.dds`,
-    specularFromDiffuse = {-0.3, 0.2}, gloss=7,
-    translucencyMap = `textures/TropGroup1_SSS.dds`,
-    shadowBias=.03,
-    gloss = 0,
-    specular = 0,
+    -- specularFromDiffuse = {-0.3, 0.2},
+    -- translucencyMap = `textures/TropGroup1_SSS.dds`,
+    specularMask = 0,
 }
 
 class `TropPlant1` (BaseClass) { castShadows=true, renderingDistance=70, placementRandomRotation=true }
@@ -18,23 +18,21 @@ class `YellowFlowers` (BaseClass) { castShadows=true, renderingDistance=35, plac
 class `PinkFlowers` (BaseClass) { castShadows=true, renderingDistance=35, placementRandomRotation=true }
 
 material `Tree_aelmTrunk` {
-    vertexDiffuse = true,
+    diffuseVertex = 1,
     diffuseMap = `textures/tree_aelm.dds`,
-	diffuseColour = V_ID*3,
+	diffuseMask = V_ID*3,
     normalMap = `textures/tree_aelm_N.dds`,
-    gloss = 0,
-    specular = 0,
+    specularMask = 0,
 }
 
 material `Tree_aelmLev` {
-    vertexDiffuse = false,
+    -- clamp = true,  // TODO: clamp
+
     diffuseMap = `textures/tree_aelm.dds`,
-	diffuseColour = V_ID*3,
-    clamp = true,
-    alphaReject = 0.5,
+	diffuseMask = V_ID*3,
+    alphaRejectThreshold = 0.5,
     normalMap = `textures/tree_aelm_N.dds`,
-    gloss = 0,
-    specular = 0,
+    specularMask = 0,
 }
 
 
@@ -45,63 +43,56 @@ class `Tree_aelm` (ColClass) { castShadows=true, renderingDistance=100, lod=`Tre
 --paroxum's tree, hes mad
 
 material `generic_bark` {
-    vertexDiffuse = false,
     diffuseMap = `textures/generic_bark.tga`,
     normalMap = `textures/generic_bark_nrm.tga`,
-    gloss = 0,
-    specular = 0,
-	diffuseColour = V_ID*10,
+    specularMask = 0,
+	diffuseMask = V_ID*10,
 }
 
 material `flowerbed_dif` {
-    backfaces=true,
-    vertexDiffuse = false,
+    backfaces = true,
+    -- clamp = true,  -- TODO: clamp
+    shadowAlphaReject = true,
+
     diffuseMap = `textures/flowerbed_dif.tga`,
     normalMap = `textures/flowerbed_nrm.tga`,
-    shadowAlphaReject = true,
-    shadowReceive = false,
-    clamp = true,
-    alphaReject = 0.5,
-    diffuseColour = V_ID*10,
-    ambientColour = 5,
-    gloss = 0,
-    specular = 0,
+    alphaRejectThreshold = 0.5,
+    diffuseMask = vec(10, 10, 10),
+    specularMask = 0,
 }
 
 class `prxtree` (ColClass) { castShadows=true, renderingDistance=250 }
 
 --end paroxum tree
 
+-- TODO: needs special grass shader
 material `GrassTuft1` {
     backfaces=true,
+    -- clamp = true,  -- TODO: clamp
+
     diffuseMap = `textures/GrassTuft1_D.dds`,
-    clamp = true,
-    alphaReject = 0.9,
-    grassLighting = true,
-    gloss = 0,
-    specular = 0,
+    alphaRejectThreshold = 0.9,
+    specularMask = 0,
 }
 
 material `grasstuft2` {
-    backfaces=true,
+    backfaces = true,
+    -- clamp = true,  -- TODO: clamp
+
     diffuseMap = `textures/GrassTuft2_D.dds`,
     normalMap = `textures/GrassTuft2_N.dds`,
-    clamp = true,
-    alphaReject = 0.33,
-    grassLighting = true,
-    gloss = 0,
-    specular = 0,
+    alphaRejectThreshold = 0.33,
+    specularMask = 0,
 }
 
 
 material `GrassMap1` {
-    backfaces=true,
+    backfaces = true,
+    -- clamp = true,  -- TODO: clamp
+
     diffuseMap = `textures/GrassMap1.dds`,
-    clamp = true,
-    alphaReject = 0.5,
-    grassLighting = true,
-    gloss = 0,
-    specular = 0,
+    alphaRejectThreshold = 0.5,
+    specularMask = 0,
 }
 
 class `GrassTuft1` (BaseClass) { renderingDistance=30, placementRandomRotation=true }

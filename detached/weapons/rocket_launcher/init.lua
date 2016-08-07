@@ -1,10 +1,15 @@
 -- Code (c) David Cunningham 2013, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 -- Art (c) Vincent Mayeur 2013, Licenced under Creative Commons License BY-NC-SA: http://creativecommons.org/licenses/by-nc-sa/3.0/
 
+-- TODO: addressingMode
+
 material `rocket_launcher` { 
-	filterMip = "NONE",filterMag="NONE";
-	shadowBias = 0.1;
-	diffuseMap=`../../textures/rocket_launcher.tga`;
+	shadowBias = 0.1,
+
+	diffuseMap = {
+        image = `../../textures/rocket_launcher.tga`,
+        filterMag = "NONE",
+    },
 }
 
 class `Rocket` (BaseClass) {
@@ -76,5 +81,4 @@ end
 
 class `RocketLauncher` (BaseClass) {
     gfxMesh = `rocket_launcher.mesh`;
-    
 }

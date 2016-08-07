@@ -73,5 +73,5 @@ class `.` (Vehicle) {
         };
 }
 
-material `Body` { blendedBones=1, diffuseMap = `Body.jpg`; gloss=0.65;specular=0.1 }
+material `Body` { blendedBones=1, diffuseMap = `Body.jpg`; glossMask=0.65;specularMask=0.1 }
 

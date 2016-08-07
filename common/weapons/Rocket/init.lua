@@ -3,11 +3,11 @@
 -- http://www.armyrecognition.com/november_2011_news_defense_army_military_industry/rheinmetall_ads_gmbh_demonstrate_new_active_defence_system_for_tactical_armoured_vehicles_1811113.html
 
 material `rocket` {
-	diffuseMap=`rocket.png`,
-	normalMap=`rocket_nm.png`,
-	gloss = 0.6,
-	specular = 0.02,
-	shadowBias=0.15
+	diffuseMap = `rocket.png`,
+	normalMap = `rocket_nm.png`,
+	glossMask = 0.6,
+	specularMask = 0.02,
+	shadowBias = 0.15
 }
 
 class `Rocket` (BaseClass) {

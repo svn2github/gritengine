@@ -120,14 +120,14 @@ include `classes.lua`
 
 
 -- most materials are temporal and will probably joined
-material `Atlas` { glossMap=`Gloss.png`; diffuseMap=`Diffuse.png`; shadowBias=0.05 }
-material `GlowingParts` { glossMap=`Gloss.png`; diffuseMap=`Diffuse.png`; emissiveMap=`Diffuse.png`; emissiveMask=vec(0.4,0.4,0.4), shadowBias=0.05, additionalLighting=true }
-material `LightOn` { emissiveMap=`Diffuse.png`, emissiveMask=vec(4,4,4); additionalLighting=true }
-material `LightBrakeOn` { emissiveMap=`Diffuse.png`, emissiveMask=vec(6,0,0); diffuseColour=vec(0,0,0); specular=0; gloss=0; additionalLighting=true }
-material `LightBrakeDim` { emissiveMap=`Diffuse.png`, emissiveMask=vec(2,0,0); diffuseColour=vec(0,0,0); specular=0; gloss=0; additionalLighting=true }
+material `Atlas` { glossMap=`Gloss.png`, glossMask=1, diffuseMap=`Diffuse.png`, shadowBias=0.05 }
+material `GlowingParts` { glossMap=`Gloss.png`, glossMask=1, diffuseMap=`Diffuse.png`, emissiveMap=`Diffuse.png`, emissiveMask=vec(0.4,0.4,0.4), shadowBias=0.05, additionalLighting=true }
+material `LightOn` { emissiveMap=`Diffuse.png`, emissiveMask=vec(4,4,4), additionalLighting=true }
+material `LightBrakeOn` { emissiveMap=`Diffuse.png`, emissiveMask=vec(6,0,0), diffuseMask=vec(0,0,0), specularMask=0, additionalLighting=true }
+material `LightBrakeDim` { emissiveMap=`Diffuse.png`, emissiveMask=vec(2,0,0), diffuseMask=vec(0,0,0), specularMask=0, additionalLighting=true }
 
-material `LightHeadLeft` { glossMap=`Gloss.png`; diffuseMap=`Diffuse.png`; shadowBias=0.05 }
-material `LightHeadRight` { glossMap=`Gloss.png`; diffuseMap=`Diffuse.png`; shadowBias=0.05 }
-material `LightBrakeLeft` { glossMap=`Gloss.png`; diffuseMap=`Diffuse.png`; shadowBias=0.05 }
-material `LightBrakeRight` { glossMap=`Gloss.png`; diffuseMap=`Diffuse.png`; shadowBias=0.05 }
+material `LightHeadLeft` { glossMap=`Gloss.png`, glossMask=1, diffuseMap=`Diffuse.png`, shadowBias=0.05 }
+material `LightHeadRight` { glossMap=`Gloss.png`, glossMask=1, diffuseMap=`Diffuse.png`, shadowBias=0.05 }
+material `LightBrakeLeft` { glossMap=`Gloss.png`, glossMask=1, diffuseMap=`Diffuse.png`, shadowBias=0.05 }
+material `LightBrakeRight` { glossMap=`Gloss.png`, glossMask=1, diffuseMap=`Diffuse.png`, shadowBias=0.05 }
 

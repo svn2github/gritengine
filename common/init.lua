@@ -2,6 +2,9 @@
 
 print "Loading common assets"
 
+include `paint_shader.lua`
+include `heightmap_texture_blend_shader.lua`
+
 include `map_classes.lua`
 include `sound_emitter_class.lua`
 include `MoveSpinClass.lua`

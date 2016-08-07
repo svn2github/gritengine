@@ -1,5 +1,5 @@
 material `spawn_point` {
-	diffuseColour = vec(0, 1, 0),
+	diffuseMask = vec(0, 1, 0),
 	emissiveMask = vec(0, 1, 0),
     additionalLighting = true,
 }

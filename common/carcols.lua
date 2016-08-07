@@ -1,33 +1,34 @@
 -- (c) David Cunningham 2009, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 local function grey(x) return vector3(x,x,x) end
-local std_spec = vector3(0.05, 0, 0.7)
-local std_spec2 = vector3(0.05, 0, 0.7)
+local std_gloss = 0.7
+local std_spec = 0.05
+local std_spec2 = 0.05
 
 carcols = {
 -- please if you define colors put them in the accurate tone, and add a comment about it
     --silver
-    ice_silver= { grey(.09), 0.1, std_spec  },
-    cream_white= { vector3(.4,.38,.34), 0.1, vector3(0.01,0,0.35)  },
+    ice_silver= { grey(.09), 0.1, std_gloss, std_spec  },
+    cream_white= { vector3(.4,.38,.34), 0.1, 0.35, 0.01 },
     -- grey
-    bianco_grey = { grey(0.2), 0.1, std_spec2},
-    marrone_grey = { grey(0.1), 0.1, std_spec},
-    carbon_gray = { grey(0.04), 0.1, std_spec},
+    bianco_grey = { grey(0.2), 0.1, std_gloss, std_spec2},
+    marrone_grey = { grey(0.1), 0.1, std_gloss, std_spec},
+    carbon_gray = { grey(0.04), 0.1, std_gloss, std_spec},
     -- blacks
-    midnight_black = { grey(0.015), 0.1, std_spec},
+    midnight_black = { grey(0.015), 0.1, std_gloss, std_spec},
     -- reds
-    velvet_red = { vector3(0.13,0.036,0.028), 0.15, std_spec},
-    cold_red = { vector3(0.1,0.025,0.021), 0.2, std_spec},
-    rosso_red = { vector3(0.19,0.026,0.011), 0.2, std_spec},
+    velvet_red = { vector3(0.13,0.036,0.028), 0.15, std_gloss, std_spec},
+    cold_red = { vector3(0.1,0.025,0.021), 0.2, std_gloss, std_spec},
+    rosso_red = { vector3(0.19,0.026,0.011), 0.2, std_gloss, std_spec},
     -- orange 
-    arancio_orange = { vector3(0.8,.17,0.03), 0.1, std_spec},
+    arancio_orange = { vector3(0.8,.17,0.03), 0.1, std_gloss, std_spec},
     -- yellow
-    giallo_yellow = { vector3(0.45,0.3,0.04), 0.0, std_spec},
+    giallo_yellow = { vector3(0.45,0.3,0.04), 0.0, std_gloss, std_spec},
     -- green 
-    ithaca_green = { vector3(0.18,0.6,0.0), 0.2, vector3(0.5,0,0.7)},
+    ithaca_green = { vector3(0.18,0.6,0.0), 0.2, 0.7, 0.5},
     -- blue
-    crystal_blue = { vector3(0.051, 0.072,0.12), 0.1, std_spec},
-    caelum_blue = { vector3(0.06,0.083,0.13), 0.1, std_spec},
-    fontus_blue = { vector3(0.045,0.045, 0.14), 0.15, std_spec2},
+    crystal_blue = { vector3(0.051, 0.072,0.12), 0.1, std_gloss, std_spec},
+    caelum_blue = { vector3(0.06,0.083,0.13), 0.1, std_gloss, std_spec},
+    fontus_blue = { vector3(0.045,0.045, 0.14), 0.15, std_gloss, std_spec2},
 
 
     white = { {1,1,1} },
@@ -35,11 +36,11 @@ carcols = {
     grey = { {.5,.5,.5} },
     dark_grey = { {.25,.25,.25} },
     black = { {.01,.01,.01} },
-    gold = { {1,.8,.4}, 0, {0.9,0.9,0.9} },
+    gold = { {1,.8,.4}, 0, 0.9, 0.9 },
 
-    metallic_silver = { {.5,.5,.5}, 1, {.75, .75, .75} },
-    metallic_gold = { {1,.8,.4}, 1, {0.9,0.9,0.9} },
-    metallic_black = { {.01,.01,.01}, 1, {.2,.2,.2} },
+    metallic_silver = { {.5,.5,.5}, 1, .75, .75 },
+    metallic_gold = { {1,.8,.4}, 1, 0.9, 0.9 },
+    metallic_black = { {.01,.01,.01}, 1, .2, .2 },
 
     brightest_red = { {1,0,0} },
     brightest_green = { {0,1,0} },
@@ -81,45 +82,45 @@ carcols = {
     darkest_yellow = { {0.1,0.1,0} },
     darkest_orange = { {0.1,0.05,0} },
 
-    brightest_metallic_red = { {1,0,0}, 1, {0.9,0.9,0.9} },
-    brightest_metallic_green = { {0,1,0}, 1, {0.9,0.9,0.9} },
-    brightest_metallic_blue = { {0,0,1}, 1, {0.9,0.9,0.9} },
-    brightest_metallic_cyan = { {0,1,1}, 1, {0.9,0.9,0.9} },
-    brightest_metallic_pink = { {1,0,1}, 1, {0.9,0.9,0.9} },
-    brightest_metallic_yellow = { {1,1,0}, 1, {0.9,0.9,0.9} },
-    brightest_metallic_orange = { {1,.5,0}, 1, {0.9,0.9,0.9} },
+    brightest_metallic_red = { {1,0,0}, 1, 0.9, 0.9 },
+    brightest_metallic_green = { {0,1,0}, 1, 0.9, 0.9 },
+    brightest_metallic_blue = { {0,0,1}, 1, 0.9, 0.9 },
+    brightest_metallic_cyan = { {0,1,1}, 1, 0.9, 0.9 },
+    brightest_metallic_pink = { {1,0,1}, 1, 0.9, 0.9 },
+    brightest_metallic_yellow = { {1,1,0}, 1, 0.9, 0.9 },
+    brightest_metallic_orange = { {1,.5,0}, 1, 0.9, 0.9 },
 
-    bright_metallic_red = { {0.75,0,0}, 1, {0.9,0.9,0.9} },
-    bright_metallic_green = { {0,0.75,0}, 1, {0.9,0.9,0.9} },
-    bright_metallic_blue = { {0,0,0.75}, 1, {0.9,0.9,0.9} },
-    bright_metallic_cyan = { {0,0.75,0.75}, 1, {0.9,0.9,0.9} },
-    bright_metallic_pink = { {0.75,0,0.75}, 1, {0.9,0.9,0.9} },
-    bright_metallic_yellow = { {0.75,0.75,0}, 1, {0.9,0.9,0.9} },
-    bright_metallic_orange = { {0.75,0.325,0}, 1, {0.9,0.9,0.9} },
+    bright_metallic_red = { {0.75,0,0}, 1, 0.9, 0.9 },
+    bright_metallic_green = { {0,0.75,0}, 1, 0.9, 0.9 },
+    bright_metallic_blue = { {0,0,0.75}, 1, 0.9, 0.9 },
+    bright_metallic_cyan = { {0,0.75,0.75}, 1, 0.9, 0.9 },
+    bright_metallic_pink = { {0.75,0,0.75}, 1, 0.9, 0.9 },
+    bright_metallic_yellow = { {0.75,0.75,0}, 1, 0.9, 0.9 },
+    bright_metallic_orange = { {0.75,0.325,0}, 1, 0.9, 0.9 },
 
-    metallic_red = { {.5,0,0}, 1, {0.9,0.9,0.9} },
-    metallic_green = { {0,.5,0}, 1, {0.9,0.9,0.9} },
-    metallic_blue = { {0,0,.5}, 1, {0.9,0.9,0.9} },
-    metallic_cyan = { {0,0.5,0.5}, 1, {0.9,0.9,0.9} },
-    metallic_pink = { {0.5,0,0.5}, 1, {0.9,0.9,0.9} },
-    metallic_yellow = { {0.5,0.5,0}, 1, {0.9,0.9,0.9} },
-    metallic_orange = { {0.5,0.25,0}, 1, {0.9,0.9,0.9} },
+    metallic_red = { {.5,0,0}, 1, 0.9, 0.9 },
+    metallic_green = { {0,.5,0}, 1, 0.9, 0.9 },
+    metallic_blue = { {0,0,.5}, 1, 0.9, 0.9 },
+    metallic_cyan = { {0,0.5,0.5}, 1, 0.9, 0.9 },
+    metallic_pink = { {0.5,0,0.5}, 1, 0.9, 0.9 },
+    metallic_yellow = { {0.5,0.5,0}, 1, 0.9, 0.9 },
+    metallic_orange = { {0.5,0.25,0}, 1, 0.9, 0.9 },
 
-    dark_metallic_red = { {.25,0,0}, 1, {0.9,0.9,0.9} },
-    dark_metallic_green = { {0,.25,0}, 1, {0.9,0.9,0.9} },
-    dark_metallic_blue = { {0,0,.25}, 1, {0.9,0.9,0.9} },
-    dark_metallic_cyan = { {0,0.25,0.25}, 1, {0.9,0.9,0.9} },
-    dark_metallic_pink = { {0.25,0,0.25}, 1, {0.9,0.9,0.9} },
-    dark_metallic_yellow = { {0.25,0.25,0}, 1, {0.9,0.9,0.9} },
-    dark_metallic_orange = { {0.25,0.125,0}, 1, {0.9,0.9,0.9} },
+    dark_metallic_red = { {.25,0,0}, 1, 0.9, 0.9 },
+    dark_metallic_green = { {0,.25,0}, 1, 0.9, 0.9 },
+    dark_metallic_blue = { {0,0,.25}, 1, 0.9, 0.9 },
+    dark_metallic_cyan = { {0,0.25,0.25}, 1, 0.9, 0.9 },
+    dark_metallic_pink = { {0.25,0,0.25}, 1, 0.9, 0.9 },
+    dark_metallic_yellow = { {0.25,0.25,0}, 1, 0.9, 0.9 },
+    dark_metallic_orange = { {0.25,0.125,0}, 1, 0.9, 0.9 },
 
-    darkest_metallic_red = { {.1,0,0}, 1, {0.9,0.9,0.9} },
-    darkest_metallic_green = { {0,.1,0}, 1, {0.9,0.9,0.9} },
-    darkest_metallic_blue = { {0,0,.1}, 1, {0.9,0.9,0.9} },
-    darkest_metallic_cyan = { {0,0.1,0.1}, 1, {0.9,0.9,0.9} },
-    darkest_metallic_pink = { {0.1,0,0.1}, 1, {0.9,0.9,0.9} },
-    darkest_metallic_yellow = { {0.1,0.1,0}, 1, {0.9,0.9,0.9} },
-    darkest_metallic_orange = { {0.1,0.05,0}, 1, {0.9,0.9,0.9} },
+    darkest_metallic_red = { {.1,0,0}, 1, 0.9, 0.9 },
+    darkest_metallic_green = { {0,.1,0}, 1, 0.9, 0.9 },
+    darkest_metallic_blue = { {0,0,.1}, 1, 0.9, 0.9 },
+    darkest_metallic_cyan = { {0,0.1,0.1}, 1, 0.9, 0.9 },
+    darkest_metallic_pink = { {0.1,0,0.1}, 1, 0.9, 0.9 },
+    darkest_metallic_yellow = { {0.1,0.1,0}, 1, 0.9, 0.9 },
+    darkest_metallic_orange = { {0.1,0.05,0}, 1, 0.9, 0.9 },
 
 }
 

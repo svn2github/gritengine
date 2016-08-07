@@ -3,66 +3,65 @@
 -- MATERIALS
 -- the plane
 material `face` {
-	diffuseColour=vec(1, 0.5, 0),
-	backfaces=true,
-	alpha=0.0,
-	depthWrite=false,
+	diffuseMask = vec(1, 0.5, 0),
+	backfaces = true,
+	alphaMask = 0.0,
+    sceneBlend = "ALPHA",
 }
 -- the plane dragging
 material `dragging_face` {
-	diffuseColour=vec(1, 0.5, 0),
-	backfaces=true,
-	depthWrite=false,
-	alpha=0.5
+	diffuseMask = vec(1, 0.5, 0),
+	backfaces = true,
+	alphaMask = 0.5,
+    sceneBlend = "ALPHA",
 }
 -- plane line 1
 material `line_1` {
-	diffuseColour=vec(0, 1, 0),
-	emissiveMask=vec(0, 1, 0),
-    additionalLighting=true,
-	depthSort=false,
+	diffuseMask = vec(0, 1, 0),
+	emissiveMask = vec(0, 1, 0),
+    additionalLighting = true,
 }
 -- plane line 2
 material `line_2` {
-	diffuseColour=vec(1, 0, 0),
-	emissiveMask=vec(1, 0, 0),
-    additionalLighting=true,
+	diffuseMask = vec(1, 0, 0),
+	emissiveMask = vec(1, 0, 0),
+    additionalLighting = true,
 }
 -- all arrows line material
 material `line` {
-	diffuseColour=vec(0, 1, 0),
-	emissiveMask=vec(0, 1, 0),
-    additionalLighting=true,
+	diffuseMask = vec(0, 1, 0),
+	emissiveMask = vec(0, 1, 0),
+    additionalLighting = true,
 }
 -- line selected (when you are dragging, only the line turns yellow)
 material `line_dragging` {
-	diffuseColour=vec(1, 0.5, 0),
-	emissiveMask=vec(1, 0.5, 0),
-    additionalLighting=true,
+	diffuseMask = vec(1, 0.5, 0),
+	emissiveMask = vec(1, 0.5, 0),
+    additionalLighting = true,
 }
 -- all arrows `arrow` material
 material `arrow` {
-	diffuseColour=vec(0, 1, 0),
-	emissiveMask=vec(0, 1, 0),
-    additionalLighting=true,
+	diffuseMask = vec(0, 1, 0),
+	emissiveMask = vec(0, 1, 0),
+    additionalLighting = true,
 }
 
 material `green` {
-	diffuseColour=vec(0, 1, 0),
-	emissiveMask=vec(0, 1, 0),
-    additionalLighting=true,
+	diffuseMask = vec(0, 1, 0),
+	emissiveMask = vec(0, 1, 0),
+    additionalLighting = true,
 }
 
 material `red` {
-	diffuseColour=vec(1, 0, 0),
-	emissiveMask=vec(1, 0, 0),
-    additionalLighting=true,
+	diffuseMask = vec(1, 0, 0),
+	emissiveMask = vec(1, 0, 0),
+    additionalLighting = true,
 }
 
 material `blue` {
-	diffuseColour=vec(0, 0, 1),
-	emissiveMask=vec(0, 0, 1),
-    additionalLighting=true,
+	diffuseMask = vec(0, 0, 1),
+	emissiveMask = vec(0, 0, 1),
+    additionalLighting = true,
 }
 -- CLASSES
 class `dummy_plane` (BaseClass) {
@@ -86,6 +85,8 @@ class `arrow_rotate` (BaseClass) {
 	editorObject = true;
 }
 
+--[[
+-- These Ogre materials no-longer exist, we will have to figure out another way of rendering on top.
 get_material(`green`):setDepthBias(0, 0, 50000, 50000)
 get_material(`red`):setDepthBias(0, 0, 50000, 50000)
 get_material(`blue`):setDepthBias(0, 0, 50000, 50000)
@@ -97,6 +98,7 @@ get_material(`face`):setDepthBias(0, 0, 50000, 50000)
 get_material(`line_1`):setDepthBias(0, 0, 50000, 50000)
 get_material(`line_2`):setDepthBias(0, 0, 50000, 50000)
 get_material(`line_dragging`):setDepthBias(0, 0, 50000, 50000)
+]]
 
 class `widget` {} {
 
@@ -143,7 +145,7 @@ class `widget` {} {
 			instance.x:destroy()
 		end
 		
-		instance.x = object (`arrow_`..instance.mode) (0, 0, 0) {name="widget_x"}
+		instance.x = object (`arrow_`..instance.mode) (0, 0, 0) {name = "widget_x"}
 		instance.x:activate()
 		instance.x.instance.gfx.localOrientation = pivot_or * euler(0, 0, -90)
 		instance.x.instance.gfx:setMaterial(`arrow`, `red`)
@@ -155,7 +157,7 @@ class `widget` {} {
 			instance.y:destroy()
 		end
 		
-		instance.y = object (`arrow_`..instance.mode) (0, 0, 0) {name="widget_y"}
+		instance.y = object (`arrow_`..instance.mode) (0, 0, 0) {name = "widget_y"}
 		instance.y:activate()
 		instance.y.instance.gfx:setMaterial(`arrow`, `green`)
 		instance.y.instance.gfx:setMaterial(`line`, `green`)
@@ -166,7 +168,7 @@ class `widget` {} {
 			instance.z:destroy()
 		end
 		
-		instance.z = object (`arrow_`..instance.mode) (0, 0, 0) {name="widget_z"}
+		instance.z = object (`arrow_`..instance.mode) (0, 0, 0) {name = "widget_z"}
 		instance.z:activate()
 		instance.z.instance.gfx.localOrientation = pivot_or * euler(90, 0, -90)
 		instance.z.instance.gfx:setMaterial(`arrow`, `blue`)
@@ -187,13 +189,13 @@ class `widget` {} {
 		end
 
 		if instance.mode == "translate" or instance.mode == "scale" then
-			instance.xy = object `dummy_plane` (0, 0, 0) {name="widget_xy"}
+			instance.xy = object `dummy_plane` (0, 0, 0) {name = "widget_xy"}
 			instance.xy:activate()
 			instance.xy.instance.gfx.localOrientation = pivot_or
 			instance.xy.instance.defmat = `green`
 			instance.xy.wc = "xy"
 
-			instance.xz = object `dummy_plane` (0, 0, 0) {name="widget_xz"}
+			instance.xz = object `dummy_plane` (0, 0, 0) {name = "widget_xz"}
 			instance.xz:activate()
 			instance.xz.instance.gfx.localOrientation = pivot_or * euler(0, -90, -90)
 			instance.xz.instance.gfx:setMaterial(`line_1`, `red`)
@@ -201,7 +203,7 @@ class `widget` {} {
 			instance.xz.instance.defmat = `green`
 			instance.xz.wc = "xz"
 	
-			instance.yz = object `dummy_plane` (0, 0, 0) {name="widget_yz"}
+			instance.yz = object `dummy_plane` (0, 0, 0) {name = "widget_yz"}
 			instance.yz:activate()
 			instance.yz.instance.gfx.localOrientation = pivot_or * euler(90, 0, 90)
 			instance.yz.instance.gfx:setMaterial(`line_1`, `blue`)

@@ -2,22 +2,41 @@
 
 include `classes.lua`
 
-material `Cone` { gloss=5, diffuseMap=`TrafficCone.dds` }
+material `Cone` {
+    glossMask = .5,
+    diffuseMap = `TrafficCone.dds`,
+}
 
-material `barrier3` { gloss=5, diffuseMap=`barrier3.jpg` }
-material `barrierS` { gloss=5, diffuseMap=`barrierS.jpg` }
+material `barrier3` {
+    glossMask = .5,
+    diffuseMap = `barrier3.jpg`,
+}
 
-material `RoadBarrel` { diffuseMap=`RoadBarrel.png`, glossFromSpecularAlpha=true; gloss=30 }
+material `barrierS` {
+    glossMask = .5,
+    diffuseMap = `barrierS.jpg`,
+}
 
-class `Barrier1` (ColClass) {renderingDistance=100,castShadows=true,placementZOffset=0.5}
+-- TODO: glossFromSpecularAlpha no-longer exists.  Texture needs updating?
+material `RoadBarrel` {
+    diffuseMap = `RoadBarrel.png`,
+    --glossFromSpecularAlpha = true,
+    glossMask = 30,
+}
+
+class `Barrier1` (ColClass) {
+    renderingDistance = 100,
+    castShadows = true,
+    placementZOffset = 0.5
+}
 
 
 -- jost, fix your shit!
 material `DEFAULT` { }
 
 class `floodlight` (ColClass) {
-    renderingDistance=250;
-    lights={
+    renderingDistance = 250;
+    lights = {
         {
             pos=vector3(0.0,0.016,1.163), diff=5*vector3(0.89,1,1),
             range=10, iangle=20, oangle=32.5, aim=quat(-30,V_RIGHT)
@@ -26,7 +45,9 @@ class `floodlight` (ColClass) {
 }
 
 local streetlamp_light_colour=vector3(1,0.81,0.45)
-material `Lamp` { diffuseMap=`Lamp.dds` }
+material `Lamp` {
+    diffuseMap = `Lamp.dds`,
+}
 material `LampBulb` {
     diffuseMap = `Lamp.dds`,
     emissiveMap = `Lamp.dds`,

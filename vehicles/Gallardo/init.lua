@@ -116,16 +116,15 @@ class `.` (Vehicle) {
 
 
 -- most materials are temporal and will probably joined
-local g, s = 1, 1
-material `Body` { paintColour = 1; microFlakes=true; gloss=g ; specular = s }
-material `Wheel` { diffuseMap = `glass.png`; gloss=1 }
-material `backlight` { diffuseMap = `backlight.png`; }
-material `Grey` { diffuseMap = `grey.png`;  }
-material `BrakeCaliper` { diffuseColour ={20,0,0}; }
-material `Black` { diffuseMap = `black.png`;  }
-material `LightBlack` { diffuseMap = `lightblack.png`; gloss=1 ; }
+material `Body` { shader = `/common/Paint`, microFlakesMap = `/common/MicroFlakes.dds`, paintSelectionMask = vec(1, 0, 0, 0), glossMask = 1, specularMask = 1 }
+material `Wheel` { diffuseMap = `glass.png`, glossMask = 1 }
+material `backlight` { diffuseMap = `backlight.png`, }
+material `Grey` { diffuseMap = `grey.png`, }
+material `BrakeCaliper` { diffuseMask = srgb(20,0,0), }
+material `Black` { diffuseMap = `black.png`,  }
+material `LightBlack` { diffuseMap = `lightblack.png`, glossMask = 1, }
 material `Tyre` { diffuseMap = `tyre.png` }
-material `Silver` { diffuseColour ={0.221,0.221,0.221};  }
-material `Grill` { diffuseMap = `grill_grey.jpg`;  }
-material `Glass` { diffuseMap = `glass.png`; alpha = true; gloss=1 ; specular = s }
+material `Silver` { diffuseMask = vec(0.221,0.221,0.221),  }
+material `Grill` { diffuseMap = `grill_grey.jpg`,  }
+material `Glass` { diffuseMap = `glass.png`, sceneBlend = "ALPHA", glossMask = 1, specularMask = 1 }
 

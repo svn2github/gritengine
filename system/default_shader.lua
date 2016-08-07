@@ -4,18 +4,23 @@ print("Loading default_shader.lua")
 
 shader `Default` {
 
+    textureAnimation = uniform_float(0, 0);
+    textureScale = uniform_float(1, 1);
+
     diffuseMap = uniform_texture_2d(1, 1, 1);
     diffuseMask = uniform_float(1, 1, 1);
+    diffuseVertex = static_float(0);  -- Boolean
 
     alphaMask = uniform_float(1);
+    alphaVertex = static_float(0);  -- Boolean
     alphaRejectThreshold = uniform_float(-1);
 
     normalMap = uniform_texture_2d(0.5, 0.5, 1);
 
     glossMap = uniform_texture_2d(1, 1, 1);
-    glossMask = uniform_float(1);
-    specularMask = uniform_float(1);
-    premultipliedAlpha = static_float(0);  -- TODO(dcunnin): Add boolean support
+    glossMask = uniform_float(0);
+    specularMask = uniform_float(0.04);
+    premultipliedAlpha = static_float(0);  -- Boolean
 
     emissiveMap = uniform_texture_2d(1, 1, 1);
     emissiveMask = uniform_float(0, 0, 0);
@@ -28,22 +33,25 @@ shader `Default` {
     ]],
 
     dangsCode = [[
-        var diff_texel = sample(mat.diffuseMap, vert.coord0.xy);
-        //if (mat.premultipliedAlpha > 0) diff_texel = pma_decode(diff_texel);
+        var uv = vert.coord0.xy * mat.textureScale + global.time * mat.textureAnimation;
+        var diff_texel = sample(mat.diffuseMap, uv);
+        if (mat.premultipliedAlpha > 0) diff_texel = pma_decode(diff_texel);
         out.diffuse = gamma_decode(diff_texel.rgb) * mat.diffuseMask;
+        if (mat.diffuseVertex > 0) out.diffuse = out.diffuse * vert.colour.xyz;
         out.alpha = diff_texel.a * mat.alphaMask;
-        if (out.alpha < mat.alphaRejectThreshold) discard;
-        var normal_texel = sample(mat.normalMap, vert.coord0.xy).xyz;
+        if (mat.alphaVertex > 0) out.alpha = out.alpha * vert.colour.w;
+        if (out.alpha <= mat.alphaRejectThreshold) discard;
+        var normal_texel = sample(mat.normalMap, uv).xyz;
         var normal_ts = normal_texel * Float3(-2, 2, 2) + Float3(1, -1, -1);
-        // TODO(dcunnin): double sided faces
         out.normal = normal_ts.x*tangent_ws + normal_ts.y*binormal_ws + normal_ts.z*normal_ws;
-        var gloss_texel = sample(mat.glossMap, vert.coord0.xy);
+        var gloss_texel = sample(mat.glossMap, uv);
         out.gloss = gloss_texel.b * mat.glossMask;
         out.specular = gamma_decode(gloss_texel.r) * mat.specularMask;
     ]],
 
     colourCode = [[
-        var c = sample(mat.emissiveMap, vert.coord0.xy);
+        var uv = vert.coord0.xy * mat.textureScale + global.time * mat.textureAnimation;
+        var c = sample(mat.emissiveMap, uv);
         out.colour = gamma_decode(c.rgb) * mat.emissiveMask;
     ]],
 }

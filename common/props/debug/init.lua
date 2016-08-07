@@ -4,10 +4,26 @@ include `crates/init.lua`
 
 include `classes.lua`
 
-material `Black` { diffuseColour={.01,.01,.01}, }
-class `CannonBall` (ColClass) {renderingDistance=100,castShadows=true, placementZOffset = 0.15, lights={{range=1,diff=vector3(0.75,0,0),spec=vector3(0.75,0,0), coronaColour=V_ZERO}} }
+material `Black` {
+    diffuseMask = vec(.01,.01,.01),
+}
+class `CannonBall` (ColClass) {
+    renderingDistance = 100,
+    castShadows = true,
+    placementZOffset = 0.15,
+    lights = {
+        {
+            range = 1,
+            diff = vector3(0.75,0,0),
+            spec = vector3(0.75,0,0),
+            coronaColour = V_ZERO,
+        },
+    },
+}
 
-material `JengaBrick` { diffuseMap = `JengaBrick.dds` }
+material `JengaBrick` {
+    diffuseMap = `JengaBrick.dds`,
+}
 
 class `JengaStack` (extends(ProcPileClass) {
     spawnObjects = function(persistent, spawn)
@@ -20,7 +36,7 @@ class `JengaStack` (extends(ProcPileClass) {
         end
     end;
 }) {
-    renderingDistance=60;
-    height=10;
+    renderingDistance = 60;
+    height = 10;
 }
 

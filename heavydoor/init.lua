@@ -3,6 +3,8 @@ map_ghost_spawn(vector3(0, 0, 0))
 class `door_low` (BaseClass) {castShadows=true,receiveShadows=true,renderingDistance=300}
 class `smallmap` (BaseClass) {castShadows=true,receiveShadows=true,renderingDistance=300}
 
+-- TODO: There is no such thing as a specularMap
+
 --Material definition:
 material `scifi_door` { diffuseMap=`heavydoor_1024_DIF.dds`, normalMap=`heavydoor_1024_NRM.dds`, specularMap=`heavydoor_1024_SPEC.dds`,
 						specularColour={2,2,2}}

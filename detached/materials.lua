@@ -4,49 +4,200 @@
 ---- MATERIALS LIBRARY ----
 ---------------------------
 
-local filter_mip = "LINEAR"
-local filter_mag = "POINT"
-
-if vince_ati_bug == true then
-    filter_mip = "NONE"
+local function point_tex(name, overrides)
+    overrides = overrides or {}
+    local T = {
+        image = name,
+        filterMax = "POINT",
+        filterMip = "LINEAR",
+    }
+    -- Vince had a problem on ATI where filterMip had to be NONE or the filterMax would not take
+    -- effect.
+    for k, v in pairs(overrides) do
+        T[k] = v
+    end
+    return T
 end
 
 -- GREYBOX MATS --
 
-material `greybox` { diffuseColour= {.4,.4,.4} ,vertexDiffuse=true}
-material `greybox_red` { diffuseColour= {.33,0.0,0.0} ,vertexDiffuse=true}
-material `greybox_blue` { diffuseColour= {0.0,.1,.33}}
-material `greybox_white` { diffuseColour= {0.8,.8,.8} , vertexDiffuse=true}
-material `greybox_black` { diffuseColour= {0.1,.1,.1} , vertexDiffuse=true}
+material `greybox` {
+    diffuseMask = vec(.4, .4, .4),
+    diffuseVertex = 1,
+}
+material `greybox_red` {
+    diffuseMask = vec(.33, 0.0, 0.0),
+    diffuseVertex = 1,
+}
+material `greybox_blue` {
+    diffuseMask = vec(0.0, .1, .33),
+}
+material `greybox_white` {
+    diffuseMask = vec(0.8, .8, .8),
+    diffuseVertex = 1,
+}
+material `greybox_black` {
+    diffuseMask = vec(0.1, .1, .1),
+    diffuseVertex = 1,
+}
 
 -- Buildings Materials -- 
 
-material `ambient_strips` { filterMip=filter_mip, filterMag=filter_mag, diffuseMap=`textures/ambient_strips.dds`, alpha = 0.99 }
-material `panels_a` { filterMip=filter_mip, filterMag=filter_mag, diffuseMap=`textures/panels_a.dds` ,glossMap=`textures/panels_a_spec.dds` ,vertexDiffuse=true}
-material `panels_b` { filterMip=filter_mip, filterMag=filter_mag, diffuseMap=`textures/panels_b.dds` ,glossMap=`textures/panels_b_spec.dds` ,vertexDiffuse=true}
-material `panels_c` { filterMip=filter_mip, filterMag=filter_mag, diffuseMap=`textures/panels_c.dds` ,glossMap=`textures/panels_c_spec.dds` ,vertexDiffuse=true}
-material `panels_d` { filterMip=filter_mip, filterMag=filter_mag, diffuseMap=`textures/panels_d.dds` ,glossMap=`textures/panels_d_spec.dds` ,vertexDiffuse=true}
-material `windows_a` { filterMip=filter_mip, filterMag=filter_mag, diffuseMap=`textures/windows_a.dds` ,glossMap=`textures/windows_a_spec.dds` ,vertexDiffuse=true}
-material `girders` { filterMip=filter_mip, filterMag=filter_mag, diffuseMap=`textures/girders.dds`, glossMap=`textures/girders_spec.dds` ,vertexDiffuse=true}
-material `glassdoor` { filterMip=filter_mip, filterMag=filter_mag, diffuseMap=`textures/glassdoor_a.dds` ,glossMap=`textures/glassdoor_a_spec.dds` ,vertexDiffuse=true}
-material `leaks` { filterMip=filter_mip, filterMag=filter_mag, diffuseMap=`textures/dirt_leaks.dds` , alpha = 0.4 ,vertexDiffuse=true}
+material `ambient_strips` {
+    diffuseMap = point_tex(`textures/ambient_strips.dds`),
+    alphaMask = 0.99,
+    sceneBlend = "ALPHA",
+}
+material `panels_a` {
+    diffuseMap = point_tex(`textures/panels_a.dds`),
+    glossMap = point_tex(`textures/panels_a_spec.dds`),
+    glossMask = 1,
+    diffuseVertex = 1,
+}
+material `panels_b` {
+    diffuseMap = point_tex(`textures/panels_b.dds`),
+    glossMap = point_tex(`textures/panels_b_spec.dds`),
+    glossMask = 1,
+    diffuseVertex = 1,
+}
+material `panels_c` {
+    diffuseMap = point_tex(`textures/panels_c.dds`),
+    glossMap = point_tex(`textures/panels_c_spec.dds`),
+    glossMask = 1,
+    diffuseVertex = 1,
+}
+material `panels_d` {
+    diffuseMap = point_tex(`textures/panels_d.dds`),
+    glossMap = point_tex(`textures/panels_d_spec.dds`),
+    glossMask = 1,
+    diffuseVertex = 1,
+}
+material `windows_a` {
+    diffuseMap = point_tex(`textures/windows_a.dds`),
+    glossMap = point_tex(`textures/windows_a_spec.dds`),
+    glossMask = 1,
+    diffuseVertex = 1,
+}
+material `girders` {
+    diffuseMap = point_tex(`textures/girders.dds`),
+    glossMap = point_tex(`textures/girders_spec.dds`),
+    glossMask = 1,
+    diffuseVertex = 1,
+}
+material `glassdoor` {
+    diffuseMap = point_tex(`textures/glassdoor_a.dds`),
+    glossMap = point_tex(`textures/glassdoor_a_spec.dds`),
+    glossMask = 1,
+    diffuseVertex = 1,
+}
+material `leaks` {
+    diffuseMap = point_tex(`textures/dirt_leaks.dds`),
+    alphaMask = 0.4,
+    sceneBlend = "ALPHA",
+    diffuseVertex = 1,
+}
 
 -- Platforms Materials -- 
 
-material `platforms` { filterMip=filter_mip, filterMag=filter_mag, diffuseMap=`textures/platforms.dds`, glossMap=`textures/platforms_spec.dds`, emissiveMap=`textures/platforms_em.dds` , emissiveMask=vec(5, 5, 5), additionalLighting=true, vertexDiffuse=true}
-material `platform_tiles_a` { filterMip=filter_mip, filterMag=filter_mag, diffuseMap=`textures/platform_tiles_a.dds`,glossMap=`textures/platform_tiles_a_spec.dds` ,vertexDiffuse=true}
-material `plaform_panels_a` { filterMip=filter_mip, filterMag=filter_mag, diffuseMap=`textures/platform_panels_a.dds`,glossMap=`textures/platform_panels_a_spec.dds` ,vertexDiffuse=true}
-material `platform_stairs_a` { filterMip=filter_mip, filterMag=filter_mag, diffuseMap=`textures/platform_stairs_a.dds`,vertexDiffuse=true, glossMap=`textures/platform_stairs_a_spec.dds` }
-material `wood_bench` { filterMip=filter_mip, filterMag=filter_mag, diffuseMap=`textures/wood_bench.dds`,vertexDiffuse=true}
-material `energy_field` { filterMip=filter_mip, filterMag=filter_mag, emissiveMap= `textures/energy_field.dds`, emissiveMask = vec(0,.5,2), additionalLighting=true,  textureAnimation={0,-.5}, alpha=0, backfaces=true,vertexDiffuse=true} 
-material `sustainment_unit` { filterMip=filter_mip, filterMag=filter_mag, diffuseMap=`textures/sustainment_unit.dds`, glossMap=`textures/sustainment_unit_spec.dds`, emissiveMap=`textures/sustainment_unit_em.dds`, emissiveMask = vec(5, 5, 5), additionalLighting=true, vertexDiffuse=true}
-material `door_maintenance` { filterMip=filter_mip, filterMag=filter_mag, diffuseMap=`textures/door_maintenance.dds`, glossMap=`textures/door_maintenance_spec.dds` ,vertexDiffuse=true}
+material `platforms` {
+    additionalLighting = true,
+
+    diffuseMap = point_tex(`textures/platforms.dds`),
+    glossMap = point_tex(`textures/platforms_spec.dds`),
+    glossMask = 1,
+    emissiveMap = point_tex(`textures/platforms_em.dds`) ,
+    emissiveMask = vec(5, 5, 5),
+    diffuseVertex = 1,
+}
+material `platform_tiles_a` {
+    diffuseMap = point_tex(`textures/platform_tiles_a.dds`),
+    glossMap = point_tex(`textures/platform_tiles_a_spec.dds`) ,
+    glossMask = 1,
+    diffuseVertex = 1,
+}
+material `plaform_panels_a` {
+    diffuseMap = point_tex(`textures/platform_panels_a.dds`),
+    glossMap = point_tex(`textures/platform_panels_a_spec.dds`),
+    glossMask = 1,
+    diffuseVertex = 1,
+}
+material `platform_stairs_a` {
+    diffuseMap = point_tex(`textures/platform_stairs_a.dds`),
+    diffuseVertex = 1,
+    glossMap = point_tex(`textures/platform_stairs_a_spec.dds`) ,
+    glossMask = 1,
+}
+material `wood_bench` {
+    diffuseMap = point_tex(`textures/wood_bench.dds`),
+    diffuseVertex = 1,
+}
+material `energy_field` {
+    backfaces = true,
+    additionalLighting = true,
+
+    emissiveMap = point_tex(`textures/energy_field.dds`),
+    emissiveMask = vec(0, .5, 2),
+    textureAnimation = vec(0, -.5),
+    alphaRejectThreshold = 1,
+    diffuseVertex = 1,
+} 
+material `sustainment_unit` {
+    additionalLighting = true,
+
+    diffuseMap = point_tex(`textures/sustainment_unit.dds`),
+    glossMap = point_tex(`textures/sustainment_unit_spec.dds`),
+    glossMask = 1,
+    emissiveMap = point_tex(`textures/sustainment_unit_em.dds`),
+    emissiveMask = vec(5, 5, 5),
+    diffuseVertex = 1,
+}
+material `door_maintenance` {
+    diffuseMap = point_tex(`textures/door_maintenance.dds`),
+    glossMap = point_tex(`textures/door_maintenance_spec.dds`),
+    glossMask = 1,
+    diffuseVertex = 1,
+}
 
 -- Props Materials --
 
-material `cardboard_a` { filterMip=filter_mip, filterMag=filter_mag, diffuseMap=`textures/cardboard_a.dds`, glossMap=`textures/cardboard_a_spec.dds`}
-material `foliage_tree_a` { filterMip=filter_mip, filterMag=filter_mag, grassLighting = true, diffuseMap=`textures/foliage_tree_a.dds`, glossMap=`textures/foliage_tree_a_spec.dds`, backfaces=true, clamp = true, alphaReject = 0.33, vertexDiffuse=true}
-material `trunk_a` { filterMip=filter_mip, filterMag=filter_mag, diffuseMap=`textures/trunk_a.dds`,vertexDiffuse=true}
-material `dumpster` { filterMip=filter_mip, filterMag=filter_mag, diffuseMap=`textures/dumpster.dds`,vertexDiffuse=true, glossMap=`textures/dumpster_spec.dds`}
-material `tube_station` { filterMip=filter_mip, filterMag=filter_mag, diffuseMap=`textures/tube_station.tga`, glossMap=`textures/tube_station_spec.tga`, emissiveMap=`textures/tube_station_em.tga`, emissiveMask = vec(5,5,5), additionalLighting=true, vertexDiffuse=true}
-material `tube` { filterMip=filter_mip, filterMag=filter_mag, diffuseMap=`textures/tube.tga`,vertexDiffuse=true, glossMap=`textures/tube_spec.tga`, alpha = 0.8}
+material `cardboard_a` {
+    diffuseMap = point_tex(`textures/cardboard_a.dds`),
+    glossMap = point_tex(`textures/cardboard_a_spec.dds`),
+    glossMask = 1,
+}
+material `foliage_tree_a` {
+    backfaces = true,
+    diffuseMap = point_tex(`textures/foliage_tree_a.dds`, { modeU = "CLAMP", modeV = "CLAMP", modeW = "CLAMP" }),
+    glossMap = point_tex(`textures/foliage_tree_a_spec.dds`, { modeU = "CLAMP", modeV = "CLAMP", modeW = "CLAMP" }),
+    glossMask = 1,
+    alphaRejectThreshold = 0.33,
+    diffuseVertex = 1,
+}
+material `trunk_a` {
+    diffuseMap = point_tex(`textures/trunk_a.dds`),
+    diffuseVertex = 1,
+}
+material `dumpster` {
+    diffuseMap = point_tex(`textures/dumpster.dds`),
+    diffuseVertex = 1,
+    glossMap = point_tex(`textures/dumpster_spec.dds`),
+    glossMask = 1,
+}
+material `tube_station` {
+    additionalLighting = true,
+
+    diffuseMap = point_tex(`textures/tube_station.tga`),
+    glossMap = point_tex(`textures/tube_station_spec.tga`),
+    glossMask = 1,
+    emissiveMap = point_tex(`textures/tube_station_em.tga`),
+    emissiveMask = vec(5, 5, 5),
+    diffuseVertex = 1,
+}
+material `tube` {
+    diffuseMap = point_tex(`textures/tube.tga`),
+    diffuseVertex = 1,
+    glossMap = point_tex(`textures/tube_spec.tga`),
+    glossMask = 1,
+    alphaMask = 0.8,
+    sceneBlend = "ALPHA",
+}

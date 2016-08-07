@@ -1,86 +1,134 @@
 -- (c) Acisclo Murillo (JostVice), (c) Some texture work from Vincent Mayeur - 2012 - Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 --Materials
 
-local soc=20
-soc = 0
-
-material `DEFAULT` { diffuseColour={.5,.5,.5}, specularColour={.5,.5,.5}, gloss=.15, shadowObliqueCutOff=soc, vertexDiffuse = true }
+material `DEFAULT` {
+    diffuseMask = vec(0.5, 0.5, 0.5),
+    specularMask = .5,
+    glossMask = .15,
+    diffuseVertex = 1,
+}
 
 material `terrainLAY1` {
-    vertexDiffuse=true,
-    blend = {
-        { diffuseMap=`textures/grass.dds`, normalMap=`textures/grass_N.dds`, glossMap=`textures/grass_S.tga`, textureScale={2,2} },
-        { diffuseMap=`textures/dirt.dds`, normalMap=`textures/dirt_N.dds`,glossMap=`textures/dirt_S.tga` },
-        { diffuseMap=`textures/rock.dds`, normalMap=`textures/rock_N.png`,glossMap=`textures/rock_S.tga`, textureScale={3,3} },
-        { diffuseMap=`textures/beachsand.dds`, normalMap=`textures/beachsand_N.dds`,glossMap=`textures/beachsand_S.tga`},
-    },
-    shadowObliqueCutOff = soc,
+    shader = `/common/HeightmapBlend4`,
+    diffuseVertex = 1,
+    
+    diffuseMap0 = `textures/grass.dds`,
+    normalMap0 = `textures/grass_N.dds`,
+    pbrMap0 = `textures/grass_S.tga`,
+    uvScale0 = 1/vec(2, 2),
+
+    diffuseMap1 = `textures/dirt.dds`,
+    normalMap1 = `textures/dirt_N.dds`,
+    pbrMap1 = `textures/dirt_S.tga`,
+
+    diffuseMap2 = `textures/rock.dds`,
+    normalMap2 = `textures/rock_N.png`,
+    pbrMap2 = `textures/rock_S.tga`,
+    uvScale2 = 1/vec(3, 3),
+
+    diffuseMap3 = `textures/beachsand.dds`,
+    normalMap3 = `textures/beachsand_N.dds`,
+    pbrMap3 = `textures/beachsand_S.tga`,
 }
 
 material `terrainGRASS` {
-    vertexDiffuse=true,
-    diffuseMap=`textures/grass.dds`, 
-	normalMap=`textures/grass_N.dds`, 
-	glossMap=`textures/grass_S.tga`, 
-	textureScale={2,2},
-    shadowObliqueCutOff = soc,
+    diffuseVertex = 1,
+    diffuseMap = `textures/grass.dds`, 
+	normalMap = `textures/grass_N.dds`, 
+	glossMap = `textures/grass_S.tga`, 
+    glossMask = 1,
+	textureScale = 1 / vec(2, 2),
 }
 	
 material `terrainLAY2` {
-    vertexDiffuse=true,
-    blend = {
-        { diffuseMap=`textures/grass.dds`, normalMap=`textures/grass_N.dds`, glossMap=`textures/grass_S.tga`, textureScale={2,2} },
-        { diffuseMap=`textures/dirt.dds`, normalMap=`textures/dirt_N.dds`,glossMap=`textures/dirt_S.tga` },
-        { diffuseMap=`textures/grass_dead.dds`, normalMap=`textures/grass_dead_N.dds`,glossMap=`textures/grass_dead_S.tga` },
-        { diffuseMap=`textures/mud.dds`, normalMap=`textures/mud_N.dds`,glossMap=`textures/mud_S.tga` },
-    },
-    shadowObliqueCutOff = soc,
+    shader = `/common/HeightmapBlend4`,
+
+    diffuseVertex = 1,
+    diffuseMap0 = `textures/grass.dds`,
+    normalMap0 = `textures/grass_N.dds`,
+    pbrMap0 = `textures/grass_S.tga`,
+    uvScale0 = 1 / vec(2, 2),
+
+    diffuseMap1 = `textures/dirt.dds`,
+    normalMap1 = `textures/dirt_N.dds`,
+    pbrMap1 = `textures/dirt_S.tga`,
+
+    diffuseMap2 = `textures/grass_dead.dds`,
+    normalMap2 = `textures/grass_dead_N.dds`,
+    pbrMap2 = `textures/grass_dead_S.tga`,
+
+    diffuseMap3 = `textures/mud.dds`,
+    normalMap3 = `textures/mud_N.dds`,
+    pbrMap3 = `textures/mud_S.tga`,
 }
 	
 material `airport_cement` {
-    vertexDiffuse=true,
-    blend = {
-        { diffuseMap=`textures/cement_tiles.dds`, normalMap=`textures/cement_tiles_N.dds`, glossMap=`textures/cement_tiles_S.tga`, textureScale={2,2} },
-        { diffuseMap=`textures/dirt.dds`, normalMap=`textures/dirt_N.dds`, glossMap=`textures/dirt_S.tga` },
-    },
+    shader = `/common/HeightmapBlend2`,
+
+    diffuseVertex = 1,
+
+    diffuseMap0 = `textures/cement_tiles.dds`,
+    normalMap0 = `textures/cement_tiles_N.dds`,
+    pbrMap0 = `textures/cement_tiles_S.tga`,
+    uvScale0 = 1 / vec(2, 2),
+
+    diffuseMap1 = `textures/dirt.dds`,
+    normalMap1 = `textures/dirt_N.dds`,
+    pbrMap1 = `textures/dirt_S.tga`,
 }
+
 material `WATERFALL` {
-    vertexDiffuse=true,
-    textureAnimation={0,-1},
-    diffuseMap = `textures/waterfall.dds`, diffuseColour={1,1,1}, alpha=0.75,
-    normalMap=`textures/waterfall_NM.dds`,
-    specularMap=`textures/waterfall_S.dds`, specularColour={2,2.3,4}, gloss=0.7,
-    --translucencyMap="textures/waterfall_S.dds",
+    sceneBlend = "ALPHA",
     backfaces = true,
+    castShadows = false,
+
+    textureAnimation = vec(0, -1),
+    diffuseVertex = 1,
+    diffuseMap = `textures/waterfall.dds`,
+    alphaMask = 0.75,
+    normalMap = `textures/waterfall_NM.dds`,
+    -- specularMap = `textures/waterfall_S.dds`,
+    specularMask = 0.02,
+    glossMask = 0.7,
 }
 
 material `ocean` {
-	diffuseColour = V_ZERO,
-	--diffuseMap="textures/ocean_D.dds",
-	normalMap=`textures/ocean_N.tga`,
-	glossMap=`textures/ocean_S.tga`,
-    depthWrite=true,
-	alpha = 0.9,
-	textureAnimation={-0.1,0},
+    sceneBlend = "ALPHA_DEPTH",
+
+	diffuseMask = vec(0, 0, 0),
+	alphaMask = 0.9,
+	normalMap = `textures/ocean_N.tga`,
+    glossMask = 1,
+    specularMask = 0.5,
+	textureAnimation = vec(-0.1, 0),
 }
 
-material `Road` {vertexDiffuse=true, diffuseMap=`textures/road.dds`, normalMap=`textures/road_N.dds`, glossMap=`textures/road_S.tga`  }
-material `TunnelWall` {vertexDiffuse=true, diffuseMap=`textures/TunnelWall.dds`, normalMap=`textures/TunnelWall_N.dds`, glossMap=`textures/TunnelWall_S.tga`  }
+material `Road` {
+    diffuseVertex = 1,
+    diffuseMap = `textures/road.dds`,
+    normalMap = `textures/road_N.dds`,
+    glossMap = `textures/road_S.tga`,
+    glossMask = 1,
+}
+material `TunnelWall` {
+    diffuseVertex = 1,
+    diffuseMap = `textures/TunnelWall.dds`,
+    normalMap = `textures/TunnelWall_N.dds`,
+    glossMap = `textures/TunnelWall_S.tga`,
+    glossMask = 1,
+}
 
 --Classes for the jilted generation
 
-class `VCtest` (BaseClass) {castShadows=true,receiveShadows=true,renderingDistance=300}
-class `road` (ColClass) {castShadows=true,receiveShadows=true,renderingDistance=1500}
-class `Road2` (ColClass) {renderingDistance=1500}
-class `terrain` (ColClass) {castShadows=true,receiveShadows=true,renderingDistance=1500}
-class `canal` (ColClass) {castShadows=true,receiveShadows=true,renderingDistance=1500}
-class `tunnel` (ColClass) {castShadows=true, receiveShadows=true, renderingDistance=500}
-class `ocean_plane` (BaseClass) {renderingDistance=10000, castShadows=false, receiveShadows=false}
-lights = {
-
-	}
-class `Waterfall` (BaseClass) {castShadows=true,receiveShadows=true,renderingDistance=300}
-class `WaterfallBase` (ColClass) {castShadows=true,receiveShadows=true,renderingDistance=500}
-class `airport_base` (ColClass) {renderingDistance=1500}
+class `VCtest` (BaseClass) {castShadows = true,renderingDistance = 300}
+class `road` (ColClass) {castShadows = true,renderingDistance = 1500}
+class `Road2` (ColClass) {renderingDistance = 1500}
+class `terrain` (ColClass) {castShadows = true,renderingDistance = 1500}
+class `canal` (ColClass) {castShadows = true,renderingDistance = 1500}
+class `tunnel` (ColClass) {castShadows = true, renderingDistance = 500}
+class `ocean_plane` (BaseClass) {renderingDistance = 10000, castShadows = false}
+class `Waterfall` (BaseClass) {castShadows = true,renderingDistance = 300}
+class `WaterfallBase` (ColClass) {castShadows = true,renderingDistance = 500}
+class `airport_base` (ColClass) {renderingDistance = 1500}
 
 class `/common/sounds/waterfall` (SoundEmitterClass) { renderingDistance = 200, rollOff = 3, referenceDistance = 10 }

@@ -1,27 +1,41 @@
-material `DEFAULT` { diffuseColour={.25,.25,.25}, specularColour={.25,.25,.25}, gloss=.15, shadowObliqueCutOff=soc, vertexDiffuse = true }
+material `DEFAULT` { diffuseMask = vec(.25,.25,.25), specularMask = .25, glossMask = .15, diffuseVertex = 1 }
 --material `concrW` { diffuseMap = "textures/concrW.dds", normalMap = "textures/concrW_N.dds", specularMap="textures/concRW_S.dds"  }
 --material `METALcorr` { diffuseMap = "textures/metalcorr.dds", normalMap = "textures/metalcorr_N.dds", specularMap="textures/metalcorr_S.dds" }
 --material `metbeam` { diffuseMap = "textures/metbeam.dds", normalMap = "textures/metbeam_N.dds", specularMap="textures/metbeam_s.dds" }
 material `concrW` {
-    vertexDiffuse=true,
-    blend = {
-        { diffuseMap=`textures/concrW.dds`, normalMap=`textures/concrW_N.dds`, specularFromDiffuse={-2,0} },
-        { diffuseMap=`textures/DAM_concrW.dds`, normalMap=`textures/DAM_concrW_N.dds`, specularFromDiffuse={-2,0} },
-    },
+    shader = `/common/HeightmapBlend2`,
+
+    diffuseVertex = 1,
+
+    diffuseMap0 = `textures/concrW.dds`,
+    normalMap0 = `textures/concrW_N.dds`,
+
+    diffuseMap1 = `textures/DAM_concrW.dds`,
+    normalMap1 = `textures/DAM_concrW_N.dds`,
 }
+
 material `METALcorr` {
-    vertexDiffuse=true,
-    blend = {
-        { diffuseMap=`textures/metalcorr.dds`, normalMap=`textures/metalcorr_N.dds`, specularFromDiffuse={0,5} },
-        { diffuseMap=`textures/DAM_metalcorr.dds`, normalMap=`textures/DAM_metalcorr_N.dds`, specularFromDiffuse={-2,0} },
-    },
+    shader = `/common/HeightmapBlend2`,
+
+    diffuseVertex = 1,
+
+    diffuseMap0 = `textures/metalcorr.dds`,
+    normalMap0 = `textures/metalcorr_N.dds`,
+
+    diffuseMap1 = `textures/DAM_metalcorr.dds`,
+    normalMap1 = `textures/DAM_metalcorr_N.dds`,
 }
+
 material `metbeam` {
-    vertexDiffuse=true,
-    blend = {
-        { diffuseMap=`textures/metbeam.dds`, normalMap=`textures/metbeam_N.dds`, specularFromDiffuse={0,0} },
-        { diffuseMap=`textures/DAM_metbeam.dds`, normalMap=`textures/DAM_metbeam_N.dds`, specularFromDiffuse={0,0} },
-    },
+    shader = `/common/HeightmapBlend2`,
+
+    diffuseVertex = 1,
+
+    diffuseMap0 = `textures/metbeam.dds`,
+    normalMap0 = `textures/metbeam_N.dds`,
+
+    diffuseMap1 = `textures/DAM_metbeam.dds`,
+    normalMap1 = `textures/DAM_metbeam_N.dds`,
 }
 
 --Classes

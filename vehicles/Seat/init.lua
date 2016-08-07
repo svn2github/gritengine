@@ -88,5 +88,5 @@ class `.` (Vehicle) {
         };
 }
 
-material `Body` { blendedBones=1, diffuseMap = `Body.dds`, paintByDiffuseAlpha = true, paintColour=`Body_c.dds`, microFlakes = true }
+material `Body` { blendedBones=1, shader = `/common/Paint`, diffuseMap = `Body.dds`, paintByDiffuseAlpha = 1, paintSelectionMap=`Body_c.dds`, microFlakesMap = `/common/MicroFlakes.dds` }
 

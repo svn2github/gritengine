@@ -1,7 +1,15 @@
-material `concrete` { diffuseColour= {.5,.5,.5}; }
-material `grass` { diffuseColour= {.35,1,.1}; }
-material `metal` { diffuseColour= {.25,.25,.25}; }
-material `water` { diffuseColour= {.2,.5,1}; }
+material `concrete` {
+    diffuseMask = vec(.5, .5, .5),
+}
+material `grass` {
+    diffuseMask = vec(.35, 1, .1),
+}
+material `metal` {
+    diffuseMask = vec(.25, .25, .25),
+}
+material `water` {
+    diffuseMask = vec(.2, .5, 1),
+}
 
 class `citadel_wb` (ColClass) {renderingDistance=600}
 class `static_ground_wb` (ColClass) {renderingDistance=600}

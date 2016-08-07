@@ -1,4 +1,6 @@
-material `Black` { diffuseColour={.01,.01,.01}, }
+material `Black` {
+    diffuseMask = vec(.01, .01, .01),
+}
 
 class `Grenade` (BaseClass) {
     renderingDistance = 400.0;

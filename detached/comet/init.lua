@@ -1,30 +1,52 @@
 --test vehicle
 
-material `greybox` { diffuseColour= {.4,.4,.4}, vertexDiffuse=true }
+local function point_tex(name, overrides)
+    overrides = overrides or {}
+    local T = {
+        image = name,
+        filterMax = "POINT",
+        filterMip = "LINEAR",
+    }
+    -- Vince had a problem on ATI where filterMip had to be NONE or the filterMax would not take
+    -- effect.
+    for k, v in pairs(overrides) do
+        T[k] = v
+    end
+    return T
+end
+
+material `greybox` {
+    diffuseMask = vec(.4, .4, .4),
+    diffuseVertex = 1,
+}
 
 material `car_generic_a` {
-    filterMip = "NONE",
-    filterMag = "POINT",
-
-    diffuseMap = `../textures/car_generic_a.tga`,
-    glossMap = `../textures/car_generic_a_spec.tga`,
-
-    paintByDiffuseAlpha = true,
-    paintColour = 1,
-
-    emissiveMap=`../textures/car_generic_a_em.tga`,
-    emissiveMask = vec(4,4,4),
+    shader = `/common/Paint`,
     additionalLighting = true,
-
     shadowBias = 0.1,
-    vertexDiffuse = true
+
+    diffuseMap = point_tex(`../textures/car_generic_a.tga`),
+    glossMap = point_tex(`../textures/car_generic_a_spec.tga`),
+    glossMask = 1,
+
+    paintByDiffuseAlpha = 1,
+    paintSelectionMask = vec(1, 0, 0, 0),
+
+    emissiveMap = point_tex(`../textures/car_generic_a_em.tga`),
+    emissiveMask = vec(4, 4, 4),
+
+    -- diffuseVertex = 1,
 }
 
 material `car_generic_glass` {
-    diffuseColour = {0.01,0.01,0.01};
-	glossMap = `../textures/car_generic_glass_spec.dds`;
-    alpha = 0.8;
-    shadowBias =0.1;
+    shadowBias = 0.1,
+    sceneBlend = "ALPHA",
+
+    diffuseMask = vec(0.01, 0.01, 0.01),
+	glossMap = point_tex(`../textures/car_generic_glass_spec.dds`),
+    glossMask = 1,
+
+    alphaMask = 0.8,
 }
 
 FlyingCar = extends (ColClass) {

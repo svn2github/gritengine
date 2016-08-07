@@ -15,5 +15,5 @@ material `NeonGreen` { diffuseMap=`NeonRed.dds`, emissiveMap=`NeonGreen.dds`, em
 material `Glass` { diffuseMap=`Glass.dds`, alpha=true }
 
 sky_material `Sky` {
-    emissiveMap = uniform_texture { name=`FunkyStarField.dds` };
+    emissiveMap = `FunkyStarField.dds`,
 }

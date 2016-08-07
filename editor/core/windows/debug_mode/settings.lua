@@ -133,86 +133,7 @@ hud_class `Settings` (extends(WindowClass)
 			align = vec(-1, 1);
 			offset = vec(50, -5);
 		})		
-		self.content.debug_panel.cmaps = gui.checkbox({
-			caption = "Use colour maps",
-			checked = debug_cfg.colourMaps,
-			parent = self.content.debug_panel,
-			align = vec(-1, 1);
-			offset = vec(10, -30),
-			onCheck = function(self)
-				debug_cfg.colourMaps = true
-			end,
-			onUncheck = function(self)
-				debug_cfg.colourMaps = false
-			end,
-		})
-		self.content.debug_panel.dmaps = gui.checkbox({
-			caption = "Use diffuse maps",
-			checked = debug_cfg.diffuseMaps,
-			parent = self.content.debug_panel,
-			align = vec(-1, 1);
-			offset = vec(10, -50),
-			onCheck = function(self)
-				debug_cfg.diffuseMaps = true
-			end,
-			onUncheck = function(self)
-				debug_cfg.diffuseMaps = false
-			end,
-		})
-		
-		self.content.debug_panel.theme = gui.text({
-			value = "False Colour: ",
-			parent = self.content.debug_panel,
-			align = vec(-1, 1);
-			offset = vec(10, -70);		
-		})
 
-		self.content.debug_panel.fc_selectbox = gui.selectbox({
-			parent = self.content.debug_panel;
-			choices = {
-				"false";
-				"UV";
-				"UV_STRETCH";
-				"UV_STRETCH_BANDS";
-				"NORMAL";
-				"OBJECT_NORMAL";
-				"NORMAL_MAP";
-				"TANGENT";
-				"BINORMAL";
-				"UNSHADOWYNESS";
-				"GLOSS";
-				"SPECULAR";
-				"SPECULAR_TERM";
-				"SPECULAR_COMPONENT";
-				"HIGHLIGHT";
-				"FRESNEL";
-				"FRESNEL_HIGHLIGHT";
-				"DIFFUSE_COLOUR";
-				"DIFFUSE_TERM";
-				"DIFFUSE_COMPONENT";
-				"VERTEX_COLOUR";
-				"ENV_DIFFUSE_COMPONENT";
-				"ENV_SPECULAR_COMPONENT";
-				"ENV_DIFFUSE_LIGHT";
-				"ENV_SPECULAR_LIGHT";
-			};
-			selection = 0;
-			align = vec(-1, 1);
-			offset = vec(100, -70);
-			size = vec(200, 22);
-		})
-		self.content.debug_panel.fc_selectbox:select(tostring(debug_cfg.falseColour))
-
-		self.content.debug_panel.fc_selectbox.onSelect = function(self)
-			if self.selected.name == "false" then
-				debug_cfg.falseColour = false
-			elseif self.value == "true" then
-				debug_cfg.falseColour = true
-			else
-				debug_cfg.falseColour = self.selected.name
-			end
-		end;		
-		
 		self.content.debug_panel.farc = gui.text({
 			value = "Far Clip: ",
 			parent = self.content.debug_panel,
@@ -245,58 +166,6 @@ hud_class `Settings` (extends(WindowClass)
 				debug_cfg.fog = false
 			end,
 		})
-		self.content.debug_panel.fpro = gui.checkbox({
-			caption = "Fragment processing",
-			checked = debug_cfg.fragmentProcessing,
-			parent = self.content.debug_panel,
-			align = vec(-1, 1);
-			offset = vec(10, -140),
-			onCheck = function(self)
-				debug_cfg.fragmentProcessing = true
-			end,
-			onUncheck = function(self)
-				debug_cfg.fragmentProcessing = false
-			end,
-		})		
-		self.content.debug_panel.gmaps = gui.checkbox({
-			caption = "Gloss maps",
-			checked = debug_cfg.glossMaps,
-			parent = self.content.debug_panel,
-			align = vec(-1, 1);
-			offset = vec(10, -160),
-			onCheck = function(self)
-				debug_cfg.glossMaps = true
-			end,
-			onUncheck = function(self)
-				debug_cfg.glossMaps = false
-			end,
-		})			
-		self.content.debug_panel.hbl = gui.checkbox({
-			caption = "Heightmap blending",
-			checked = debug_cfg.heightmapBlending,
-			parent = self.content.debug_panel,
-			align = vec(-1, 1);
-			offset = vec(10, -180),
-			onCheck = function(self)
-				debug_cfg.heightmapBlending = true
-			end,
-			onUncheck = function(self)
-				debug_cfg.heightmapBlending = false
-			end,
-		})
-		self.content.debug_panel.nmps = gui.checkbox({
-			caption = "Normal maps",
-			checked = debug_cfg.normalMaps,
-			parent = self.content.debug_panel,
-			align = vec(-1, 1);
-			offset = vec(10, -200),
-			onCheck = function(self)
-				debug_cfg.normalMaps = true
-			end,
-			onUncheck = function(self)
-				debug_cfg.normalMaps = false
-			end,
-		})		
 		self.content.debug_panel.pdw = gui.checkbox({
 			caption = "Physics debug world",
 			checked = debug_cfg.physicsDebugWorld,
@@ -347,29 +216,6 @@ hud_class `Settings` (extends(WindowClass)
 			debug_cfg.polygonMode = self.selected.name
 		end;
 		
-		self.content.debug_panel.smmod = gui.text({
-			value = "Shading Model: ";
-			parent = self.content.debug_panel;
-			align = vec(-1, 1);
-			offset = vec(10, -285);		
-		})
-		self.content.debug_panel.smmodsel = gui.selectbox({
-			parent = self.content.debug_panel;
-			choices = {
-				"SHARP";
-				"HALF_LAMBERT";
-				"WASHED_OUT";
-			};
-			selection = 0;
-			align = vec(-1, 1);
-			offset = vec(110, -285);
-			size = vec(200, 22);
-		})
-		self.content.debug_panel.smmodsel:select(tostring(debug_cfg.shadingModel))
-		self.content.debug_panel.smmodsel.onSelect = function(self)
-			debug_cfg.shadingModel = self.selected.name
-		end;		
-		
 		self.content.debug_panel.sc = gui.checkbox({
 			caption = "Shadow cast",
 			checked = debug_cfg.shadowCast,
@@ -396,84 +242,6 @@ hud_class `Settings` (extends(WindowClass)
 				debug_cfg.shadowReceive = false
 			end,
 		})
-		self.content.debug_panel.ta = gui.checkbox({
-			caption = "Texture animation",
-			checked = debug_cfg.textureAnimation,
-			parent = self.content.debug_panel,
-			align = vec(-1, 1);
-			offset = vec(10, -350),
-			onCheck = function(self)
-				debug_cfg.textureAnimation = true
-			end,
-			onUncheck = function(self)
-				debug_cfg.textureAnimation = false
-			end,
-		})
-		self.content.debug_panel.tf = gui.checkbox({
-			caption = "Texture fetches",
-			checked = debug_cfg.textureFetches,
-			parent = self.content.debug_panel,
-			align = vec(-1, 1);
-			offset = vec(10, -370),
-			onCheck = function(self)
-				debug_cfg.textureFetches = true
-			end,
-			onUncheck = function(self)
-				debug_cfg.textureFetches = false
-			end,
-		})
-		self.content.debug_panel.ts = gui.checkbox({
-			caption = "Texture scale",
-			checked = debug_cfg.textureScale,
-			parent = self.content.debug_panel,
-			align = vec(-1, 1);
-			offset = vec(10, -390),
-			onCheck = function(self)
-				debug_cfg.textureScale = true
-			end,
-			onUncheck = function(self)
-				debug_cfg.textureScale = false
-			end,
-		})
-		self.content.debug_panel.tm = gui.checkbox({
-			caption = "Translucency maps",
-			checked = debug_cfg.translucencyMaps,
-			parent = self.content.debug_panel,
-			align = vec(-1, 1);
-			offset = vec(10, -410),
-			onCheck = function(self)
-				debug_cfg.translucencyMaps = true
-			end,
-			onUncheck = function(self)
-				debug_cfg.translucencyMaps = false
-			end,
-		})
-		self.content.debug_panel.vd = gui.checkbox({
-			caption = "Vertex diffuse",
-			checked = debug_cfg.vertexDiffuse,
-			parent = self.content.debug_panel,
-			align = vec(-1, 1);
-			offset = vec(10, -430),
-			onCheck = function(self)
-				debug_cfg.vertexDiffuse = true
-			end,
-			onUncheck = function(self)
-				debug_cfg.vertexDiffuse = false
-			end,
-		})
-		self.content.debug_panel.vp = gui.checkbox({
-			caption = "Vertex processing",
-			checked = debug_cfg.vertexProcessing,
-			parent = self.content.debug_panel,
-			align = vec(-1, 1);
-			offset = vec(10, -450),
-			onCheck = function(self)
-				debug_cfg.vertexProcessing = true
-			end,
-			onUncheck = function(self)
-				debug_cfg.vertexProcessing = false
-			end,
-		})		
 
 		local function clearAllPlaced()
 			for _, obj in ipairs(object_all()) do

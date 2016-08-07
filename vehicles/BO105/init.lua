@@ -62,11 +62,29 @@ class `.` (Plane) {
 
 }
 
-material `Material__2`    { diffuseColour = {0.000000, 0.000000, 0.000000, 1.000000}; }
-material `Material__3`    { diffuseMap = `105.jpg`; }
-material `Material__4`    { diffuseColour = {0.059608, 0.062745, 0.047059, 1.000000}; }
-material `Material__6`    { diffuseColour = {0.100392, 0.116078, 0.125490, 1.000000}; }
-material `Material__7`    { diffuseColour = {0.116078, 0.116078, 0.116078, 1.000000}; }
-material `Glass`    { diffuseColour = {0.097255, 0.112941, 0.116078, 0.210000}; }
-material `DullCamo`    { diffuseColour = {0.232157, 0.250980, 0.219608, 1.000000}; }
-material `GlossBlack`    { diffuseColour = {0.000000, 0.000000, 0.000000, 1.000000}; }
+material `Material__2` {
+    diffuseMask = vec(0, 0, 0),
+}
+material `Material__3` {
+    diffuseMap = `105.jpg`,
+}
+material `Material__4` {
+    diffuseMask = vec(0.059608, 0.062745, 0.047059),
+}
+material `Material__6` {
+    diffuseMask = vec(0.100392, 0.116078, 0.125490),
+}
+material `Material__7` {
+    diffuseMask = vec(0.116078, 0.116078, 0.116078),
+}
+material `Glass` {
+    diffuseMask = vec(0.097255, 0.112941, 0.116078),
+    alphaMask = 0.21,
+    sceneBlend = "ALPHA",
+}
+material `DullCamo` {
+    diffuseMask = vec(0.232157, 0.250980, 0.219608),
+}
+material `GlossBlack` {
+    diffuseMask = vec(0.000000, 0.000000, 0.000000),
+}

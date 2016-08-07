@@ -142,14 +142,62 @@ class `Wheel` (ColClass) { placementZOffset = 0.3; castShadows = true }
 -- most materials are temporal and will probably joined
 local g, s = 0.6, 0.04
 -- when using paint, set spec and gloss to 1, they will be masked by the paint colour
-material `Carpaint` { paintColour = 1; specular=1; gloss = 1; microFlakes=true; shadowBias=0.05 }
-material `LightPlastic` { diffuseColour=vec(0.2, 0.2, 0.2); specular=0.04; gloss=0.5; }
-material `Chrome` { diffuseColour=0.09*vec(1,1,1); specular=0.15; gloss = 1; }
-material `Pattern` { diffuseColour=vec(0.1, 0.1, 0.1), specular=0.04, gloss=0.25 }
-material `Interior` { diffuseColour=vec(0.1, 0.1, 0.1), specular=0.04, gloss=0.2 }
-material `Rubber` { diffuseColour=vec(0.05, 0.05, 0.05), specular=0.04, gloss=0  }
-material `Headlight` { gloss = g; specular=s; alpha=0.7 }
-material `Brakelight` { diffuseColour=vec(1,0,0), gloss = g; specular=s; alpha=0.7 }
-material `Turnlight` { diffuseColour=vec(1.0,0.597,0), gloss=g; specular=s; alpha =0.7 }
-material `Windows` { diffuseColour=vec(0.035, 0.035, 0.035), gloss=1; specular=0.045; alpha =0.8 }
-
+material `Carpaint` {
+    shader = `/common/Paint`,
+    microFlakesMap = `/common/MicroFlakes.dds`,
+    paintSelectionMask = vec(1, 0, 0, 0),
+    specularMask = 1,
+    glossMask = 1,
+    shadowBias = 0.05,
+}
+material `LightPlastic` {
+    diffuseMask = vec(0.2, 0.2, 0.2),
+    specularMask = 0.04,
+    glossMask = 0.5,
+}
+material `Chrome` {
+    diffuseMask = 0.09 * vec(1, 1, 1),
+    specularMask = 0.15,
+    glossMask = 1,
+}
+material `Pattern` {
+    diffuseMask = vec(0.1, 0.1, 0.1),
+    specularMask = 0.04,
+    glossMask = 0.25,
+}
+material `Interior` {
+    diffuseMask = vec(0.1, 0.1, 0.1),
+    specularMask = 0.04,
+    glossMask = 0.2,
+}
+material `Rubber` {
+    diffuseMask = vec(0.05, 0.05, 0.05),
+    specularMask = 0.04,
+}
+material `Headlight` {
+    glossMask = g,
+    specularMask = s,
+    alphaMask = 0.7,
+    sceneBlend = "ALPHA",
+}
+material `Brakelight` {
+    diffuseMask = vec(1,0,0),
+    glossMask = g,
+    specularMask = s,
+    alphaMask = 0.7,
+    sceneBlend = "ALPHA",
+}
+material `Turnlight` {
+    diffuseMask = vec(1.0,0.597,0),
+    glossMask = g,
+    specularMask = s,
+    alphaMask = 0.7,
+    sceneBlend = "ALPHA",
+}
+material `Windows` {
+    diffuseMask = vec(0.035, 0.035, 0.035),
+    glossMask = 1,
+    specularMask = 0.045,
+    alphaMask = 0.8,
+    sceneBlend = "ALPHA",
+}

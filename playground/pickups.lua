@@ -1,62 +1,65 @@
 material `mat_chromeClean` {
-    specular = 0.3,
-    gloss = 0.5,
-    diffuseColour = vec(0.2, 0.2, 0.2),
     shadowBias=0.2,
+
+    specularMask = 0.3,
+    glossMask = 0.5,
+    diffuseMask = vec(0.2, 0.2, 0.2),
 }
 
 material `mat_basicGlass` {
-    specular = 0.4,
-    gloss = 1,
-    alpha = 0.5,
-    diffuseColour = vec(0.1, 0.1, 0.1),
+    specularMask = 0.4,
+    glossMask = 1,
+    alphaMask = 0.5,
+    sceneBlend = "ALPHA",
+    diffuseMask = vec(0.1, 0.1, 0.1),
 }
 
 material `mat_batteryCoreEffect` {
-    specular = 0,
-    gloss = 0,
+    additionalLighting = true;
+
+    specularMask = 0,
     emissiveMap = `batteryCoreEffect.dds`,
     emissiveMask = vec(0, 3, 0),
-    additionalLighting = true;
-    diffuseColour = vec(0, 1, 0),
-    textureAnimation = { 0.5, 0.15 },
+    diffuseMask = vec(0, 1, 0),
+    textureAnimation = vec2(0.5, 0.15),
 }
 
 material `mat_batteryCoreEffect_space` {
-    specular = 0,
-    gloss = 0,
+    additionalLighting = true;
+
+    specularMask = 0,
     diffuseMap = `batteryCoreEffect.dds`,
     emissiveMap = `batteryCoreEffect.dds`,
     emissiveMask = vec(3, 3, 3),
-    additionalLighting = true;
-    textureAnimation = { 0.5, 0.15 },
+    textureAnimation = vec2(0.5, 0.15),
 }
 
 material `mat_batteryCoreEffect_red` {
-    specular = 0,
-    gloss = 0,
+    additionalLighting = true;
+
+    specularMask = 0,
     emissiveMap = `batteryCoreEffect.dds`,
     emissiveMask = vec(3, 0, 0),
-    additionalLighting = true;
-    diffuseColour = vec(1, 1, 0),
-    textureAnimation = { 0.5, 0.15 },
+    diffuseMask = vec(1, 1, 0),
+    textureAnimation = vec2(0.5, 0.15),
 }
 
 material `mat_batteryCoreEffect_yellow` {
-    specular = 0,
-    gloss = 0,
+    additionalLighting = true;
+
+    specularMask = 0,
     emissiveMap = `batteryCoreEffect.dds`,
     emissiveMask = vec(3, 3, 0),
-    additionalLighting = true;
-    diffuseColour = vec(1, 1, 0),
-    textureAnimation = { 0.5, 0.15 },
+    diffuseMask = vec(1, 1, 0),
+    textureAnimation = vec2(0.5, 0.15),
 }
 
 material `mat_basicPlastic` {
-    specular = 0.1,
-    gloss = 0.3,
-    diffuseColour = vec(0.02, 0.02, 0.02),
-    shadowBias=0.2,
+    shadowBias = 0.2,
+
+    specularMask = 0.1,
+    glossMask = 0.3,
+    diffuseMask = vec(0.02, 0.02, 0.02),
 }
 
 PickUpClass = {
