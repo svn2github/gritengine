@@ -113,8 +113,6 @@ function GED:deleteSelection()
 	
 	for i = 1, #selobjs do
 		if not selobjs[i].destroyed then
-			current_map.objects[selobjs[i].name] = nil
-			current_map.object_properties[selobjs[i].name] = nil
 			safe_destroy(selobjs[i])
 		end
 	end
