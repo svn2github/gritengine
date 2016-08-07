@@ -1,10 +1,10 @@
 material `meshes/default_material` {
 	diffuseMap = `/common/textures/default_texture.png`;
-	diffuseColour = V_ID * 1.7;
+	diffuseMask = V_ID * 1.7;
 	normalMap = `/common/textures/default_texture_nm.png`;
 	glossMap = `/common/textures/default_texture_gm.png`;
-	specular = 1;
-	gloss = 1.2;
+	specularMask = 1;
+	glossMask = 1.2;
 	shadowBias = 0.05;
 }
 material `Terrain` {
@@ -20,8 +20,8 @@ material `Terrain` {
 			diffuseMap=`../../playground/img/textures/grass.dds`;
 			normalMap=`../../playground/img/textures/grass_N.dds`;
 			glossMap=`../../playground/img/textures/grass_S.tga`;
-			textureScale={0.015, 0.015},
-			shadowBias=0.05;
+			textureScale = vec(0.015, 0.015),
+			shadowBias = 0.05;
 		-- },	
 	-- },	
 }
