@@ -566,7 +566,7 @@ end
 
 function Plane.setAltLeft(persistent, v)
     if not persistent.activated then error("Not activated: "..persistent.name) end
-    persistent.instance.rollLeft=v and 0.13 or 0
+    persistent.instance.rollLeft=v and 0.05 or 0
 
     if v then persistent.instance.cyclicxTarget=1.0
     else persistent.instance.cyclicxTarget=0 end
@@ -574,7 +574,7 @@ end
 
 function Plane.setAltRight (persistent, v)
     if not persistent.activated then error("Not activated: "..persistent.name) end
-    persistent.instance.rollRight=v and 0.13 or 0
+    persistent.instance.rollRight=v and 0.05 or 0
 
     if v then persistent.instance.cyclicxTarget=-1.0
     else persistent.instance.cyclicxTarget=0 end
@@ -582,7 +582,7 @@ end
 
 function Plane.setAltDown(persistent, v)
     if not persistent.activated then error("Not activated: "..persistent.name) end
-    persistent.instance.pitchUp=v and 0.13 or 0
+    persistent.instance.pitchUp=v and 0.05 or 0
 
     if v then persistent.instance.cyclicyTarget=1.0
     else persistent.instance.cyclicyTarget=0 end
@@ -590,7 +590,7 @@ end
 
 function Plane.setAltUp (persistent, v)
     if not persistent.activated then error("Not activated: "..persistent.name) end
-    persistent.instance.pitchDown=v and 0.18 or 0
+    persistent.instance.pitchDown=v and 0.05 or 0
 
     if v then persistent.instance.cyclicyTarget=-1.0
     else persistent.instance.cyclicyTarget=0 end
