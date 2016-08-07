@@ -20,6 +20,7 @@ class `PinkFlowers` (BaseClass) { castShadows=true, renderingDistance=35, placem
 material `Tree_aelmTrunk` {
     vertexDiffuse = true,
     diffuseMap = `textures/tree_aelm.dds`,
+	diffuseColour = V_ID*3,
     normalMap = `textures/tree_aelm_N.dds`,
     gloss = 0,
     specular = 0,
@@ -44,11 +45,12 @@ class `Tree_aelm` (ColClass) { castShadows=true, renderingDistance=100, lod=`Tre
 --paroxum's tree, hes mad
 
 material `generic_bark` {
-    vertexDiffuse = true,
+    vertexDiffuse = false,
     diffuseMap = `textures/generic_bark.tga`,
     normalMap = `textures/generic_bark_nrm.tga`,
     gloss = 0,
     specular = 0,
+	diffuseColour = V_ID*10,
 }
 
 material `flowerbed_dif` {
@@ -60,7 +62,7 @@ material `flowerbed_dif` {
     shadowReceive = false,
     clamp = true,
     alphaReject = 0.5,
-    diffuseColour = V_ID*5,
+    diffuseColour = V_ID*10,
     ambientColour = 5,
     gloss = 0,
     specular = 0,
