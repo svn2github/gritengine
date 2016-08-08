@@ -92,7 +92,64 @@ material `WATERFALL` {
     glossMask = 0.7,
 }
 
+
+shader `Ocean` {
+
+    textureAnimation = uniform_float(0, 0);
+    textureScale = uniform_float(1, 1);
+
+    diffuseMap = uniform_texture_2d(1, 1, 1);
+    diffuseMask = uniform_float(1, 1, 1);
+    diffuseVertex = static_float(0);  -- Boolean
+
+    alphaMask = uniform_float(1);
+    alphaVertex = static_float(0);  -- Boolean
+    alphaRejectThreshold = uniform_float(-1);
+
+    normalMap = uniform_texture_2d(0.5, 0.5, 1);
+
+    glossMap = uniform_texture_2d(1, 1, 1);
+    glossMask = uniform_float(0);
+    specularMask = uniform_float(0.04);
+    premultipliedAlpha = static_float(0);  -- Boolean
+
+    emissiveMap = uniform_texture_2d(1, 1, 1);
+    emissiveMask = uniform_float(0, 0, 0);
+
+    vertexCode = [[
+        out.position = transform_to_world(vert.position.xyz)+Float3(0, 0, sin(global.time*0.0002 * (vert.position.x+vert.position.y)));
+        var normal_ws = rotate_to_world(vert.normal.xyz);
+        var tangent_ws = rotate_to_world(vert.tangent.xyz);
+        var binormal_ws = vert.tangent.w * cross(normal_ws, tangent_ws);
+    ]],
+
+    dangsCode = [[
+        var uv = vert.coord0.xy * mat.textureScale + global.time * mat.textureAnimation;
+		var uv2 = vert.coord0.xy * mat.textureScale*5 + global.time*5 * -mat.textureAnimation.yx;
+        var diff_texel = sample(mat.diffuseMap, uv);
+        if (mat.premultipliedAlpha > 0) diff_texel = pma_decode(diff_texel);
+        out.diffuse = gamma_decode(diff_texel.rgb) * mat.diffuseMask;
+        if (mat.diffuseVertex > 0) out.diffuse = out.diffuse * vert.colour.xyz;
+        out.alpha = diff_texel.a * mat.alphaMask;
+        if (mat.alphaVertex > 0) out.alpha = out.alpha * vert.colour.w;
+        if (out.alpha <= mat.alphaRejectThreshold) discard;
+        var normal_texel = ((sample(mat.normalMap, uv) + sample(mat.normalMap, uv2))/2).xyz;
+        var normal_ts = normal_texel * Float3(-2, 2, 2) + Float3(1, -1, -1);
+        out.normal = normal_ts.x*tangent_ws + normal_ts.y*binormal_ws + normal_ts.z*normal_ws;
+        var gloss_texel = sample(mat.glossMap, uv);
+        out.gloss = gloss_texel.b * mat.glossMask;
+        out.specular = gamma_decode(gloss_texel.r) * mat.specularMask;
+    ]],
+
+    colourCode = [[
+        var uv = vert.coord0.xy * mat.textureScale + global.time * mat.textureAnimation;
+        var c = sample(mat.emissiveMap, uv);
+        out.colour = gamma_decode(c.rgb) * mat.emissiveMask;
+    ]],
+}
+
 material `ocean` {
+	shader = `Ocean`,
     sceneBlend = "ALPHA_DEPTH",
 
 	diffuseMask = vec(0, 0, 0),
