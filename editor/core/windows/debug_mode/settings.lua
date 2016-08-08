@@ -3,10 +3,10 @@ hud_class `Settings` (extends(WindowClass)
 	init = function (self)
 		WindowClass.init(self)
 		
-		-- self.close_btn.pressedCallback = function (self)
-			-- safe_destroy(self.parent.parent.parent)
-		-- end;
-		
+		self.close_btn.pressedCallback = function (self)
+			GED:toggleMouseCapture()
+		end;
+
 		self.content = gui.notebook(self)
 
 		-- GENERAL
