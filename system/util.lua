@@ -964,7 +964,8 @@ function create_dialog(subject, message, options, functioncall) --Example: creat
 	end
 end
 
-function table_concat(tab1, tab2)
+-- all tab2 keys are copied to tab1
+function table.concatto(tab1, tab2)
 	if tab1 == nil and tab2 ~= nil then return tab2 end
 	if tab2 == nil and tab1 ~= nil then return tab1 end
 
@@ -978,7 +979,8 @@ function table_concat(tab1, tab2)
    return tab1
 end
 
-function table_concat_copy(tab1, tab2)
+-- returns a combination of all tab1 and tab2 keys (tab2 overwrite tab1 keys)
+function table.extends(tab1, tab2)
 	if tab1 == nil and tab2 ~= nil then return tab2 end
 	if tab2 == nil and tab1 ~= nil then return tab1 end
 

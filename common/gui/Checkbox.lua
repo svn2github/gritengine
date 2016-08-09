@@ -7,18 +7,19 @@
 --  http://www.opensource.org/licenses/mit-license.php
 ------------------------------------------------------------------------------
 
-hud_class `Checkbox` (extends(GuiClass)
+hud_class `Checkbox` (extends(_gui.class)
 {
 	alpha = _current_theme.colours.checkbox.alpha;
 	colour = _current_theme.colours.checkbox.background;
 	textColour = _current_theme.colours.text.default;
 	
-	caption = "";
+	caption = nil;
 	padding = 5;
 	checked = false;
 	dragging = false;
-
+	
 	init = function (self)
+		_gui.class.init(self)
 		self.needsInputCallbacks = true
 		self.needsParentResizedCallbacks = true
 		
@@ -37,10 +38,12 @@ hud_class `Checkbox` (extends(GuiClass)
 		})
 		self.icon_checked.enabled = false
 		
-		self.text = gfx_hud_text_add(self.font or _current_theme.fonts.checkbox)
-		self.text.parent = self
-		self.text.text = self.caption
-		self.text.colour = self.textColour
+		if self.caption then
+			self.text = gfx_hud_text_add(self.font or _current_theme.fonts.checkbox)
+			self.text.parent = self
+			self.text.text = self.caption
+			self.text.colour = self.textColour
+		end
 		
 		if self.checked then
 			self:check()
@@ -50,6 +53,7 @@ hud_class `Checkbox` (extends(GuiClass)
 	end;
 	
 	destroy = function (self)
+		_gui.class.destroy(self)
 		self.needsParentResizedCallbacks = false
 		
 		self:destroy()
@@ -63,7 +67,9 @@ hud_class `Checkbox` (extends(GuiClass)
     update = function (self)		
 		self.size = vec(self.text.size.x+self.padding*4+self.icon.size.x, self.icon.size.y)
 		self.icon.position = vec(-self.size.x/2+self.icon.size.x/2, self.icon.position.y)
-		self.text.position = vec(-self.size.x/2+self.icon.size.x+self.padding+self.text.size.x/2, self.text.position.y)
+		if self.caption then
+			self.text.position = vec(-self.size.x/2+self.icon.size.x+self.padding+self.text.size.x/2, self.text.position.y)
+		end
 	end;	
 
     buttonCallback = function (self, ev)
@@ -84,7 +90,7 @@ hud_class `Checkbox` (extends(GuiClass)
     end;
 
 	parentResizedCallback = function(self, psize)
-		GuiClass.parentResizedCallback(self, psize)
+		_gui.class.parentResizedCallback(self, psize)
 	end;
 	
 	check = function(self)

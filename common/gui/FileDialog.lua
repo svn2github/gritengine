@@ -7,7 +7,7 @@
 --  http://www.opensource.org/licenses/mit-license.php
 ------------------------------------------------------------------------------
 
-hud_class `window_editbox` (extends(table_concat_copy(GuiClass, EditBox))
+hud_class `window_editbox` (extends(table.extends(_gui.class, EditBoxClass))
 {
 	alpha = 1;
 	
@@ -19,17 +19,17 @@ hud_class `window_editbox` (extends(table_concat_copy(GuiClass, EditBox))
 	texture = _current_theme.colours.editbox.texture;
 	
 	init = function (self)
-		GuiClass.init(self)
-		EditBox.init(self)
+		_gui.class.init(self)
+		EditBoxClass.init(self)
 	end;
 	
 	destroy = function (self)
-		GuiClass.destroy(self)
-		EditBox.destroy(self)
+		_gui.class.destroy(self)
+		EditBoxClass.destroy(self)
 	end;
 
 	parentResizedCallback = function(self, psize)
-		GuiClass.parentResizedCallback(self, psize)
+		_gui.class.parentResizedCallback(self, psize)
 		self:parentresizecb(psize)
 		self:updateChildrenSize()		
 	end;
@@ -39,7 +39,7 @@ hud_class `window_editbox` (extends(table_concat_copy(GuiClass, EditBox))
 	end;
 
     setEditing = function (self, editing, no_callback)
-		EditBox.setEditing(self, editing, no_callback)
+		EditBoxClass.setEditing(self, editing, no_callback)
     end;
 })
 
@@ -148,7 +148,7 @@ hud_class `browser_icon` {
 	end;
 }
 
-hud_class `file_list` (extends(GuiClass)
+hud_class `file_list` (extends(_gui.class)
 {
 	size = vec(0, 0);
 	alpha = 1;
@@ -158,6 +158,7 @@ hud_class `file_list` (extends(GuiClass)
 	colour = _current_theme.colours.file_explorer.background;
 	
     init = function (self)
+		_gui.class.init(self)
 		self.needsParentResizedCallbacks = true
 		self.needsInputCallbacks = true
 		self.items = {}

@@ -6,18 +6,19 @@
 --  Licensed under the MIT license:
 --  http://www.opensource.org/licenses/mit-license.php
 ------------------------------------------------------------------------------
+guialign = {
+	center = vec(0, 0);
+	left = vec(-1, 0);
+	right = vec(1, 0);
+	top = vec(0, 1);
+	topleft = vec(-1, 1);
+	topright = vec(1, 1);
+	bottom = vec(0, -1);
+	bottomleft = vec(-1, -1);
+	bottomright = vec(1, -1);
+}
 
-CENTER = vec(0, 0)
-LEFT = vec(-1, 0)
-RIGHT = vec(1, 0)
-TOP = vec(0, 1)
-BOTTOM = vec(0, -1)
-TOPLEFT = vec(-1, 1)
-TOPRIGHT = vec(1, 1)
-BOTTOMLEFT = vec(-1, -1)
-BOTTOMRIGHT = vec(1, -1)
-
-GuiClass = {
+_gui.class = {
 	alpha = 0;
 	colour = vec(1, 1, 1);
 
@@ -70,27 +71,27 @@ GuiClass = {
 	end;
 }
 
-hud_class `GuiClass` (extends(GuiClass)
+hud_class `GuiClass` (extends(_gui.class)
 {
 	alpha = 1;
 	
 	init = function (self)
-		GuiClass.init(self)
+		_gui.class.init(self)
 	end;
 	
 	destroy = function (self)
-		GuiClass.destroy(self)
+		_gui.class.destroy(self)
 	end;
 
 	parentResizedCallback = function(self, psize)
-		GuiClass.parentResizedCallback(self, psize)
+		_gui.class.parentResizedCallback(self, psize)
 	end;
 })
 
-function gui.object(options)
-	return gfx_hud_object_add(`GuiClass`, options)
+function gui.object(tab)
+	return gfx_hud_object_add(`GuiClass`, tab)
 end
 
-function create_rect(options)
-	return gfx_hud_object_add(`/common/hud/Rect`, options)
+function create_rect(tab)
+	return gfx_hud_object_add(`/common/hud/Rect`, tab)
 end

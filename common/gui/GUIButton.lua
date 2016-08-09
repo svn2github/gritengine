@@ -9,7 +9,7 @@
 --  http://www.opensource.org/licenses/mit-license.php
 ------------------------------------------------------------------------------
 
-hud_class `GuiButton` (extends(GuiClass)
+hud_class `GuiButton` (extends(_gui.class)
 {
 	padding = vec(8,6);
 
@@ -32,7 +32,7 @@ hud_class `GuiButton` (extends(GuiClass)
 	texture = _gui_textures.button;
 	
 	init = function (self)
-		GuiClass.init(self)
+		_gui.class.init(self)
 		
 		self.needsInputCallbacks = true
 
@@ -53,6 +53,7 @@ hud_class `GuiButton` (extends(GuiClass)
 	end;
 
 	destroy = function (self)
+		_gui.class.destroy(self)
 	end;
 
 	setCaption = function (self, v)
@@ -103,7 +104,7 @@ hud_class `GuiButton` (extends(GuiClass)
 	end;
 
 	parentResizedCallback = function(self, psize)
-		GuiClass.parentResizedCallback(self, psize)
+		_gui.class.parentResizedCallback(self, psize)
 	end;
 	
 	pressedCallback = function (self)

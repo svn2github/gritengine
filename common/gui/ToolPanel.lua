@@ -9,7 +9,7 @@
 
 -- TODO: align left, icon click to collapse/show
 
-hud_class `ToolPanel` (extends(GuiClass)
+hud_class `ToolPanel` (extends(_gui.class)
 {
 	resizing = false;
 	align = vec(1, -1);
@@ -19,7 +19,7 @@ hud_class `ToolPanel` (extends(GuiClass)
 	lastDefinedSize = vec(50, 50);
 	
 	init = function (self)
-		GuiClass.init(self)
+		_gui.class.init(self)
 		self.needsInputCallbacks = true
 		
 		self.icon = create_rect({
@@ -32,11 +32,11 @@ hud_class `ToolPanel` (extends(GuiClass)
 	end;
 	
 	destroy = function (self)
-		GuiClass.destroy(self)
+		_gui.class.destroy(self)
 	end;
 
 	parentResizedCallback = function(self, psize)
-		GuiClass.parentResizedCallback(self, psize)
+		_gui.class.parentResizedCallback(self, psize)
 		self:updateIcon()
 	end;
 	
@@ -44,7 +44,7 @@ hud_class `ToolPanel` (extends(GuiClass)
         self.inside = inside
 		if self.resizing then
 			self.size = vec(gfx_window_size().x-mouse_pos_abs.x, self.size.y)
-			GuiClass.alignUpdate(self, self.parent.size)
+			_gui.class.alignUpdate(self, self.parent.size)
 			self:updateIcon()
 		end
     end;
@@ -62,8 +62,8 @@ hud_class `ToolPanel` (extends(GuiClass)
 	end;
 })
 
-function gui.toolpanel(options)
-	return gfx_hud_object_add(`ToolPanel`, options)
+function gui.toolpanel(tab)
+	return gfx_hud_object_add(`ToolPanel`, tab)
 end
 
 -- safe_destroy(mtlpn)

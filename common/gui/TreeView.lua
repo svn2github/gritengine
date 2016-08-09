@@ -9,7 +9,7 @@
 
 local treevlastcol = false
 
-hud_class `TreeViewNode` (extends(GuiClass)
+hud_class `TreeViewNode` (extends(_gui.class)
 {
 	alpha = 0.2;
 	size = vec(150, 20);
@@ -34,7 +34,7 @@ hud_class `TreeViewNode` (extends(GuiClass)
 	dragging = false;
 	
 	init = function (self)
-		GuiClass.init(self)
+		_gui.class.init(self)
 		
 		self.needsInputCallbacks = true
 		
@@ -87,8 +87,7 @@ hud_class `TreeViewNode` (extends(GuiClass)
 	end;
 	
 	destroy = function (self)
-
-		self:destroy()
+		_gui.class.destroy(self)
 	end;
 	
 	addChild = function (self, nodename)
@@ -282,7 +281,7 @@ hud_class `DraggingTreeViewObject` {
     end;
 }
 
-TreeView =  (extends(GuiClass)
+TreeView =  (extends(_gui.class)
 {
 	alpha = 1;
 	size = vec(256, 256);
@@ -296,13 +295,13 @@ TreeView =  (extends(GuiClass)
 	canDrag = false;
 	
 	init = function (self)
-		GuiClass.init(self)
+		_gui.class.init(self)
 		self.childs = {}
 		self.line = {}
 	end;
 	
 	destroy = function (self)
-		self:destroy()
+		_gui.class.destroy(self)
 	end;
 	
 	addNode = function(self, nodename, par)

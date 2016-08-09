@@ -173,7 +173,7 @@ hud_class `selectboxicon` {
     end;
 }   
 
-hud_class `Selectbox` (extends(GuiClass)
+hud_class `Selectbox` (extends(_gui.class)
 {
 	alpha = 1;
 	size = vec(256, 40);
@@ -204,7 +204,7 @@ hud_class `Selectbox` (extends(GuiClass)
 	texture = _gui_textures.grad_button;
 	
 	init = function (self)
-		GuiClass.init(self)
+		_gui.class.init(self)
 		self.needsParentResizedCallbacks = true;
 		self.needsInputCallbacks = true;
 		
@@ -244,9 +244,8 @@ hud_class `Selectbox` (extends(GuiClass)
 	end;
 	
 	destroy = function (self)
+		_gui.class.destroy(self)
 		self.needsParentResizedCallbacks = false
-		
-		self:destroy()
 	end;
 	
 	setTitle = function(self, name)
@@ -289,7 +288,7 @@ hud_class `Selectbox` (extends(GuiClass)
 	end;	
 	
 	parentResizedCallback = function (self, psize)
-		GuiClass.parentResizedCallback(self, psize)
+		_gui.class.parentResizedCallback(self, psize)
 		-- self:parentresizecb(psize)
 	end;
 	

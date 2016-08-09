@@ -7,7 +7,7 @@
 --  http://www.opensource.org/licenses/mit-license.php
 ------------------------------------------------------------------------------
 
-hud_class `RadioButton` (extends(GuiClass)
+hud_class `RadioButton` (extends(_gui.class)
 {
 	alpha = _current_theme.colours.radiobutton.alpha;
 	colour = _current_theme.colours.radiobutton.background;
@@ -19,6 +19,7 @@ hud_class `RadioButton` (extends(GuiClass)
 	dragging = false;
 	
 	init = function (self)
+		_gui.class.init(self)
 		self.needsInputCallbacks = true;
 		self.needsParentResizedCallbacks = true
 		
@@ -46,9 +47,8 @@ hud_class `RadioButton` (extends(GuiClass)
 	end;
 	
 	destroy = function (self)
+		_gui.class.destroy(self)
 		self.needsParentResizedCallbacks = false
-		
-		self:destroy()
 	end;
 	
     mouseMoveCallback = function (self, local_pos, screen_pos, inside)		
@@ -87,7 +87,7 @@ hud_class `RadioButton` (extends(GuiClass)
     end;
 
 	parentResizedCallback = function(self, psize)
-		GuiClass.parentResizedCallback(self, psize)
+		_gui.class.parentResizedCallback(self, psize)
 	end;
 	
 	select = function(self)

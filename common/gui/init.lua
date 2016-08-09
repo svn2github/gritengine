@@ -1,7 +1,10 @@
 include `themes/init.lua`
 include `icons/init.lua`
 
+-- create gui objects
 gui = gui or {}
+-- hold gui classes
+_gui = _gui or {}
 
 include `GUIClass.lua`
 include `GUIText.lua`

@@ -23,7 +23,7 @@ end
 -- Value is always text.  Can set .number to restrict input to numbers, but 
 -- empty string is still a valid state. If using .number, use tonumber(blah.value) or 0
 
-EditBox = {
+EditBoxClass = {
     textColour = vec(1, 1, 1);
     borderColour = 0.4 * vec(1, 1, 1);
     padding = 4;
@@ -346,13 +346,13 @@ EditBox = {
 
 }
 
-hud_class `EditBox` (extends(EditBox)
+hud_class `EditBox` (extends(EditBoxClass)
 {
 	init = function (self)
-		EditBox.init(self)
+		EditBoxClass.init(self)
 	end;
 	
 	destroy = function (self)
-		EditBox.destroy(self)
+		EditBoxClass.destroy(self)
 	end;
 })

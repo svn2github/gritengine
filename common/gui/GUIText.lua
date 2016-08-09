@@ -7,7 +7,7 @@
 --  http://www.opensource.org/licenses/mit-license.php
 ------------------------------------------------------------------------------
 
-hud_class `GuiText` (extends(GuiClass)
+hud_class `GuiText` (extends(_gui.class)
 {
 	font = _current_theme.fonts.default;
 	colour = _current_theme.colours.text.default;
@@ -17,7 +17,7 @@ hud_class `GuiText` (extends(GuiClass)
 	textColour = _current_theme.colours.text.default;
 	
 	init = function (self)
-		GuiClass.init(self)
+		_gui.class.init(self)
 		self.text = gfx_hud_text_add(self.font)
 		self.text.parent = self
 		self.text.colour = self.textColour
@@ -25,7 +25,7 @@ hud_class `GuiText` (extends(GuiClass)
 	end;
 	
 	destroy = function (self)
-		GuiClass.destroy(self)
+		_gui.class.destroy(self)
 	end;
 	
 	setValue = function (self, value)
@@ -35,7 +35,7 @@ hud_class `GuiText` (extends(GuiClass)
 	end;	
 
 	parentResizedCallback = function(self, psize)
-		GuiClass.parentResizedCallback(self, psize)
+		_gui.class.parentResizedCallback(self, psize)
 	end;
 })
 

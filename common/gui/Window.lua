@@ -7,7 +7,7 @@
 --  http://www.opensource.org/licenses/mit-license.php
 ------------------------------------------------------------------------------
 
-hud_class `window_title_bar`(extends(GuiClass)
+hud_class `window_title_bar`(extends(_gui.class)
 {
 	alpha = _current_theme.colours.window.titlebar_background_alpha;
 	size = vec(256, 24);
@@ -18,18 +18,17 @@ hud_class `window_title_bar`(extends(GuiClass)
 
 	cornered = true;
 	texture = _gui_textures.window.titlebar;
-	align = TOP;
+	align = guialign.top;
 	
 	init = function (self)
-		GuiClass.init(self)
+		_gui.class.init(self)
 		self.needsInputCallbacks = true
 		self.needsParentResizedCallbacks = true
 		self.offset = vec(0, self.size.y)
 	end;
 	destroy = function (self)
+		_gui.class.destroy(self)
 		self.needsInputCallbacks = false
-		
-		self:destroy()
 	end;
 
     mouseMoveCallback = function (self, local_pos, screen_pos, inside)
@@ -52,7 +51,7 @@ hud_class `window_title_bar`(extends(GuiClass)
     end;
 	
 	parentResizedCallback = function(self, psize)
-		GuiClass.parentResizedCallback(self, psize)
+		_gui.class.parentResizedCallback(self, psize)
 		if self.parent ~= nil then
 			self.size = vec2(self.parent.size.x, self.size.y)
 		end

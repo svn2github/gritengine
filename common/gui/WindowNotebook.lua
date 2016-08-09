@@ -7,7 +7,7 @@
 --  http://www.opensource.org/licenses/mit-license.php
 ------------------------------------------------------------------------------
 
-hud_class `roundbutton` (extends(GuiClass)
+hud_class `roundbutton` (extends(_gui.class)
 {
 	alpha = _current_theme.colours.window_notebook.close_btn_alpha;
 	
@@ -29,7 +29,7 @@ hud_class `roundbutton` (extends(GuiClass)
 	texture = _gui_textures.window_notebook.closebtn;
 	
 	init = function (self)
-		GuiClass.init(self)
+		_gui.class.init(self)
 		
 		self.needsInputCallbacks = true
 
@@ -51,6 +51,7 @@ hud_class `roundbutton` (extends(GuiClass)
 	end;
 
 	destroy = function (self)
+		_gui.class.destroy(self)
 	end;
 
 	setCaption = function (self, v)
@@ -104,7 +105,7 @@ hud_class `roundbutton` (extends(GuiClass)
 	end;
 
 	parentResizedCallback = function(self, psize)
-		GuiClass.parentResizedCallback(self, psize)
+		_gui.class.parentResizedCallback(self, psize)
 	end;	
 	
 	reloadTheme = function(self)
@@ -341,7 +342,7 @@ hud_class `window_page_button` {
 	end;
 }
 
-hud_class `windownotebook` (extends(GuiClass)
+hud_class `windownotebook` (extends(_gui.class)
 {
 	alpha = _current_theme.colours.window_notebook.alpha;
 	colour = _current_theme.colours.window_notebook.background;
@@ -354,19 +355,18 @@ hud_class `windownotebook` (extends(GuiClass)
 	zOrder = 5;
 	
 	init = function (self)
-		GuiClass.init(self)
+		_gui.class.init(self)
 		self.buttons = {}
 
 	end;
 	
 	destroy = function (self)
+		_gui.class.destroy(self)
 		self.needsParentResizedCallbacks = false
-			
-		self:destroy()
 	end;
 	
 	parentResizedCallback = function (self, psize)
-		GuiClass.parentResizedCallback(self, psize)
+		_gui.class.parentResizedCallback(self, psize)
 		self.position = vec(gfx_window_size().x/2, gfx_window_size().y-self.size.y/2)
 		self:updateTabs()
 	end;

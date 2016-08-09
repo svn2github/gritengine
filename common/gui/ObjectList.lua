@@ -7,28 +7,19 @@
 --  http://www.opensource.org/licenses/mit-license.php
 ------------------------------------------------------------------------------
 
-hud_class `ObjectList` (extends(GuiClass)
+_gui.list = table.extends(_gui.class,
 {
 	alpha = 1;
 	size = vec(0, 0);
-	zOrder = 0;
 	padding = 4;
 	cellSpacing = 2;
 	orient = "vertical"; -- or horizontal
 	
 	init = function (self)
-		GuiClass.init(self)
+		_gui.class.init(self)
 		
 		self.items = {}
 		self.itemsSpace = vec(0, 0)
-		
-		if self.orient == "vertical" then -- vertical
-			self.update = self.updateV
-			self.addItem = self.addItemV
-		else -- horizontal
-			self.update = self.updateH
-			self.addItem = self.addItemH
-		end
 	end;
 
 	destroy = function (self)
@@ -36,42 +27,73 @@ hud_class `ObjectList` (extends(GuiClass)
 	end;
 
 	parentResizedCallback = function (self, psize)
-		GuiClass.parentResizedCallback(self, psize)
+		_gui.class.parentResizedCallback(self, psize)
 	end;
 	
-	updateV = function(self)	
-		local lastsize = -self.cellSpacing*#self.items/2
+	update = function(self, update_is)	
+		local lastsize = vec(-self.cellSpacing*#self.items/2, -self.cellSpacing*#self.items/2)
 
+		if update_is then
+			self:updateItemsSpace()
+			self:updateSize()
+		end
+		
 		for i = 1, #self.items do
-			self.items[i].position = vec2(0, self.itemsSpace.y/2 - (self.items[i].size.y+self.cellSpacing)/2 - lastsize)
-			lastsize = lastsize + self.items[i].size.y + self.cellSpacing
+			self.items[i].position = vec2(
+				self.orient == "horizontal" and (-self.itemsSpace.x/2 + (self.items[i].size.x+self.cellSpacing)/2 + lastsize.x) or 0,
+				self.orient == "vertical" and (self.itemsSpace.y/2 - (self.items[i].size.y+self.cellSpacing)/2 - lastsize.y) or 0
+			)
+			
+			lastsize = vec(lastsize.x + self.items[i].size.x + self.cellSpacing, lastsize.y + self.items[i].size.y + self.cellSpacing)
 		end
 	end;
 	
-    addItemV = function (self, itm)
+    addItem = function (self, itm)
 		self.items[#self.items+1] = itm
 		itm.parent = self
-		self.itemsSpace = vec(0, self.itemsSpace.y + itm.size.y)
-		self.size = vec2(math.max(self.size.x, itm.size.x + self.padding*2), self.itemsSpace.y + self.padding*2 + (#self.items-1) * self.cellSpacing)
+		
+		self.itemsSpace = vec(
+			self.orient == "horizontal" and (self.itemsSpace.x + itm.size.x) or math.max(self.itemsSpace.x, itm.size.x),
+			self.orient == "vertical" and (self.itemsSpace.y + itm.size.y) or math.max(self.itemsSpace.y, itm.size.y)
+		)
+		
+		self:updateSize()
 		self:update()
     end;
 
-	updateH = function(self)	
-		local lastsize = -self.cellSpacing*#self.items/2
-
+	updateSize = function(self)
+		self.size = vec(
+			self.itemsSpace.x + self.padding*2 + (self.orient == "horizontal" and ((#self.items-1)*self.cellSpacing) or 0),
+			self.itemsSpace.y + self.padding*2 + (self.orient == "vertical" and ((#self.items-1)*self.cellSpacing) or 0)
+		)
+	end;	
+	
+	updateItemsSpace = function(self)
+		self.itemsSpace = vec(0, 0)
 		for i = 1, #self.items do
-			self.items[i].position = vec2(-self.itemsSpace.x/2 + (self.items[i].size.x+self.cellSpacing)/2 + lastsize, 0)
-			lastsize = lastsize + self.items[i].size.x + self.cellSpacing
+			if self.items[i] and not self.items[i].destroyed then
+				self.itemsSpace = vec(
+					self.orient == "horizontal" and (self.itemsSpace.x + self.items[i].size.x) or math.max(self.itemsSpace.x, self.items[i].size.x),
+					self.orient == "vertical" and (self.itemsSpace.y +  self.items[i].size.y) or math.max(self.itemsSpace.y, self.items[i].size.y)
+				)
+			end
 		end
 	end;
-	
-    addItemH = function (self, itm)
-		self.items[#self.items+1] = itm
-		itm.parent = self
-		self.itemsSpace = vec(self.itemsSpace.x + itm.size.x, 0)
-		self.size = vec2(self.itemsSpace.x + self.padding*2 + (#self.items-1) * self.cellSpacing, math.max(self.size.y, itm.size.y + self.padding*2))
-		self:update()
-    end;
+})
+
+hud_class `ObjectList` (extends(_gui.list)
+{
+	init = function (self)
+		_gui.list.init(self)
+	end;
+
+	destroy = function (self)
+
+	end;
+
+	parentResizedCallback = function (self, psize)
+		_gui.list.parentResizedCallback(self, psize)
+	end;
 })
 
 function gui.list(tab)

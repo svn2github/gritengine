@@ -319,7 +319,7 @@ hud_class `MenuBarButton` {
     end;
 }
 
-hud_class `MenuBar` (extends(GuiClass)
+hud_class `MenuBar` (extends(_gui.class)
 {
     colour = _current_theme.colours.menu_bar.background;
 	alpha = _current_theme.colours.menu_bar.background_alpha;
@@ -334,7 +334,7 @@ hud_class `MenuBar` (extends(GuiClass)
 	zOrder = 6;
 	
     init = function (self)
-		GuiClass.init(self)
+		_gui.class.init(self)
 		
         self.needsParentResizedCallbacks = true
 		self.needsInputCallbacks = true
@@ -393,7 +393,7 @@ hud_class `MenuBar` (extends(GuiClass)
     end;
 	
     parentResizedCallback = function (self, psize)
-		GuiClass.parentResizedCallback(self, psize)
+		_gui.class.parentResizedCallback(self, psize)
     end;
 
 	unselect = function (self)
@@ -425,12 +425,12 @@ hud_class `MenuBar` (extends(GuiClass)
 
 _menus = {}
 
-function gui.menubar_menu(options)
-	local mn = gfx_hud_object_add(`Menu`, options)
+function gui.menubar_menu(tab)
+	local mn = gfx_hud_object_add(`Menu`, tab)
 	_menus[#_menus+1] = mn
 	return mn
 end
 
-function gui.menubar(options)
-	return gfx_hud_object_add(`MenuBar`, options)
+function gui.menubar(tab)
+	return gfx_hud_object_add(`MenuBar`, tab)
 end

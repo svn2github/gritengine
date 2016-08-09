@@ -7,7 +7,7 @@
 --  http://www.opensource.org/licenses/mit-license.php
 ------------------------------------------------------------------------------
 
--- TODO: add "_current_theme"..
+-- TODO: add "_current_theme".., extend _gui.class
 
 hud_class `dragbarsld` {
 	alpha = 1;

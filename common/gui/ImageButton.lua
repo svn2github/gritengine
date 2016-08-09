@@ -7,7 +7,7 @@
 --  http://www.opensource.org/licenses/mit-license.php
 ------------------------------------------------------------------------------
 
-hud_class `ImageButton` (extends(GuiClass)
+hud_class `ImageButton` (extends(_gui.class)
 {
 	alpha = _current_theme.colours.image_button.alpha;
 	size = vec2(24, 24);
@@ -21,7 +21,7 @@ hud_class `ImageButton` (extends(GuiClass)
 	hoverTime = 0;
 	
 	init = function (self)
-		GuiClass.init(self)
+		_gui.class.init(self)
 		self.needsInputCallbacks = true
 		self.needsFrameCallbacks = false
 		self.dragging = false;
@@ -37,7 +37,7 @@ hud_class `ImageButton` (extends(GuiClass)
 	end;
 
     destroy = function (self)
-		self:destroy()
+		_gui.class.destroy(self)
     end;
 
 	mouseMoveCallback = function (self, local_pos, screen_pos, inside)
@@ -55,7 +55,7 @@ hud_class `ImageButton` (extends(GuiClass)
 	end;	
 
 	parentResizedCallback = function(self, psize)
-		GuiClass.parentResizedCallback(self, psize)
+		_gui.class.parentResizedCallback(self, psize)
 	end;
 	
 	mousemovecb = function (self, local_pos, screen_pos, inside)

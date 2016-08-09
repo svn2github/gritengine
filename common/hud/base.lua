@@ -41,8 +41,10 @@ hud_class `Stretcher` {
 }   
 
 hud_center = hud_center or gfx_hud_object_add(`Positioner`, { factor = vec(0.5, 0.5) })
+hud_bottom = hud_bottom or gfx_hud_object_add(`Positioner`, { factor = vec(0.5, 0) })
 hud_bottom_left = hud_bottom_left or gfx_hud_object_add(`Positioner`, { factor = vec(0.0, 0.0) })
 hud_bottom_right = hud_bottom_right or gfx_hud_object_add(`Positioner`, { factor = vec(1.0, 0.0) })
+hud_top = hud_top or gfx_hud_object_add(`Positioner`, { factor = vec(0.5, 1.0) })
 hud_top_left = hud_top_left or gfx_hud_object_add(`Positioner`, { factor = vec(0.0, 1.0) })
 hud_top_right = hud_top_right or gfx_hud_object_add(`Positioner`, { factor = vec(1.0, 1.0) })
 

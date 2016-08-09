@@ -7,7 +7,7 @@
 --  http://www.opensource.org/licenses/mit-license.php
 ------------------------------------------------------------------------------
 
-hud_class `ToolBar` (extends(GuiClass)
+hud_class `ToolBar` (extends(_gui.class)
 {
     colour = _current_theme.colours.tool_bar.background;
 	alpha = _current_theme.colours.tool_bar.alpha;
@@ -16,7 +16,7 @@ hud_class `ToolBar` (extends(GuiClass)
 	orient = "horizontal";
 	
     init = function (self)
-		GuiClass.init(self)
+		_gui.class.init(self)
 		
         self.needsParentResizedCallbacks = true
         self.tools = {}
@@ -89,12 +89,12 @@ hud_class `ToolBar` (extends(GuiClass)
 	end;
 	
     destroy = function (self)
+		_gui.class.destroy(self)
 		self.needsParentResizedCallbacks = false
-		self:destroy()
     end;
 
     parentResizedCallback = function (self, psize)
-		GuiClass.parentResizedCallback(self, psize)
+		_gui.class.parentResizedCallback(self, psize)
     end;
 })
 

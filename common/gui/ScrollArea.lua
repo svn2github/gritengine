@@ -107,7 +107,7 @@ hud_class `ScrollBar`
 	end;
 }
 
-hud_class `ScrollArea` (extends(GuiClass)
+hud_class `ScrollArea` (extends(_gui.class)
 {
 	size = vec(0, 0);
 	alpha = 1;
@@ -125,7 +125,7 @@ hud_class `ScrollArea` (extends(GuiClass)
 	y_bar = true;
 	
     init = function (self)
-		GuiClass.init(self)
+		_gui.class.init(self)
 		self.needsParentResizedCallbacks = true;
 		self.needsInputCallbacks = true;
 
@@ -145,7 +145,7 @@ hud_class `ScrollArea` (extends(GuiClass)
     end;
 	
 	parentResizedCallback = function (self, psize)
-		GuiClass.parentResizedCallback(self, psize)
+		_gui.class.parentResizedCallback(self, psize)
 
 		local a, b = self:showOrHideBars()
 		
@@ -258,6 +258,10 @@ hud_class `ScrollArea` (extends(GuiClass)
 			(self.size.y/2-self.content.size.y/2) * self.content_pos.y)
 	end;
 })
+
+function gui.scrollarea(tab)
+	return gfx_hud_object_add(`ScrollArea`, tab)
+end
 
 -- safe_destroy(xplorer)
 
