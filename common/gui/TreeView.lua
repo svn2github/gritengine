@@ -16,7 +16,7 @@ hud_class `TreeViewNode` (extends(_gui.class)
 	zOrder = 0;
 	extends_w = true;
 	colour = vec(1, 0.5, 0.5);
-	align = LEFT;
+	align = guialign.left;
 	
 	icon = `/common/gui/icons/open_15.png`;
 	
@@ -48,7 +48,7 @@ hud_class `TreeViewNode` (extends(_gui.class)
 		if self.canHaveNodeChilds or self.canHaveObjectChilds then
 			self.iconcolapse = gui.imagebutton({
 				parent = self,
-				align= LEFT,
+				align= guialign.left,
 				offset = vec(3, 0),
 				size = vec(15, 15),
 				icon_texture = `/common/gui/icons/treeviewcolapsed.png`,
@@ -70,7 +70,7 @@ hud_class `TreeViewNode` (extends(_gui.class)
 		self.iconx = gui.object({
 			parent = self,
 			texture = self.icon,
-			align = LEFT,
+			align = guialign.left,
 			size = vec(self.size.y-2, self.size.y-2),
 			alpha = 1,
 			offset = vec(20, 0),
@@ -78,7 +78,7 @@ hud_class `TreeViewNode` (extends(_gui.class)
 		})
 		self.text = gui.text({
 			parent = self,
-			align = LEFT,
+			align = guialign.left,
 			offset = vec(self.iconx.size.x + 20, 0),
 			alpha = 0
 		})
