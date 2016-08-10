@@ -41,12 +41,12 @@ Vehicle = extends (ColClass) {
         wheelRadius=rad,
         transEff=0.7,
         torqueCurve = {
-            [0] = { rpm = 1000, torque = 410.00 },
-            [1] = { rpm = 2000, torque = 600.00 },
-            [2] = { rpm = 3000, torque = 750.00 },
-            [3] = { rpm = 4000, torque = 955.00 },
-            [4] = { rpm = 6000, torque = 800.00 },
-            [5] = { rpm = 7000, torque = 500.00 },
+            [1000] = 410.00,
+            [2000] = 600.00,
+            [3000] = 750.00,
+            [4000] = 955.00,
+            [6000] = 800.00,
+            [7000] = 500.00,
         },
         gearRatios = {
             [-1] = -4.84, -- reverse

@@ -7,7 +7,7 @@ shader `Default` {
     textureAnimation = uniform_float(0, 0);
     textureScale = uniform_float(1, 1);
 
-    diffuseMap = uniform_texture_2d(1, 1, 1);
+    diffuseMap = uniform_texture_2d(1, 1, 1, 1);
     diffuseMask = uniform_float(1, 1, 1);
     diffuseVertex = static_float(0);  -- Boolean
 
@@ -15,7 +15,7 @@ shader `Default` {
     alphaVertex = static_float(0);  -- Boolean
     alphaRejectThreshold = uniform_float(-1);
 
-    normalMap = uniform_texture_2d(0.5, 0.5, 1);
+    normalMap = uniform_texture_2d(0.5, 0.5, 1, 1);
 
     glossMap = uniform_texture_2d(1, 1, 1);
     glossMask = uniform_float(0);

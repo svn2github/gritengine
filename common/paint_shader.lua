@@ -5,8 +5,8 @@ shader `Paint` {
 
     -- This map and mask control the mix of colours.  Each fragment has a blend of the 4 colours
     -- from the body.  If the map is not used, the whole material will have a solid blend.
-    paintSelectionMap = uniform_texture_2d(1, 1, 1, 1),
-    paintSelectionMask = uniform_float(1, 1, 1, 1),
+    -- Note: The alpha channel is inverted (i.e. 0 means full colour3, 1 means no colour3).
+    paintSelectionMap = uniform_texture_2d(1, 0, 0, 1),
     paintByDiffuseAlpha = static_float(0),
     
     diffuseMap = uniform_texture_2d(1, 1, 1);
@@ -36,7 +36,9 @@ shader `Paint` {
         out.gloss = gloss_texel.b * mat.glossMask;
         out.specular = gamma_decode(gloss_texel.r) * mat.specularMask;
 
-        var paint_selector = sample(mat.paintSelectionMap, uv) * mat.paintSelectionMask;
+        var paint_selector = sample(mat.paintSelectionMap, uv);
+        // Since textures without alpha channel have it set to 1.
+        paint_selector.w = 1 - paint_selector.w;
         var paint_diffuse = paint_selector.x * body.paintDiffuse0
                           + paint_selector.y * body.paintDiffuse1
                           + paint_selector.z * body.paintDiffuse2
@@ -79,6 +81,7 @@ shader `Paint` {
         var normal_texel = sample(mat.normalMap, uv).xyz;
         var normal_ts = normal_texel * Float3(-2, 2, 2) + Float3(1, -1, -1);
         out.normal = normal_ts.x*tangent_ws + normal_ts.y*binormal_ws + normal_ts.z*normal_ws;
+
     ]],
 
     colourCode = [[

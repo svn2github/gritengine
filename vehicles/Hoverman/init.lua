@@ -49,7 +49,7 @@ class `.` (Hover) {
 }
 
 -- most materials are temporal and will probably joined
-material `Carpaint` { shader = `/common/Paint`, paintSelectionMask = vec(1, 0, 0, 0), specularMask = 1, glossMask = 1, microFlakesMap = `/common/MicroFlakes.dds`, }
+material `Carpaint` { shader = `/common/Paint`, paintSelectionMap = vec(1, 0, 0, 1), specularMask = 1, glossMask = 1, microFlakesMap = `/common/MicroFlakes.dds`, }
 material `LightPlastic` { diffuseMask = vec(0.2, 0.2, 0.2), specularMask = 0.04, glossMask = .5, }
 material `Chrome` { diffuseMask = V_ZERO, specularMask = 1, glossMask = 1, }
 material `Pattern` { diffuseMask = vec(0.05, 0.05, 0.05), specularMask = 0.04, glossMask = .5, }

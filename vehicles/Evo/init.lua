@@ -103,7 +103,7 @@ material `Body` {
     blendedBones = 1,
     shader = `/common/Paint`,
 
-    microFlakesMap = `/common/Microflakes.dds`,
+    microFlakesMap = `/common/MicroFlakes.dds`,
     microFlakesMask = 1,
     diffuseMap = `Body.dds`,
     paintSelectionMap = `Body_c.dds`,

@@ -30,7 +30,7 @@ material `car_generic_a` {
     glossMask = 1,
 
     paintByDiffuseAlpha = 1,
-    paintSelectionMask = vec(1, 0, 0, 0),
+    paintSelectionMap = vec(1, 0, 0, 1),
 
     emissiveMap = point_tex(`../textures/car_generic_a_em.tga`),
     emissiveMask = vec(4, 4, 4),

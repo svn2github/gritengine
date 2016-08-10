@@ -65,7 +65,7 @@ class `Wheel` (ColClass) { placementZOffset = 0.3; castShadows = true }
 -- most materials are temporal and will probably joined
 local g, s = 0.6, 0.04
 -- when using paint, set spec and gloss to 1, they will be masked by the paint colour
-material `Paint` { shader = `/common/Paint`, paintSelectionMask = vec(1, 0, 0, 0), specularMask = 1, glossMask = 1, microFlakesMap = `/common/MicroFlakes.dds`, shadowBias = 0.05 }
+material `Paint` { shader = `/common/Paint`, paintSelectionMap = vec(1, 0, 0, 1), specularMask = 1, glossMask = 1, microFlakesMap = `/common/MicroFlakes.dds`, shadowBias = 0.05 }
 material `LightPlastic` { diffuseMask = vec(0.2, 0.2, 0.2), specularMask = 0.04, glossMask = 0.5, }
 material `Chrome` { diffuseMask = 0.09*vec(1,1,1), specularMask = 0.15, glossMask = 1, }
 material `Pattern` { diffuseMask = vec(0.2, 0.2, 0.2), specularMask = 0.04, glossMask = 0.25 }

@@ -116,7 +116,7 @@ class `.` (Vehicle) {
 
 
 -- most materials are temporal and will probably joined
-material `Body` { shader = `/common/Paint`, microFlakesMap = `/common/MicroFlakes.dds`, paintSelectionMask = vec(1, 0, 0, 0), glossMask = 1, specularMask = 1 }
+material `Body` { shader = `/common/Paint`, microFlakesMap = `/common/MicroFlakes.dds`, paintSelectionMap = vec(1, 0, 0, 1), glossMask = 1, specularMask = 1 }
 material `Wheel` { diffuseMap = `glass.png`, glossMask = 1 }
 material `backlight` { diffuseMap = `backlight.png`, }
 material `Grey` { diffuseMap = `grey.png`, }

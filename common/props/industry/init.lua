@@ -5,7 +5,7 @@ material `BoringBarrel` {
     shader = `/common/Paint`,
 
     diffuseMap = `BoringBarrel.dds`,
-    paintSelectionMask = vec(1, 0, 0, 0),
+    paintSelectionMap = vec(1, 0, 0, 1),
     paintByDiffuseAlpha = 1,
     -- specularMap = `BoringBarrel_s.dds`,
     normalMap = `BoringBarrel_n.png`,
