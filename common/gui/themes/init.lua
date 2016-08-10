@@ -214,6 +214,7 @@ editor_themes['light'] =
 		{
 			background = V_ID * light_base*0.95;
 			text = V_ID*0;
+			selected_text_background = vec(1, 0.9, 0.5);
 			border = V_ID * 0.7;
 			font = `/common/fonts/Verdana12`;
 			texture = `/common/hud/CornerTextures/Filled02.png`;
@@ -478,9 +479,10 @@ editor_themes['dark'] =
 		};
 		editbox = 
 		{
-			background = V_ID * 0.3;
-			text = V_ID;
-			border = V_ID * 0.2;
+			background = V_ID * 0.9;
+			text = V_ID*0.1;
+			selected_text_background = vec(1, 0.9, 0.5);
+			border = V_ID * 0.9;
 			font = `/common/fonts/Verdana12`;
 			texture = `/common/hud/CornerTextures/Filled02.png`;
 		};
@@ -746,6 +748,7 @@ editor_themes['Dark Magenta'] = {
 		{
 			background = V_ID * 0.3;
 			text = V_ID;
+			selected_text_background = vec(1, 0.9, 0.5);
 			border = V_ID * 0.2;
 			font = `/common/fonts/Verdana12`;
 			texture = `/common/hud/CornerTextures/Filled02.png`;

@@ -38,6 +38,7 @@ EditBoxClass = {
 	isPassword = false;
 	selection = vec(0, 0); -- begin, end
 	selectionBG = nil;
+	selectionColour = V_ID*0.5;
 	clickedInside = false;
 	
     init = function (self)
@@ -60,7 +61,7 @@ EditBoxClass = {
         })
 
 		self.selectionBG = gfx_hud_object_add(`Rect`, {
-            colour = self.textColour-0.5;
+            colour = self.selectionColour;
             parent = self;
         })
 		self.selectionBG.enabled = false

@@ -13,7 +13,8 @@ hud_class `window_editbox` (extends(table.extends(_gui.class, EditBoxClass))
 	
     textColour = _current_theme.colours.editbox.text;
     borderColour = _current_theme.colours.editbox.border;
-
+	selectionColour = _current_theme.colours.editbox.selected_text_background;
+	
     colour = _current_theme.colours.editbox.background;
     font = _current_theme.colours.editbox.font;
 	texture = _current_theme.colours.editbox.texture;

@@ -98,7 +98,7 @@ hud_class `TreeViewNode` (extends(_gui.class)
 			expand_x = true,
 			expand_offset = vec(self.expand_offset.x-20, 0),
 			root = self.root,
-			align = TOP,
+			align = guialign.top,
 			parentNode = self,
 			ID = #self.childs+1,
 			canDrag = self.root.canDrag
@@ -304,7 +304,7 @@ TreeView =  (extends(_gui.class)
 		_gui.class.destroy(self)
 	end;
 	
-	addNode = function(self, nodename, par)
+	addNode = function(self, nodename, par, icon)
 		if par == nil then
 			self.childs[#self.childs+1] = gfx_hud_object_add(`TreeViewNode`, {
 				name = nodename,
@@ -322,6 +322,7 @@ TreeView =  (extends(_gui.class)
 			
 			self.activeLines = self.activeLines + 1
 			self.line[#self.activeLines] = self.childs[#self.childs] 
+			return self.childs[#self.childs]
 		else
 			par:addChild(nodename)
 		end
