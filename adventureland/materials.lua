@@ -4,9 +4,32 @@
 --}
 --material "road01" { diffuseMap="road01.png" } 
 
--- TODO: addressMode
-material `road01` { diffuseMap=`road.png` }
-material `02 - Default` { backfaces=true, diffuseMap=`branch7.png`, clamp = true, alphaRejectThreshold = 0.5 }
+material `road01` {
+    diffuseMap = `road.png`,
+}
 
-material `20 - Default` { backfaces=true, diffuseMap=`branch3.dds`, clamp = true, alphaRejectThreshold = 0.5 }
-material `03 - Default` { diffuseMap=`bark.png` }
+material `02 - Default` {
+    backfaces = true,
+    diffuseMap = {
+        image = `branch7.png`,
+        modeU = "CLAMP", modeV = "CLAMP", modeW = "CLAMP",
+        filterMin = "LINEAR", filterMax = "LINEAR", filterMip = "ANISOTROPIC",
+        anisotropy = 16,
+    };
+    alphaRejectThreshold = 0.5,
+}
+
+material `20 - Default` {
+    backfaces=true,
+    diffuseMap = {
+        image = `branch3.dds`,
+        modeU = "CLAMP", modeV = "CLAMP", modeW = "CLAMP",
+        filterMin = "LINEAR", filterMax = "LINEAR", filterMip = "ANISOTROPIC",
+        anisotropy = 16,
+    };
+    alphaRejectThreshold = 0.5,
+}
+
+material `03 - Default` {
+    diffuseMap=`bark.png`,
+}
