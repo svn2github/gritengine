@@ -99,16 +99,10 @@ shader `FoliageAnimation` {
 		// x is used for edges; y is used for branches 
 		var vWavesIn : Float2 =  Float2(fVtxPhase, fBranchPhase) + global.time;
 
+		var vWaves : Float4 = (fract(vWavesIn.xxyy * vFreq) * 2.0 - 1.0 ) * fSpeed * fDetailFreq;
 		
-		var afrac : Float4 =  Float4(vWavesIn.x, vWavesIn.x, vWavesIn.y, vWavesIn.y) * vFreq;
-		afrac = afrac - floor(afrac);
-		var vWaves : Float4 = (afrac * 2.0 - 1.0 ) * fSpeed * fDetailFreq;
-		
-		var fracc = vWaves + 0.5;
-		fracc = fracc - floor(fracc);
-		var TriangleWave = abs( fracc * 2.0 - 1.0 );
+		var TriangleWave = abs( fract(vWaves + 0.5) * 2.0 - 1.0 );
 		vWaves = TriangleWave * TriangleWave *( 3.0 - 2.0 * TriangleWave );  
-
 
 		var vWavesSum : Float2 = vWaves.xz + vWaves.yw;  
 
