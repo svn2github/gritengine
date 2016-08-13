@@ -16,7 +16,7 @@ shader `SkyBackground` {
         defaultAlpha = 1,
     };
     vertexCode = import_str `SkyBackground.vert.gsl`,
-    colourCode = import_str `SkyBackground.colour.gsl`,
+    additionalCode = import_str `SkyBackground.colour.gsl`,
 }
 
 sky_material `Sky` {
@@ -39,7 +39,7 @@ shader `Clouds` {
         defaultColour = vector3(0.5, 0.5, 1);
     };
     vertexCode = import_str `SkyClouds.vert.gsl`;
-    colourCode = import_str `SkyClouds.colour.gsl`;
+    additionalCode = import_str `SkyClouds.colour.gsl`;
 }
 
 sky_material `Clouds` {

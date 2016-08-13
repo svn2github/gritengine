@@ -141,7 +141,7 @@ shader `Ocean` {
         out.specular = gamma_decode(gloss_texel.r) * mat.specularMask;
     ]],
 
-    colourCode = [[
+    additionalCode = [[
         var uv = vert.coord0.xy * mat.textureScale + global.time * mat.textureAnimation;
         var c = sample(mat.emissiveMap, uv);
         out.colour = gamma_decode(c.rgb) * mat.emissiveMask;

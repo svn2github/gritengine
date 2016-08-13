@@ -49,7 +49,7 @@ shader `Default` {
         out.specular = gamma_decode(gloss_texel.r) * mat.specularMask;
     ]],
 
-    colourCode = [[
+    additionalCode = [[
         var uv = vert.coord0.xy * mat.textureScale + global.time * mat.textureAnimation;
         var c = sample(mat.emissiveMap, uv);
         out.colour = gamma_decode(c.rgb) * mat.emissiveMask;
@@ -83,7 +83,7 @@ shader `Particle` {
         var camera_to_fragment = out.position - global.cameraPos;
     ]],
 
-    colourCode = [[
+    additionalCode = [[
         var uv = frag.screen / global.viewportSize;
         uv.y = 1 - uv.y;  // Textures addressed from top left, frag.screen is bottom left
         var ray = lerp(lerp(global.rayBottomLeft, global.rayBottomRight, uv.x),

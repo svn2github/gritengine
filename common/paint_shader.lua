@@ -84,7 +84,7 @@ shader `Paint` {
 
     ]],
 
-    colourCode = [[
+    additionalCode = [[
         var uv = vert.coord0.xy;
         var c = sample(mat.emissiveMap, uv);
         out.colour = gamma_decode(c.rgb) * mat.emissiveMask;
