@@ -145,7 +145,7 @@ local g, s = 0.6, 0.04
 material `Carpaint` {
     shader = `/common/Paint`,
     microFlakesMap = `/common/MicroFlakes.dds`,
-    paintSelectionMap = vec(1, 0, 0, 0),
+    paintSelectionMap = vec(1, 0, 0, 1),
     specularMask = 1,
     glossMask = 1,
     shadowBias = 0.05,
