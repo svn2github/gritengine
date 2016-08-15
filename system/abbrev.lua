@@ -158,6 +158,16 @@ function shader(name)
     return shader2
 end
 
+function uniform_texture_1d(r, g, b, a)
+    a = a or 1
+    local tab2 = {
+        uniformKind = "TEXTURE1D";
+        defaultColour = vec(r, g, b);
+        defaultAlpha = a;
+    }
+    return tab2
+end
+
 function uniform_texture_2d(r, g, b, a)
     a = a or 1
     local tab2 = {
@@ -168,12 +178,23 @@ function uniform_texture_2d(r, g, b, a)
     return tab2
 end
 
-function uniform_texture(tab)
-    local tab2 = { }
-    tab2.uniformKind = "TEXTURE2D";
-    for k, v in pairs(tab) do
-        tab2[k] = v
-    end
+function uniform_texture_3d(r, g, b, a)
+    a = a or 1
+    local tab2 = {
+        uniformKind = "TEXTURE3D";
+        defaultColour = vec(r, g, b);
+        defaultAlpha = a;
+    }
+    return tab2
+end
+
+function uniform_texture_cube(r, g, b, a)
+    a = a or 1
+    local tab2 = {
+        uniformKind = "TEXTURE_CUBE";
+        defaultColour = vec(r, g, b);
+        defaultAlpha = a;
+    }
     return tab2
 end
 
