@@ -22,6 +22,7 @@ local function make_cubemap_from_function(name, sz, func)
     dds_save_cube(name, "R8G8B8", pos_x, neg_x, pos_y, neg_y, pos_z, neg_z)
 end
 
+-- http://www.hoist-point.com/soccerball.htm
 local beta = deg(acos(1 / math.sqrt(5)))
 black_planes = {
     vec(0, 0, 1),
