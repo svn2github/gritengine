@@ -3,7 +3,7 @@
 material `WorkBench` {
     shadowBias = .02,
 
-    diffuseVertex = 1,
+    -- diffuseVertex = 1,
     diffuseMap = `WorkBench.dds`,
     normalMap = `WorkBenchN.dds`,
     -- specularMap = `WorkBenchS.dds`,
