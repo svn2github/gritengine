@@ -138,7 +138,7 @@ editor = {
         editor_debug_binds.enabled = false
         editor_debug_ghost_binds.enabled = false
 
-		ticker.text.enabled = false
+		ticker.text.enabled = true
 		
 		safe_destroy(self.debug_mode_text)
 		
