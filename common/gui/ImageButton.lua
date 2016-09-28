@@ -18,6 +18,7 @@ hud_class `ImageButton` (extends(_gui.class)
 	selected = false;
 	colour = _current_theme.colours.image_button.base;
 	
+	tipActive = false;
 	hoverTime = 0;
 	
 	init = function (self)
@@ -49,6 +50,7 @@ hud_class `ImageButton` (extends(_gui.class)
 		self.hoverTime = self.hoverTime + elapsed
 		if self.hoverTime >= 0.9 then
 			gui.showtip(self.tip)
+			self.tipActive = true
 			self.hoverTime = -1
 			self.needsFrameCallbacks = false
 		end
@@ -69,8 +71,10 @@ hud_class `ImageButton` (extends(_gui.class)
 				self.colour = self.defaultColour
 				self.needsFrameCallbacks = false
 				self.hoverTime = 0
-				if _tip ~= nil and type(_tip) ~= "table" then
+				
+				if self.tipActive and _tip ~= nil and type(_tip) ~= "table" then
 					_tip:destroy()
+					self.tipActive = false
 				end
 			end
 		end

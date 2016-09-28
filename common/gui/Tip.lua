@@ -28,7 +28,7 @@ hud_class `Tip` {
 	end;
 	
 	update = function(self)
-		self.size = vec(self.text.size.x + self.padding*2, self.size.y)
+		self.size = vec(self.text.size.x + self.padding*2, self.text.size.y + self.padding)
 	end;
 	
 	frameCallback = function (self, elapsed)
