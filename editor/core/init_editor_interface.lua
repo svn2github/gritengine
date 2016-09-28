@@ -5,7 +5,7 @@ include`pages/MapEditor.lua`
 include`pages/NavigationEditor.lua`
 
 -- add the button to the editor toolbar
-add_editor_tool("Navigation Edtor", map_editor_icons.navigation, function(self) open_navigation_page() end)
+add_editor_tool("Navigation Editor", map_editor_icons.navigation, function(self) open_navigation_page() end)
 
 include`pages/ObjectEditor.lua`
 
