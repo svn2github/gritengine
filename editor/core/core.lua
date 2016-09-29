@@ -97,8 +97,7 @@ function GED:leftMouseClick()
 end;
 
 function GED:stopDraggingObj()
-	input_filter_set_cursor_hidden(false)
-    widget_manager:select(false)
+    widget_manager:stopDragging()
 end;
 
 function GED:deleteSelection()
@@ -454,6 +453,8 @@ end;
 function GED:newMap(ndestroyobjs)
     gfx_option("RENDER_SKY", true)
 	
+	unload_icons = true
+	
 	navigation_reset()
 	
 	-- no fog and a smooth background colour
@@ -488,13 +489,14 @@ function GED:openMap(map_file)
 
 	widget_manager:unselectAll()
 
+	-- unload_icons = true
+	
 	-- you can create a new map and include a lua that cointains object placements
 	local map_ext = get_extension(map_file)
 	if map_ext == "lua" then
         current_map = nil
         current_map = GritMap.new()		
 		include (mapfile)
-		self.objects = object_all()
 	elseif map_ext == "gmap" then
 		gfx_option("RENDER_SKY", true)
 		
@@ -503,8 +505,10 @@ function GED:openMap(map_file)
 		if current_map == nil then
 			current_map = GritMap.new()	
 		end
+		local gmap = current_map:open(map_file)
 		
-		return current_map:open(map_file)		
+		create_world_icons()
+		return gmap
 	end
 
     -- if update_map_properties ~= nil then

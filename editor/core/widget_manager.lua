@@ -34,6 +34,7 @@ widget_manager = {
 	selectedObjs = nil;
 	offsets = {};
 	rotationOffsets = {};
+	initialPosition = vec(0, 0, 0);
 	lastobj = nil;
 	widget = nil;
 	strdrag = nil;
@@ -162,6 +163,7 @@ function widget_manager:enablewidget(pos, mrot)
 	
 	self.widget = object (`/editor/assets/widget`) (pos) { name = "widget_obj", mode = self.mode, rot = mrot, rotating = self.mode == "rotate" }
 	self.widget:activate()
+	self.initialPosition = pos
 end
 
 function widget_manager:setSpaceMode(mode)
@@ -209,6 +211,14 @@ function widget_manager:unselectAll()
 	safe_destroy(self.widget)
 end
 
+function widget_manager:stopDragging()
+	input_filter_set_cursor_hidden(false)
+    self:select(false)
+	-- self.initialPosition = self.widget.instance.pivot.localPosition
+	-- self.selectedObjs[1].initialPosition = self.selectedObjs[1].instance.body.worldPosition
+	-- self.selectedObjs[1].initialOrientation = self.selectedObjs[1].instance.body.worldOrientation
+end
+
 function widget_manager:startDragging(widget_component)
 	if not valid_object(self.widget) then return end
 	self.strdrag = widget_component
@@ -227,7 +237,7 @@ function widget_manager:startDragging(widget_component)
 		self.widget:setInitialOrientations()
 	end
 	self.objinitpos = self.widget.instance.pivot.localPosition
-	input_filter_set_cursor_hidden(true)	
+	-- input_filter_set_cursor_hidden(true)	
 end
 
 function widget_manager:calcOffsets()
@@ -264,13 +274,28 @@ end
 function widget_manager:selectSingleObject()
 	self:unselectAll()
 
-	self.offsets[1] = vec(0, 0, 0)
+	-- self.offsets[1] = vec(0, 0, 0)
 
 	local ray = 1000 * gfx_screen_to_world(main.camPos, main.camQuat, mouse_pos_abs)
 	local _, b = physics_cast(main.camPos, ray, true, 0)
+	-- local b2 = self:selectNonPhysicalObjects()
+	
+	-- if b2 then
+		-- if b and b.owner then
+			-- if b.owner.instance and b.owner.instance then
+				-- if #(main.camPos - b.owner.instance.body.worldPosition) > #(main.camPos - b2.pos) then
+				
+				-- end
+			-- end
+		-- end
+	-- end
+	
 	if b ~= nil then
 		if self.selectedObjs == nil then self.selectedObjs = {} end
 		self.selectedObjs[1] = b.owner
+		
+		self.selectedObjs[1].initialPosition = self.selectedObjs[1].instance.body.worldPosition
+		self.selectedObjs[1].initialOrientation = self.selectedObjs[1].instance.body.worldOrientation
 		
 		self:setEditorToolbar("Selected: "..self.selectedObjs[1].name)
 		
@@ -299,6 +324,8 @@ function widget_manager:addObject()
 		end
 		if not isonthelist then
 			self.selectedObjs[#self.selectedObjs+1] = b.owner
+			self.selectedObjs[#self.selectedObjs].initialPosition = self.selectedObjs[#self.selectedObjs].instance.body.worldPosition
+			self.selectedObjs[#self.selectedObjs].initialOrientation = self.selectedObjs[#self.selectedObjs].instance.body.worldOrientation
 		end
 		self:setEditorToolbar("Selected: Multiple")
 		b.owner.instance.gfx.wireframe = true
@@ -339,6 +366,8 @@ function widget_manager:selectAll()
 			end
 			if not isonthelist then
 				self.selectedObjs[#self.selectedObjs+1] = b
+				self.selectedObjs[#self.selectedObjs].initialPosition = self.selectedObjs[#self.selectedObjs].instance.body.worldPosition
+				self.selectedObjs[#self.selectedObjs].initialOrientation = self.selectedObjs[#self.selectedObjs].instance.body.worldOrientation
 			end
 
 			b.instance.gfx.wireframe = true
@@ -400,6 +429,7 @@ function intersectRayAABoxV(origin, direction, p1, p2)
     return true, t_near, t_far
 end
 
+-- a bounding box ray tracer
 function widget_manager:bbMouseSelect(pos, rot, scale)
 	local iq = inv(rot)
 	-- move our stuff to origin to calculate it properly
@@ -412,6 +442,32 @@ function widget_manager:bbMouseSelect(pos, rot, scale)
 	local dir = 1000 * gfx_screen_to_world(ppos, rrot, mouse_pos_abs)
 	local bmin, bmax = pos -scale/2, pos+scale/2
 	return intersectRayAABoxV(ppos, dir, bmin, bmax)
+end
+
+function widget_manager:selectNonPhysicalObjects()
+	local obj = nil
+
+	for k, v in ipairs(object_all()) do
+		if v and v.instance and not v.destroyed()  then
+			if v.instance.body == nil then
+				local found = nil
+				if v.instance.gfx then
+					-- found = self:bbMouseSelect(v.pos, v.instance.gfx.localOrientation, v.instance.gfx.bb)
+				elseif v.instance.audio then
+					found = self:bbMouseSelect(v.pos, Q_ID, vec(1, 1, 1))
+				end
+				
+				if found then
+					if obj == nil then
+						obj = v
+					elseif (#(main.camPos - v.pos) < #(main.camPos - obj.pos)) then
+						obj = v
+					end
+				end
+			end
+		end
+	end
+	return obj
 end
 
 function widget_manager:select(mode, multi)
@@ -430,17 +486,21 @@ function widget_manager:select(mode, multi)
 				local lastdistance = nil
 				
 				local scale = self.widget.instance.scale
+				
+				-- ray cast to each arrow first, so we can start dragging
 				for i = 1, 3 do
 					local posit, orient
 					local offset, offset2
+					
+					-- arrows
 					if valid_object(wi[axm[i]]) then
 						posit, orient  = wi[axm[i]].instance.gfx.localPosition, wi[axm[i]].instance.gfx.localOrientation
 						offset, offset2 = orient * (4*scale * V_FORWARDS), orient * (7*scale * V_FORWARDS) -- arrow base, arrow
 						
-						local kq, kna = self:bbMouseSelect(posit+offset, orient, vec(0.25, 8, 0.25)*scale)
-						if not kq then
-							kq, kna = self:bbMouseSelect(posit+offset2, orient, vec(0.8, 2, 0.8)*scale)
-						end
+						local kq, kna = self:bbMouseSelect(posit+offset, orient, vec(1, 8, 1)*scale)--lines
+						-- if not kq then
+							-- kq, kna = self:bbMouseSelect(posit+offset2, orient, vec(0.8, 2, 0.8)*scale)--arrows
+						-- end
 						
 						if kq and (lastdistance == nil or kna < lastdistance)  then
 							wfound = i == 1 and "x" or i == 2 and "y" or i == 3 and "z"
@@ -448,12 +508,17 @@ function widget_manager:select(mode, multi)
 						end
 					end
 					
+					-- dummies
 					if valid_object(wi[dxm[i]]) then
 						posit, orient  = wi[dxm[i]].instance.gfx.localPosition, wi[dxm[i]].instance.gfx.localOrientation
-						offset = (orient * V_FORWARDS*scale) + (i == 1 and (V_RIGHT*scale) or i == 2 and (V_UP*scale) or i == 3 and (V_FORWARDS*scale))
-
-						local _, knd = self:bbMouseSelect(posit+offset, orient, vec(2, 2, 0.1)*scale)
-
+						local obj_orient_dir = orient * V_FORWARDS
+						-- TODO: fix this:
+						offset = obj_orient_dir + (i == 1 and V_RIGHT or i == 2 and V_UP or i == 3 and V_FORWARDS)
+						
+						offset = offset * scale
+						
+						local _, knd = self:bbMouseSelect(posit+offset, orient, vec(2, 2, 0.2)*scale)
+						
 						if knd and (lastdistance == nil or knd < lastdistance) then
 							wfound = i == 1 and "xy" or i == 2 and "xz" or i == 3 and "yz"
 							lastdistance = knd

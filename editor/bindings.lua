@@ -104,6 +104,10 @@ function editor_receive_button(button, state)
 			elseif state == '-' then
 				GED:stopDraggingObj()
 			end
+		elseif button == "selectModeTranslate" then
+			GED:setWidgetMode("translate")
+		elseif button == "selectModeRotate" then
+			GED:setWidgetMode("rotate")
 		elseif button == "weaponPrimary" then
 			if not mouse_inside_any_window() then
 				if state == '+' then

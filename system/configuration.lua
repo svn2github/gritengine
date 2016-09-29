@@ -248,6 +248,8 @@ local default_user_editor_edit_bindings = {
 	delete = "Delete";
 	duplicate = "C+v";
 	select = "left";
+	selectModeTranslate = "1";
+	selectModeRotate = "2";
 }
 
 local default_user_editor_debug_bindings = {

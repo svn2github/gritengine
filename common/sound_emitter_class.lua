@@ -2,6 +2,7 @@
 
 SoundEmitterClass = {
         renderingDistance=50;
+		type = "SoundEmitterClass";
         init = function(persistent)
                 persistent:addDiskResource(persistent.audioFile or persistent.className..".wav")
         end;
