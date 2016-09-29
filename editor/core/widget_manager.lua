@@ -498,10 +498,7 @@ function widget_manager:select(mode, multi)
 						offset, offset2 = orient * (4*scale * V_FORWARDS), orient * (7*scale * V_FORWARDS) -- arrow base, arrow
 						
 						local kq, kna = self:bbMouseSelect(posit+offset, orient, vec(1, 8, 1)*scale)--lines
-						-- if not kq then
-							-- kq, kna = self:bbMouseSelect(posit+offset2, orient, vec(0.8, 2, 0.8)*scale)--arrows
-						-- end
-						
+
 						if kq and (lastdistance == nil or kna < lastdistance)  then
 							wfound = i == 1 and "x" or i == 2 and "y" or i == 3 and "z"
 							lastdistance = kna
@@ -511,9 +508,8 @@ function widget_manager:select(mode, multi)
 					-- dummies
 					if valid_object(wi[dxm[i]]) then
 						posit, orient  = wi[dxm[i]].instance.gfx.localPosition, wi[dxm[i]].instance.gfx.localOrientation
-						local obj_orient_dir = orient * V_FORWARDS
-						-- TODO: fix this:
-						offset = obj_orient_dir + (i == 1 and V_RIGHT or i == 2 and V_UP or i == 3 and V_FORWARDS)
+
+						offset =  (orient * V_RIGHT)+(orient*V_FORWARDS)
 						
 						offset = offset * scale
 						
