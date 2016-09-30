@@ -181,8 +181,6 @@ function widget_manager:calcCentreOffsets()
 end
 
 function widget_manager:selectSingleObject()
-	self:unselectAll()
-
 	-- self.offsets[1] = vec(0, 0, 0)
 
 	local ray = 1000 * gfx_screen_to_world(main.camPos, main.camQuat, mouse_pos_abs)
@@ -201,6 +199,9 @@ function widget_manager:selectSingleObject()
 	
 	if b ~= nil then
 		local selected = b.owner
+		
+		if self.selectedObjs and selected == self.selectedObjs[1] then return end
+		
 		selected.initialPosition = selected.instance.body.worldPosition
 		selected.initialOrientation = selected.instance.body.worldOrientation
 
