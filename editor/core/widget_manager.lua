@@ -105,10 +105,12 @@ function widget_manager:setEditorToolbar(str)
 end
 
 function widget_manager:unselectAll()
+	physics_update()
 	if self.selectedObjs ~= nil then
 		for i = 0, #self.selectedObjs do
 			if self.selectedObjs[i] ~= nil and self.selectedObjs[i].instance ~= nil and self.selectedObjs[i].instance.gfx ~= nil and not self.selectedObjs[i].destroyed then
 				self.selectedObjs[i].instance.gfx.wireframe = false
+				self.selectedObjs[i].instance.body.worldPosition = self.selectedObjs[i].spawnPos
 			end
 		end
 		self.selectedObjs = nil
@@ -116,7 +118,7 @@ function widget_manager:unselectAll()
 	
 	self.setEditorToolbar("Selected: none")
 	safe_destroy(self.widget)
-	physics_update()
+	
 	main.frameCallbacks:insert("widget_manager", wm_callback)
 end
 
@@ -202,6 +204,8 @@ function widget_manager:selectSingleObject()
 		
 		if self.selectedObjs and selected == self.selectedObjs[1] then return end
 		
+		self:unselectAll()
+		
 		selected.initialPosition = selected.instance.body.worldPosition
 		selected.initialOrientation = selected.instance.body.worldOrientation
 
@@ -217,7 +221,9 @@ function widget_manager:selectSingleObject()
 		if valid_object(self.widget) then
 			self.widget.instance.dragged = self.selectedObjs
 		end
-	end	
+	elseif self.selectedObjs and self.selectedObjs[1] then
+		self:unselectAll()
+	end
 end
 
 function widget_manager:addObject()
