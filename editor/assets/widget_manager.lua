@@ -9,8 +9,8 @@ material `face` {
     sceneBlend = "ALPHA",
 }
 -- the plane dragging
-material `dragging_face` {
-	diffuseMask = vec(1, 0.5, 0),
+material `face_dragging` {
+	diffuseMask = vec(1, 1, 0),
 	backfaces = true,
 	alphaMask = 0.5,
     sceneBlend = "ALPHA",
@@ -33,10 +33,10 @@ material `line` {
 	emissiveMask = vec(0, 1, 0),
     additionalLighting = true,
 }
--- line selected (when you are dragging, only the line turns yellow)
-material `line_dragging` {
-	diffuseMask = vec(1, 0.5, 0),
-	emissiveMask = vec(1, 0.5, 0),
+
+material `yellow` {
+	diffuseMask = vec(1, 1, 0),
+	emissiveMask = vec(1, 1, 0),
     additionalLighting = true,
 }
 -- all arrows `arrow` material
@@ -128,6 +128,36 @@ class `widget` {} {
 		persistent:updateArrows(persistent)
     end;
 
+	setMaterial = function(self, component, highlight)
+		local inst = self.instance
+
+		if valid_object(inst[component]) then
+			if not highlight then
+				if #component == 1 then
+					inst[component].instance.gfx:setMaterial(`line`, inst[component].defmat)
+				elseif #component == 2 then
+					inst[component].instance.gfx:setMaterial(`line_1`, inst[component].defmat1)
+					inst[component].instance.gfx:setMaterial(`line_2`, inst[component].defmat2)
+					inst[component].instance.gfx:setMaterial(`face`, `face`)
+					
+					inst[component:sub(1, 1)].instance.gfx:setMaterial(`line`, inst[component:sub(1, 1)].defmat)
+					inst[component:sub(2, 2)].instance.gfx:setMaterial(`line`, inst[component:sub(2, 2)].defmat)
+				end
+			else
+				if #component == 1 then
+					inst[component].instance.gfx:setMaterial(`line`, `yellow`)
+				elseif #component == 2 then
+					inst[component].instance.gfx:setMaterial(`line_1`, `yellow`)
+					inst[component].instance.gfx:setMaterial(`line_2`, `yellow`)
+					inst[component].instance.gfx:setMaterial(`face`, `face_dragging`)
+					
+					inst[component:sub(1, 1)].instance.gfx:setMaterial(`line`, `yellow`)
+					inst[component:sub(2, 2)].instance.gfx:setMaterial(`line`, `yellow`)
+				end
+			end
+		end
+	end;
+	
 	updateArrows = function(persistent)
 		local instance = persistent.instance
 		local pivot_or = instance.pivot.localOrientation
@@ -150,7 +180,7 @@ class `widget` {} {
 		instance.x.instance.gfx.localOrientation = pivot_or * euler(0, 0, -90)
 		instance.x.instance.gfx:setMaterial(`arrow`, `red`)
 		instance.x.instance.gfx:setMaterial(`line`, `red`)
-		instance.x.instance.defmat = `red`
+		instance.x.defmat = `red`
 		instance.x.wc = "x"
 
 		if valid_object(instance.y) then
@@ -161,7 +191,7 @@ class `widget` {} {
 		instance.y:activate()
 		instance.y.instance.gfx:setMaterial(`arrow`, `green`)
 		instance.y.instance.gfx:setMaterial(`line`, `green`)
-		instance.y.instance.defmat = `green`
+		instance.y.defmat = `green`
 		instance.y.wc = "y"
 
 		if valid_object(instance.z) then
@@ -173,7 +203,7 @@ class `widget` {} {
 		instance.z.instance.gfx.localOrientation = pivot_or * euler(90, 0, -90)
 		instance.z.instance.gfx:setMaterial(`arrow`, `blue`)
 		instance.z.instance.gfx:setMaterial(`line`, `blue`)
-		instance.z.instance.defmat = `blue`
+		instance.z.defmat = `blue`
 		instance.z.wc = "z"
 
 		if valid_object(instance.xy) then
@@ -192,7 +222,8 @@ class `widget` {} {
 			instance.xy = object `dummy_plane` (0, 0, 0) {name = "widget_xy"}
 			instance.xy:activate()
 			instance.xy.instance.gfx.localOrientation = pivot_or
-			instance.xy.instance.defmat = `green`
+			instance.xy.defmat1 = `green`
+			instance.xy.defmat2 = `red`
 			instance.xy.wc = "xy"
 
 			instance.xz = object `dummy_plane` (0, 0, 0) {name = "widget_xz"}
@@ -200,7 +231,8 @@ class `widget` {} {
 			instance.xz.instance.gfx.localOrientation = pivot_or * euler(0, -90, -90)
 			instance.xz.instance.gfx:setMaterial(`line_1`, `red`)
 			instance.xz.instance.gfx:setMaterial(`line_2`, `blue`)
-			instance.xz.instance.defmat = `green`
+			instance.xz.defmat1 = `red`
+			instance.xz.defmat2 = `blue`
 			instance.xz.wc = "xz"
 	
 			instance.yz = object `dummy_plane` (0, 0, 0) {name = "widget_yz"}
@@ -208,7 +240,8 @@ class `widget` {} {
 			instance.yz.instance.gfx.localOrientation = pivot_or * euler(90, 0, 90)
 			instance.yz.instance.gfx:setMaterial(`line_1`, `blue`)
 			instance.yz.instance.gfx:setMaterial(`line_2`, `green`)
-			instance.yz.instance.defmat = `green`
+			instance.yz.defmat1 = `blue`
+			instance.yz.defmat2 = `green`
 			instance.yz.wc = "yz"
 		end
 	end;
@@ -320,7 +353,11 @@ class `widget` {} {
 	rotate = function(persistent, rot)
 		local inst = persistent.instance
 
-		inst.pivot.localOrientation = inst.pivotInitialOrientation * rot
+		if widget_manager.space_mode == "local" then
+			inst.pivot.localOrientation = inst.pivotInitialOrientation * rot
+		else
+			inst.pivot.localOrientation = rot * inst.pivotInitialOrientation
+		end
 		
 		for i = 1, #inst.dragged do
 			if inst.dragged[i] ~= nil and inst.dragged[i].instance ~= nil and not inst.dragged[i].destroyed then
@@ -358,6 +395,23 @@ class `widget` {} {
 				
 				inst.initialOrientations[#inst.initialOrientations+1] = initialorientation
 			end
+		end
+	end;
+	highlight = function(self, component)
+		if component == nil then
+			if self.instance.highlighted then
+				self:setMaterial(self.instance.highlighted, false)
+				self.instance.highlighted = nil
+			end
+			return
+		end
+		local c_obj = self.instance[component]
+			if c_obj and not c_obj.destroyed and c_obj.instance then
+			if self.instance.highlighted then
+				self:setMaterial(self.instance.highlighted, false)
+			end
+			self.instance.highlighted = component
+			self:setMaterial(component, true)
 		end
 	end;
 }
