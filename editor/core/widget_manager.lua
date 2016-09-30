@@ -116,6 +116,7 @@ function widget_manager:unselectAll()
 	
 	self.setEditorToolbar("Selected: none")
 	safe_destroy(self.widget)
+	physics_update()
 	main.frameCallbacks:insert("widget_manager", wm_callback)
 end
 
