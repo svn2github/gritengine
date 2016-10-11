@@ -198,7 +198,8 @@ function fpsgame:destroy()
 end;
 
 game_manager:define("First Person", fpsgame)
-
+game_manager:description("First Person", "First Person Shooter Game Demo")
+game_manager:thumb("First Person", "/gamemodes/fpsgame.png")
 
 local function actor_cast (pos, ray, radius, height, body)
 	return physics_sweep_cylinder(radius, height, quat(1,0,0,0), pos, ray, true, 0, body)

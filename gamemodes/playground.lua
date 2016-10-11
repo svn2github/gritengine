@@ -400,3 +400,5 @@ function playground:destroy()
 end
 
 game_manager:define("Playground", playground)
+game_manager:description("Playground", "Open World Game Demo")
+game_manager:thumb("Playground", "/gamemodes/playground.png")

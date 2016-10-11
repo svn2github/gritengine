@@ -81,12 +81,13 @@ hud_class `Button` {
     if(self.inside)then
       self.edge.alpha = 1
       self.text.shadow = vec(2, -2)
+      self:eventCallback("inside")
     else
       self.edge.alpha = 0
       self.text.shadow = vec(0, 0)
     end
     self:refreshState()
-  end;
+   end;
 
   buttonCallback = function (self, ev)
     if ev == "+left" and self.inside then
@@ -103,5 +104,8 @@ hud_class `Button` {
 
   pressedCallback = function (self)
     error "Button has no associated action."
+  end;
+
+  eventCallback = function (self,event)
   end;
 }

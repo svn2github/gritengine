@@ -26,9 +26,21 @@ system_layer = system_layer or nil
 
 game_manager = {
     gameModes = { };
+    gameDescriptions = { };
+    gameThumbs = { };
     currentMode = nil;
 
-    define = function (self, name, mode)
+    description = function (self, name, desc)
+        self.gameDescriptions[name] = desc
+    end;
+
+    thumb = function (self, name, thumb )
+        self.gameThumbs[name] = thumb
+    end;
+
+    define = function (self, name, mode )
+        self.gameDescriptions[name] = "no description!"
+        self.gameThumbs[name] = `/common/hud/LoadingScreen/GritLogo.png`
         self.gameModes[name] = mode
     end;
 

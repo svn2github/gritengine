@@ -29,26 +29,28 @@ hud_class `Main` {
 				
 				local ypos = 0
 				self.activeGuis["projectsButton"] = gfx_hud_object_add(`Button`, {
-					size = vec(210,40);
+					size = vec(230,40);
 					font = `/common/fonts/Impact24`;
 					caption = "Projects";
 					parent = self;
 					position = vec2(0, ypos);
 					edgeColour = vec(1, 102/255, 0)*1.0;
-					edgePosition = vec2(-(210 / 2) + 5, 0);
+					edgePosition = vec2(-(230 / 2) + 5, 0);
+					edgeSize = vec2(10,40);
 					pressedCallback = function() 
 						menu.menu.projects()
 					end
 				})
 				ypos = ypos - 50
 				self.activeGuis["debugmodeButton"] = gfx_hud_object_add(`Button`, {
-					size = vec(210,40);
+					size = vec(230,40);
 					font = `/common/fonts/Impact24`;
 					caption = "Debug Mode";
 					parent = self;
 					position = vec2(0, ypos);
 					edgeColour = vec(0, 1, 0);
-					edgePosition = vec2(-(210 / 2) + 5, 0);
+					edgePosition = vec2(-(230 / 2) + 5, 0);
+					edgeSize = vec2(10,40);
 					pressedCallback = function() 
 						menu.activeGuis = {}
 						menu.activeMenu = "project"
@@ -58,13 +60,14 @@ hud_class `Main` {
 				ypos = ypos - 50
 				if GED then
 					self.activeGuis["editorButton"] = gfx_hud_object_add(`Button`, {
-						size = vec(210,40);
+						size = vec(230,40);
 						font = `/common/fonts/Impact24`;
 						caption = "Editor";
 						parent = self;
 						position = vec2(0, -100);
 						edgeColour = vec(0, 102/255, 1)*1.0;
-						edgePosition = vec2(-(210 / 2) + 5, 0);
+						edgePosition = vec2(-(230 / 2) + 5, 0);
+						edgeSize = vec2(10,40);
 						pressedCallback = function() 
 							menu.activeMenu = "editor"
 							game_manager:enter("Map Editor")
@@ -73,26 +76,28 @@ hud_class `Main` {
 					ypos = ypos - 50
 				end
 				self.activeGuis["settingsButton"] = gfx_hud_object_add(`Button`, {
-					size = vec(210,40);
+					size = vec(230,40);
 					font = `/common/fonts/Impact24`;
 					caption = "Settings";
 					parent = self;
 					position = vec2(0, ypos);
 					edgeColour = vec(1, 1, 0);
-					edgePosition = vec2(-(210 / 2) + 5, 0);
+					edgePosition = vec2(-(230 / 2) + 5, 0);
+					edgeSize = vec2(10,40);
 					pressedCallback = function() 
 						menu.menu.settings()
 					end
 				})
 				ypos = ypos - 50
 				self.activeGuis["exitButton"] = gfx_hud_object_add(`Button`, {
-					size = vec(210,40);
+					size = vec(230,40);
 					font = `/common/fonts/Impact24`;
 					caption = "Exit";
 					parent = self;
 					position = vec2(0, ypos);
 					edgeColour = vec(1, 0, 1)*1.0;
-					edgePosition = vec2(-(210 / 2) + 5, 0);
+					edgePosition = vec2(-(230 / 2) + 5, 0);
+					edgeSize = vec2(10,40);
 					pressedCallback = quit
 				})
 			end;
@@ -118,14 +123,14 @@ hud_class `Main` {
 					end
 				end
 				menu.activeGuis["backButton"] = gfx_hud_object_add(`Button`, {
-					size = vec(210,40);
+					size = vec(230,40);
 					font = `/common/fonts/Impact24`;
 					caption = "Go Back";
 					parent = self;
 					position = vec2(0, 100);
 					edgeColour = vec(1, 0, 0)*1.0;
 					edgeSize = vec2(10,40);
-					edgePosition = vec2(-(210 / 2) + 5, 0);
+					edgePosition = vec2(-(230 / 2) + 5, 0);
 					pressedCallback = function() 
 						menu.menu.main()
 					end
@@ -137,60 +142,69 @@ hud_class `Main` {
 				menu.activeMenu = "projects"
 				local currentPosition = 0 --Starting Y position of game modes buttons
 				local first = 0
-				for key,value in pairs(game_manager.gameModes) do
+				for key,value in spairs(game_manager.gameModes) do
 					if key ~= "Map Editor" and key ~= "Debug Mode" then
 						print("The gamemode: ".. key .." was loaded!") --Used for debugging
-						menu.activeGuis[key] = gfx_hud_object_add(`GameModeButton`, {
-							size = vec(200,40);
+						menu.activeGuis[key] = gfx_hud_object_add(`Button`, {
+                     needsInputCallbacks = true;
+                     inside = false;
+							size = vec(230,40);
+                                                        zOrder=1;
 							font = `/common/fonts/Impact24`;
 							caption = key;
+                     image = game_manager.gameThumbs[key];
+                     desc = game_manager.gameDescriptions[key];
 							parent = menu;
-							position = vec2(-205, currentPosition);
-							edgePosition = vec2(-(210 / 2) + 5, 0);
-							edgeColour = vec(1, 1, 1);
+							position = vec2(-230, currentPosition*-50);
+							edgeColour = vec(1, 102/255, currentPosition*0.5);
+							edgeSize = vec2(10,40);
 							isSelected = false;
+							edgePosition = vec2(-(230 / 2) + 5, 0); 
 							pressedCallback = function(self)
-								menu.makeSelection(self)
+								menu.selectedOption = key
+								for k in pairs (menu.activeGuis) do
+									safe_destroy(menu.activeGuis[k])
+								end
+								menu.activeGuis = {}
+								menu.activeMenu = "project"
+								game_manager:enter(menu.selectedOption)
 							end;
+							 eventCallback = function(self,event)
+									menu.activeGuis["description"]:setValue(menu.activeGuis[(self.caption)].desc);
+                           menu.activeGuis["image"].texture=menu.activeGuis[(self.caption)].image;
+							 end;
 						})
 						if(first == 0)then first = menu.activeGuis[key] end
-						currentPosition = currentPosition - 50
+						currentPosition = currentPosition + 1
 					end
 				end
-				menu.activeGuis["description"] = gfx_hud_object_add(`/common/hud/Rect`, {
-					font = `/common/fonts/Impact50`;
-					alpha = 0.5;
-					colour = vec(0.1, 0.1, 0.1) * 0.5;
-					text = "Choose a game mode to see the description! This game mode menu is incomplete and may have bugs, report the bugs on the Grit Engine forum at www.gritengine.com!";
+				menu.activeGuis["image"] = gfx_hud_object_add(`/common/hud/Rect`, {
+					alpha = 1;
+					texture = `/common/hud/LoadingScreen/GritLogo.png`;
 					parent = menu;
 					position = vec(105, -80);
 					size = vec(400, 200);
-					textWrap = vec(400, 400);
 				})
-				menu.activeGuis["load"] = gfx_hud_object_add(`Button`, {
-					caption = "Load Gamemode";
-					font = `/common/fonts/Impact24`;
-					size = vec(210, 40);
-					position = vec2(215, -(gfx_window_size().y / 2) + 100);
-					parent = menu;
-					pressedCallback = function(self)
-						for k in pairs (menu.activeGuis) do
-							safe_destroy(menu.activeGuis[k])
-						end
-						menu.activeGuis = {}
-						menu.activeMenu = "project"
-						game_manager:enter(menu.selectedOption)
-					end;
+				menu.activeGuis["description"] = gfx_hud_object_add(`/common/hud/Label`, {
+					font = `/common/fonts/Impact18`;
+  					parent = menu;
+					size = vec(400, 20);
+               position = vec(105, -190);
+					textColour = vec(0,0,0);
+					alignment = "CENTER";
+					value = "Select a project"; 
+					alpha = 1;
+               enabled = true;
 				})
 				menu.activeGuis["backButton"] = gfx_hud_object_add(`Button`, {
-					size = vec(210,40);
+					size = vec(230,40);
 					font = `/common/fonts/Impact24`;
 					caption = "Go Back";
 					parent = self;
 					position = vec2(0, 100);
 					edgeColour = vec(1, 0, 0)*1.0;
 					edgeSize = vec2(10,40);
-					edgePosition = vec2(-(210 / 2) + 5, 0);
+					edgePosition = vec2(-(230 / 2) + 5, 0);
 					pressedCallback = function() 
 						menu.menu.main()
 					end
@@ -266,37 +280,40 @@ hud_class `Pause` {
 			position = vec2(0, (gfx_window_size().y / 2) - 250);
 		})
 		self.activeGuis["resume"] = gfx_hud_object_add(`Button`, {
-			size = vec(210,40);
+			size = vec(230,40);
 			font = `/common/fonts/Impact24`;
 			caption = "Resume";
 			parent = self;
 			position = vec2(0, 0);
 			edgeColour = vec(1, 102/255, 0)*1.0;
-			edgePosition = vec2(-(210 / 2) + 5, 0);
+			edgePosition = vec2(-(230 / 2) + 5, 0);
+			edgeSize = vec2(10,40);
 			pressedCallback = function() 
 				menu:setEnabled(false)
 			end
 		})
 		self.activeGuis["return"] = gfx_hud_object_add(`Button`, {
-			size = vec(210,40);
+			size = vec(230,40);
 			font = `/common/fonts/Impact24`;
 			caption = "Return to main menu";
 			parent = self;
 			position = vec2(0, -50);
 			edgeColour = vec(0, 102/255, 1)*1.0;
-			edgePosition = vec2(-(210 / 2) + 5, 0);
+			edgePosition = vec2(-(230 / 2) + 5, 0);
+			edgeSize = vec2(10,40);
 			pressedCallback = function() 
 				game_manager:exit()
 			end
 		})
 		self.activeGuis["exitButton"] = gfx_hud_object_add(`Button`, {
-			size = vec(210,40);
+			size = vec(230,40);
 			font = `/common/fonts/Impact24`;
 			caption = "Exit";
 			parent = self;
 			position = vec2(0, -100);
 			edgeColour = vec(1, 0, 1)*1.0;
-			edgePosition = vec2(-(210 / 2) + 5, 0);
+			edgePosition = vec2(-(230 / 2) + 5, 0);
+			edgeSize = vec2(10,40);
 			pressedCallback = quit
 		})
 	end;
@@ -330,4 +347,27 @@ function create_pause_menu(v)
 	v = v or false
 	menu = gfx_hud_object_add(`/common/hud/menu/Pause`, { zOrder = 14 })
 	menu:setEnabled(v)
+end
+
+function spairs(t, order)
+    -- collect the keys
+    local keys = {}
+    for k in pairs(t) do keys[#keys+1] = k end
+
+    -- if order function given, sort by it by passing the table and keys a, b,
+    -- otherwise just sort the keys 
+    if order then
+        table.sort(keys, function(a,b) return order(t, a, b) end)
+    else
+        table.sort(keys)
+    end
+
+    -- return the iterator function
+    local i = 0
+    return function()
+        i = i + 1
+        if keys[i] then
+            return keys[i], t[keys[i]]
+        end
+    end
 end

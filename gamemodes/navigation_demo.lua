@@ -243,3 +243,6 @@ function navigation_demo:destroy()
 end
 
 game_manager:define("Navigation Demo", navigation_demo)
+game_manager:description("Navigation Demo", "Strategic Companion's Game Demo")
+game_manager:thumb("Navigation Demo", "/gamemodes/navgame.png")
+
