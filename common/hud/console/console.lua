@@ -165,6 +165,10 @@ hud_class `Console` {
         local reset_completions = true
 
         if ev2 == "Return" then
+            -- scroll to bottom to see execution
+            self.text.scroll = math.ceil(self.text.bufferHeight - self.text.size.y)
+            self.pinToBottom = true
+
             self:recordCommand()
             self:execute()
             -- the above can execute arbitrary code, which can involve destroying the console... test for that!
@@ -234,6 +238,15 @@ hud_class `Console` {
         elseif ev2=="PageUp" then
             self.text.scroll = math.floor(math.max(self.text.scroll - self.size.y/2, -self.size.y/2))
             self.pinToBottom = false
+        elseif ev2=="up" then
+            self.text.scroll = math.floor(math.max(self.text.scroll - 8, -8))
+            self.pinToBottom = false
+        elseif ev2=="down" then
+            self.text.scroll = self.text.scroll + 8
+            if self.text.scroll > self.text.bufferHeight - math.floor(self.text.size.y) then
+                self.text.scroll = math.ceil(self.text.bufferHeight - self.text.size.y)
+                self.pinToBottom = true
+            end
         elseif ev2=="PageDown" then
             self.text.scroll = self.text.scroll + math.floor(self.size.y/2)
             if self.text.scroll > self.text.bufferHeight - math.floor(self.text.size.y) then
