@@ -18,33 +18,43 @@ gritmap =
 		env_cycle_file = "";
 		time = 43200;
 	};
-	objects = {	 {
-		"/common/props/industry/BoringBarrel";
-		vector3(-4.488408, -8.886621, 0.2066899);
-	},	 {
+	objects = {	 
+	{
 		"/maps/navigation_demo/RobotScout";
 		vector3(-11.4, -12.6, 0.8);
 		properties	= {};
-	},	 {
-		"/common/props/bowling/Pin";
-		vector3(-7.129782, -8.875875, -0.07081008);
-		properties	= {};
-	},	 {
+	},
+	{
 		"/maps/navigation_demo/navmeshtest";
 		vector3(0, 0, 0);
 		properties	= {};
+	},{
+		"/maps/navigation_demo/RobotMed";
+		vector3(-9.224091, -13.07049, 1.890617);
+		properties	= {};
 	},	 {
+		"/maps/navigation_demo/RobotHeavy";
+		vector3(-5.8, -13.4, 0.9);
+		properties	= {};
+	},	  
+	--[[
+	{
+		"/common/props/bowling/Pin";
+		vector3(-7.129782, -8.875875, -0.07081008);
+		properties	= {};
+	},	 
+	{
+		"/common/props/industry/BoringBarrel";
+		vector3(-4.488408, -8.886621, 0.2066899);
+	},
+{
 		"/common/props/bowling/Pin";
 		vector3(-8.078918, -7.278009, -0.07081103);
 		properties	= {};
 	},	 {
 		"/common/props/industry/BoringBarrel";
 		vector3(-6.560123, -10.40107, 0.2066899);
-	},	 {
-		"/maps/navigation_demo/RobotMed";
-		vector3(-9.224091, -13.07049, 1.890617);
-		properties	= {};
-	},	 {
+	}, {
 		"/common/props/bowling/Pin";
 		vector3(-6.481492, -9.56488, -0.07081008);
 		properties	= {};
@@ -56,11 +66,7 @@ gritmap =
 		"/common/props/bowling/Pin";
 		vector3(-5.851483, -8.689445, -0.07081008);
 		properties	= {};
-	},	 {
-		"/maps/navigation_demo/RobotHeavy";
-		vector3(-5.8, -13.4, 0.9);
-		properties	= {};
-	},	 {
+	},{
 		"/common/props/bowling/Pin";
 		vector3(-6.427202, -4.376955, -0.07081008);
 		properties	= {};
@@ -92,7 +98,8 @@ gritmap =
 		"/common/props/bowling/Pin";
 		vector3(-5.372951, -5.242907, -0.07081008);
 		properties	= {};
-	} };
+	} ]]
+	};
 	properties = {
 		author = "";
 		description = "";
