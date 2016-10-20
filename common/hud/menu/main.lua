@@ -106,28 +106,44 @@ hud_class `Main` {
 				menu.clearMenu() --Will clear all active guis
 				menu.activeMenu = "settings"
 				local lastPos = -10;
+				
+				local mmenu = gui.list({parent=menu, align=guialign.bottom, offset=vec(0, 25)})
+				mmenu.alpha = 0
+				menu.activeGuis.menu = mmenu
+				
+				-- menu.activeGuis.scrollarea = gui.scrollarea({parent=menu, size = vec(gfx_window_size().x - 200, 450), expand=false, align=guialign.bottom})
+				
+				
 				for key,value in pairs(user_cfg.c) do --Not sure what the difference is between user_cfg.p and user_cfg.c
 					if(type(value) == "boolean")then
 						print("The variable: ".. key .." with the name of ".. key .." is equal to ".. tostring(user_cfg[tostring(key)]) .."!") --Was used for debugging!
-						menu.activeGuis[key] = gfx_hud_object_add(`SettingEdit`, {
-							size = vec(gfx_window_size().x - 200,40);
-							font = `/common/fonts/Impact24`;
-							caption = tostring(key);
-							valueLocation = user_cfg;
-							valueKey = tostring(key);
-							parent = menu;
-							position = vec2(0, lastPos);
-						})
-						lastPos = lastPos - 45
+						mmenu:addItem(
+							gfx_hud_object_add(`SettingEdit`, {
+								size = vec(gfx_window_size().x - 200,40);
+								font = `/common/fonts/Impact24`;
+								caption = tostring(key);
+								valueLocation = user_cfg;
+								valueKey = tostring(key);
+								-- parent = menu;
+								-- position = vec2(0, lastPos);
+							})
+						)
+						-- lastPos = lastPos - 45
 						--menu.gui[key].set.position
 					end
 				end
+				
+				-- menu.activeGuis.scrollarea:setContent(mmenu)
+				
+				mmenu.position = vec(0, -gfx_window_size().y/2+mmenu.size.y/2+25)
+				
+				
 				menu.activeGuis["backButton"] = gfx_hud_object_add(`Button`, {
 					size = vec(230,40);
 					font = `/common/fonts/Impact24`;
 					caption = "Go Back";
 					parent = self;
-					position = vec2(0, 100);
+					position = vec2(0, 250);
 					edgeColour = vec(1, 0, 0)*1.0;
 					edgeSize = vec2(10,40);
 					edgePosition = vec2(-(230 / 2) + 5, 0);
