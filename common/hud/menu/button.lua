@@ -7,9 +7,6 @@ hud_class `Button` {
   captionColourHover = vec(1, 1, 1);
   captionColourGreyed = vec(0.4, 0.4, 0.4);
   font = `/common/fonts/Impact50`;
-  edgeSize = vec2(3,40);
-  edgeColour = vec(1, 102/255, 0);
-  edgePosition = vec(0, 0);
   buttonType = "Setting";
   settingTableVariable = false;
 
@@ -22,16 +19,6 @@ hud_class `Button` {
     self.text = gfx_hud_text_add(self.font)
     self.text.parent = self
     self:setCaption(self.caption)
-
-    self.edge = gfx_hud_object_add(`/common/hud/Rect`, {
-        size = vec(0, 0);
-        colour = vec(1, 0, 0)*1;
-        alpha = 0;
-        --texture = `/common/hud/LoadingScreen/GritLogo.png`;
-        parent = self;
-        position = vec2(0, 0);
-      })
-    self:setEdge()
 
     --self.size = self.text.size + 20
 
@@ -61,7 +48,7 @@ hud_class `Button` {
       self.text.colour = self.captionColourGreyed
     else
       if self.dragging and self.inside then
-        self.text.colour = self.edgeColour
+        self.text.colour = self.captionColourClick
       elseif self.inside then
         self.text.colour = self.captionColourHover
       else
@@ -70,20 +57,12 @@ hud_class `Button` {
     end
   end;
   
-  setEdge = function (self)
-    self.edge.colour = self.edgeColour
-    self.edge.size = self.edgeSize
-    self.edge.position = self.edgePosition
-  end;
-
   mouseMoveCallback = function (self, local_pos, screen_pos, inside)
     self.inside = inside
     if(self.inside)then
-      self.edge.alpha = 1
       self.text.shadow = vec(2, -2)
       self:eventCallback("inside")
     else
-      self.edge.alpha = 0
       self.text.shadow = vec(0, 0)
     end
     self:refreshState()
