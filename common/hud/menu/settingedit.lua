@@ -20,7 +20,7 @@ hud_class `SettingEdit` {
     self.label.size = self.label.text.size
     self.label.position = vec2(-(self.label.parent.size.x / 2) + ((self.label.size.x / 2) + 10), 0)
 
-    if(type(self.valueLocation[self.valueKey]) == "boolean")then
+    if type(self.valueLocation[self.valueKey]) == "boolean" then
       self.setBackground = gfx_hud_object_add(`/common/hud/Rect`, {
           colour = vec(1, 1, 1) * 0.8;
           alpha = 0.5;
@@ -28,11 +28,20 @@ hud_class `SettingEdit` {
           parent = self;
         })
       self.setBackground.position = vec2((self.setBackground.parent.size.x / 2) - ((self.setBackground.size.x / 2) + 5), 0)
-      self.set = gfx_hud_object_add(`Button`, {
+      self.set = gfx_hud_object_add(`/common/hud/Button`, {
           caption = tostring(self.valueLocation[self.valueKey]);
-          font = `/common/fonts/Impact24`;
+          captionFont = `/common/fonts/Impact24`;
           size = vec(70, 35);
-          borderTexture = nil;
+          captionPassiveColour = vec(0.9, 0.9, 0.9);
+          captionClickColour = vec(1, 0.5, 0);
+          captionHoverColour = vec(1, 1, 1);
+          captionGreyedColour = vec(0.4, 0.4, 0.4);
+          alpha = 0.5;
+          backgroundPassiveColour = vec(0.25, 0.25, 0.25);
+          backgroundClickColour = vec(0.25, 0.25, 0.25);
+          backgroundGreyedColour = vec(0.25, 0.25, 0.25);
+          backgroundHoverColour = vec(0.25, 0.25, 0.25);
+          borderTexture = false;
           parent = self;
           pressedCallback = function(self)
             self.parent.valueLocation[self.parent.valueKey] = not self.parent.valueLocation[self.parent.valueKey]
