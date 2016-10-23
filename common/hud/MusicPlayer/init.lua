@@ -33,8 +33,8 @@ hud_class `.` {
         
         self.showHideButton = gfx_hud_object_add(`/common/hud/Button`, {
             caption=":";
-            font=`/common/fonts/misc.fixed`;
-            texture=`/common/hud/CornerTextures/Filled04.png`;
+            captionFont=`/common/fonts/misc.fixed`;
+            backgroundTexture=`/common/hud/CornerTextures/Filled04.png`;
             borderTexture=`/common/hud/CornerTextures/Border04.png`;
             size=vec(16, 16);
             parent=self,
@@ -46,7 +46,7 @@ hud_class `.` {
         
         self.playPauseButton = gfx_hud_object_add(`/common/hud/Button`, {
             caption="▶",
-            font=`/common/fonts/misc.fixed`,
+            captionFont=`/common/fonts/misc.fixed`,
             size=vec(48, 32),
             parent=self,
         })
@@ -69,7 +69,7 @@ hud_class `.` {
         
         self.prevSongButton = gfx_hud_object_add(`/common/hud/Button`, {
             caption="<",
-            font=`/common/fonts/misc.fixed`,
+            captionFont=`/common/fonts/misc.fixed`,
             size=vec(32, 24),
             parent=self,
         })
@@ -86,7 +86,7 @@ hud_class `.` {
         
         self.nextSongButton = gfx_hud_object_add(`/common/hud/Button`, {
             caption=">",
-            font=`/common/fonts/misc.fixed`,
+            captionFont=`/common/fonts/misc.fixed`,
             size=vec(32, 24),
             parent=self,
         })

@@ -13,6 +13,7 @@ hud_class `SystemLayer` {
 
         self.consoleButton = gfx_hud_object_add(`Button`, {
             pressedCallback = function (button) self:onConsolePressed() end;
+            autoSize = true;
             caption = "Console";
             orientation = -90;
             padding = self.buttonPadding;
@@ -24,6 +25,7 @@ hud_class `SystemLayer` {
             local panel = desc.panel
             self.buttons[i] = gfx_hud_object_add(`Button`, {
                 pressedCallback = function (button) self:onPanePress(i) end;
+                autoSize = true;
                 caption = desc.name;
                 orientation = -90;
                 padding = self.buttonPadding;

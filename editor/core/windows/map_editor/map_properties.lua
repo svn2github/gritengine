@@ -121,16 +121,17 @@ hud_class `Expand_List` {
 		self.title.text = self.caption
 		self:setTitle(self.caption)
 
+        -- TODO: Use /common/hud/Positioner instead of custom parentResizedCallback.
 		self.expand_btn = gfx_hud_object_add(`/common/hud/Button`, {				
 				caption = "-";
 				padding = vec(8, 1);
-				cornered=true;
+				cornered = true;
 				borderTexture = `/common/hud/CornerTextures/SquareBorderWhite.png`;
 				needsParentResizedCallbacks = true;
 				parentResizedCallback = function(self, psize) self.position = vec2(psize.x/2-self.size.x/2, self.position.y) end;
-				baseColour = vec(0.2, 0.2, 0.2);
-				hoverColour = vec(1, 0.5, 0);
-				clickColour = vec(0.7, 0.3, 0);
+				backgroundPassiveColour = vec(0.2, 0.2, 0.2);
+				backgroundHoverColour = vec(1, 0.5, 0);
+				backgroundClickColour = vec(0.7, 0.3, 0);
 		})
 		self.expand_btn.texture = `/common/gui/icons/grad_notebook.png`
 		self.expand_btn.border.enabled = false

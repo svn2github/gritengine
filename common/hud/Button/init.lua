@@ -1,4 +1,4 @@
--- (c) David Cunningham 2013, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
+-- (c) The Grit Game Engine authors 2016, Licensed under the MIT license (https://goo.gl/YVVx3L).
 
 -- A clickable button, supporting:
 -- * greying out
@@ -7,58 +7,79 @@
 -- * textual caption
 hud_class `.` {
 
+    -- Applied to both background and border textures.
     cornered=true;
+
+    -- Whether the button will be shrunk to match the text.
+    autoSize = false;
+
+    -- Padding around the text when auto-sizing.
     padding=vec(8,6);
 
-    texture = `/common/hud/CornerTextures/Filled08.png`;
-    baseColour = vec(1,1,1) * 0.25;
-    hoverColour = vec(1, 0.5, 0) * 0.5;
-    clickColour = vec(1, 0.5, 0);
+    backgroundTexture = `/common/hud/CornerTextures/Filled08.png`;
+    backgroundPassiveColour = vec(0.25, 0.25, 0.25);
+    backgroundHoverColour = vec(0.5, 0.25, 0);
+    backgroundClickColour = vec(1, 0.5, 0);
+    backgroundGreyedColour = vec(0.25, 0.25, 0.25);
 
     borderTexture = `/common/hud/CornerTextures/Border08.png`;
-    borderColour = vec(1, 1, 1) * 0.6;
+    borderPassiveColour = vec(0.6, 0.6, 0.6);
+    borderHoverColour = vec(0.6, 0.6, 0.6);
+    borderClickColour = vec(0.6, 0.6, 0.6);
+    borderGreyedColour = vec(0.6, 0.6, 0.6);
 
-    font = `/common/fonts/Verdana12`;
+    captionFont = `/common/fonts/Verdana12`;
     caption = "Button";
-    captionColour = vec(1, 1, 1) * 0.7;
-    captionColourGreyed = vec(1, 1, 1) * 0.4;
+    captionPassiveColour = vec(0.7, 0.7, 0.7);
+    captionHoverColour = vec(0.7, 0.7, 0.7);
+    captionClickColour = vec(0.7, 0.7, 0.7);
+    captionGreyedColour = vec(0.4, 0.4, 0.4);
 
     init = function (self)
         self.needsInputCallbacks = true
 
-        self.text = gfx_hud_text_add(self.font)
+        if self.backgroundTexture then
+            self.texture = self.backgroundTexture
+        end
+
+        self.text = gfx_hud_text_add(self.captionFont)
         self.text.parent = self
         self:setCaption(self.caption)
-
-        if not self.sizeSet then 
-            self.size = self.text.size + self.padding * 2
-        end
 
         self.dragging = false;
         self.inside = false
         if self.greyed == nil then self.greyed = false end
 
-        self.border = gfx_hud_object_add(`/common/hud/Rect`, {
-            texture=self.borderTexture,
-            colour=self.borderColour,
-            parent=self,
-            cornered=true
-        })
+        if self.borderTexture then
+            self.border = gfx_hud_object_add(`/common/hud/Rect`, {
+                texture=self.borderTexture,
+                colour=self.borderColour,
+                parent=self,
+                cornered=self.cornered,
+            })
+        end
         
         self:updateChildrenSize()
+        self.state = "PASSIVE"
         self:refreshState();
     end;
 
     updateChildrenSize = function (self)
-        self.border.size = self.size
+        if self.borderTexture then
+            self.border.size = self.size
+        end
     end;
    
     destroy = function (self)
     end;
     
+    -- Also resizes the button if autoSize is set.
     setCaption = function (self, v)
         self.caption = v
         self.text.text = self.caption
+        if self.autoSize then 
+            self.size = self.text.size + self.padding * 2
+        end
     end;
 
     setGreyed = function (self, v)
@@ -67,18 +88,40 @@ hud_class `.` {
     end;
 
     refreshState = function (self)
+        local old_state = self.lastState
         if self.greyed then
-            self.text.colour = self.captionColourGreyed
-            self.colour = self.baseColour
-        else
-            self.text.colour = self.captionColour
-            if self.dragging and self.inside then
-                self.colour = self.clickColour
-            elseif self.inside then
-                self.colour = self.hoverColour
-            else
-                self.colour = self.baseColour
+            self.text.colour = self.captionGreyedColour
+            if self.borderTexture then
+                self.border.colour = self.borderGreyedColour
             end
+            self.colour = self.backgroundGreyedColour
+            self.state = "GREYED"
+        else
+            if self.dragging and self.inside then
+                self.text.colour = self.captionClickColour
+                if self.borderTexture then
+                    self.border.colour = self.borderClickColour
+                end
+                self.colour = self.backgroundClickColour
+                self.state = "CLICK"
+            elseif self.inside then
+                self.text.colour = self.captionHoverColour
+                if self.borderTexture then
+                    self.border.colour = self.borderHoverColour
+                end
+                self.colour = self.backgroundHoverColour
+                self.state = "HOVER"
+            else
+                self.text.colour = self.captionPassiveColour
+                if self.borderTexture then
+                    self.border.colour = self.borderPassiveColour
+                end
+                self.colour = self.backgroundPassiveColour
+                self.state = "PASSIVE"
+            end
+        end
+        if old_state ~= self.state then
+            self:stateChangeCallback(old_state, self.state)
         end
     end;
 
@@ -93,6 +136,7 @@ hud_class `.` {
         elseif ev == "-left" then
             if self.dragging and self.inside and not self.greyed then
                 self:pressedCallback()
+                -- In case the button destroyed itself.  This is common with "close" buttons.
 				if self.destroyed then return end
             end
             self.dragging = false
@@ -102,6 +146,9 @@ hud_class `.` {
 
     pressedCallback = function (self)
         error "Button has no associated action."
+    end;
+
+    stateChangeCallback = function (self, hover)
     end;
 
 }

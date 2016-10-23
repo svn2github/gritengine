@@ -205,7 +205,7 @@ hud_class `.` {
         })
         self.timeLeftButton = gfx_hud_object_add(`/common/hud/Button`, {
             caption = "◄";
-            font = "/common/fonts/misc.fixed";
+            captionFont = "/common/fonts/misc.fixed";
             pressedCallback = function (self2)
                 self:timeChange(-1)
             end;
@@ -213,7 +213,7 @@ hud_class `.` {
         })
         self.timeRightButton = gfx_hud_object_add(`/common/hud/Button`, {
             caption = "►";
-            font = `/common/fonts/misc.fixed`;
+            captionFont = `/common/fonts/misc.fixed`;
             pressedCallback = function (self2)
                 self:timeChange(1)
             end;
@@ -252,7 +252,7 @@ hud_class `.` {
                 vec(200, 0),
                 gfx_hud_object_add(`/common/hud/Button`, {
                     caption = "X";
-                    font = `/common/fonts/misc.fixed`;
+                    captionFont = `/common/fonts/misc.fixed`;
                     pressedCallback = function (self2)
                         system_layer:hidePane(env_cycle_editor)
                     end;

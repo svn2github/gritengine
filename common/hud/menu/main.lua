@@ -1,5 +1,35 @@
 -- (c) Al-x Spiker 2015, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
+local function add_button_to(parent, ypos, tab)
+    local tab2 = {
+        size = vec(230,40);
+        parent = parent;
+        position = vec2(0, ypos);
+
+        alpha = 0.4;
+        backgroundTexture = false;
+        backgroundPassiveColour = vec(0.25, 0.25, 0.25);
+        backgroundHoverColour = vec(0.25, 0.25, 0.25);
+        backgroundClickColour = vec(0.25, 0.25, 0.0);
+        backgroundGreyedColour = vec(0.25, 0.25, 0.25);
+
+        borderTexture = `/common/hud/CornerTextures/SquareBorderWhite.png`;
+        borderPassiveColour = vec(0.75, 0.75, 0.75);
+        borderHoverColour = vec(1, 1, 1);
+        borderClickColour = vec(1, 0.6, 0.3);
+
+        captionFont = `/common/fonts/Verdana18`;
+        captionPassiveColour = vec(0.75, 0.75, 0.75);
+        captionHoverColour = vec(1, 1, 1);
+        captionClickColour = vec(1, 0.6, 0.3);
+
+    }
+    for k, v in pairs(tab) do
+        tab2[k] = v
+    end
+    return gfx_hud_object_add(`/common/hud/Button`, tab2)
+end
+
 hud_class `Main` {
 	colour = vec(1, 1, 1)*0.2;
 	texture = `background.dds`;
@@ -8,12 +38,12 @@ hud_class `Main` {
 	init = function (self)
 		self.needsParentResizedCallbacks = true;
 
-		self.selectedOption = ""; --Used for loading projects
+        local function add_button(...) return add_button_to(self, ...) end
 
 		self.activeMenu = "";
 		
 		self.activeGuis = {};
-		
+
 		self.desc = {
 			main = function()
 				self:clearMenu() --Will clear all active guis
@@ -26,59 +56,38 @@ hud_class `Main` {
 				})
 				
 				local ypos = 0
-				self.activeGuis["projectsButton"] = gfx_hud_object_add(`Button`, {
-					size = vec(230,40);
-					font = `/common/fonts/Impact24`;
+				self.activeGuis["projectsButton"] = add_button(ypos, {
 					caption = "Projects";
-					parent = self;
-					position = vec2(0, ypos);
 					pressedCallback = function() 
 						self.desc.projects()
 					end
 				})
 				ypos = ypos - 50
-				self.activeGuis["debugmodeButton"] = gfx_hud_object_add(`Button`, {
-					size = vec(230,40);
-					font = `/common/fonts/Impact24`;
+				self.activeGuis["debugmodeButton"] = add_button(ypos, {
 					caption = "Debug Mode";
-					parent = self;
-					position = vec2(0, ypos);
 					pressedCallback = function() 
-						self.activeGuis = {}
 						self.activeMenu = "project"
 						game_manager:enter("Debug Mode")
 					end
 				})
 				ypos = ypos - 50
-                self.activeGuis["editorButton"] = gfx_hud_object_add(`Button`, {
-                    size = vec(230,40);
-                    font = `/common/fonts/Impact24`;
+                self.activeGuis["editorButton"] = add_button(ypos, {
                     caption = "Editor";
-                    parent = self;
-                    position = vec2(0, -100);
                     pressedCallback = function() 
                         self.activeMenu = "editor"
                         game_manager:enter("Map Editor")
                     end
                 })
                 ypos = ypos - 50
-				self.activeGuis["settingsButton"] = gfx_hud_object_add(`Button`, {
-					size = vec(230,40);
-					font = `/common/fonts/Impact24`;
+				self.activeGuis["settingsButton"] = add_button(ypos, {
 					caption = "Settings";
-					parent = self;
-					position = vec2(0, ypos);
 					pressedCallback = function() 
 						self.desc.settings()
 					end
 				})
 				ypos = ypos - 50
-				self.activeGuis["exitButton"] = gfx_hud_object_add(`Button`, {
-					size = vec(230,40);
-					font = `/common/fonts/Impact24`;
+				self.activeGuis["exitButton"] = add_button(ypos, {
 					caption = "Exit";
-					parent = self;
-					position = vec2(0, ypos);
 					pressedCallback = quit
 				})
 			end;
@@ -119,12 +128,11 @@ hud_class `Main` {
 				mmenu.position = vec(0, -gfx_window_size().y/2+mmenu.size.y/2+25)
 				
 				
-				self.activeGuis["backButton"] = gfx_hud_object_add(`Button`, {
-					size = vec(230,40);
-					font = `/common/fonts/Impact24`;
-					caption = "Go Back";
+				self.activeGuis["backButton"] = add_button(0, {
+					caption = "<";
 					parent = self;
-					position = vec2(0, 250);
+                    position = vec(-400, 220);
+                    size = vec(40, 40);
 					pressedCallback = function() 
 						self.desc.main()
 					end
@@ -134,66 +142,61 @@ hud_class `Main` {
 			projects = function()
 				self:clearMenu() --Will clear all active guis
 				self.activeMenu = "projects"
-				local currentPosition = 0 --Starting Y position of game modes buttons
+				local currentPosition = -3 --Starting Y position of game modes buttons
 				local first = 0
 				for key,value in spairs(game_manager.gameModes) do
 					if key ~= "Map Editor" and key ~= "Debug Mode" then
-                        local upper_self = self
-						print("The gamemode: ".. key .." was loaded!") --Used for debugging
-						self.activeGuis[key] = gfx_hud_object_add(`Button`, {
-                            needsInputCallbacks = true;
-                            inside = false;
-							size = vec(230,40);
+						self.activeGuis[key] = add_button(0, {
                             zOrder=1;
-							font = `/common/fonts/Impact24`;
 							caption = key;
                             image = game_manager.gameThumbs[key];
                             desc = game_manager.gameDescriptions[key];
 							parent = self;
-							position = vec2(-230, currentPosition*-50);
+							position = vec2(-230, currentPosition * -50);
 							isSelected = false;
-							pressedCallback = function(self)
-								upper_self.selectedOption = key
-								for k in pairs (upper_self.activeGuis) do
-									safe_destroy(upper_self.activeGuis[k])
+							pressedCallback = function(button)
+								for k in pairs (self.activeGuis) do
+									safe_destroy(self.activeGuis[k])
 								end
-								upper_self.activeGuis = {}
-								upper_self.activeMenu = "project"
-								game_manager:enter(upper_self.selectedOption)
+								self.activeGuis = {}
+								self.activeMenu = "project"
+								game_manager:enter(key)
 							end;
-							eventCallback = function(self,event)
-                                upper_self.activeGuis["description"]:setValue(upper_self.activeGuis[self.caption].desc);
-                                upper_self.activeGuis["image"].texture=upper_self.activeGuis[self.caption].image;
+                            stateChangeCallback = function (button, old_state, new_state)
+                                if new_state == "HOVER" then
+                                    self.activeGuis["description"]:setValue(button.desc);
+                                    self.activeGuis["image"].texture=button.image;
+                                    self.activeGuis["image"].colour = vec(1, 1, 1)
+                                end
 							end;
 						})
-						if(first == 0)then first = self.activeGuis[key] end
+						if first == 0 then first = self.activeGuis[key] end
 						currentPosition = currentPosition + 1
 					end
 				end
 				self.activeGuis["image"] = gfx_hud_object_add(`/common/hud/Rect`, {
-					alpha = 1;
-					texture = `/common/hud/LoadingScreen/GritLogo.png`;
+					-- texture = `/common/hud/LoadingScreen/GritLogo.png`;
+					colour = vec(0.5, 0.5, 0.5);
 					parent = self;
-					position = vec(105, -80);
+					position = vec(105, 70);
 					size = vec(400, 200);
 				})
 				self.activeGuis["description"] = gfx_hud_object_add(`/common/hud/Label`, {
-					font = `/common/fonts/Impact18`;
+					font = `/common/fonts/ArialBold18`;
   					parent = self;
-					size = vec(400, 20);
-                    position = vec(105, -190);
-					textColour = vec(0,0,0);
+					size = vec(400, 24);
+                    position = vec(105, -40);
+					textColour = vec(1, 1, 1);
+                    colour = vec(0, 0, 0);
 					alignment = "CENTER";
 					value = "Select a project"; 
 					alpha = 1;
                     enabled = true;
 				})
-				self.activeGuis["backButton"] = gfx_hud_object_add(`Button`, {
-					size = vec(230,40);
-					font = `/common/fonts/Impact24`;
-					caption = "Go Back";
-					parent = self;
-					position = vec2(0, 100);
+				self.activeGuis["backButton"] = add_button(0, {
+					caption = "<";
+                    position = vec(-400, 150);
+                    size = vec(40, 40);
 					pressedCallback = function() 
 						self.desc.main()
 					end
@@ -201,19 +204,6 @@ hud_class `Main` {
 				--self:selectOption(first) --Need to implement where the first one is selected
 			end
 		};
-	end;
-	
-	makeSelection = function(self, v)
-		for key,value in pairs(self.activeGuis) do
-			if(value.isSelected ~= nil)then
-				if(value == v)then
-					value.isSelected = true
-					self.selectedOption = key
-				else
-					value.isSelected = false
-				end
-			end
-		end
 	end;
 	
 	clearMenu = function(self)
@@ -260,6 +250,8 @@ hud_class `Pause` {
 	init = function (self)
 		self.needsParentResizedCallbacks = true;
 
+        local function add_button(...) add_button_to(self, ...) end
+
 		self.activeGuis = {};
 		
 		self.activeGuis["gritLogo"] = gfx_hud_object_add(`/common/hud/Rect`, {
@@ -268,32 +260,20 @@ hud_class `Pause` {
 			parent = self;
 			position = vec2(0, (gfx_window_size().y / 2) - 250);
 		})
-		self.activeGuis["resume"] = gfx_hud_object_add(`Button`, {
-			size = vec(230,40);
-			font = `/common/fonts/Impact24`;
+		self.activeGuis["resume"] = add_button(0, {
 			caption = "Resume";
-			parent = self;
-			position = vec2(0, 0);
 			pressedCallback = function() 
 				self:setEnabled(false)
 			end
 		})
-		self.activeGuis["return"] = gfx_hud_object_add(`Button`, {
-			size = vec(230,40);
-			font = `/common/fonts/Impact24`;
+		self.activeGuis["return"] = add_button(-50, {
 			caption = "Return to main menu";
-			parent = self;
-			position = vec2(0, -50);
 			pressedCallback = function() 
 				game_manager:exit()
 			end
 		})
-		self.activeGuis["exitButton"] = gfx_hud_object_add(`Button`, {
-			size = vec(230,40);
-			font = `/common/fonts/Impact24`;
+		self.activeGuis["exitButton"] = add_button(-100, {
 			caption = "Exit";
-			parent = self;
-			position = vec2(0, -100);
 			pressedCallback = quit
 		})
 	end;
@@ -328,27 +308,4 @@ function create_pause_menu(v)
 	safe_destroy(menu)
 	menu = gfx_hud_object_add(`/common/hud/menu/Pause`, { zOrder = 14 })
 	menu:setEnabled(v)
-end
-
-function spairs(t, order)
-    -- collect the keys
-    local keys = {}
-    for k in pairs(t) do keys[#keys+1] = k end
-
-    -- if order function given, sort by it by passing the table and keys a, b,
-    -- otherwise just sort the keys 
-    if order then
-        table.sort(keys, function(a,b) return order(t, a, b) end)
-    else
-        table.sort(keys)
-    end
-
-    -- return the iterator function
-    local i = 0
-    return function()
-        i = i + 1
-        if keys[i] then
-            return keys[i], t[keys[i]]
-        end
-    end
 end
