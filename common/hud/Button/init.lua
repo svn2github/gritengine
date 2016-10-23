@@ -1,5 +1,10 @@
 -- (c) David Cunningham 2013, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
+-- A clickable button, supporting:
+-- * greying out
+-- * mouseover and click effects
+-- * border and base colour and texture
+-- * textual caption
 hud_class `.` {
 
     cornered=true;
