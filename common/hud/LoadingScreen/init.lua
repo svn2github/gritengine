@@ -1,3 +1,4 @@
+-- Displays a fullscreen background + logo, and map loading status.
 hud_class `.` {
 
     alpha = 1;
