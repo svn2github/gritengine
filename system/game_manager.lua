@@ -55,8 +55,6 @@ game_manager = {
         core_option("FOREGROUND_WARNINGS", false)
         self.currentMode = new_mode
 		
-		create_pause_menu(false)
-		
         new_mode:init();
         core_option("FOREGROUND_WARNINGS", true)
     end;
@@ -66,10 +64,7 @@ game_manager = {
             self.currentMode:destroy();
             self.currentMode = nil
         end
-		if system_layer then
-			system_layer:setEnabled(false)
-			create_main_menu(true)
-		end
+        menu_show('main')
     end;
 
     frameUpdate = function (self, elapsed_secs)
@@ -92,6 +87,9 @@ game_manager = {
 
     receiveButton = function (self, button, state)
         if self.currentMode ~= nil then
+            if button == "menu" and state == '+' then
+                menu_show('pause')
+            end
             self.currentMode:receiveButton(button, state)
         end
     end;

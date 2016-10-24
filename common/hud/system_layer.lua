@@ -108,9 +108,11 @@ hud_class `SystemLayer` {
 
 local selected_pane = nil
 local console_enabled = true
+local last_enabled = false
 if system_layer ~= nil then
     selected_pane = system_layer.selectedPane
     console_enabled = system_layer.consoleEnabled
+    last_enabled = system_layer.enabled
     safe_destroy(system_layer)
 end
 system_layer = gfx_hud_object_add(`SystemLayer`, {
@@ -131,3 +133,4 @@ system_layer = gfx_hud_object_add(`SystemLayer`, {
         },
     };
 })
+system_layer:setEnabled(last_enabled)

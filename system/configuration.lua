@@ -16,6 +16,7 @@ if editor_core_binds then
 	user_editor_debug_bindings = user_editor_debug_bindings or { }
 	user_editor_debug_ghost_bindings = user_editor_debug_ghost_bindings or { }
 end
+user_playing_bindings = user_playing_bindings or { }
 user_drive_bindings = user_drive_bindings or { }
 user_foot_bindings = user_foot_bindings or { }
 
@@ -188,9 +189,12 @@ local debug_cfg_spec = {
 
 
 local default_user_system_bindings = {
-    menu = "Escape";
     console = "Tab";
     screenShot = "F12";
+}
+
+local default_user_playing_bindings = {
+    menu = "Escape";
 }
 
 local default_user_drive_bindings = {
@@ -296,6 +300,7 @@ if editor_core_binds then
 	process_user_table("user_editor_debug_bindings", user_editor_debug_bindings, default_user_editor_debug_bindings)
 	process_user_table("user_editor_debug_ghost_bindings", user_editor_debug_ghost_bindings, default_user_editor_debug_ghost_bindings)
 end
+process_user_table("user_playing_bindings", user_playing_bindings, default_user_playing_bindings)
 process_user_table("user_drive_bindings", user_drive_bindings, default_user_drive_bindings)
 process_user_table("user_foot_bindings", user_foot_bindings, default_user_foot_bindings)
 
@@ -320,11 +325,7 @@ local function process_bindings2(bindings, func, input_filter)
 end
 
 local function system_receive_button(button, state)
-    if button == "menu" and state == '+' then
-        if not menu.destroyed and menu.destroyed ~= nil then
-			menu:setEnabled(not menu.enabled)
-		end
-    elseif button == "console" and state == '+' then
+    if button == "console" and state == '+' then
         if input_filter_pressed("Ctrl") then
             system_layer:setEnabled(true)
             system_layer:selectConsole(true)
@@ -350,6 +351,7 @@ local function play_receive_button(button, state)
     game_manager:receiveButton(button, state)
 end
 
+process_bindings2(user_playing_bindings, play_receive_button, playing_binds)
 process_bindings2(user_drive_bindings, play_receive_button, playing_vehicle_binds)
 process_bindings2(user_foot_bindings, play_receive_button, playing_actor_binds)
 
@@ -567,6 +569,7 @@ print('Reading user_cfg.lua')
 		write_table("user_editor_debug_bindings", user_editor_debug_bindings, default_user_editor_debug_bindings, {})
 		write_table("user_editor_debug_ghost_bindings", user_editor_debug_ghost_bindings, default_user_editor_debug_ghost_bindings, {})
 	end
+    write_table("user_playing_bindings", user_playing_bindings, default_user_playing_bindings, {})
     write_table("user_drive_bindings", user_drive_bindings, default_user_drive_bindings, {})
     write_table("user_foot_bindings", user_foot_bindings, default_user_foot_bindings, {})
 

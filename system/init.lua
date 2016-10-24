@@ -279,7 +279,6 @@ end
 
 
 include `game_manager.lua` 
---include `player_ctrl.lua` 
 
 include `default_shader.lua` 
 
@@ -308,8 +307,6 @@ include `net.lua`
 include`navigation_system.lua`
 
 include `weapon_effect_manager.lua`
-
-include `debug_mode.lua`
 
 minimal = minimal or false
 if not minimal then
@@ -363,26 +360,12 @@ end
 function debug_mode()
     game_manager:enter('Map Editor')
     GED:toggleDebugMode()
+    menu_show(nil)
     ticker.text.enabled = true
 end
 
 game_manager:exit()
 
 safe_include `/user_script.lua`
-
--- only loads menu if no game mode is defined on user_script
-create_main_menu = create_main_menu or nil
-if create_main_menu then
-	if game_manager.currentMode == nil then
-		create_main_menu()
-	else
-		if game_manager.currentMode.pause_menu == nil then
-			create_pause_menu(false)
-		end
-	end
-end
--- TODO: Why? (camera doesn't work properly, debug_mode() as command line argument still not working)
--- system_binds.modal = true
--- system_binds.modal = false
 
 main:run(...)

@@ -2,6 +2,9 @@
 
 hud_class `Rect` { }
 
+-- An invisible object that always keeps a position within its parent's rectangle.
+--
+-- Set factor and offset to control the relative location.
 hud_class `Positioner` {     
     size = vec(0, 0);    
     factor = vec(1, 1);
@@ -17,6 +20,7 @@ hud_class `Positioner` {
     end;    
 }   
 
+-- An invisible object that resizes its child to a function of its parent's rectangle.
 hud_class `Stretcher` {     
     alpha = 0;
     init = function (self)  
@@ -31,7 +35,7 @@ hud_class `Stretcher` {
         end
     end;    
     calcRect = function (self, psize)
-        return 0, 0, 300, 200
+        return 0, 0, psize.x, psize.y
     end;
     parentResizedCallback = function (self, psize)
         local l, b, r, t = self:calcRect(psize)

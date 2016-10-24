@@ -42,7 +42,6 @@ if ticker ~= nil then
     safe_destroy(ticker)
 end
 ticker = gfx_hud_object_add(`console/Ticker`, {buffer=buffer, timeBuffer=other_buffer, shadow=vec(1,-1), zOrder=10})
-ticker.enabled = false
 
 -- Console
 local console_focused = true
