@@ -1,10 +1,8 @@
 -- (c) Al-x Spiker 2015, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
-local function add_button_to(parent, ypos, tab)
+local function menu_button(tab)
     local tab2 = {
         size = vec(230,40);
-        parent = parent;
-        position = vec2(0, ypos);
 
         alpha = 0.4;
         backgroundTexture = false;
@@ -30,64 +28,66 @@ local function add_button_to(parent, ypos, tab)
     return gfx_hud_object_add(`/common/hud/Button`, tab2)
 end
 
+-- For a simple menu, override stackMenu to return a list of buttons.
+-- For a custom menu, override buildChildren to build whatever GUI you want.
 hud_class `MenuPage` {
     colour = vec(1, 1, 1)*0.2;
     texture = `background.dds`;
     init = function (self)
         self:buildChildren()
     end;
-    buildChildren = function (self)
+    stackMenu = function (self)
         -- Subclasses override this.
+    end;
+    buildChildren = function(self)
+        self.stack = gfx_hud_object_add(`/common/hud/StackY`, {
+            parent = self,
+            padding = 10,
+            gfx_hud_object_add(`/common/hud/Rect`, {
+                size = vec(300, 150);
+                texture = `/common/hud/LoadingScreen/GritLogo.png`;
+            }), 
+            vec(0, 20),
+            self:stackMenu()
+        })  
     end;
 }
 
 menu_pages = {
     main = function()
         return gfx_hud_object_add(`MenuPage`, {
-            buildChildren = function(self)
-
-                self.gritLogo = gfx_hud_object_add(`/common/hud/Rect`, {
-                    size = vec(300, 150);
-                    texture = `/common/hud/LoadingScreen/GritLogo.png`;
-                    parent = self;
-                    position = vec2(0, (gfx_window_size().y / 2) - 250);
-                })
-                
-                local ypos = 0
-                self.projectsButton = add_button_to(self, ypos, {
+            stackMenu = function(self)
+                return
+                menu_button {
                     caption = "Projects";
                     pressedCallback = function() 
                         menu_show("projects")
                     end
-                })
-                ypos = ypos - 50
-                self.debugmodeButton = add_button_to(self, ypos, {
+                },
+                menu_button {
                     caption = "Debug Mode";
                     pressedCallback = function() 
                         menu_show(nil)
                         debug_mode()
                     end
-                })
-                ypos = ypos - 50
-                self.editorButton = add_button_to(self, ypos, {
+                },
+                menu_button {
                     caption = "Editor";
                     pressedCallback = function() 
                         menu_show(nil)
                         game_manager:enter("Map Editor")
                     end
-                })
-                ypos = ypos - 50
-                self.settingsButton = add_button_to(self, ypos, {
+                },
+                menu_button {
                     caption = "Settings";
                     pressedCallback = function() 
                         menu_show("settings")
                     end
-                })
-                ypos = ypos - 50
-                self.exitButton = add_button_to(self, ypos, {
+                },
+                menu_button {
                     caption = "Exit";
                     pressedCallback = quit
-                })
+                }
             end;
         })
     end;
@@ -126,14 +126,15 @@ menu_pages = {
                 
                 mmenu.position = vec(0, -gfx_window_size().y/2+mmenu.size.y/2+25)
                 
-                self.backButton = add_button_to(self, 0, {
+                self.backButton = menu_button {
+                    parent = self,
                     caption = "<";
                     position = vec(-400, 220);
                     size = vec(40, 40);
                     pressedCallback = function() 
                         menu_show("main")
                     end
-                })
+                }
             end;
         })
     end;
@@ -141,42 +142,14 @@ menu_pages = {
     projects = function()
         return gfx_hud_object_add(`MenuPage`, {
             buildChildren = function(self)
-                local currentPosition = -3 --Starting Y position of game modes buttons
-                self.gameModeButtons = {}
-                for key,value in spairs(game_manager.gameModes) do
-                    if key ~= "Map Editor" and key ~= "Debug Mode" then
-                        self[key] = add_button_to(self, 0, {
-                            caption = key;
-                            image = game_manager.gameThumbs[key];
-                            desc = game_manager.gameDescriptions[key];
-                            position = vec2(-230, currentPosition * -50);
-                            pressedCallback = function(button)
-                                menu_show(nil)
-                                game_manager:enter(key)
-                            end;
-                            stateChangeCallback = function (button, old_state, new_state)
-                                if new_state == "HOVER" then
-                                    self.description:setValue(button.desc);
-                                    self.image.texture = button.image;
-                                    self.image.colour = vec(1, 1, 1)
-                                end
-                            end;
-                        })
-                        currentPosition = currentPosition + 1
-                    end
-                end
-                self.image = gfx_hud_object_add(`/common/hud/Rect`, {
+                local image = gfx_hud_object_add(`/common/hud/Rect`, {
                     -- texture = `/common/hud/LoadingScreen/GritLogo.png`;
                     colour = vec(0.5, 0.5, 0.5);
-                    parent = self;
-                    position = vec(105, 70);
                     size = vec(400, 200);
                 })
-                self.description = gfx_hud_object_add(`/common/hud/Label`, {
+                local description = gfx_hud_object_add(`/common/hud/Label`, {
                     font = `/common/fonts/Verdana18`;
-                    parent = self;
-                    size = vec(400, 24);
-                    position = vec(105, -40);
+                    size = vec(400, 40);
                     textColour = vec(1, 1, 1);
                     colour = vec(0, 0, 0);
                     alignment = "CENTER";
@@ -184,13 +157,47 @@ menu_pages = {
                     alpha = 1;
                     enabled = true;
                 })
-                self.backButton = add_button_to(self, 0, {
-                    caption = "<";
-                    position = vec(-400, 150);
-                    size = vec(40, 40);
-                    pressedCallback = function() 
-                        menu_show('main')
+                local game_mode_buttons = {}
+                for key,value in spairs(game_manager.gameModes) do
+                    if key ~= "Map Editor" and key ~= "Debug Mode" then
+                        game_mode_buttons[#game_mode_buttons + 1] = menu_button {
+                            caption = key;
+                            gameImage = game_manager.gameThumbs[key];
+                            gameDesc = game_manager.gameDescriptions[key];
+                            pressedCallback = function(self)
+                                menu_show(nil)
+                                game_manager:enter(key)
+                            end;
+                            stateChangeCallback = function (self, old_state, new_state)
+                                if new_state == "HOVER" then
+                                    description:setValue(self.gameDesc);
+                                    image.texture = self.gameImage;
+                                    image.colour = vec(1, 1, 1)
+                                end
+                            end;
+                        }
                     end
+                end
+                self.stack = gfx_hud_object_add(`/common/hud/StackX`, {
+                    parent = self,
+                    padding = 40,
+                    { align = "TOP" },
+                    menu_button {
+                        caption = "<";
+                        size = vec(40, 40);
+                        pressedCallback = function() 
+                            menu_show('main')
+                        end
+                    },
+                    gfx_hud_object_add(`/common/hud/StackY`, {
+                        padding = 10,
+                        table.unpack(game_mode_buttons)
+                    }),
+                    gfx_hud_object_add(`/common/hud/StackY`, {
+                        padding = 0,
+                        image,
+                        description
+                    })
                 })
             end;
         })
@@ -199,37 +206,32 @@ menu_pages = {
     pause = function()
         main.physicsPaused = true
         return gfx_hud_object_add(`MenuPage`, {
-            buildChildren = function(self)
-                self.gritLogo = gfx_hud_object_add(`/common/hud/Rect`, {
-                    size = vec(300, 150);
-                    texture = `/common/hud/LoadingScreen/GritLogo.png`;
-                    parent = self;
-                    position = vec2(0, (gfx_window_size().y / 2) - 250);
-                })
-                self.resume = add_button_to(self, 0, {
+            stackMenu = function(self)
+                return
+                menu_button {
                     caption = "Resume";
                     pressedCallback = function() 
                         main.physicsPaused = false
                         menu_show(nil)
                     end
-                })
-                self.mainMenu = add_button_to(self, -50, {
+                },
+                menu_button {
                     caption = "Return to main menu";
                     pressedCallback = function() 
                         game_manager:exit()
                         menu_show("main")
                     end
-                })
-                self.exitButton = add_button_to(self, -100, {
+                },
+                menu_button {
                     caption = "Exit";
                     pressedCallback = quit
-                })
+                }
             end;
         })
     end;
 }
 
-menu_active = nil
+menu_active = menu_active or nil
 
 -- Show the menu of the given name, replacing the current one if there is one.
 -- This function handles the overall UI aspects of displaying the menu.
