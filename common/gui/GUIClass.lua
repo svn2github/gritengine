@@ -19,7 +19,7 @@ guialign = {
 }
 
 _gui.class = {
-	alpha = 0;
+	alpha = 1;
 	colour = vec(1, 1, 1);
 
 	align = vec(0, 0);
@@ -71,22 +71,7 @@ _gui.class = {
 	end;
 }
 
-hud_class `GuiClass` (extends(_gui.class)
-{
-	alpha = 1;
-	
-	init = function (self)
-		_gui.class.init(self)
-	end;
-	
-	destroy = function (self)
-		_gui.class.destroy(self)
-	end;
-
-	parentResizedCallback = function(self, psize)
-		_gui.class.parentResizedCallback(self, psize)
-	end;
-})
+hud_class `GuiClass` (_gui.class)
 
 function gui.object(tab)
 	return gfx_hud_object_add(`GuiClass`, tab)

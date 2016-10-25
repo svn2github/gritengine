@@ -81,20 +81,7 @@ _gui.list = table.extends(_gui.class,
 	end;
 })
 
-hud_class `ObjectList` (extends(_gui.list)
-{
-	init = function (self)
-		_gui.list.init(self)
-	end;
-
-	destroy = function (self)
-
-	end;
-
-	parentResizedCallback = function (self, psize)
-		_gui.list.parentResizedCallback(self, psize)
-	end;
-})
+hud_class `ObjectList` (_gui.list)
 
 function gui.list(tab)
 	return gfx_hud_object_add(`ObjectList`, tab)
