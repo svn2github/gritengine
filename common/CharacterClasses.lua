@@ -155,8 +155,8 @@ StateMachine =
 	
     update = function (self, elapsed)
 		if self.currentState.update ~= nil then
-			-- NOTE: this swap self and the object pointer, we have two 'self', one of the object and other is the real self (state)
-			self.currentState.update(self.reference, elapsed, self)
+			-- NOTE: this swap self and the object pointer, we have two 'self', one of the object and other is the real self (state machine)
+			self.states[self.currentStateName.."_state"].update(self.reference, elapsed, self)
 		end
     end;
 
@@ -184,8 +184,6 @@ StateMachine =
 			end
 		end
 	end;
-	
-    currentState = default_state;
 }
 
 -- a simple state machine
@@ -415,7 +413,25 @@ AnimMgr =
 	-- health = 1000;
 -- }
 
-AICharacter =  extends (BaseClass)
+
+-- aichars = {}
+-- aichars[#aichars+1] = object (`/navigation/aichar`) (pick_pos()+vec(0, 0, class_get(`/navigation/aichar`).placementZOffset)) {}
+
+function crowd_move(pos)
+	for i = 1, #current_map.aicharacters do
+		if not current_map.aicharacters[i].destroyed and current_map.aicharacters[i].activated and current_map.aicharacters[i].instance.agentID ~= -1 then
+			current_map.aicharacters[i]:updateDestination(pos, false)
+		end
+	end
+end
+
+-- for i = 1, #current_map.aicharacters do
+	-- if not current_map.aicharacters[i].destroyed then
+		-- current_map.aicharacters[i].needsStepCallbacks = true
+	-- end
+-- end
+
+AICharacter =  double_extends(AnimMgr, BaseClass)
 {
     renderingDistance = 500.0;
     castShadows = true;
@@ -430,7 +446,7 @@ AICharacter =  extends (BaseClass)
 	states = {
 		idle_state = {
 			init = function(self)
-				-- self:setAnimation(self.instance.animID.idle, false)
+				self:setAnimation(self.instance.animID.idle, false)
 				
 				self.onUpdateDestination = function(self)
 					self:gotoState("walk")
@@ -439,11 +455,11 @@ AICharacter =  extends (BaseClass)
 			end;
 			
 			update = function(self, elapsed)
-				-- local ins = self.instance
-				-- local id = ins.animID.idle
+				local ins = self.instance
+				local id = ins.animID.idle
 				
-				-- ins.animPos[id] = math.mod(ins.animPos[id] + elapsed, ins.animLen[id])
-				-- ins.gfx:setAnimationPos(ins.animName[id], ins.animPos[id])
+				ins.animPos[id] = math.mod(ins.animPos[id] + elapsed, ins.animLen[id])
+				ins.gfx:setAnimationPos(ins.animName[id], ins.animPos[id])
 			end;
 			
 			exit = function(self)
@@ -452,7 +468,7 @@ AICharacter =  extends (BaseClass)
 		};
 		walk_state = {
 			init = function(self)
-				-- self:setAnimation(self.instance.animID.walk, false)
+				self:setAnimation(self.instance.animID.walk, false)
 				
 				self.onDestinationReached = function (self)
 					print(self.className.." reached destination point")
@@ -466,11 +482,11 @@ AICharacter =  extends (BaseClass)
 			end;
 			
 			update = function(self, elapsed)
-				-- local ins = self.instance
-				-- local id = ins.animID.walk
+				local ins = self.instance
+				local id = ins.animID.walk
 				
-				-- ins.animPos[id] = math.mod(ins.animPos[id] + elapsed*(self:getSpeed()*0.5), ins.animLen[id])
-				-- ins.gfx:setAnimationPos(ins.animName[id], ins.animPos[id])
+				ins.animPos[id] = math.mod(ins.animPos[id] + elapsed*(self:getSpeed()*0.5), ins.animLen[id])
+				ins.gfx:setAnimationPos(ins.animName[id], ins.animPos[id])
 			end;
 			
 			exit = function(self)
@@ -482,7 +498,8 @@ AICharacter =  extends (BaseClass)
 	
     activate = function(self, instance)
         BaseClass.activate(self, instance)
-
+		AnimMgr.activate(self, instance)
+		
         self.needsStepCallbacks = true
 		
 		instance.target = nil
@@ -555,8 +572,8 @@ AICharacter =  extends (BaseClass)
 	
     stepCallback = function (self, elapsed)
 		-- BaseClass.stepCallback(self, elapsed)
-		
-		-- self.instance.state_machine:update(elapsed)
+		AnimMgr.stepCallback(self, elapsed)
+		self.instance.state_machine:update(elapsed)
 		
 		if self:getAgentID() ~= -1 then
 			self:updatePosition(elapsed)
@@ -566,7 +583,6 @@ AICharacter =  extends (BaseClass)
 				self:setOrientation(quat(V_NORTH, dir))
 			end
 		end
-		
     end;
 
 	getTargetPosition = function(self)

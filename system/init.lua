@@ -329,6 +329,8 @@ else
 	safe_include `/common/gui/init.lua`
 	safe_include `/common/map_classes.lua`
 	safe_include `/common/pmat/init.lua`
+	safe_include `/common/CharacterClasses.lua`
+	safe_include `/common/heightmap_texture_blend_shader.lua`
 end
 
 safe_include `/editor/init.lua`   -- TODO(dcunnin):  This must be moved to /system
