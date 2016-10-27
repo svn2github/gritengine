@@ -22,19 +22,19 @@ hud_class `Console` {
         self.pinToBottom = true
 
 
-        self.text = gfx_hud_text_add(self.font)
+        self.text = hud_text_add(self.font)
         self.text.shadow = self.shadow
         self.text.parent = self
         self.text.letterTopColour = self.textColour
         self.text.letterBottomColour = self.textColour
 
-        self.prompt = gfx_hud_text_add(self.font)
+        self.prompt = hud_text_add(self.font)
         self.prompt.shadow = self.shadow
         self.prompt.parent = self
         self.prompt.colour = self.textColour
         self.prompt.text = self.promptPrefix
 
-        self.cursor = gfx_hud_text_add(self.font)
+        self.cursor = hud_text_add(self.font)
         self.cursor.shadow = self.shadow
         self.cursor.parent = self
         self.cursor.colour = self.textColour

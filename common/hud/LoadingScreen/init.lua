@@ -13,11 +13,11 @@ hud_class `.` {
         
         self.logo = hud_object `/common/hud/Rect` {texture=`GritLogo.png`, parent=self, size=vec(600, 300)}
         
-        self.mapName = gfx_hud_text_add(`/common/fonts/Verdana18`)
+        self.mapName = hud_text_add(`/common/fonts/Verdana18`)
         self.mapName.parent = self
         self.mapName.position = vec(0, -140)
         
-        self.mapStatus = gfx_hud_text_add(`/common/fonts/Verdana24`)
+        self.mapStatus = hud_text_add(`/common/fonts/Verdana24`)
         self.mapStatus.parent = self
         self.mapStatus.colour = vector3(1, 0.5, 0)
         self.mapStatus.position = vec(0, -220)

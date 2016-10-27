@@ -122,7 +122,7 @@ WindowClass = {
 			factor = vec2(-0.5, 0);
 		}
 		
-		self.window_title = gfx_hud_text_add(`/common/fonts/Arial12`)
+		self.window_title = hud_text_add(`/common/fonts/Arial12`)
 		self.window_title.parent = self.titlePositioner
 		self.window_title.colour = _current_theme.colours.window.titlebar_text
 		self.window_title.position = vec(0, 0)

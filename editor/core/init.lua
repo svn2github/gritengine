@@ -56,7 +56,7 @@ editor = {
 		
 		ticker.text.colour = V_ID*2
 		
-		self.debug_mode_text = gfx_hud_text_add(`/common/fonts/Verdana12`)
+		self.debug_mode_text = hud_text_add(`/common/fonts/Verdana12`)
 		self.debug_mode_text.parent = hud_bottom_left
 		self.debug_mode_text.text = "Mouse left: Use Weapon\nMouse Scroll: Change Weapon\nF: Controll Object\nTab: Console\nF1: Open debug mode menu (TODO)\nF5: Return Editor"
 		self.debug_mode_text.position = vec(self.debug_mode_text.size.x/2+10, self.debug_mode_text.size.y)

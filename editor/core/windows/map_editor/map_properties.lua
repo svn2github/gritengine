@@ -20,7 +20,7 @@ hud_class `Expand_List_Item` {
 			offset = vec2(10, 0);
 			factor = vec2(-0.5, 0);
 		}
-		self.title = gfx_hud_text_add(`/common/fonts/Verdana12`)
+		self.title = hud_text_add(`/common/fonts/Verdana12`)
 		self.title.parent= self.title_pos
 		self:setTitle(self.name)
 		
@@ -116,7 +116,7 @@ hud_class `Expand_List` {
 			offset = vec2(10, 0);
 			factor = vec2(-0.5, 0);
 		}
-		self.title = gfx_hud_text_add(`/common/fonts/Verdana12`)
+		self.title = hud_text_add(`/common/fonts/Verdana12`)
 		self.title.parent= self.title_pos
 		self.title.text = self.caption
 		self:setTitle(self.caption)

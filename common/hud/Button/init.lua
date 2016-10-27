@@ -42,7 +42,7 @@ hud_class `.` {
             self.texture = self.backgroundTexture
         end
 
-        self.text = gfx_hud_text_add(self.captionFont)
+        self.text = hud_text_add(self.captionFont)
         self.text.parent = self
         self:setCaption(self.caption)
 

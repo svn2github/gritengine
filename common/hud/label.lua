@@ -16,7 +16,7 @@ hud_class `Label` {
     alignment = "CENTRE";
 
     init = function (self)
-        self.text = gfx_hud_text_add(self.font)
+        self.text = hud_text_add(self.font)
         self.text.colour = self.textColour
         self.text.parent = self
         self.text.shadow = self.shadow

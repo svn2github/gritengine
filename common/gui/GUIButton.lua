@@ -36,7 +36,7 @@ hud_class `GuiButton` (extends(_gui.class)
 		
 		self.needsInputCallbacks = true
 
-		self.text = gfx_hud_text_add(self.font)
+		self.text = hud_text_add(self.font)
 		self.text.parent = self
 		self.text.colour = self.captionBaseColour
 		self:setCaption(self.caption)

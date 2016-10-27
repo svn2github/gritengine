@@ -43,7 +43,7 @@ EditBoxClass = {
 	
     init = function (self)
         self.needsInputCallbacks = true
-        self.text = gfx_hud_text_add(self.font)
+        self.text = hud_text_add(self.font)
         self.text.parent = self
 
         self.border = hud_object `Rect` {

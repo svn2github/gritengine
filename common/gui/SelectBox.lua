@@ -224,7 +224,7 @@ hud_class `Selectbox` (extends(_gui.class)
 			offset = vec2(10, 0);
 			factor = vec2(-0.5, 0);
 		}
-		self.caption = gfx_hud_text_add(_current_theme.fonts.default)
+		self.caption = hud_text_add(_current_theme.fonts.default)
 		self.caption.parent = self.caption_pos
 		self.caption.colour = self.captionBaseColour
 		

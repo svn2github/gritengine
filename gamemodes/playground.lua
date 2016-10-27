@@ -115,17 +115,17 @@ function playground:init()
 
     playing_binds.enabled = true
 
-    self.centreNotify = gfx_hud_text_add(`/common/fonts/Impact50`)
+    self.centreNotify = hud_text_add(`/common/fonts/Impact50`)
     self.centreNotify.text = ''
     self.centreNotify.position = vec(0, 100)
     self.centreNotify.parent = hud_centre
     self.centreNotify.shadow = vec(6, -3)
     self.centreNotify.colour = vec(1, .7, .3)
 
-    self.debugText1 = gfx_hud_text_add(`/common/fonts/misc.fixed`)
+    self.debugText1 = hud_text_add(`/common/fonts/misc.fixed`)
     self.debugText1.text = ''
     self.debugText1.position = vec(100, 100)
-    self.debugText2 = gfx_hud_text_add(`/common/fonts/misc.fixed`)
+    self.debugText2 = hud_text_add(`/common/fonts/misc.fixed`)
     self.debugText2.text = ''
     self.debugText2.position = vec(100, 85)
 

@@ -18,7 +18,7 @@ hud_class `browser_icon2` {
 	init = function (self)
 		self.needsInputCallbacks = true;
 		self.icon = create_rect({ texture=self.icon_texture, size=vec2(64, 64), parent=self, position=vec(0, 8)})
-		self.text = gfx_hud_text_add(`/common/fonts/Verdana12`)
+		self.text = hud_text_add(`/common/fonts/Verdana12`)
 		self.text.text = self.name
 		if self.text.size.x >= self.size.x then
 			-- print("long name: "..self.name)

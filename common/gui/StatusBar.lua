@@ -29,7 +29,7 @@ hud_class `StatusBar` {
 		}
 		self.line:setThickness(1)
 		
-		self.text = gfx_hud_text_add("/common/fonts/Arial12")
+		self.text = hud_text_add("/common/fonts/Arial12")
 		self.text.parent = self
 		self.text.colour = _current_theme.colours.status_bar.text
 		self:setText("")
@@ -74,7 +74,7 @@ hud_class `StatusBar` {
 	end;	
 	
 	addField = function(self, txt, sz)
-		self.fields[#self.fields+1] = gfx_hud_text_add("/common/fonts/Arial12")
+		self.fields[#self.fields+1] = hud_text_add("/common/fonts/Arial12")
 		self.fields[#self.fields].parent = self
 		self.fields[#self.fields].colour = _current_theme.colours.status_bar.text
 		self.fields[#self.fields].text = txt	

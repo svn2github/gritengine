@@ -11,7 +11,7 @@ hud_class `Ticker` {
     init = function (self)
         self.buffer = self.buffer or {}
         self.timeBuffer = self.timeBuffer or {}
-        self.text = gfx_hud_text_add(self.font)
+        self.text = hud_text_add(self.font)
         self.text.parent = self
         self.text.shadow = self.shadow
         self.text.letterTopColour = self.textColour

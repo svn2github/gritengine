@@ -33,7 +33,7 @@ hud_class `roundbutton` (extends(_gui.class)
 		
 		self.needsInputCallbacks = true
 
-		self.text = gfx_hud_text_add(self.font)
+		self.text = hud_text_add(self.font)
 		self.text.parent = self
 		self.text.colour = self.captionBaseColour
 		self.text.position = vec(0, 1)
@@ -109,7 +109,7 @@ hud_class `roundbutton` (extends(_gui.class)
 	end;	
 	
 	reloadTheme = function(self)
-		local class = gfx_hud_class_get(self.className)
+		local class = hud_class_get(self.className)
 		self.alpha = class.alpha
 		self.colour = class.colour
 		self.texture = class.texture
@@ -161,7 +161,7 @@ hud_class `window_page_button` {
         self.needsInputCallbacks = true
 		self.needsFrameCallbacks = false
 		
-        self.text = gfx_hud_text_add(self.font)
+        self.text = hud_text_add(self.font)
         self.text.parent = self
 		self.text.position = vec(0, 0)
         self:setCaption(self.caption)
@@ -304,7 +304,7 @@ hud_class `window_page_button` {
 	end;	
 
 	reloadTheme = function(self)
-		local class = gfx_hud_class_get(self.className)
+		local class = hud_class_get(self.className)
 		self.alpha = class.alpha
 		self.colour = class.colour or V_ID
 		self.texture = class.texture
@@ -463,7 +463,7 @@ hud_class `windownotebook` (extends(_gui.class)
 		end
 	end;
 	reloadTheme = function(self)
-		local class = gfx_hud_class_get(self.className)
+		local class = hud_class_get(self.className)
 		self.alpha = class.alpha
 		self.colour = class.colour
 		

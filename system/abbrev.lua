@@ -44,7 +44,7 @@ local function hud_class2 (tab)
     for k, v in pairs(tab) do
         tab2[k] = v
     end
-    return gfx_hud_class_add(curried_name, tab2)
+    return hud_class_add(curried_name, tab2)
 end
 function hud_class (name)
     curried_name = name
@@ -239,6 +239,6 @@ end
 function hud_object(name)
     -- Has to support nesting, so do not use curried_name global.
     return function (tab)
-        return gfx_hud_object_add(name, tab)
+        return hud_object_add(name, tab)
     end
 end
