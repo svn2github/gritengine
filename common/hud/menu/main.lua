@@ -25,7 +25,7 @@ local function menu_button(tab)
     for k, v in pairs(tab) do
         tab2[k] = v
     end
-    return gfx_hud_object_add(`/common/hud/Button`, tab2)
+    return hud_object `/common/hud/Button` (tab2)
 end
 
 -- For a simple menu, override stackMenu to return a list of buttons.
@@ -40,22 +40,22 @@ hud_class `MenuPage` {
         -- Subclasses override this.
     end;
     buildChildren = function(self)
-        self.stack = gfx_hud_object_add(`/common/hud/StackY`, {
+        self.stack = hud_object `/common/hud/StackY` {
             parent = self,
             padding = 10,
-            gfx_hud_object_add(`/common/hud/Rect`, {
+            hud_object `/common/hud/Rect` {
                 size = vec(300, 150);
                 texture = `/common/hud/LoadingScreen/GritLogo.png`;
-            }), 
+            }, 
             vec(0, 20),
             self:stackMenu()
-        })  
+        }
     end;
 }
 
 menu_pages = {
     main = function()
-        return gfx_hud_object_add(`MenuPage`, {
+        return hud_object `MenuPage` {
             stackMenu = function(self)
                 return
                 menu_button {
@@ -89,11 +89,11 @@ menu_pages = {
                     pressedCallback = quit
                 }
             end;
-        })
+        }
     end;
 
     settings = function()
-        return gfx_hud_object_add(`MenuPage`, {
+        return hud_object `MenuPage` {
             buildChildren = function(self)
                 local lastPos = -10;
                 local mmenu = gui.list({parent=self, align=guialign.bottom, offset=vec(0, 25)})
@@ -107,7 +107,7 @@ menu_pages = {
                     if type(value) == "boolean" then
                         print("The variable: ".. key .." with the name of ".. key .." is equal to ".. tostring(user_cfg[tostring(key)]) .."!") --Was used for debugging!
                         mmenu:addItem(
-                            gfx_hud_object_add(`SettingEdit`, {
+                            hud_object `SettingEdit` {
                                 size = vec(gfx_window_size().x - 200, 40);
                                 font = `/common/fonts/Impact24`;
                                 caption = tostring(key);
@@ -115,7 +115,7 @@ menu_pages = {
                                 valueKey = tostring(key);
                                 -- parent = self;
                                 -- position = vec2(0, lastPos);
-                            })
+                            }
                         )
                         -- lastPos = lastPos - 45
                         --self.gui[key].set.position
@@ -136,18 +136,18 @@ menu_pages = {
                     end
                 }
             end;
-        })
+        }
     end;
 
     projects = function()
-        return gfx_hud_object_add(`MenuPage`, {
+        return hud_object `MenuPage` {
             buildChildren = function(self)
                 local image = gfx_hud_object_add(`/common/hud/Rect`, {
                     -- texture = `/common/hud/LoadingScreen/GritLogo.png`;
                     colour = vec(0.5, 0.5, 0.5);
                     size = vec(400, 200);
                 })
-                local description = gfx_hud_object_add(`/common/hud/Label`, {
+                local description = hud_object `/common/hud/Label` {
                     font = `/common/fonts/Verdana18`;
                     size = vec(400, 40);
                     textColour = vec(1, 1, 1);
@@ -156,7 +156,7 @@ menu_pages = {
                     value = "Select a project"; 
                     alpha = 1;
                     enabled = true;
-                })
+                }
                 local game_mode_buttons = {}
                 for key,value in spairs(game_manager.gameModes) do
                     if key ~= "Map Editor" and key ~= "Debug Mode" then
@@ -178,7 +178,7 @@ menu_pages = {
                         }
                     end
                 end
-                self.stack = gfx_hud_object_add(`/common/hud/StackX`, {
+                self.stack = hud_object `/common/hud/StackX` {
                     parent = self,
                     padding = 40,
                     { align = "TOP" },
@@ -189,23 +189,23 @@ menu_pages = {
                             menu_show('main')
                         end
                     },
-                    gfx_hud_object_add(`/common/hud/StackY`, {
+                    hud_object `/common/hud/StackY` {
                         padding = 10,
-                        table.unpack(game_mode_buttons)
-                    }),
-                    gfx_hud_object_add(`/common/hud/StackY`, {
+                        table.unpack(game_mode_buttons),
+                    },
+                    hud_object `/common/hud/StackY` {
                         padding = 0,
                         image,
-                        description
-                    })
-                })
+                        description,
+                    },
+                }
             end;
-        })
+        }
     end;
 
     pause = function()
         main.physicsPaused = true
-        return gfx_hud_object_add(`MenuPage`, {
+        return hud_object `MenuPage` {
             stackMenu = function(self)
                 return
                 menu_button {
@@ -227,7 +227,7 @@ menu_pages = {
                     pressedCallback = quit
                 }
             end;
-        })
+        }
     end;
 }
 
@@ -242,6 +242,6 @@ function menu_show(name)
         return
     end
     local inner_menu = menu_pages[name]()
-    menu_active = gfx_hud_object_add(`/common/hud/Stretcher`, { child=inner_menu, zOrder=14 })
+    menu_active = hud_object `/common/hud/Stretcher` { child=inner_menu, zOrder=14 }
     menu_binds.modal = true
 end
