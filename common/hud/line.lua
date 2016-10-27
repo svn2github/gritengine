@@ -1,5 +1,6 @@
 -- (c) Alexey "Razzeeyy" Shmakov 2014, licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
+-- HorizontalLine fills its parent horizontally but with the given thickness.
 hud_class `HorizontalLine` {
     init = function (self)
         self.needsParentResizedCallbacks = true;
@@ -19,6 +20,7 @@ hud_class `HorizontalLine` {
     end;
 }
 
+-- VerticalLine fills its parent vertically but with the given thickness.
 hud_class `VerticalLine` {
     init = function (self)
         self.needsParentResizedCallbacks = true;
