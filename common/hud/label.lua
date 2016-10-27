@@ -1,5 +1,12 @@
 -- (c) David Cunningham 2014, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
+-- Label wraps a HUD text object to provide the following additional features:
+--
+-- Greyout of the text
+-- Alignment of the text (LEFT / RIGHT / CENTRE) within the object's dimensions.
+-- Background texture / colour (standard HUD object attributes).
+--
+-- The alignment feature comes into play with the Label is larger than the enclosed text.
 hud_class `Label` {
 
     textColour = vec(1, 1, 1);
