@@ -83,12 +83,12 @@ WindowClass = {
 			self.max_size = vec2(gfx_window_size().x, gfx_window_size().y)
 		end
 		
-		self.draggable_area = gfx_hud_object_add(`window_title_bar`, {
+		self.draggable_area = hud_object `window_title_bar` {
 			position = vec2(0, 0);
 			size = vec2(self.size.x, 24);
 			zOrder = 4;
 			parent = self;
-		})
+		}
 
 		self.close_btn = gui.button({				
 				caption = "X";
@@ -116,11 +116,11 @@ WindowClass = {
 			end
 		end
 
-		self.titlePositioner = gfx_hud_object_add(`/common/hud/Positioner`, {
+		self.titlePositioner = hud_object `/common/hud/Positioner` {
 			parent = self.draggable_area;
 			offset = vec2(10, 0);
 			factor = vec2(-0.5, 0);
-		})
+		}
 		
 		self.window_title = gfx_hud_text_add(`/common/fonts/Arial12`)
 		self.window_title.parent = self.titlePositioner
@@ -238,9 +238,9 @@ function gui.window(w_title, pos, res, w_size, w_min_size, w_max_size, w_bk_colo
 	local t_window = {}
 	
 	if type(w_title) == "table" then
-		t_window = gfx_hud_object_add(`Window`, w_title)
+		t_window = hud_object `Window` (w_title)
 	else
-		t_window = gfx_hud_object_add(`Window`, {
+		t_window = hud_object `Window` {
 			title = w_title;
 			parent = hud_center;
 			position = pos;
@@ -249,7 +249,7 @@ function gui.window(w_title, pos, res, w_size, w_min_size, w_max_size, w_bk_colo
 			min_size = w_min_size;
 			colour = w_bk_colour or _current_theme.colours.window.background;
 			alpha = w_bk_alpha or 1;
-		})
+		}
 	end
 	-- t_window.enabled = false
 	_windows[#_windows+1] = t_window

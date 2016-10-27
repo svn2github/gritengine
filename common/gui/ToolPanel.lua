@@ -63,7 +63,7 @@ hud_class `ToolPanel` (extends(_gui.class)
 })
 
 function gui.toolpanel(tab)
-	return gfx_hud_object_add(`ToolPanel`, tab)
+	return hud_object `ToolPanel` (tab)
 end
 
 -- safe_destroy(mtlpn)

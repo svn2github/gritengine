@@ -91,7 +91,7 @@ hud_class `TreeViewNode` (extends(_gui.class)
 	end;
 	
 	addChild = function (self, nodename)
-		self.childs[#self.childs+1] = gfx_hud_object_add(`TreeViewNode`, {
+		self.childs[#self.childs+1] = hud_object `TreeViewNode` {
 			name = nodename,
 			parent = self.root,
 			offset = vec(self.offset.x+10, (-(#self.childs+1)*21)),
@@ -102,7 +102,7 @@ hud_class `TreeViewNode` (extends(_gui.class)
 			parentNode = self,
 			ID = #self.childs+1,
 			canDrag = self.root.canDrag
-		})
+		}
 		
 		self.childs[#self.childs].enabled = false
 		self.iconcolapse.enabled = true
@@ -306,7 +306,7 @@ TreeView =  (extends(_gui.class)
 	
 	addNode = function(self, nodename, par, icon)
 		if par == nil then
-			self.childs[#self.childs+1] = gfx_hud_object_add(`TreeViewNode`, {
+			self.childs[#self.childs+1] = hud_object `TreeViewNode` {
 				name = nodename,
 				parent = self,
 				childs_child = true,
@@ -318,7 +318,7 @@ TreeView =  (extends(_gui.class)
 				ID = #self.childs+1,
 				lineIndex = self.activeLines+1,
 				canDrag = self.canDrag
-			})
+			}
 			
 			self.activeLines = self.activeLines + 1
 			self.line[#self.activeLines] = self.childs[#self.childs] 
@@ -338,7 +338,7 @@ TreeView =  (extends(_gui.class)
 	end;
 
 	startMovingObject = function(self, obj)
-		self.floatingObject = gfx_hud_object_add(`DraggingTreeViewObject`, { icon = obj.icon, caption = obj.name })
+		self.floatingObject = hud_object `DraggingTreeViewObject` { icon = obj.icon, caption = obj.name }
 		self.draggingNode = obj
 
 		self.marker = create_rect({ parent = self, size = vec(self.size.x, 3.5), colour = vec(1, 0.5, 0), texture=`/common/gui/icons/line.png` })
@@ -539,5 +539,5 @@ hud_class `TreeView` (extends(TreeView)
 })
 
 function gui.treeview(options)
-	return gfx_hud_object_add(`TreeView`, options)
+	return hud_object `TreeView` (options)
 end

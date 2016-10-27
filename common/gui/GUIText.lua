@@ -40,5 +40,5 @@ hud_class `GuiText` (extends(_gui.class)
 })
 
 function gui.text(options)
-	return gfx_hud_object_add(`GuiText`, options)
+	return hud_object `GuiText` (options)
 end

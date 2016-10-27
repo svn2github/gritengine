@@ -130,7 +130,7 @@ hud_class `Slider` {
 		self.text.shadow = vec(1, -1)
 		--self.text.zOrder = 0
 		
-		self.slidebar = gfx_hud_object_add(`dragbarsld`, { size = vec(9, self.size.y-self.padding/2), colour = vec(1, 1, 1), parent = self, position=vec2(-self.size.x/2+self.padding, 0), parentColour=self.colour, alpha = 1 })
+		self.slidebar = hud_object `dragbarsld` { size = vec(9, self.size.y-self.padding/2), colour = vec(1, 1, 1), parent = self, position=vec2(-self.size.x/2+self.padding, 0), parentColour=self.colour, alpha = 1 }
 		
 		self.slidebar.position = vec(-self.size.x/2 + ((self.value-self.minValue) / (self.maxValue-self.minValue)) * self.size.x, 0)
 		--self.slidebar.zOrder = 1
@@ -199,9 +199,9 @@ hud_class `Slider` {
 function gui.slider(s_caption_ortab, s_position, s_defaultvalue, s_parent, s_minvalue, s_maxvalue, s_stepsize, s_onclick, s_onclickend)
 	local sld
 	if type(s_caption_ortab) == "table" then
-		sld = gfx_hud_object_add(`Slider`, s_caption_ortab)	
+		sld = hud_object `Slider` (s_caption_ortab)	
 	else
-		sld = gfx_hud_object_add(`Slider`, {
+		sld = hud_object `Slider` {
 			caption = s_caption_ortab or "",
 			position = s_position or vec(0, 0),
 			value = s_defaultvalue or 0,
@@ -211,7 +211,7 @@ function gui.slider(s_caption_ortab, s_position, s_defaultvalue, s_parent, s_min
 			step = s_stepsize or 0,
 			onClick = s_onclick or do_nothing,
 			onClickEnd = s_onclickend or do_nothing
-		})
+		}
 	end
 	return sld
 end

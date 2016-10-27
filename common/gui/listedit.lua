@@ -8,19 +8,19 @@ hud_class `listedit` {
 
 	init = function (self)
 		self.needsFrameCallbacks = true;
-		self.base = gfx_hud_object_add(`/common/hud/Border`, { parent=self,  position=vec2(0, 0)})
+		self.base = hud_object `/common/hud/Border` { parent=self,  position=vec2(0, 0)}
 		self.items = {}
 		
-		self.itemPositioner = gfx_hud_object_add(`/common/hud/Positioner`, {
+		self.itemPositioner = hud_object `/common/hud/Positioner` {
 			parent = self;
 			offset = vec2(10, 0);
 			factor = vec2(-0.5, 0);
-		})
-		self.valuePositioner = gfx_hud_object_add(`/common/hud/Positioner`, {
+		}
+		self.valuePositioner = hud_object `/common/hud/Positioner` {
 			parent = self;
 			offset = vec2(-10, 0);
 			factor = vec2(0.5, 0);
-		})
+		}
 		
 	end;
 	
@@ -39,13 +39,13 @@ hud_class `listedit` {
 		self.items[#self.items + 1] = {
 			title = gfx_hud_text_add(``, { text = name, parent = itemPositioner, position = vec2(size.x / 2, position.y) });
 			
-			value = gfx_hud_object_add(`/common/hud/EditBox`, {
+			value = hud_object `/common/hud/EditBox` {
 				value = defaultvalue;
 				size = vec(100,20);
 				alignment = "LEFT";
 				parent=valuePositioner;
 				position=vec2(value.size.x / 2, value.position.y);
-			})
+			}
 		}
 	end;
 }

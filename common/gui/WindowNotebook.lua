@@ -167,13 +167,13 @@ hud_class `window_page_button` {
         self:setCaption(self.caption)
 		
 		if self.closebtn then
-			self.close_btn = gfx_hud_object_add(`roundbutton`, {
+			self.close_btn = hud_object `roundbutton` {
 				parent = self,
 				align = vec(1, 0),
 				position=vec(0, -1),
 				offset = vec(-10, -2),
 				pressedCallback = function(self) self.parent.parent:destroyTab(self.parent.ID) end
-			})
+			}
 		end
 		
         if not self.sizeSet then 
@@ -379,7 +379,7 @@ hud_class `windownotebook` (extends(_gui.class)
 			top_pos = -self.size.x/2
 		end
 		
-		self.buttons[#self.buttons+1] = gfx_hud_object_add(`window_page_button`, tab)
+		self.buttons[#self.buttons+1] = hud_object `window_page_button` (tab)
 		self.buttons[#self.buttons].parent = self
 		self.buttons[#self.buttons].ID = #self.buttons
 		
@@ -476,5 +476,5 @@ hud_class `windownotebook` (extends(_gui.class)
 })
 
 gui.windownotebook = function(options)
-	return gfx_hud_object_add(`windownotebook`, options)
+	return hud_object `windownotebook` (options)
 end

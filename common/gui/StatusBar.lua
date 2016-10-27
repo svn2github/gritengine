@@ -21,12 +21,12 @@ hud_class `StatusBar` {
 		self.fields = {}
 		self.widths = {};
 		
-		self.line = gfx_hud_object_add('/common/hud/HorizontalLine', {
+		self.line = hud_object `/common/hud/HorizontalLine` {
 			parent = self;
 			position = vec2(0, self.size.y/2);
 			colour = _current_theme.colours.status_bar.line;
 			alpha = 0.3;
-		})
+		}
 		self.line:setThickness(1)
 		
 		self.text = gfx_hud_text_add("/common/fonts/Arial12")
@@ -87,5 +87,5 @@ hud_class `StatusBar` {
 }
 
 function gui.statusbar(options)
-	return gfx_hud_object_add(`StatusBar`, options)
+	return hud_object `StatusBar` (options)
 end

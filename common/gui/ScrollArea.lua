@@ -138,9 +138,9 @@ hud_class `ScrollArea` (extends(_gui.class)
 		
 		self.ref_pos = vec(0, 0)
 		
-		self.scrollbar_x = gfx_hud_object_add(`ScrollBar`, { parent = self, type = "x", zOrder = 3 })
+		self.scrollbar_x = hud_object `ScrollBar` { parent = self, type = "x", zOrder = 3 }
 		self.scrollbar_x.enabled = self.x_bar
-		self.scrollbar_y = gfx_hud_object_add(`ScrollBar`, { parent = self, type = "y", zOrder = 3 })
+		self.scrollbar_y = hud_object `ScrollBar` { parent = self, type = "y", zOrder = 3 }
 		self.scrollbar_y.enabled = self.y_bar
     end;
 	
@@ -260,9 +260,9 @@ hud_class `ScrollArea` (extends(_gui.class)
 })
 
 function gui.scrollarea(tab)
-	return gfx_hud_object_add(`ScrollArea`, tab)
+	return hud_object `ScrollArea` (tab)
 end
 
 -- safe_destroy(xplorer)
 
--- xplorer = gfx_hud_object_add(`/common/gui/ScrollArea`, {parent = editor_interface.map_editor_page.windows.object_properties;})
+-- xplorer = hud_object `/common/gui/ScrollArea` {parent = editor_interface.map_editor_page.windows.object_properties;}

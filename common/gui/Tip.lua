@@ -49,5 +49,5 @@ function gui.showtip(text)
 	if _tip ~= nil and _tip.destroyed ~= nil then
 		_tip:destroy()
 	end
-	_tip = gfx_hud_object_add(`Tip`, { caption = text or "", pos = mouse_pos_abs })
+	_tip = hud_object `Tip` { caption = text or "", pos = mouse_pos_abs }
 end;

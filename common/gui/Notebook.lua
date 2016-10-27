@@ -150,14 +150,14 @@ hud_class `Notebook` {
 	end;
 	
 	addPage = function (self, page, name, p_onOpen)
-		self.page_buttons[#self.page_buttons+1] = gfx_hud_object_add(`page_button`, {
+		self.page_buttons[#self.page_buttons+1] = hud_object `page_button` {
 			parent = self.page_menu,
 			position = vec2(0, 0),
 			colour = self.pageButtonColour,
 			caption = name,
 			id = #self.page_buttons+1,
 			onOpen = p_onOpen or function(self)end
-		})
+		}
 		self.page_menu_list:addItem(self.page_buttons[#self.page_buttons])
 		self:updateTabs()
 		
@@ -206,7 +206,7 @@ hud_class `Notebook` {
 }
 
 function gui.notebook(t_parent)
-	return gfx_hud_object_add(`Notebook`, { parent = t_parent })
+	return hud_object `Notebook` { parent = t_parent }
 end
 
 function gui.notebookpanel()

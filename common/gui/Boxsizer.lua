@@ -93,7 +93,14 @@ hud_class `Boxsizer` {
 }
 
 function gui.boxsizer(g_expand, g_orient, p, g_size, g_colour, g_alpha)
-	local bs = gfx_hud_object_add(`Boxsizer`, { parent = p, orient = g_orient or "h", expand = g_expand or false, colour = g_colour or vec(0.3, 0.3, 0.3), alpha = g_alpha or 0, size = g_size })
+	local bs = hud_object `Boxsizer` {
+        parent = p,
+        orient = g_orient or "h",
+        expand = g_expand or false,
+        colour = g_colour or vec(0.3, 0.3, 0.3),
+        alpha = g_alpha or 0,
+        size = g_size
+    }
 	if p then
 		bs:updateExpandType()
 	end
@@ -108,18 +115,18 @@ end
 
 -- bxsz = gui.boxsizer(true, "h", editor_interface.windows.object_properties)
 
--- it1 = gfx_hud_object_add(`/editor/core/hud/boxsizer`, { colour = vec(1, 0, 0), size = vec(50, 50), alpha = 1 })
--- it2 = gfx_hud_object_add(`/editor/core/hud/boxsizer`, { colour = vec(0, 1, 0), size = vec(50, 50), alpha = 1, expand = false })
--- it3 = gfx_hud_object_add(`/editor/core/hud/boxsizer`, { colour = vec(0, 0, 1), size = vec(50, 50), alpha = 1 })
--- it4 = gfx_hud_object_add(`/editor/core/hud/boxsizer`, { colour = vec(0, 1, 1), size = vec(50, 50), alpha = 1, orient="v" })
+-- it1 = hud_object `/editor/core/hud/boxsizer` { colour = vec(1, 0, 0), size = vec(50, 50), alpha = 1 }
+-- it2 = hud_object `/editor/core/hud/boxsizer` { colour = vec(0, 1, 0), size = vec(50, 50), alpha = 1, expand = false }
+-- it3 = hud_object `/editor/core/hud/boxsizer` { colour = vec(0, 0, 1), size = vec(50, 50), alpha = 1 }
+-- it4 = hud_object `/editor/core/hud/boxsizer` { colour = vec(0, 1, 1), size = vec(50, 50), alpha = 1, orient="v" }
 
 -- bxsz:addChild(it1)
 -- bxsz:addChild(it2)
 -- bxsz:addChild(it3)
 -- bxsz:addChild(it4)
 
--- it4child1 = gfx_hud_object_add(`/editor/core/hud/boxsizer`, { colour = vec(1, 0, 1), size = vec(50, 50), alpha = 1 })
--- it4child2 = gfx_hud_object_add(`/editor/core/hud/boxsizer`, { colour = vec(0, 0, 0), size = vec(50, 50), alpha = 1 })
+-- it4child1 = hud_object `/editor/core/hud/boxsizer` { colour = vec(1, 0, 1), size = vec(50, 50), alpha = 1 }
+-- it4child2 = hud_object `/editor/core/hud/boxsizer` { colour = vec(0, 0, 0), size = vec(50, 50), alpha = 1 }
 
 -- it4:addChild(it4child1)
 -- it4:addChild(it4child2)

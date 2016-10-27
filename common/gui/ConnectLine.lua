@@ -3,8 +3,8 @@
 --
 -- Examples:
 -- 1:
--- hudobj = gfx_hud_object_add(`/common/gui/Draggable`, { parent = hud_center, size=vec(64, 64), colour=vec(0, 0, 1), position=vec(100, -50) })
--- hudobj2 = gfx_hud_object_add(`/common/gui/Draggable`, { parent = hud_center, size=vec(64, 64), colour=vec(1, 0, 0), position=vec(50, -100)})
+-- hudobj = hud_object `/common/gui/Draggable` { parent = hud_center, size=vec(64, 64), colour=vec(0, 0, 1), position=vec(100, -50) })
+-- hudobj2 = hud_object `/common/gui/Draggable` { parent = hud_center, size=vec(64, 64), colour=vec(1, 0, 0), position=vec(50, -100)})
 -- myLine = gui.connectline({ parent = hud_center; p1 = hudobj; p2 = hudobj2 })
 -- 2:
 -- myLine = gui.connectline({ parent = hud_center; p1 = vec(0, 0); p2 = vec(10, -50) })
@@ -64,5 +64,5 @@ hud_class `ConnectLine` {
 }
 
 function gui.connectline(tab)
-	return gfx_hud_object_add(`ConnectLine`, tab)
+	return hud_object `ConnectLine` (tab)
 end

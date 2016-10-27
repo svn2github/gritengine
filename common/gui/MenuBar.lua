@@ -21,7 +21,7 @@ hud_class `MenuItem` {
 	
 	init = function (self)
 		self.needsInputCallbacks = true;
-		self.item = gfx_hud_object_add(`/common/hud/Label`, {
+		self.item = hud_object `/common/hud/Label` {
 			parent = self;
 			size = self.size;
 			textColour = self.textColour;
@@ -30,7 +30,7 @@ hud_class `MenuItem` {
 			alpha = 0;
 			colour = self.colour;
 			font = _current_theme.fonts.menu_bar.menu;
-		})
+		}
 		self.icon = create_rect({
 			parent = self.item,
 			size = vec2(15, 15),
@@ -118,15 +118,15 @@ hud_class `Menu` {
 		if self.items ~= nil then
 			for i = 1, #self.items do
 				if next(self.items[i]) == nil then
-					self.menuitems[i] = gfx_hud_object_add(`/common/hud/HorizontalLine`, {
+					self.menuitems[i] = hud_object `/common/hud/HorizontalLine` {
 						parent = self,
 						position = vec2(0, self.lastItem + 7.5),
 						colour = _current_theme.colours.menu.line
-					})
+					}
 					self.menuitems[i]:setThickness(1);
 					self.lastItem = self.lastItem - 5
 				else
-					self.menuitems[i] = gfx_hud_object_add(`MenuItem`, {
+					self.menuitems[i] = hud_object `MenuItem` {
 						value = self.items[i].name;
 						pressedCallback = self.items[i].callback;
 						endPressedCallback = self.items[i].endPressedCallback or function(self)end;
@@ -137,7 +137,7 @@ hud_class `Menu` {
 						colour = self.menu_item_colour;
 						hoverColour = self.menu_hoverColour;
 						hoverTextColour = self.menu_hoverTextColour;
-					})
+					}
 					
 					if(self.items[i].icon ~= nil) then
 						self.menuitems[i]:setIcon(self.items[i].icon)
@@ -340,15 +340,15 @@ hud_class `MenuBar` (extends(_gui.class)
 		self.needsInputCallbacks = true
         self.buttons = {}
 
-		self.leftPositioner = gfx_hud_object_add(`/common/hud/Positioner`, {
+		self.leftPositioner = hud_object `/common/hud/Positioner` {
 			parent = self;
 			offset = vec2(40, 0);
 			factor = vec2(-0.5, 0);
-		})
+		}
     end;
 
 	append = function(self, obj, name)
-		self.buttons[#self.buttons + 1] = gfx_hud_object_add(`MenuBarButton`, {
+		self.buttons[#self.buttons + 1] = hud_object `MenuBarButton` {
 			menu = obj;
 			pressedCallback = function (self)
 				if self.menu.enabled ~= true then
@@ -368,7 +368,7 @@ hud_class `MenuBar` (extends(_gui.class)
 			caption = name;
 			padding = self.buttonPadding;
 			parent = self.leftPositioner;
-		})
+		}
 		
 		for i = 1, #obj.menuitems do
 			obj.menuitems[i].endPressedCallback = function (self)
@@ -426,11 +426,11 @@ hud_class `MenuBar` (extends(_gui.class)
 _menus = {}
 
 function gui.menubar_menu(tab)
-	local mn = gfx_hud_object_add(`Menu`, tab)
+	local mn = hud_object `Menu` (tab)
 	_menus[#_menus+1] = mn
 	return mn
 end
 
 function gui.menubar(tab)
-	return gfx_hud_object_add(`MenuBar`, tab)
+	return hud_object `MenuBar` (tab)
 end

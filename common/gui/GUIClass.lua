@@ -74,9 +74,9 @@ _gui.class = {
 hud_class `GuiClass` (_gui.class)
 
 function gui.object(tab)
-	return gfx_hud_object_add(`GuiClass`, tab)
+	return hud_object `GuiClass` (tab)
 end
 
 function create_rect(tab)
-	return gfx_hud_object_add(`/common/hud/Rect`, tab)
+	return hud_object `/common/hud/Rect` (tab)
 end

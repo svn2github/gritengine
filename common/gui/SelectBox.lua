@@ -22,14 +22,14 @@ hud_class `selectmenuitem` {
 	init = function (self)
 		self.needsInputCallbacks = true;
 		self.needsParentResizedCallbacks = true
-		self.item = gfx_hud_object_add(`/common/hud/Label`, {
+		self.item = hud_object `/common/hud/Label` {
 			parent = self;
 			size = self.size;
 			textColour = self.textColour;
 			alignment = "LEFT";
 			value = self.value;
 			alpha = 0;
-		})
+		}
 		self.dragging = false;
 		self.inside = false;
 	end;
@@ -150,7 +150,7 @@ hud_class `selectmenu` {
 	end;
 	
     addItem = function (self, itm)
-		self.menuitems[#self.menuitems+1] = gfx_hud_object_add(`selectmenuitem`, { value = itm, parent=self, position=vec2(0, self.lastItem), size=vec2(150, 20), id=#self.menuitems })
+		self.menuitems[#self.menuitems+1] = hud_object `selectmenuitem` { value = itm, parent=self, position=vec2(0, self.lastItem), size=vec2(150, 20), id=#self.menuitems }
 		self.lastItem = self.lastItem - 20
 		self.size = vec2(256, -self.lastItem +5)
 		self.position=vec2(0, -self.size.y/2 - self.parent.size.y/2)
@@ -208,7 +208,7 @@ hud_class `Selectbox` (extends(_gui.class)
 		self.needsParentResizedCallbacks = true;
 		self.needsInputCallbacks = true;
 		
-		self.icon = gfx_hud_object_add(`selectboxicon`, {
+		self.icon = hud_object `selectboxicon` {
 			texture = _gui_textures.triangle.up,
 			size = vec2(15, 15),
 			offset = vec2(-10, 0),
@@ -216,21 +216,21 @@ hud_class `Selectbox` (extends(_gui.class)
 			parent = self,
 			alpha = self.iconAlpha,			
 			colour = self.iconColour
-		})
+		}
 		self.icon.pressedCallback = function(self, ev) self.parent:showMenu() end;
 		
-		self.caption_pos = gfx_hud_object_add(`/common/hud/Positioner`, {
+		self.caption_pos = hud_object `/common/hud/Positioner` {
 			parent = self;
 			offset = vec2(10, 0);
 			factor = vec2(-0.5, 0);
-		})
+		}
 		self.caption = gfx_hud_text_add(_current_theme.fonts.default)
 		self.caption.parent = self.caption_pos
 		self.caption.colour = self.captionBaseColour
 		
 		self:setTitle(self.defaultText)
 		
-		self.menu = gfx_hud_object_add(`selectmenu`, { parent = self })
+		self.menu = hud_object `selectmenu` { parent = self }
 		
 		for i = 1, #self.choices do
 			self.menu:addItem(self.choices[i])
@@ -335,5 +335,5 @@ hud_class `Selectbox` (extends(_gui.class)
 })
 
 function gui.selectbox(tab)
-	return gfx_hud_object_add(`Selectbox`, tab)
+	return hud_object `Selectbox` (tab)
 end

@@ -172,14 +172,14 @@ hud_class `file_list` (extends(_gui.class)
 
 	addItem = function(self, m_name, icon, pc, dpc)
 		if icon == nil then icon = `/common/gui/icons/foldericon.png`end
-		self.items[#self.items+1] = gfx_hud_object_add(`browser_icon`, {
+		self.items[#self.items+1] = hud_object `browser_icon` {
 			icon_texture = icon;
 			position = vec2(0, 0);
 			parent = self;
 			colour = vec(0.5, 0.5, 0.5);
 			size = vec2(self.icons_size.x, self.icons_size.y);
 			name = m_name;
-		})
+		}
 		
 		if pc ~= nil then
 			self.items[#self.items].pressedCallback = pc
@@ -302,7 +302,7 @@ hud_class `FileDialog` (extends(WindowClass)
 			self.parent:update_file_explorer(self.parent.currentdir)
 		end;
 		
-		self.file_edbox = gfx_hud_object_add(`window_editbox`, {
+		self.file_edbox = hud_object `window_editbox` {
 			parent = self;
 			value = "";
 			alignment = "LEFT";
@@ -315,10 +315,10 @@ hud_class `FileDialog` (extends(WindowClass)
 			expand_x = true;
 			expand_offset = vec(-130, 0);
 			
-		})
+		}
 		self.file_edbox:setEditing(true)
 		
-		self.scrollarea = gfx_hud_object_add(`/common/gui/ScrollArea`, {
+		self.scrollarea = hud_object `/common/gui/ScrollArea` {
 			parent = self;
 			expand_x = true;
 			expand_y = true;
@@ -326,15 +326,15 @@ hud_class `FileDialog` (extends(WindowClass)
 			align = vec(-1, 1);
 			offset = vec(115, -40);
 			x_bar = false;
-		})
+		}
 		
-		self.file_explorer = gfx_hud_object_add(`file_list`, {
+		self.file_explorer = hud_object `file_list` {
 			position = vec2(0, 0);
 			parent = self;
 			size = vec2(self.size.x-20, self.size.y-120);
 			alpha = 0;
 			zOrder = 1;
-		})
+		}
 		--self.file_explorer.enabled = false
 		self.scrollarea:setContent(self.file_explorer)
 		
@@ -385,7 +385,7 @@ hud_class `FileDialog` (extends(WindowClass)
 			align = vec(1, 1);
 		})
 
-		self.dir_edbox = gfx_hud_object_add(`window_editbox`, {
+		self.dir_edbox = hud_object `window_editbox` {
 			parent = self;
 			value = self.currentdir;
 			alignment = "LEFT";
@@ -394,7 +394,7 @@ hud_class `FileDialog` (extends(WindowClass)
 			align = vec(-1, 1);
 			expand_x = true;
 			expand_offset = vec(-120, 0);
-		})
+		}
 		self.dir_edbox.enterCallback = function(self)
 			self.parent:update_file_explorer(self.value)
 			self.parent.currentdir = self.value
@@ -502,7 +502,7 @@ _save_file_dialog = nil
 
 function gui.file_dialog(options)
 	local t_window = {}
-	t_window = gfx_hud_object_add(`FileDialog`, options)
+	t_window = hud_object `FileDialog` (options)
 	_windows[#_windows+1] = t_window
 	return t_window
 end

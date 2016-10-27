@@ -113,5 +113,5 @@ hud_class `GuiButton` (extends(_gui.class)
 })
 
 function gui.button(options)
-	return gfx_hud_object_add(`GuiButton`, options)
+	return hud_object `GuiButton` (options)
 end

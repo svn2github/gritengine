@@ -84,5 +84,5 @@ _gui.list = table.extends(_gui.class,
 hud_class `ObjectList` (_gui.list)
 
 function gui.list(tab)
-	return gfx_hud_object_add(`ObjectList`, tab)
+	return hud_object `ObjectList` (tab)
 end

@@ -99,5 +99,5 @@ hud_class `ToolBar` (extends(_gui.class)
 })
 
 function gui.toolbar(tab)
-	return gfx_hud_object_add(`ToolBar`, tab)
+	return hud_object `ToolBar` (tab)
 end

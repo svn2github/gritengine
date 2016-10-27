@@ -27,7 +27,7 @@ hud_class `ColourWheel` {
 		self.debug_rect = create_rect({ parent = self, position = vec(self.size.x/2+30+50, 0), size = vec(30, 30) })
 		-- self.debug_rect.enabled= false
 		
-		self.controlv = gfx_hud_object_add(`/common/hud/Scale`, {
+		self.controlv = hud_object `/common/hud/Scale` {
 			onChange = function(self)
 				self.parent.hsv = vec(self.parent.hsv.x, self.parent.hsv.y, math.abs(self.value-1))
 				local hsv = self.parent.hsv
@@ -93,5 +93,5 @@ hud_class `ColourWheel` {
 }
 
 function gui.colourwheel(tab)
-	return gfx_hud_object_add(`ColourWheel`, tab)
+	return hud_object `ColourWheel` (tab)
 end

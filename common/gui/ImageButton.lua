@@ -119,5 +119,5 @@ hud_class `ImageButton` (extends(_gui.class)
 })
 
 function gui.imagebutton(tab)
-	return gfx_hud_object_add(`ImageButton`, tab)
+	return hud_object `ImageButton` (tab)
 end

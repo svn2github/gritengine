@@ -130,7 +130,14 @@ hud_class `FlexBoxsizer` {
 }
 
 function gui.flexboxsizer(g_expand, g_orient, p, g_size, g_colour, g_alpha)
-	local bs = gfx_hud_object_add(`FlexBoxsizer`, { parent = p, orient = g_orient or "horizontal", expand = g_expand or false, colour = g_colour or vec(0.3, 0.3, 0.3), alpha = g_alpha or 1, size = g_size })
+	local bs = hud_object `FlexBoxsizer` {
+        parent = p,
+        orient = g_orient or "horizontal",
+        expand = g_expand or false,
+        colour = g_colour or vec(0.3, 0.3, 0.3),
+        alpha = g_alpha or 1,
+        size = g_size,
+    }
 	if p then
 		bs:updateExpandType()
 	end

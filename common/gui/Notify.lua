@@ -85,7 +85,7 @@ hud_class `notify_panel` {
 	end;
 		
 	addMessage = function(self, msg, clr, text_clr, t_limit, b_alpha)
-		self.messages[#self.messages+1] = gfx_hud_object_add(`ntfmessage`, {
+		self.messages[#self.messages+1] = hud_object `ntfmessage` {
 			parent = self,
 			position = vec2(0, 0),
 			value = msg,
@@ -94,12 +94,12 @@ hud_class `notify_panel` {
 			tableid = #self.messages+1, -- this is probably the main problem
 			alpha = b_alpha,
 			timelimit = t_limit
-		})
+		}
 	end;
 }
 
 if ntfpanel ~= nil then safe_destroy(ntfpanel) end
-ntfpanel = gfx_hud_object_add(`notify_panel`, { position = vec2(0, 50), parent = hud_bottom_right })
+ntfpanel = hud_object `notify_panel` { position = vec2(0, 50), parent = hud_bottom_right }
 
 -- otherwise doesn't appear on top of the windows
 hud_bottom_right.zOrder = 4
