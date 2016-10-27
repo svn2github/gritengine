@@ -72,7 +72,7 @@ hud_class `.` {
                 self.alp = math.max(self.alp - 0.07, 0)
 			else
                 --self.alp = math.min(self.alp + 0.07, 1)
-				-- decreases alpha according by distance of sun position and the center of screen
+				-- decreases alpha according by distance of sun position and the centre of screen
 				self.alp = math.min(math.sqrt((0 - s_pos.x) ^ 2 + (0 - s_pos.y) ^ 2) * -0.0002  + 1, 1)
 			end
 			
