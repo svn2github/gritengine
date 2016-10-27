@@ -7,7 +7,7 @@
 --  http://www.opensource.org/licenses/mit-license.php
 ------------------------------------------------------------------------------
 guialign = {
-	center = vec(0, 0);
+	centre = vec(0, 0);
 	left = vec(-1, 0);
 	right = vec(1, 0);
 	top = vec(0, 1);

@@ -41,7 +41,7 @@ widget_manager = {
 	widget = nil;
 	strdrag = nil;
 	space_mode = "local"; -- "world", "local"
-	pivot_center = "active object"; -- "individual origins", "active object" or "center point"
+	pivot_centre = "active object"; -- "individual origins", "active object" or "centre point"
 	step_size = 0.5;
 	highlight_widget = true;
 };
@@ -253,7 +253,7 @@ function widget_manager:addObject()
 			self.widget.instance.pivot.localPosition = b.owner.instance.body.worldPosition
 			self.widget.instance.pivot.localOrientation = b.owner.instance.body.worldOrientation
 			
-			if self.pivot_center == "active object" then
+			if self.pivot_centre == "active object" then
 				self:calcOffsets()
 			else
 				self.widget.instance.pivot.localPosition = self:calcCentreOffsets()
@@ -292,7 +292,7 @@ function widget_manager:selectAll()
 				self.widget.instance.pivot.localPosition = b.instance.body.worldPosition
 				self.widget.instance.pivot.localOrientation = b.instance.body.worldOrientation
 				
-				if self.pivot_center == "active object" then
+				if self.pivot_centre == "active object" then
 					self:calcOffsets()
 				else
 					self.widget.instance.pivot.localPosition = self:calcCentreOffsets()
