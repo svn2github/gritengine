@@ -9,16 +9,16 @@ hud_class `.` {
         self.needsFrameCallbacks = true
 
         --pointer is the notch at the top of the compass that marks where you're looking
-        self.pointer = gfx_hud_object_add(`/common/hud/Rect`, {texture=`Pointer.png`, zOrder=7})
+        self.pointer = hud_object `/common/hud/Rect` {texture=`Pointer.png`, zOrder=7}
         self.pointer.parent = self
         self.pointer.position = vec(0, self.size.y/2 - 24)
 
         -- compass orientation (what makes N point towards north) 
-        self.ring = gfx_hud_object_add(`/common/hud/Rect`, {texture=`Body.png`, size=self.size})
+        self.ring = hud_object `/common/hud/Rect` {texture=`Body.png`, size=self.size}
         self.ring.parent = self
 
         --player denotes the player model direction (if any)
-        self.player = gfx_hud_object_add(`/common/hud/Rect`, {texture=`Needle.png`})
+        self.player = hud_object `/common/hud/Rect` {texture=`Needle.png`}
         self.player.parent = self.ring
 
 

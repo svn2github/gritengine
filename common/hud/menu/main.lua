@@ -142,17 +142,17 @@ menu_pages = {
     projects = function()
         return hud_object `MenuPage` {
             buildChildren = function(self)
-                local image = gfx_hud_object_add(`/common/hud/Rect`, {
+                local image = hud_object `/common/hud/Rect` {
                     -- texture = `/common/hud/LoadingScreen/GritLogo.png`;
                     colour = vec(0.5, 0.5, 0.5);
                     size = vec(400, 200);
-                })
+                }
                 local description = hud_object `/common/hud/Label` {
                     font = `/common/fonts/Verdana18`;
                     size = vec(400, 40);
                     textColour = vec(1, 1, 1);
                     colour = vec(0, 0, 0);
-                    alignment = "CENTER";
+                    alignment = "CENTRE";
                     value = "Select a project"; 
                     alpha = 1;
                     enabled = true;

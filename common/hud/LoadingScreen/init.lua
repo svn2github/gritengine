@@ -11,7 +11,7 @@ hud_class `.` {
         
         self.texture = `Background.png`
         
-        self.logo = gfx_hud_object_add(`/common/hud/Rect`, {texture=`GritLogo.png`, parent=self, size=vec(600, 300)})
+        self.logo = hud_object `/common/hud/Rect` {texture=`GritLogo.png`, parent=self, size=vec(600, 300)}
         
         self.mapName = gfx_hud_text_add(`/common/fonts/Verdana18`)
         self.mapName.parent = self
@@ -22,11 +22,11 @@ hud_class `.` {
         self.mapStatus.colour = vector3(1, 0.5, 0)
         self.mapStatus.position = vec(0, -220)
 
-        self.loadingBarShadow = gfx_hud_object_add(`/common/hud/Rect`, {colour=vector3(0, 0, 0), alpha=0.25, parent=self})
+        self.loadingBarShadow = hud_object `/common/hud/Rect` {colour=vector3(0, 0, 0), alpha=0.25, parent=self}
         self.loadingBarShadow.size = vec(self.loadingBarSize.x+6, self.loadingBarSize.y+6)
         self.loadingBarShadow.position = vec(0, -300)
         
-        self.loadingBar = gfx_hud_object_add(`/common/hud/Rect`, {colour=vector3(1, 0.5, 0), parent=self.loadingBarShadow})
+        self.loadingBar = hud_object `/common/hud/Rect` {colour=vector3(1, 0.5, 0), parent=self.loadingBarShadow}
 
         self:setProgress(0.5)
         self:setStatus('status')

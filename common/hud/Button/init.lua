@@ -51,12 +51,12 @@ hud_class `.` {
         if self.greyed == nil then self.greyed = false end
 
         if self.borderTexture then
-            self.border = gfx_hud_object_add(`/common/hud/Rect`, {
+            self.border = hud_object `/common/hud/Rect` {
                 texture=self.borderTexture,
                 colour=self.borderColour,
                 parent=self,
                 cornered=self.cornered,
-            })
+            }
         end
         
         self:updateChildrenSize()

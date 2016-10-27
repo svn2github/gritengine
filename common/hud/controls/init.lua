@@ -33,7 +33,7 @@ hud_class `DragIcon` {
     end
 }
 safe_destroy(control_beaker)
-control_beaker = gfx_hud_object_add(`DragIcon`, { enabled = false })
+control_beaker = hud_object `DragIcon` { enabled = false }
 
 local Control = {
 
@@ -47,7 +47,7 @@ local Control = {
         self.needsInputCallbacks = true
         self.alpha = 0
         if self.showCaption then
-            self.label = gfx_hud_object_add(`/common/hud/Label`, {parent=self, borderColour=vec(0, 0, 0), value=self.caption, alpha = 0});
+            self.label = hud_object `/common/hud/Label` {parent=self, borderColour=vec(0, 0, 0), value=self.caption, alpha = 0}
         else
             self.size = vec(self.width, self.size.y)
         end
@@ -109,8 +109,8 @@ hud_class `ColourControl` (extends(Control) {
     initialAlpha = 1;
     init = function (self)
         Control.init(self)
-        self.square = gfx_hud_object_add(`/common/hud/Rect`, {parent=self, texture = `Capsule.png`})
-        self.alphaSquare = gfx_hud_object_add(`/common/hud/Rect`, {parent=self, texture = `CapsuleAlpha.png`})
+        self.square = hud_object `/common/hud/Rect` {parent=self, texture = `Capsule.png`}
+        self.alphaSquare = hud_object `/common/hud/Rect` {parent=self, texture = `CapsuleAlpha.png`}
         self:setColour(self.initialColour, self.initialAlpha)
         self:updateAppearance()
         self:updateChildrenSize();
@@ -162,7 +162,7 @@ hud_class `ValueControl` (extends(Control) {
     maxValue = 1;
     init = function (self)
         Control.init(self)    
-        self.valueDisplay = gfx_hud_object_add(`/common/hud/EditBox`, {
+        self.valueDisplay = hud_object `/common/hud/EditBox` {
             font=`/common/fonts/TinyFont`;
             parent=self;
             borderColour=vec(1,1,1);
@@ -188,7 +188,7 @@ hud_class `ValueControl` (extends(Control) {
                 self:onEditting(editting)
             end;
             onClick = function() self:onClick() end;
-        })
+        }
         self:updateChildrenSize()
         self:setValue(self.initialValue)
     end;
@@ -227,7 +227,7 @@ hud_class `EnumControl` (extends (Control) {
     options = { "False", "True" };
     init = function (self)
         Control.init(self)
-        self.valueDisplay = gfx_hud_object_add(`/common/hud/Label`, {parent=self, borderColour=vec(0,0,0)})
+        self.valueDisplay = hud_object `/common/hud/Label` {parent=self, borderColour=vec(0,0,0)}
         self:setValue(self.value)
         self:updateChildrenSize()
     end;

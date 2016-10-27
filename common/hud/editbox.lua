@@ -33,7 +33,7 @@ EditBoxClass = {
     font = `/common/fonts/Verdana12`;
     value = "Text";
     number = false;
-    alignment = "CENTER";
+    alignment = "CENTRE";
 	editing = false;
 	isPassword = false;
 	selection = vec(0, 0); -- begin, end
@@ -46,24 +46,24 @@ EditBoxClass = {
         self.text = gfx_hud_text_add(self.font)
         self.text.parent = self
 
-        self.border = gfx_hud_object_add(`Rect`, {
+        self.border = hud_object `Rect` {
             texture = `CornerTextures/Border02.png`;
             colour = self.borderColour;
             cornered = true;
             parent = self;
-        })
+        }
 
-        self.caret = gfx_hud_object_add(`Rect`, {
+        self.caret = hud_object `Rect` {
             texture = `CornerTextures/Caret.png`;
             colour = self.textColour;
             cornered = true;
             parent = self;
-        })
+        }
 
-		self.selectionBG = gfx_hud_object_add(`Rect`, {
+		self.selectionBG = hud_object `Rect` {
             colour = self.selectionColour;
             parent = self;
-        })
+        }
 		self.selectionBG.enabled = false
 		
         self.inside = false

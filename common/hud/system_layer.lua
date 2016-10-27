@@ -9,30 +9,30 @@ hud_class `SystemLayer` {
 
     init = function (self)
         self.needsParentResizedCallbacks = true
-        self.buttons = { padding = 10 }
+        local buttons = { padding = 10 }
 
-        self.consoleButton = gfx_hud_object_add(`Button`, {
+        self.consoleButton = hud_object `Button` {
             pressedCallback = function (button) self:onConsolePressed() end;
             autoSize = true;
             caption = "Console";
             orientation = -90;
             padding = self.buttonPadding;
             parent=self;
-        })
+        }
 
         for i, desc in ipairs(self.buttonDescs) do
             -- create 
             local panel = desc.panel
-            self.buttons[i] = gfx_hud_object_add(`Button`, {
+            buttons[i] = hud_object `Button` {
                 pressedCallback = function (button) self:onPanePress(i) end;
                 autoSize = true;
                 caption = desc.name;
                 orientation = -90;
                 padding = self.buttonPadding;
-            })
+            }
         end
 
-        self.buttonStack = gfx_hud_object_add(`StackY`, self.buttons)
+        self.buttonStack = hud_object `StackY` (buttons)
         self.buttonStack.parent = self
 
         local sp = self.selectedPane
@@ -115,7 +115,7 @@ if system_layer ~= nil then
     last_enabled = system_layer.enabled
     safe_destroy(system_layer)
 end
-system_layer = gfx_hud_object_add(`SystemLayer`, {
+system_layer = hud_object `SystemLayer` {
     console = console;
     consoleEnabled = console_enabled;
     selectedPane = selected_pane;
@@ -132,5 +132,5 @@ system_layer = gfx_hud_object_add(`SystemLayer`, {
             panel = music_player;
         },
     };
-})
+}
 system_layer:setEnabled(last_enabled)

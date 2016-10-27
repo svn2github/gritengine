@@ -36,17 +36,17 @@ hud_class `Stats` {
         for k,name in ipairs(self.keys) do
             local stat = self.stats[name]
             if stat ~= nil then
-                local label = gfx_hud_object_add(`Label`, {
+                local label = hud_object `Label` {
                     size=vec(self.width, 15),
                     alignment="RIGHT",
                     textColour=vec(0,0,0),
                     font=`/common/fonts/misc.fixed`,
-                })
+                }
                 self.labels[name] = label
                 tab[k] = label
             end
         end
-        self.stack = gfx_hud_object_add(`StackY`, tab)
+        self.stack = hud_object `StackY` (tab)
 
         self.stack.position = self.stack.size/2 * vec(-1,1)
     end;

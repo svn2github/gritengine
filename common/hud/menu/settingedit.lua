@@ -10,25 +10,25 @@ hud_class `SettingEdit` {
   init = function (self)
     self.needsInputCallbacks = true
 
-    self.label = gfx_hud_object_add(`/common/hud/Label`, {
+    self.label = hud_object `/common/hud/Label` {
         value = self.caption;
         font = `/common/fonts/Impact24`;
         colour = vec(1, 0, 0)*1;
         alpha = 0;
         parent = self;
-      })
+      }
     self.label.size = self.label.text.size
     self.label.position = vec2(-(self.label.parent.size.x / 2) + ((self.label.size.x / 2) + 10), 0)
 
     if type(self.valueLocation[self.valueKey]) == "boolean" then
-      self.setBackground = gfx_hud_object_add(`/common/hud/Rect`, {
+      self.setBackground = hud_object `/common/hud/Rect` {
           colour = vec(1, 1, 1) * 0.8;
           alpha = 0.5;
           size = vec(70, 35);
           parent = self;
-        })
+        }
       self.setBackground.position = vec2((self.setBackground.parent.size.x / 2) - ((self.setBackground.size.x / 2) + 5), 0)
-      self.set = gfx_hud_object_add(`/common/hud/Button`, {
+      self.set = hud_object `/common/hud/Button` {
           caption = tostring(self.valueLocation[self.valueKey]);
           captionFont = `/common/fonts/Impact24`;
           size = vec(70, 35);
@@ -47,7 +47,7 @@ hud_class `SettingEdit` {
             self.parent.valueLocation[self.parent.valueKey] = not self.parent.valueLocation[self.parent.valueKey]
             self:setCaption(tostring(self.parent.valueLocation[self.parent.valueKey]))
           end;
-        })
+        }
       self.set.position = vec2((self.set.parent.size.x / 2) - ((self.set.size.x / 2) + 5), 0)
     elseif(type(self.valueLocation[self.valueKey]) == "string")then
 

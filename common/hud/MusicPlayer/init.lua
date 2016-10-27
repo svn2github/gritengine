@@ -31,25 +31,25 @@ hud_class `.` {
         --self.audiosource = audio_body_make_ambient(playlist[self.trackID]);
         self.texture = `body.png`
         
-        self.showHideButton = gfx_hud_object_add(`/common/hud/Button`, {
+        self.showHideButton = hud_object `/common/hud/Button` {
             caption=":";
             captionFont=`/common/fonts/misc.fixed`;
             backgroundTexture=`/common/hud/CornerTextures/Filled04.png`;
             borderTexture=`/common/hud/CornerTextures/Border04.png`;
             size=vec(16, 16);
             parent=self,
-        })
+        }
         self.showHideButton.position = vec(self.size.x/2-32, self.size.y/2-18)
         self.showHideButton.pressedCallback = function(self2)
             system_layer:hidePane(self)
         end
         
-        self.playPauseButton = gfx_hud_object_add(`/common/hud/Button`, {
+        self.playPauseButton = hud_object `/common/hud/Button` {
             caption="▶",
             captionFont=`/common/fonts/misc.fixed`,
             size=vec(48, 32),
             parent=self,
-        })
+        }
         self.playPauseButton.position = vec(0, -90)
         self.playPauseButton.pressedCallback = function(this)
 			if(firstTime)then
@@ -67,12 +67,12 @@ hud_class `.` {
             end
         end
         
-        self.prevSongButton = gfx_hud_object_add(`/common/hud/Button`, {
+        self.prevSongButton = hud_object `/common/hud/Button` {
             caption="<",
             captionFont=`/common/fonts/misc.fixed`,
             size=vec(32, 24),
             parent=self,
-        })
+        }
         self.prevSongButton.position = vec(-52, -90)
         self.prevSongButton.pressedCallback = function(this)
             self.audiosource:destroy()
@@ -84,12 +84,12 @@ hud_class `.` {
             end
         end
         
-        self.nextSongButton = gfx_hud_object_add(`/common/hud/Button`, {
+        self.nextSongButton = hud_object `/common/hud/Button` {
             caption=">",
             captionFont=`/common/fonts/misc.fixed`,
             size=vec(32, 24),
             parent=self,
-        })
+        }
         self.nextSongButton.position = vec(52, -90)
         self.nextSongButton.pressedCallback = function(this)
             self.audiosource:destroy()

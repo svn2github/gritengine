@@ -13,23 +13,23 @@ hud_class `.` {
 
 		self.flare = {}
 
-		self.flare[0] = gfx_hud_object_add(`/common/hud/Rect`, { texture=`Flare6.png`, size=vec(16, 16), parent = self, colour = vec(0.085, 1, 0.15)*2 })
+		self.flare[0] = hud_object `/common/hud/Rect` { texture=`Flare6.png`, size=vec(16, 16), parent = self, colour = vec(0.085, 1, 0.15)*2 }
 		
-		self.flare[1] = gfx_hud_object_add(`/common/hud/Rect`, { texture=`Flare6.png`, size=vec(40, 40), parent = self, colour = vec(0.085, 0.7, 1)*2 })
+		self.flare[1] = hud_object `/common/hud/Rect` { texture=`Flare6.png`, size=vec(40, 40), parent = self, colour = vec(0.085, 0.7, 1)*2 }
 		
-        self.flare[2] = gfx_hud_object_add(`/common/hud/Rect`, { texture=`Flare5.png`, size=vec(2048, 2048), parent = self, colour = V_ID * 2 })
+        self.flare[2] = hud_object `/common/hud/Rect` { texture=`Flare5.png`, size=vec(2048, 2048), parent = self, colour = V_ID * 2 }
 		
-		self.flare[3] = gfx_hud_object_add(`/common/hud/Rect`, { texture=`Flare4.png`, size=vec(400, 400), parent = self, colour = V_ID * 2 })
+		self.flare[3] = hud_object `/common/hud/Rect` { texture=`Flare4.png`, size=vec(400, 400), parent = self, colour = V_ID * 2 }
 		
-		self.flare[4] = gfx_hud_object_add(`/common/hud/Rect`, { texture=`Flare3.png`, size=vec(300, 300), parent = self, colour = vec(0, 0.75, 0.65)*2 })
+		self.flare[4] = hud_object `/common/hud/Rect` { texture=`Flare3.png`, size=vec(300, 300), parent = self, colour = vec(0, 0.75, 0.65)*2 }
 		
-		self.flare[5] = gfx_hud_object_add(`/common/hud/Rect`, { texture=`Flare2.png`, size=vec(230, 230), parent = self, colour = vec(1, 0, 0.85)*2 })
+		self.flare[5] = hud_object `/common/hud/Rect` { texture=`Flare2.png`, size=vec(230, 230), parent = self, colour = vec(1, 0, 0.85)*2 }
 		
-		self.flare[6] = gfx_hud_object_add(`/common/hud/Rect`, { texture=`Flare2.png`, size=vec(200, 200), parent = self, colour = vec(1, 0, 0.85)*2 })
+		self.flare[6] = hud_object `/common/hud/Rect` { texture=`Flare2.png`, size=vec(200, 200), parent = self, colour = vec(1, 0, 0.85)*2 }
 
-        self.flare[7] = gfx_hud_object_add(`/common/hud/Rect`, { texture=`Flare1.png`, needsAlpha = true, size=vec(2048, 256), parent = self, colour = V_ID * 2 })	
+        self.flare[7] = hud_object `/common/hud/Rect` { texture=`Flare1.png`, needsAlpha = true, size=vec(2048, 256), parent = self, colour = V_ID * 2 }
 		
-        self.flare[8] = gfx_hud_object_add(`/common/hud/Rect`, { texture=`Flare0.png`, size=self.size, parent = self, colour = V_ID * 2 })
+        self.flare[8] = hud_object `/common/hud/Rect` { texture=`Flare0.png`, size=self.size, parent = self, colour = V_ID * 2 }
 		
 		self.flare[0].enabled = false
 		self.flare[1].enabled = false

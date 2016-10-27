@@ -1,7 +1,25 @@
 -- (c) David Cunningham 2013, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
+-- The classes in this file are intended to be used together to define a hierarchy layout of HUD
+-- objects.  The HUD objects must be statically sized, and the parents expand to accomodate the
+-- children.  This works well for static forms and the like.
+
+
+-- StackY takes a list of statically-sized HUD objects and positions them vertically.
+--
+-- The stack also resizes itself to wrap the objects, essentially turning them into a single
+-- object.
+--
+-- The elements are separated by padding, the amount of which can be overridden.
+--
+-- By putting in a vec2 as an element, more space can be added.
+--
+-- By default the stack is aligned CENTRE, but this can be modified by inserting
+-- { align = 'LEFT' } or 'RIGHT' into the list, which affects all subsequent elements.
 hud_class `StackY` {
+
     padding = 0;
+
     init = function (self)
         self.alpha = 0
         self.alignment = { }
@@ -14,7 +32,7 @@ hud_class `StackY` {
                     if mk == "align" then
                         if mv == "LEFT" then
                             alignment = -1
-                        elseif mv == "CENTER" then
+                        elseif mv == "CENTRE" then
                             alignment = 0
                         elseif mv == "RIGHT" then
                             alignment = 1
@@ -52,6 +70,8 @@ hud_class `StackY` {
         end
         self.size = vec(w, h)
     end;
+
+    -- Recursively execute the same function on all nodes of the tree, if that function exists.
     callAll = function (self, funcname, ...)
         for k,v in ipairs(self.contents or { }) do
             local func = v[funcname]
@@ -64,12 +84,25 @@ hud_class `StackY` {
             end
         end
     end;
+
     destroy = function (self)
     end;
 }
 
+
+-- StackX takes a list of statically-sized HUD objects and positions them horizontally.
+--
+-- The stack also resizes itself to wrap the objects, essentially turning them into a single
+-- object.
+--
+-- The elements are separated by padding, the amount of which can be overridden.
+-- By putting in a vec2 as an element, more space can be added.
+-- By default the stack is aligned CENTRE, but this can be modified by inserting
+-- { align = 'TOP' } or 'BOTTOM' into the list, which affects all subsequent elements.
 hud_class `StackX` {
+
     padding = 0;
+
     init = function (self)
         self.alpha = 0
         self.contents = { }
@@ -120,6 +153,8 @@ hud_class `StackX` {
         end
         self.size = vec(w, h)
     end;
+
+    -- Recursively execute the same function on all nodes of the tree, if that function exists.
     callAll = function (self, funcname, ...)
         for k,v in ipairs(self.contents or { }) do
             local func = v[funcname]
@@ -132,19 +167,25 @@ hud_class `StackX` {
             end
         end
     end;
+
     destroy = function (self)
     end;
 }
 
+
+-- Border puts a border around a single object.  It introduces a bit of extra padding.
 hud_class `Border` {
+
     padding = 4;
     texture = `CornerTextures/Border02.png`;
     size = vec(1, 1);
     cornered = true;
+
     init = function (self)
         self.child.parent = self
         self.size = self.child.bounds + vec(2,2)*self.padding
     end;
+
     callAll = function (self, funcname, ...)
         local func = self.child[funcname]
         if func ~= nil then
@@ -155,6 +196,7 @@ hud_class `Border` {
             end
         end
     end;
+
     destroy = function (self)
     end;
 }

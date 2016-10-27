@@ -8,15 +8,15 @@ hud_class `Speedo` {
         self.needsFrameCallbacks = true
         self.needsInputCallbacks = true
         local width = 108
-        self.labels = gfx_hud_object_add(`StackY`, {
+        self.labels = hud_object `StackY` {
             parent = self,
             padding = -1,
-            gfx_hud_object_add(`Label`, {font = `/common/fonts/TinyFont`, size=vec(width, 10), colour=vec(0,0,0) }),
-            gfx_hud_object_add(`Label`, {font = `/common/fonts/misc.fixed`, size=vec(width, 15), colour=vec(0,0,0) }),
-			gfx_hud_object_add(`Label`, {font = `/common/fonts/misc.fixed`, size=vec(width, 15), colour=vec(0,0,0) }),
-			gfx_hud_object_add(`Label`, {font = `/common/fonts/misc.fixed`, size=vec(width, 15), colour=vec(0,0,0) }),
-			gfx_hud_object_add(`Label`, {font = `/common/fonts/misc.fixed`, size=vec(width, 15), colour=vec(0,0,0), text="" }),
-        })
+            hud_object `Label` {font = `/common/fonts/TinyFont`, size=vec(width, 10), colour=vec(0,0,0) },
+            hud_object `Label` {font = `/common/fonts/misc.fixed`, size=vec(width, 15), colour=vec(0,0,0) },
+			hud_object `Label` {font = `/common/fonts/misc.fixed`, size=vec(width, 15), colour=vec(0,0,0) },
+			hud_object `Label` {font = `/common/fonts/misc.fixed`, size=vec(width, 15), colour=vec(0,0,0) },
+			hud_object `Label` {font = `/common/fonts/misc.fixed`, size=vec(width, 15), colour=vec(0,0,0), text="" },
+        }
         self.size = self.labels.size
     end;
 

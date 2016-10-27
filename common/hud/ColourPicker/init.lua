@@ -10,24 +10,24 @@ hud_class `.` {
         local scalesz = vec(388,20)
         local labsz = vec(41,20)
 
-        self.hueScale = gfx_hud_object_add("/common/hud/Scale", { onChange = on_change, size=scalesz, bgTexture=`bg_hue.png`,   bgColour=vec(1,1,1) })
-        self.satScale = gfx_hud_object_add("/common/hud/Scale", { onChange = on_change, size=scalesz, bgColour=vec(1,0,0), mgTexture=`bg_sat.png`, mgAlpha=1 })
-        self.valScale = gfx_hud_object_add("/common/hud/Scale", { onChange = on_change, size=scalesz, bgTexture=`bg_val.png`,   bgColour=vec(1,1,1), mgTexture=`bg_val_simple.png`, mgAlpha=0, mgColour=vec(1,1,1), gamma=true, maxValue=10 })
-        self.aScale   = gfx_hud_object_add("/common/hud/Scale", { onChange = on_change, size=scalesz, mgTexture=`bg_alpha.png`, mgColour=vec(1,1,1), mgAlpha=1, bgColour=vec(1,1,1) })
+        self.hueScale = hud_object `/common/hud/Scale` { onChange = on_change, size=scalesz, bgTexture=`bg_hue.png`,   bgColour=vec(1,1,1) }
+        self.satScale = hud_object `/common/hud/Scale` { onChange = on_change, size=scalesz, bgColour=vec(1,0,0), mgTexture=`bg_sat.png`, mgAlpha=1 }
+        self.valScale = hud_object `/common/hud/Scale` { onChange = on_change, size=scalesz, bgTexture=`bg_val.png`,   bgColour=vec(1,1,1), mgTexture=`bg_val_simple.png`, mgAlpha=0, mgColour=vec(1,1,1), gamma=true, maxValue=10 }
+        self.aScale   = hud_object `/common/hud/Scale` { onChange = on_change, size=scalesz, mgTexture=`bg_alpha.png`, mgColour=vec(1,1,1), mgAlpha=1, bgColour=vec(1,1,1) }
 
-        self.hueLabel = gfx_hud_object_add("/common/hud/Label", { size=labsz, value="Hue", alpha=0 })
-        self.satLabel = gfx_hud_object_add("/common/hud/Label", { size=labsz, value="Sat", alpha=0 })
-        self.valLabel = gfx_hud_object_add("/common/hud/Label", { size=labsz, value="Val", alpha=0 })
-        self.aLabel = gfx_hud_object_add("/common/hud/Label", { size=labsz, value="Alpha", alpha=0 })
+        self.hueLabel = hud_object `/common/hud/Label` { size=labsz, value="Hue", alpha=0 }
+        self.satLabel = hud_object `/common/hud/Label` { size=labsz, value="Sat", alpha=0 }
+        self.valLabel = hud_object `/common/hud/Label` { size=labsz, value="Val", alpha=0 }
+        self.aLabel = hud_object `/common/hud/Label` { size=labsz, value="Alpha", alpha=0 }
 
-        self.contents = gfx_hud_object_add("/common/hud/StackY", {
+        self.contents = hud_object `/common/hud/StackY` {
             parent = self, 
             padding = -1,
-            gfx_hud_object_add("/common/hud/StackX", { padding = -1, self.hueLabel, self.hueScale, }),
-            gfx_hud_object_add("/common/hud/StackX", { padding = -1, self.satLabel, self.satScale, }),
-            gfx_hud_object_add("/common/hud/StackX", { padding = -1, self.valLabel, self.valScale, }),
-            gfx_hud_object_add("/common/hud/StackX", { padding = -1, self.aLabel, self.aScale, }),
-        })
+            hud_object `/common/hud/StackX` { padding = -1, self.hueLabel, self.hueScale, },
+            hud_object `/common/hud/StackX` { padding = -1, self.satLabel, self.satScale, },
+            hud_object `/common/hud/StackX` { padding = -1, self.valLabel, self.valScale, },
+            hud_object `/common/hud/StackX` { padding = -1, self.aLabel, self.aScale, },
+        }
 
         self.size = self.contents.size
 
