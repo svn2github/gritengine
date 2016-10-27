@@ -830,15 +830,15 @@ okDialogButton = nil
 function okDialogcreation(subject, message, functioncall)
 if okDialogWindow == nil then
 	okDialogWindow = gui.window(subject, vec2(-1000,-1000), false, vec2(600, 200))
-	okDialogText = gfx_hud_object_add(`../common/hud/Label`, {
+	okDialogText = hud_object `../common/hud/Label` {
 		value = message;
 		size = vec(600, 150);
 		colour = 0.25 * vec(1, 1, 1);
 		parent = okDialogWindow;
 		position = vec2(0, 25);
-	})
+	}
 
-	okDialogButton = gfx_hud_object_add(`../common/hud/Button`, {
+	okDialogButton = hud_object `../common/hud/Button` {
 		caption = "Ok";
 		parent = okDialogWindow;
 		size = vec(600, 50);
@@ -849,7 +849,7 @@ if okDialogWindow == nil then
 			okDialogButton.functiontocall(true) 
 			okDialogWindow.position = vec2(-1000,-1000)
 		end);
-	})
+	}
 	okDialogWindow.position = vec2(0,0)
 else
 	okDialogWindow:setTitle(subject)
@@ -866,15 +866,15 @@ noDialogButton = nil
 function yesnoDialogcreation(subject, message, functioncall)
 if yesnoDialogWindow == nil then
 	yesnoDialogWindow = gui.window(subject, vec2(-1000,-1000), false, vec2(600, 200))
-	yesnoDialogText = gfx_hud_object_add(`../common/hud/Label`, {
+	yesnoDialogText = hud_object `../common/hud/Label` {
 		value = message;
 		size = vec(600, 150);
 		colour = 0.25 * vec(1, 1, 1);
 		parent = yesnoDialogWindow;
 		position = vec2(0, 25);
-	})
+	}
 
-	yesDialogButton = gfx_hud_object_add(`../common/hud/Button`, {
+	yesDialogButton = hud_object `../common/hud/Button` {
 		caption = "YES";
 		parent = yesnoDialogWindow;
 		size = vec(300, 50);
@@ -884,8 +884,8 @@ if yesnoDialogWindow == nil then
 			yesDialogButton.functiontocall(true) 
 			yesnoDialogWindow.position = vec2(-1000,-1000)
 		end);
-	})
-	noDialogButton = gfx_hud_object_add(`../common/hud/Button`, {
+	}
+	noDialogButton = hud_object `../common/hud/Button` {
 		caption = "NO";
 		parent = yesnoDialogWindow;
 		size = vec(300, 50);
@@ -895,7 +895,7 @@ if yesnoDialogWindow == nil then
 			noDialogButton.functiontocall(false) 
 			yesnoDialogWindow.position = vec2(-1000,-1000)
 		end);
-	})
+	}
 	yesnoDialogWindow.position = vec2(0,0)
 else
 	yesnoDialogWindow:setTitle(subject)
@@ -913,15 +913,15 @@ cancelCDialogButton = nil
 function yesnocancelDialogcreation(subject, message, functioncall)
 if yesnocancelDialogWindow == nil then
 	yesnocancelDialogWindow = gui.window(subject, vec2(-1000,-1000), false, vec2(600, 200))
-	yesnocancelDialogText = gfx_hud_object_add(`../common/hud/Label`, {
+	yesnocancelDialogText = hud_object `../common/hud/Label` {
 		value = message;
 		size = vec(600, 150);
 		colour = 0.25 * vec(1, 1, 1);
 		parent = yesnocancelDialogWindow;
 		position = vec2(0, 25);
-	})
+	}
 
-	yesCDialogButton = gfx_hud_object_add(`../common/hud/Button`, {
+	yesCDialogButton = hud_object `../common/hud/Button` {
 		caption = "YES";
 		parent = yesnocancelDialogWindow;
 		size = vec(200, 50);
@@ -931,8 +931,8 @@ if yesnocancelDialogWindow == nil then
 			yesCDialogButton.functiontocall(true) 
 			yesnocancelDialogWindow.position = vec2(-1000,-1000)
 		end);
-	})
-	noCDialogButton = gfx_hud_object_add(`../common/hud/Button`, {
+	}
+	noCDialogButton = hud_object `../common/hud/Button` {
 		caption = "NO";
 		parent = yesnocancelDialogWindow;
 		size = vec(200, 50);
@@ -942,8 +942,8 @@ if yesnocancelDialogWindow == nil then
 			noCDialogButton.functiontocall(false) 
 			yesnocancelDialogWindow.position = vec2(-1000,-1000)
 		end);
-	})
-	cancelCDialogButton = gfx_hud_object_add(`../common/hud/Button`, {
+	}
+	cancelCDialogButton = hud_object `../common/hud/Button` {
 		caption = "CANCEL";
 		parent = yesnocancelDialogWindow;
 		size = vec(200, 50);
@@ -953,7 +953,7 @@ if yesnocancelDialogWindow == nil then
 			cancelCDialogButton.functiontocall(nil) 
 			yesnocancelDialogWindow.position = vec2(-1000,-1000)
 		end);
-	})
+	}
 	yesnocancelDialogWindow.position = vec2(0,0)
 else
 	yesnocancelDialogWindow:setTitle(subject)

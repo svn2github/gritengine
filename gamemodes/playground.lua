@@ -107,7 +107,7 @@ function playground:init()
 	main.speedoSpeed = 0
 	
 	safe_destroy(self.speedo)
-	self.speedo = gfx_hud_object_add(`/common/hud/Speedo`, { parent = hud_top_right })
+	self.speedo = hud_object `/common/hud/Speedo` { parent = hud_top_right }
 	self.speedo.position = vec(-64, -128 - self.speedo.size.y/2)
 	
     self.coinsPickedUp = 0
