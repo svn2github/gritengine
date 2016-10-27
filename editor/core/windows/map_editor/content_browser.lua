@@ -280,12 +280,12 @@ hud_class `content_browser_floating_object` {
 addobjectelement = nil
 function create_floating(offset, mclass)
 	if addobjectelement == nil then
-		addobjectelement = gfx_hud_object_add(`content_browser_floating_object`, {
+		addobjectelement = hud_object `content_browser_floating_object` {
 			parent = hud_center,
 			draggingPos = offset,
 			obclass = mclass,
 			position = vec2(mouse_pos_abs.x-offset.x, mouse_pos_abs.y -offset.y)
-		})
+		}
 	end
 end
 
@@ -314,7 +314,7 @@ hud_class `ContentBrowser` (extends(WindowClass)
 
 		self.dir_tree.enabled = false
 
-		self.scrollarea = gfx_hud_object_add(`/common/gui/ScrollArea`, {
+		self.scrollarea = hud_object `/common/gui/ScrollArea` {
 			parent = self;
 			expand_x = true;
 			expand_y = true;
@@ -322,27 +322,27 @@ hud_class `ContentBrowser` (extends(WindowClass)
 			align = vec(-1, 1);
 			offset = vec(115, -35);
 			x_bar = false;
-		})
+		}
 		
-		self.file_explorer = gfx_hud_object_add(`/common/gui/file_list`, {
+		self.file_explorer = hud_object `/common/gui/file_list` {
 			position = vec2(0, 0);
 			parent = self;
 			size = vec2(self.size.x-20, self.size.y-120);
 			alpha = 0;
 			zOrder = 1;
-		})		
+		}
 		self.scrollarea:setContent(self.file_explorer)
 		
 		self.file_explorer.addItem = function(self, m_name, icon, pc, dpc, ccb)
 			if icon == nil then icon = `/common/gui/icons/foldericon.png` end
-			self.items[#self.items+1] = gfx_hud_object_add(`browser_icon2`, {
+			self.items[#self.items+1] = hud_object `browser_icon2` {
 				icon_texture = icon;
 				position = vec2(0, 0);
 				parent = self;
 				colour = vec(0.5, 0.5, 0.5);
 				size = vec2(self.icons_size.x, self.icons_size.y);
 				name = m_name;
-			})
+			}
 				
 			if pc ~= nil then
 				self.items[#self.items].pressedCallback = pc
@@ -381,7 +381,7 @@ hud_class `ContentBrowser` (extends(WindowClass)
 			align = vec(1, 1)		
 		})
 
-		self.dir_edbox = gfx_hud_object_add(`/common/gui/window_editbox`, {
+		self.dir_edbox = hud_object `/common/gui/window_editbox` {
 			parent = self;
 			value = self.currentdir;
 			alignment = "LEFT";
@@ -390,7 +390,7 @@ hud_class `ContentBrowser` (extends(WindowClass)
 			align = vec(-1, 1);
 			expand_x = true;
 			expand_offset = vec(-45, 0);
-		})
+		}
 		self.dir_edbox.enterCallback = function(self)
 			self.parent:update_file_explorer(self.value)
 			self.parent.currentdir = self.value
@@ -500,7 +500,7 @@ function create_content_browser()
 		content_browserx:destroy()
 	end
 	
-	content_browserx = gfx_hud_object_add(`ContentBrowser`, {
+	content_browserx = hud_object `ContentBrowser` {
 		title = "Class Browser";
 		parent = hud_center;
 		position = vec(230, -200);
@@ -509,7 +509,7 @@ function create_content_browser()
 		min_size = vec2(470, 235);
 		colour = _current_theme.colours.window.background;
 		alpha = 1;	
-	})
+	}
 	_windows[#_windows+1] = content_browserx
 	set_active_window(content_browserx)
 	return content_browserx

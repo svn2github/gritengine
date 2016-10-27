@@ -30,7 +30,7 @@ hud_class `Settings` (extends(WindowClass)
 			align = vec(-1, 1);
 			offset = vec(10, -25);		
 		})
-		self.content.general_panel.X = gfx_hud_object_add(`/common/gui/window_editbox`, {
+		self.content.general_panel.X = hud_object `/common/gui/window_editbox` {
 			parent = self.content.general_panel;
 			value = "0";
 			alignment = "LEFT";
@@ -43,8 +43,8 @@ hud_class `Settings` (extends(WindowClass)
 			expand_x = false;
 			expand_offset = vec(-20, 0);
 			colour = vec(1, 0, 0);
-		})
-		self.content.general_panel.Y = gfx_hud_object_add(`/common/gui/window_editbox`, {
+		}
+		self.content.general_panel.Y = hud_object `/common/gui/window_editbox` {
 			parent = self.content.general_panel;
 			value = "0";
 			alignment = "LEFT";
@@ -57,8 +57,8 @@ hud_class `Settings` (extends(WindowClass)
 			expand_x = false;
 			expand_offset = vec(-20, 0);
 			colour = vec(0, 1, 0);
-		})		
-		self.content.general_panel.Z = gfx_hud_object_add(`/common/gui/window_editbox`, {
+		}
+		self.content.general_panel.Z = hud_object `/common/gui/window_editbox` {
 			parent = self.content.general_panel;
 			value = "0";
 			alignment = "LEFT";
@@ -71,7 +71,7 @@ hud_class `Settings` (extends(WindowClass)
 			expand_x = false;
 			expand_offset = vec(-20, 0);
 			colour = vec(0, 0, 1);
-		})
+		} 
 		self.content.general_panel.button = gui.button({
 			caption = "Teleport";
 			parent = self.content.general_panel;
@@ -123,7 +123,7 @@ hud_class `Settings` (extends(WindowClass)
 			offset = vec(10, -5);		
 		})		
 		local fovcb = function(self) gfx_option("FOV", tonumber(self.value)) end
-		self.content.debug_panel.foved = gfx_hud_object_add(`/common/gui/window_editbox`, {
+		self.content.debug_panel.foved = hud_object `/common/gui/window_editbox` {
 			parent = self.content.debug_panel;
 			value = tostring(gfx_option("FOV"));
 			alignment = "LEFT";
@@ -132,7 +132,7 @@ hud_class `Settings` (extends(WindowClass)
 			size = vec(50, 20);
 			align = vec(-1, 1);
 			offset = vec(50, -5);
-		})		
+		}
 
 		self.content.debug_panel.farc = gui.text({
 			value = "Far Clip: ",
@@ -142,7 +142,7 @@ hud_class `Settings` (extends(WindowClass)
 		})		
 		
 		local fccb =  function(self) gfx_option("FAR_CLIP", tonumber(self.value)) end
-		self.content.debug_panel.farced = gfx_hud_object_add(`/common/gui/window_editbox`, {
+		self.content.debug_panel.farced = hud_object `/common/gui/window_editbox` {
 			parent = self.content.debug_panel;
 			value = tostring(gfx_option("FAR_CLIP"));
 			alignment = "LEFT";
@@ -151,7 +151,7 @@ hud_class `Settings` (extends(WindowClass)
 			size = vec(50, 20);
 			align = vec(-1, 1);
 			offset = vec(70, -95);
-		})			
+		}
 		
 		self.content.debug_panel.fcol = gui.checkbox({
 			caption = "Distance Fog",
@@ -267,7 +267,7 @@ hud_class `Settings` (extends(WindowClass)
 		
 		local cbcb = function(self) WeaponCreate.class = self.value end;
 		
-		self.content.placement_panel.classb = gfx_hud_object_add(`/common/gui/window_editbox`, {
+		self.content.placement_panel.classb = hud_object `/common/gui/window_editbox` {
 			parent = self.content.placement_panel;
 			value = `/common/veg/Tree_aelm`;
 			alignment = "LEFT";
@@ -278,7 +278,7 @@ hud_class `Settings` (extends(WindowClass)
 			offset = vec(10, -25);
 			expand_x = true;
 			expand_offset = vec(-20, 0);
-		})		
+		}
 		self.content.placement_panel.offsett = gui.text({
 			value = "Additional ground offset: ",
 			parent = self.content.placement_panel,
@@ -286,7 +286,7 @@ hud_class `Settings` (extends(WindowClass)
 			offset = vec(10, -45);		
 		})
 		local ofcb =  function(self) WeaponCreate.additionalOffset = tonumber(self.value) or 0 end
-		self.content.placement_panel.offset = gfx_hud_object_add(`/common/gui/window_editbox`, {
+		self.content.placement_panel.offset = hud_object `/common/gui/window_editbox` {
 			parent = self.content.placement_panel;
 			value = "0";
 			alignment = "LEFT";
@@ -295,7 +295,7 @@ hud_class `Settings` (extends(WindowClass)
 			size = vec(50, 20);
 			align = vec(-1, 1);
 			offset = vec(10, -65);
-		})
+		}
 		
 		self.content.placement_panel.button1 = gui.button({
 			caption = "Clear last placed object";
@@ -326,7 +326,7 @@ hud_class `Settings` (extends(WindowClass)
 			offset = vec(10, -5);		
 		})
 		local cbcb2 = function(self) WeaponCreate.class = self.value end
-		self.content.object_panel.classb = gfx_hud_object_add(`/common/gui/window_editbox`, {
+		self.content.object_panel.classb = hud_object `/common/gui/window_editbox` {
 			parent = self.content.object_panel;
 			value = `/common/veg/Tree_aelm`;
 			alignment = "LEFT";
@@ -337,14 +337,14 @@ hud_class `Settings` (extends(WindowClass)
 			offset = vec(10, -25);
 			expand_x = true;
 			expand_offset = vec(-20, 0);
-		})		
+		}
 		self.content.object_panel.vel = gui.text({
 			value = "Velocity (m/s): ",
 			parent = self.content.object_panel,
 			align = vec(-1, 1);
 			offset = vec(10, -45);		
 		})		
-		self.content.object_panel.velt = gfx_hud_object_add(`/common/gui/window_editbox`, {
+		self.content.object_panel.velt = hud_object `/common/gui/window_editbox` {
 			parent = self.content.object_panel;
 			value = "1";
 			alignment = "LEFT";
@@ -352,7 +352,7 @@ hud_class `Settings` (extends(WindowClass)
 			size = vec(50, 20);
 			align = vec(-1, 1);
 			offset = vec(10, -65);
-		})
+		}
 		self.content.object_panel.teleport = gui.text({
 			value = "Spin: ",
 			parent = self.content.object_panel,
@@ -363,7 +363,7 @@ hud_class `Settings` (extends(WindowClass)
 				WeaponCreate.spin = self.value
 				print(GREEN.."TODO")
 			end
-		self.content.object_panel.X = gfx_hud_object_add(`/common/gui/window_editbox`, {
+		self.content.object_panel.X = hud_object `/common/gui/window_editbox` {
 			parent = self.content.object_panel;
 			value = "0";
 			alignment = "LEFT";
@@ -375,12 +375,12 @@ hud_class `Settings` (extends(WindowClass)
 			expand_x = false;
 			expand_offset = vec(-20, 0);
 			colour = vec(1, 0, 0);
-		})
+		}
 		local wpscby = function(self)
 				WeaponCreate.spin = self.value
 				print(GREEN.."TODO")
 			end		
-		self.content.object_panel.Y = gfx_hud_object_add(`/common/gui/window_editbox`, {
+		self.content.object_panel.Y = hud_object `/common/gui/window_editbox` {
 			parent = self.content.object_panel;
 			value = "0";
 			alignment = "LEFT";
@@ -392,12 +392,12 @@ hud_class `Settings` (extends(WindowClass)
 			expand_x = false;
 			expand_offset = vec(-20, 0);
 			colour = vec(0, 1, 0);
-		})		
+		}
 		local wpscbz = function(self)
 				WeaponCreate.spin = self.value
 				print(GREEN.."TODO")
 			end		
-		self.content.object_panel.Z = gfx_hud_object_add(`/common/gui/window_editbox`, {
+		self.content.object_panel.Z = hud_object `/common/gui/window_editbox` {
 			parent = self.content.object_panel;
 			value = "0";
 			alignment = "LEFT";
@@ -409,7 +409,7 @@ hud_class `Settings` (extends(WindowClass)
 			expand_x = false;
 			expand_offset = vec(-20, 0);
 			colour = vec(0, 0, 1);
-		})
+		}
 		self.content.object_panel.button1 = gui.button({
 			caption = "Clear last placed object";
 			parent = self.content.object_panel;
@@ -442,7 +442,7 @@ hud_class `Settings` (extends(WindowClass)
 		local cbcb3 = function(self)
 				WeaponFlame.class = self.value
 		end
-		self.content.particles_panel.classb = gfx_hud_object_add(`/common/gui/window_editbox`, {
+		self.content.particles_panel.classb = hud_object `/common/gui/window_editbox` {
 			parent = self.content.particles_panel;
 			value = `/common/particles/Flame`;
 			alignment = "LEFT";
@@ -453,7 +453,7 @@ hud_class `Settings` (extends(WindowClass)
 			offset = vec(10, -25);
 			expand_x = true;
 			expand_offset = vec(-20, 0);
-		})		
+		}
 		self.content.particles_panel.button1 = gui.button({
 			caption = "Clear all particles";
 			parent = self.content.particles_panel;
@@ -504,7 +504,7 @@ hud_class `Settings` (extends(WindowClass)
 			offset = vec(10, -25);
 		})
 
-		self.content.prod_panel.X = gfx_hud_object_add(`/common/gui/window_editbox`, {
+		self.content.prod_panel.X = hud_object `/common/gui/window_editbox` {
 			parent = self.content.prod_panel;
 			value = "0";
 			alignment = "LEFT";
@@ -520,9 +520,9 @@ hud_class `Settings` (extends(WindowClass)
 			expand_x = false;
 			expand_offset = vec(-20, 0);
 			colour = vec(1, 0, 0);
-		})
+		}
 
-		self.content.prod_panel.Y = gfx_hud_object_add(`/common/gui/window_editbox`, {
+		self.content.prod_panel.Y = hud_object `/common/gui/window_editbox` {
 			parent = self.content.prod_panel;
 			value = "0";
 			alignment = "LEFT";
@@ -538,9 +538,9 @@ hud_class `Settings` (extends(WindowClass)
 			expand_x = false;
 			expand_offset = vec(-20, 0);
 			colour = vec(0, 1, 0);
-		})		
+		}		
 		
-		self.content.prod_panel.Z = gfx_hud_object_add(`/common/gui/window_editbox`, {
+		self.content.prod_panel.Z = hud_object `/common/gui/window_editbox` {
 			parent = self.content.prod_panel;
 			value = "0";
 			alignment = "LEFT";
@@ -557,7 +557,7 @@ hud_class `Settings` (extends(WindowClass)
 			expand_x = false;
 			expand_offset = vec(-20, 0);
 			colour = vec(0, 0, 1);
-		})		
+		}
 		
 		self.content.prod_panel.direction.text.alpha = 0.5
 		self.content.prod_panel.X.alpha = 0.5

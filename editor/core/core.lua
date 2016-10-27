@@ -342,7 +342,7 @@ function GED:createDebugModeSettingsWindow()
 		self.debugModeSettingsWindow:destroy()
 	end
 
-	self.debugModeSettingsWindow = gfx_hud_object_add(`/editor/core/windows/debug_mode/Settings`, {
+	self.debugModeSettingsWindow = hud_object `/editor/core/windows/debug_mode/Settings` {
 		title = "Debug Mode Settings";
 		parent = hud_center;
 		position = vec(0, 0);
@@ -351,7 +351,7 @@ function GED:createDebugModeSettingsWindow()
 		min_size = vec2(620, 500);
 		-- colour = _current_theme.colours.window.background;
 		alpha = 1;	
-	})
+	}
 
 	_windows[#_windows+1] = self.debugModeSettingsWindow
 end

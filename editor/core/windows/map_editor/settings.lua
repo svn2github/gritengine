@@ -27,7 +27,7 @@ hud_class `Settings` (extends(WindowClass)
 			end,
 		})
 		
-		self.content.general_panel.openstartupmap_editbox = gfx_hud_object_add(`/common/gui/window_editbox`, {
+		self.content.general_panel.openstartupmap_editbox = hud_object `/common/gui/window_editbox` {
 			parent = self.content.general_panel;
 			value = editor_cfg.startup_map;
 			alignment = "LEFT";
@@ -39,7 +39,7 @@ hud_class `Settings` (extends(WindowClass)
 			offset = vec(5, -30);
 			expand_x = true;
 			expand_offset = vec(-20, 0);
-		})
+		}
 		self.content.general_panel.openstartupmap_editbox:setGreyed(not editor_cfg.load_startup_map)
 
 		self.content.themes_panel = gui.notebookpanel()

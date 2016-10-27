@@ -15,21 +15,21 @@ hud_class `Expand_List_Item` {
 		self.time_since_last_update = 0
 		--self.colour=random_colour()
 		self.colour=vec(0.5, 0.5, 0.5)
-		self.title_pos = gfx_hud_object_add(`/common/hud/Positioner`, {
+		self.title_pos = hud_object `/common/hud/Positioner` {
 			parent = self;
 			offset = vec2(10, 0);
 			factor = vec2(-0.5, 0);
-		})
+		}
 		self.title = gfx_hud_text_add(`/common/fonts/Verdana12`)
 		self.title.parent= self.title_pos
 		self:setTitle(self.name)
 		
-		self.value = gfx_hud_object_add(`/common/hud/EditBox`, {
+		self.value = hud_object `/common/hud/EditBox` {
 			value = "/.gmap";
 			size = vec((self.size.x/2) - self.title.size.x+15,20);
 			alignment = "LEFT";
 			parent=self;
-		})
+		}
 		
 		self.value:setValue(self.default_value)
 		
@@ -40,11 +40,11 @@ hud_class `Expand_List_Item` {
 			end
 		end;
 		
-		-- self.value_pos = gfx_hud_object_add('/common/hud/Positioner', {
+		-- self.value_pos = hud_object '/common/hud/Positioner' {
 			-- parent = self;
 			-- offset = vec2(-self.value .size.x/2-5, 0);
 			-- factor = vec2(0.5, 0);
-		-- })
+		-- }
 		
 		-- self.value.parent = self.value_pos 
 		
@@ -111,18 +111,18 @@ hud_class `Expand_List` {
 			cornered = true;
 		})
 		self.base.texture = `/common/gui/icons/grad_notebook.png`;
-		self.title_pos = gfx_hud_object_add(`/common/hud/Positioner`, {
+		self.title_pos = hud_object `/common/hud/Positioner` {
 			parent = self.base;
 			offset = vec2(10, 0);
 			factor = vec2(-0.5, 0);
-		})
+		}
 		self.title = gfx_hud_text_add(`/common/fonts/Verdana12`)
 		self.title.parent= self.title_pos
 		self.title.text = self.caption
 		self:setTitle(self.caption)
 
         -- TODO: Use /common/hud/Positioner instead of custom parentResizedCallback.
-		self.expand_btn = gfx_hud_object_add(`/common/hud/Button`, {				
+		self.expand_btn = hud_object `/common/hud/Button` {				
 				caption = "-";
 				padding = vec(8, 1);
 				cornered = true;
@@ -132,18 +132,18 @@ hud_class `Expand_List` {
 				backgroundPassiveColour = vec(0.2, 0.2, 0.2);
 				backgroundHoverColour = vec(1, 0.5, 0);
 				backgroundClickColour = vec(0.7, 0.3, 0);
-		})
+		}
 		self.expand_btn.texture = `/common/gui/icons/grad_notebook.png`
 		self.expand_btn.border.enabled = false
 		--self.expand_btn.texture = `../icons/invdeg.png`;
 		--self.expand_btn.border.texture = nil
 		--self.expand_btn.border.enabled=false
 		self.expand_btn.border.colour=vec(1, 0.5, 0)
-		self.expand_button_pos = gfx_hud_object_add(`/common/hud/Positioner`, {
+		self.expand_button_pos = hud_object `/common/hud/Positioner` {
 			parent = self.base;
 			offset = vec2(-self.expand_btn.size.x/2-5, 0);
 			factor = vec2(0.5, 0);
-		})
+		}
 		
 		self.expand_btn.parent = self.expand_button_pos 
 		self.expand_btn.pressedCallback = function (self)
@@ -157,11 +157,11 @@ hud_class `Expand_List` {
 			self.parent.parent.parent:expand()
 		end;
 
-		self.container_pos = gfx_hud_object_add(`/common/hud/Positioner`, {
+		self.container_pos = hud_object `/common/hud/Positioner` {
 			parent = self.base;
 			offset = vec2(0, -self.base.size.x/2);
 			factor = vec2(0, -0.5);
-		})
+		}
 		
 		self.container = create_rect({
 			colour=vec(0.3, 0.3, 0.3);
@@ -193,7 +193,13 @@ hud_class `Expand_List` {
 	end;	
 	
 	addItem = function (self, nm, defvalue, ecallback)
-		self.items[#self.items+1] = gfx_hud_object_add(`Expand_List_Item`, {parent=self.container, position=vec(0, (#self.items+1)*-22), name=nm, default_value=defvalue, entercallback = ecallback})
+		self.items[#self.items+1] = hud_object `Expand_List_Item` {
+            parent = self.container,
+            position = vec(0, (#self.items+1)*-22),
+            name = nm,
+            default_value = defvalue,
+            entercallback = ecallback
+        }
 		self:reorganize()
 		return self.items[#self.items]
 	end;	
@@ -266,14 +272,14 @@ ty = ty
 
 function editor_init_windows()
     if ty ~= nil then safe_destroy(ty) end
-    ty = gfx_hud_object_add(`Expand_List`, {
+    ty = hud_object `Expand_List` {
         parent = editor_interface.map_editor_page.windows.level_properties,
         caption = "Common",
         needsInputCallbacks = true;
         btcallbacks = function(self)
             update_level_properties()
         end;
-    })
+    }
     ty.needsInputCallbacks = true
 
     ty:addItem("Name: ", "Map name", function(self) current_map.name = self.value.value end)

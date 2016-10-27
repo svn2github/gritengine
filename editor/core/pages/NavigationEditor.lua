@@ -502,7 +502,7 @@ editor_interface.navigation_editor =
 			self.windows.tools:destroy()
 		end
 
-		self.windows.tools = gfx_hud_object_add(`/editor/core/windows/navigation_editor/Tools`, {
+		self.windows.tools = hud_object `/editor/core/windows/navigation_editor/Tools` {
 			title = "Tools";
 			parent = hud_center;
 			position = vec(-390, 100);
@@ -511,7 +511,7 @@ editor_interface.navigation_editor =
 			min_size = vec(180, 225);
 			colour = _current_theme.colours.window.background;
 			alpha = 1;	
-		})
+		}
 		_windows[#_windows+1] = self.windows.tools
 		set_active_window(self.windows.tools)
 		return self.windows.tools
@@ -522,7 +522,7 @@ editor_interface.navigation_editor =
 			self.windows.debug:destroy()
 		end
 
-		self.windows.debug = gfx_hud_object_add(`/editor/core/windows/navigation_editor/Debug`, {
+		self.windows.debug = hud_object `/editor/core/windows/navigation_editor/Debug` {
 			title = "Debug";
 			parent = hud_center;
 			position = vec(-390, -200);
@@ -531,7 +531,7 @@ editor_interface.navigation_editor =
 			min_size = vec(200, 250);
 			colour = _current_theme.colours.window.background;
 			alpha = 1;	
-		})
+		}
 		_windows[#_windows+1] = self.windows.debug
 		set_active_window(self.windows.debug)
 		return self.windows.debug

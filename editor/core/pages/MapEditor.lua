@@ -518,7 +518,7 @@ editor_interface.map_editor_page =
 			self.windows.settings:destroy()
 		end
 		
-		self.windows.settings = gfx_hud_object_add(`/editor/core/windows/map_editor/Settings`, {
+		self.windows.settings = hud_object `/editor/core/windows/map_editor/Settings` {
 			title = "Editor Settings";
 			parent = hud_center;
 			position = vec2(editor_interface_cfg.settings.position[1], editor_interface_cfg.settings.position[2]);
@@ -527,7 +527,7 @@ editor_interface.map_editor_page =
 			min_size = vec2(470, 235);
 			colour = _current_theme.colours.window.background;
 			alpha = 1;	
-		})
+		}
 		_windows[#_windows+1] = self.windows.settings
 
 		self.windows.event_editor.enabled = editor_interface_cfg.event_editor.opened
