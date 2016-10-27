@@ -205,7 +205,7 @@ function gui.slider(s_caption_ortab, s_position, s_defaultvalue, s_parent, s_min
 			caption = s_caption_ortab or "",
 			position = s_position or vec(0, 0),
 			value = s_defaultvalue or 0,
-			parent = s_parent or hud_center,
+			parent = s_parent or hud_centre,
 			maxValue = s_maxvalue or 1,
 			minValue = s_minvalue or 0,
 			step = s_stepsize or 0,

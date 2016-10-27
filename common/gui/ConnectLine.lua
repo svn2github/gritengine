@@ -3,11 +3,11 @@
 --
 -- Examples:
 -- 1:
--- hudobj = hud_object `/common/gui/Draggable` { parent = hud_center, size=vec(64, 64), colour=vec(0, 0, 1), position=vec(100, -50) })
--- hudobj2 = hud_object `/common/gui/Draggable` { parent = hud_center, size=vec(64, 64), colour=vec(1, 0, 0), position=vec(50, -100)})
--- myLine = gui.connectline({ parent = hud_center; p1 = hudobj; p2 = hudobj2 })
+-- hudobj = hud_object `/common/gui/Draggable` { parent = hud_centre, size=vec(64, 64), colour=vec(0, 0, 1), position=vec(100, -50) })
+-- hudobj2 = hud_object `/common/gui/Draggable` { parent = hud_centre, size=vec(64, 64), colour=vec(1, 0, 0), position=vec(50, -100)})
+-- myLine = gui.connectline({ parent = hud_centre; p1 = hudobj; p2 = hudobj2 })
 -- 2:
--- myLine = gui.connectline({ parent = hud_center; p1 = vec(0, 0); p2 = vec(10, -50) })
+-- myLine = gui.connectline({ parent = hud_centre; p1 = vec(0, 0); p2 = vec(10, -50) })
 --
 --
 --  (c) 2015 Augusto P. Moura (augustomoura94@hotmail.com)

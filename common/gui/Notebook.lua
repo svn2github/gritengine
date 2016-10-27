@@ -210,5 +210,5 @@ function gui.notebook(t_parent)
 end
 
 function gui.notebookpanel()
-	return gui.boxsizer({ parent = hud_center, position = vec2(0, 0), size = vec(0, 0), colour = random_colour(), enabled = false })
+	return gui.boxsizer({ parent = hud_centre, position = vec2(0, 0), size = vec(0, 0), colour = random_colour(), enabled = false })
 end

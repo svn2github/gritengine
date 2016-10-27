@@ -44,7 +44,7 @@ hud_class `Stretcher` {
     end;
 }   
 
-hud_center = hud_center or hud_object `Positioner` { factor = vec(0.5, 0.5) }
+hud_centre = hud_centre or hud_object `Positioner` { factor = vec(0.5, 0.5) }
 hud_bottom = hud_bottom or hud_object `Positioner` { factor = vec(0.5, 0) }
 hud_bottom_left = hud_bottom_left or hud_object `Positioner` { factor = vec(0.0, 0.0) }
 hud_bottom_right = hud_bottom_right or hud_object `Positioner` { factor = vec(1.0, 0.0) }

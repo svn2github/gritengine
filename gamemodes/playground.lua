@@ -118,7 +118,7 @@ function playground:init()
     self.centreNotify = gfx_hud_text_add(`/common/fonts/Impact50`)
     self.centreNotify.text = ''
     self.centreNotify.position = vec(0, 100)
-    self.centreNotify.parent = hud_center
+    self.centreNotify.parent = hud_centre
     self.centreNotify.shadow = vec(6, -3)
     self.centreNotify.colour = vec(1, .7, .3)
 

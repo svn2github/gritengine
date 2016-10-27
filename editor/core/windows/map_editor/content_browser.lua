@@ -281,7 +281,7 @@ addobjectelement = nil
 function create_floating(offset, mclass)
 	if addobjectelement == nil then
 		addobjectelement = hud_object `content_browser_floating_object` {
-			parent = hud_center,
+			parent = hud_centre,
 			draggingPos = offset,
 			obclass = mclass,
 			position = vec2(mouse_pos_abs.x-offset.x, mouse_pos_abs.y -offset.y)
@@ -502,7 +502,7 @@ function create_content_browser()
 	
 	content_browserx = hud_object `ContentBrowser` {
 		title = "Class Browser";
-		parent = hud_center;
+		parent = hud_centre;
 		position = vec(230, -200);
 		resizeable = true;
 		size = vec2(560, 320);

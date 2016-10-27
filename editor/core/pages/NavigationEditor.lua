@@ -4,7 +4,7 @@ include`/editor/core/windows/navigation_editor/debug.lua`
 function open_navmesh_dialog()
 	gui.open_file_dialog({
 		title = "Open navmesh";
-		parent = hud_center;
+		parent = hud_centre;
 		position = vec(0, 0);
 		resizeable = true;
 		size = vec2(720, 465);
@@ -31,7 +31,7 @@ end
 function save_navmesh_dialog()
 	gui.save_file_dialog({
 		title = "Save navmesh";
-		parent = hud_center;
+		parent = hud_centre;
 		position = vec(0, 0);
 		resizeable = true;
 		size = vec2(720, 465);
@@ -105,7 +105,7 @@ editor_interface.navigation_editor =
 	init = function(self)
 		local _ = nil
 
-		self.propertiesToolpanel = gui.toolpanel({ size = vec(200, 786), parent = hud_center, offset = vec(0, 20), expand_offset = vec(0, -75), expand_y = true })
+		self.propertiesToolpanel = gui.toolpanel({ size = vec(200, 786), parent = hud_centre, offset = vec(0, 20), expand_offset = vec(0, -75), expand_y = true })
 		self.propertiesToolpanel.icon.alpha = 0
 		
 		self.propertiesToolpanel.bxsz = gui.boxsizer(true, "vertical", self.propertiesToolpanel)
@@ -311,7 +311,7 @@ editor_interface.navigation_editor =
 		self:create_debug()
 		
 		self.menubar = gui.menubar({
-			parent = hud_center;
+			parent = hud_centre;
 			size = vec(20, 26);
 			offset = vec(0, -29);
 			expand_x = true;
@@ -504,7 +504,7 @@ editor_interface.navigation_editor =
 
 		self.windows.tools = hud_object `/editor/core/windows/navigation_editor/Tools` {
 			title = "Tools";
-			parent = hud_center;
+			parent = hud_centre;
 			position = vec(-390, 100);
 			resizeable = true;
 			size = vec(180, 225);
@@ -524,7 +524,7 @@ editor_interface.navigation_editor =
 
 		self.windows.debug = hud_object `/editor/core/windows/navigation_editor/Debug` {
 			title = "Debug";
-			parent = hud_center;
+			parent = hud_centre;
 			position = vec(-390, -200);
 			resizeable = true;
 			size = vec(200, 250);

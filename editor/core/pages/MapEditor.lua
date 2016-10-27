@@ -1,7 +1,7 @@
 function open_map_dialog()
 	gui.open_file_dialog({
 		title = "Open Map";
-		parent = hud_center;
+		parent = hud_centre;
 		position = vec(0, 0);
 		resizeable = true;
 		size = vec2(560, 390);
@@ -28,7 +28,7 @@ end
 function save_map_dialog()
 	gui.save_file_dialog({
 		title = "Save Map";
-		parent = hud_center;
+		parent = hud_centre;
 		position = vec(0, 0);
 		resizeable = true;
 		size = vec2(560, 390);
@@ -98,7 +98,7 @@ editor_interface.map_editor_page =
 	
 	init = function(self)
 		self.menubar = gui.menubar({
-			parent = hud_center;
+			parent = hud_centre;
 			size = vec(20, 26);
 			offset = vec(0, -29);
 			expand_x = true;
@@ -431,7 +431,7 @@ editor_interface.map_editor_page =
 		self.toolbar:addTool("Editor Settings", map_editor_icons.config, (function(self) open_window(editor_interface.map_editor_page.windows.settings) end), "Editor Settings")
 
 		self.mlefttoolbar = gui.toolbar({
-			parent = hud_center;
+			parent = hud_centre;
 			zOrder = 5;
 			offset = vec(0, 20);
 			expand_offset = vec(0, -75);
@@ -520,7 +520,7 @@ editor_interface.map_editor_page =
 		
 		self.windows.settings = hud_object `/editor/core/windows/map_editor/Settings` {
 			title = "Editor Settings";
-			parent = hud_center;
+			parent = hud_centre;
 			position = vec2(editor_interface_cfg.settings.position[1], editor_interface_cfg.settings.position[2]);
 			resizeable = true;
 			size = vec2(editor_interface_cfg.settings.size[1], editor_interface_cfg.settings.size[2]);

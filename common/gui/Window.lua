@@ -242,7 +242,7 @@ function gui.window(w_title, pos, res, w_size, w_min_size, w_max_size, w_bk_colo
 	else
 		t_window = hud_object `Window` {
 			title = w_title;
-			parent = hud_center;
+			parent = hud_centre;
 			position = pos;
 			resizeable = res;
 			size = w_size;

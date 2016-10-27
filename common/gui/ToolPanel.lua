@@ -68,4 +68,4 @@ end
 
 -- safe_destroy(mtlpn)
 
--- mtlpn = gui.toolpanel({ size = vec(150, 786), parent = hud_center, offset = vec(0, 20), expand_offset = vec(0, -75), expand_y = true })
+-- mtlpn = gui.toolpanel({ size = vec(150, 786), parent = hud_centre, offset = vec(0, 20), expand_offset = vec(0, -75), expand_y = true })

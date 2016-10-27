@@ -344,7 +344,7 @@ function GED:createDebugModeSettingsWindow()
 
 	self.debugModeSettingsWindow = hud_object `/editor/core/windows/debug_mode/Settings` {
 		title = "Debug Mode Settings";
-		parent = hud_center;
+		parent = hud_centre;
 		position = vec(0, 0);
 		resizeable = true;
 		size = vec(620, 500);

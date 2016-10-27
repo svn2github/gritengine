@@ -66,7 +66,7 @@ end
 
 -- Crosshair
 safe_destroy(ch)
-ch = hud_object `Rect` {texture=`CrossHair.png`, parent=hud_center}
+ch = hud_object `Rect` {texture=`CrossHair.png`, parent=hud_centre}
 
 -- Music player
 safe_destroy(music_player)
@@ -168,6 +168,6 @@ env_cycle_editor = hud_object `EnvCycleEditor` { zOrder=6 }
 env_cycle_editor.position = env_cycle_editor.size/2 + vec(50, 10)
 
 safe_destroy(lens_flare)
-lens_flare = hud_object `LensFlare` {parent=hud_center}
+lens_flare = hud_object `LensFlare` {parent=hud_centre}
 
 include `system_layer.lua`
