@@ -1,7 +1,7 @@
 ------------------------------------------------------------------------------
 --  A W.I.P. (not working, just a concept) character animation system/ai manager
 -- Animation events: call a function when reaches a animation timing
--- State machine: easy way to manage character animations and other stuff
+-- State machine: easy way to manage character states and other stuff
 -- Animation manager: manage animations and animation blending
 -- AI character
 -- TODO: 2d animation blending space: see https://goo.gl/I6zYt9
@@ -12,12 +12,183 @@
 --  http://www.opensource.org/licenses/mit-license.php
 ------------------------------------------------------------------------------
 
-
+-- source = object/camera position (vec3), target = target position (vec3)
 function lookAt(source, target)
 	local dir = norm(target-source)
 	return quat(yaw(dir.x, dir.y), V_DOWN) * quat(pitch(dir.z), V_EAST)
 end;
 
+function double_extends (p1, p2)
+	return function(child)
+		for k,v in pairs(p1) do
+			if child[k] == nil then
+				child[k] = v
+			end
+		end
+		for k,v in pairs(p2) do
+			if child[k] == nil then
+				child[k] = v
+			end
+		end				
+		
+		return child
+	end
+end
+
+function multi_extends (parents)
+	return function(child)
+		for i = 1, #parents do
+			for k,v in pairs(parents[i]) do
+				if child[k] == nil then
+					child[k] = v
+				end
+			end
+		end	
+		return child
+	end
+end
+
+function merge_extends (parents)
+	local child = {}
+	
+	for i = 1, #parents do
+		for k,v in pairs(parents[i]) do
+			if child[k] == nil then
+				child[k] = v
+			end
+		end
+	end	
+	return child
+
+end
+
+-- this is an example of a state for StateMachine
+-- you probably want to declare it in your object class with other states, like .states = { mystate_state = {...}, mystate2_state = {...} }
+-- NOTES:
+-- Always use the '_state' after your state name (this is intended for developers that want to store their states on the object class table itself instead of a sub-table like i suggested)
+-- Don't forget the paramaters for each methods:
+-- self is the reference for the object class
+-- state_machine is the reference for this state machine, it is optional
+local default_state = {
+	init = function(self, state_machine)
+		
+	end;
+	
+	update = function(self, elapsed, state_machine)
+		
+	end;
+	
+	exit = function(self, state_machine)
+		
+	end;
+}
+
+-- StateMachine states example (pseudo code):
+--[[
+mystates = {
+	idle_state = {
+		init = function(self, state_machine)
+			self.velocity = V_ZERO
+			self:setAnimation('idle')
+			self.instance.isRunning = false
+		end;
+		
+		update = function(self, elapsed, state_machine)
+			
+		end;
+		
+		exit = function(self, state_machine)
+			
+		end;
+	};
+	running_state = {
+		init = function(self, state_machine)
+			self:setAnimation('runimpulse')
+			state_machine.currentState.startRunTiming = 0
+			self.instance.isRunning = true
+		end;
+		
+		update = function(self, elapsed, state_machine)
+			local cs = state_machine.currentState -- you can use self.state_machine or whatever name you give to this state machine and ignore the 'state_machine' parameter if you prefer 
+			
+			cs.startRunTiming = cs.startRunTiming + elapsed
+			if cs.startRunTiming > 2.0 and not cs.runningLoop then
+				self:setAnimation('runningloop')
+				cs.runningLoop = true
+			end
+			
+			if cs.startRunTiming > 20 and cs.runningLoop then -- too tired
+				state_machine:gotoState('idle')
+			end
+			
+		end;
+		
+		exit = function(self, state_machine)
+			self.instance.isRunning = false
+		end;
+	};
+}
+]]
+
+-- do not try to extend this, this is intended to be used on object initialization, as:
+-- instance.statemachine = StateMachine.new(self, self.states)
+-- where last 'self' is used as reference for wich object class this StateMachine is working for
+-- 'self.states' is optional, if you want to store your states on other table other than object class table itself
+StateMachine =
+{
+	new = function(ref, states_table, default)
+		local self = {
+			currentStateName = "";
+			prevStateName = "";
+
+			reference = ref or {}; -- reference for the object class that is using this state machine
+			states = states_table or ref or {}; -- states_table is optional, if you want to store your states somewhere else, otherwise use the object class table
+		}
+
+		make_instance(self, StateMachine)
+		
+		if default then
+			self:gotoState(default) -- 'default' is optional, when set initializes this state
+		end
+		return self
+	end;
+	
+    update = function (self, elapsed)
+		if self.currentState.update ~= nil then
+			-- NOTE: this swap self and the object pointer, we have two 'self', one of the object and other is the real self (state)
+			self.currentState.update(self.reference, elapsed, self)
+		end
+    end;
+
+	gotoState = function(self, state_name)
+		local s = "_state"
+		if state_name ~= nil and self.states[state_name..s] ~= nil then
+			local curstname = self.currentStateName
+			local prevStateName = self.currentStateName
+			self.currentStateName = state_name
+			
+			if self.states[curstname..s] ~= nil and self.states[curstname..s].exit ~= nil then
+				self.states[curstname..s].exit(self.reference, self)
+			end
+
+			self.currentState = self.states[state_name..s]
+
+			if self.states[self.currentStateName..s].init ~= nil then
+				self.states[self.currentStateName..s].init(self.reference, self)
+			end
+		else
+			if self.reference.className then
+				error("State '"..state_name.."' from object of class "..self.reference.className.." not found!")
+			else
+				error("State '"..state_name.."' not found!")
+			end
+		end
+	end;
+	
+    currentState = default_state;
+}
+
+-- a simple state machine
 StateClass =  extends (BaseClass)
 {
     activate = function(self, instance)
@@ -52,68 +223,44 @@ StateClass =  extends (BaseClass)
     end;
 }
 
-StateMachine =
-{
-	currentStateName = "";
-	prevStateName = "";
-	var = {}; -- store temporary variables, on current state context only
-	prevVar = {}; -- store previous state variables, just for "init" context
-	reference = {}; -- where states are stored
-	
-    update = function (self, elapsed)
-		if self.currentState.update ~= nil then
-			-- NOTE: this swap self and the object pointer, we have two 'self', one of the object and other is the real self (state)
-			self.currentState.update(self.reference, elapsed, self)
-		end
-    end;
-
-	goto = function(self, state_name)
-		if state_name ~= nil and self[state_name.."_state"] ~= nil then
-			local curstname = self.currentStateName
-			local prevStateName = self.currentStateName
-			self.currentStateName = state_name
-			
-			if self[curstname] ~= nil and self[curstname].exit ~= nil then
-				self[curstname].exit(self.reference, self)
-			end
-			
-			self.prevVar = self.var
-			
-			self.currentState = self.reference[state_name.."_state"]
-			
-			self.var = {}
-			
-			if self[self.currentStateName].init ~= nil then
-				self[self.currentStateName].init(self.reference, self)
-				self.prevVar = {}
-			end
-		else
-			print(RED.."State: "..state_name.." not found!")
-		end
-	end;	
-	
-    currentState = {init=do_nothing,exit=do_nothing,update=do_nothing};
-}
-
 AnimEvent = 
 {
     activate = function(self, instance)
 		instance.animEvents = {}
 		instance.onFinishAnimEvents = {}
+		instance.latestUpdate = {}
     end;
 
     stepCallback = function (self, elapsed)
 		local inst = self.instance
+		
 		for i = 1, #inst.animEvents do
-			if inst.animPos[inst.animEvents.animID] == inst.animEvents.timePos then
+			local event_pos = inst.animEvents.timePos
+			local current_pos = inst.animPos[inst.animEvents.animID]
+			
+			local should_call = false
+			
+			if inst.animEvents[i].latestUpdate[i] ~= -1 then
+				if event_pos >= inst.animEvents[i].latestUpdate[i] and event_pos <= current_pos  then
+					should_call = true
+				end
+			else
+				if event_pos == current_pos then
+					should_call = true
+				end
+				inst.animEvents[i].latestUpdate[i] = os.time()
+			end
+			
+			if should_call then
 				inst.animEvents[i].callback(self)
 			end
 		end
 
+		-- TODO
 		for i = 1, #inst.onFinishAnimEvents do
 			if inst.animPos[inst.animEvents.animID] == inst.animLen[inst.onFinishAnimEvents.animID] then
 				inst.onFinishAnimEvents[i].callback()
-				table.remove(inst.onFinishAnimEvents, i)
+				-- table.remove(inst.onFinishAnimEvents, i)
 			end
 		end		
     end;
@@ -123,7 +270,9 @@ AnimEvent =
 			animID = id;
 			timePos = tp;
 			callback = cb;
+			latestUpdate = -1;
 		}
+
 	end;
 	
 	addOnFinishEvent = function(self, id, cb)
@@ -215,104 +364,58 @@ AnimMgr =
 	end;
 }
 
--- table_concat(AnimatedClass, ColClass)
-
-CustomAnimatedClass = double_extends (AnimatedClass, ColClass)
-{
-	init = function (persistent)
-		ColClass.init(persistent)
-	end;
+-- CustomAnimatedClass = double_extends (AnimMgr, ColClass)
+-- {
+	-- init = function (persistent)
+		-- ColClass.init(persistent)
+	-- end;
 	
-    activate = function(self, instance)
-		AnimatedClass.activate(self, instance)
+    -- activate = function(self, instance)
+		-- AnimMgr.activate(self, instance)
 		
-		self:setAnimation(instance.animID.idle, false)
-		self:gotoState("idle")
-    end;
+		-- self:setAnimation(instance.animID.idle, false)
+		-- self:gotoState("idle")
+    -- end;
 
-    deactivate = function (self)
-        self.needsStepCallbacks = false
+    -- deactivate = function (self)
+        -- self.needsStepCallbacks = false
 
-        AnimatedClass.deactivate(self)
-    end;
+        -- AnimMgr.deactivate(self)
+    -- end;
 	
-    destroy = function (self)
+    -- destroy = function (self)
 
-    end;	
+    -- end;	
 	
-    stepCallback = function (self, elapsed)
-		AnimatedClass.stepCallback(self, elapsed)
+    -- stepCallback = function (self, elapsed)
+		-- AnimMgr.stepCallback(self, elapsed)
 
-    end;
+    -- end;
  
-	idle_state = function(self, elapsed)
-		local ins = self.instance
-		local id = ins.animID.idle
+	-- idle_state = function(self, elapsed)
+		-- local ins = self.instance
+		-- local id = ins.animID.idle
 		
-		ins.animPos[id] = math.mod(ins.animPos[id] + elapsed, ins.animLen[id])
-		ins.gfx:setAnimationPos(ins.animName[id], ins.animPos[id])
-	end;
-}
+		-- ins.animPos[id] = math.mod(ins.animPos[id] + elapsed, ins.animLen[id])
+		-- ins.gfx:setAnimationPos(ins.animName[id], ins.animPos[id])
+	-- end;
+-- }
 
-class `CustomAnimated` (CustomAnimatedClass)
-{
+-- class `CustomAnimated` (CustomAnimatedClass)
+-- {
 
-	gfxMesh = `/detached/characters/robot_med/robot_med.mesh`;
-	colMesh = `/detached/characters/robot_med/robot_med.gcol`;
+	-- gfxMesh = `/detached/characters/robot_med/robot_med.mesh`;
+	-- colMesh = `/detached/characters/robot_med/robot_med.gcol`;
 
-	mass = 90;	
-    radius = 0.3;
-	height = 2.2;
+	-- mass = 90;	
+    -- radius = 0.3;
+	-- height = 2.2;
 
-    placementZOffset = 1.112;
-	health = 1000;
-}
+    -- placementZOffset = 1.112;
+	-- health = 1000;
+-- }
 
-function double_extends (p1, p2)
-	return function(child)
-		for k,v in pairs(p1) do
-			if child[k] == nil then
-				child[k] = v
-			end
-		end
-		for k,v in pairs(p2) do
-			if child[k] == nil then
-				child[k] = v
-			end
-		end				
-		
-		return child
-	end
-end
-
-function multi_extends (parents)
-	return function(child)
-		for i = 1, #parents do
-			for k,v in pairs(parents[i]) do
-				if child[k] == nil then
-					child[k] = v
-				end
-			end
-		end	
-		return child
-	end
-end
-
-function merge_extends (parents)
-	local child = {}
-	
-	for i = 1, #parents do
-		for k,v in pairs(parents[i]) do
-			if child[k] == nil then
-				child[k] = v
-			end
-		end
-	end	
-	return child
-
-end
-
-AICharacter =  extends (StateClass)
+AICharacter =  extends (BaseClass)
 {
     renderingDistance = 500.0;
     castShadows = true;
@@ -324,27 +427,85 @@ AICharacter =  extends (StateClass)
     
 	AICharacter = true;
 
+	states = {
+		idle_state = {
+			init = function(self)
+				-- self:setAnimation(self.instance.animID.idle, false)
+				
+				self.onUpdateDestination = function(self)
+					self:gotoState("walk")
+				end
+				-- print("Idle begin")
+			end;
+			
+			update = function(self, elapsed)
+				-- local ins = self.instance
+				-- local id = ins.animID.idle
+				
+				-- ins.animPos[id] = math.mod(ins.animPos[id] + elapsed, ins.animLen[id])
+				-- ins.gfx:setAnimationPos(ins.animName[id], ins.animPos[id])
+			end;
+			
+			exit = function(self)
+				-- print("Idle finish")
+			end;
+		};
+		walk_state = {
+			init = function(self)
+				-- self:setAnimation(self.instance.animID.walk, false)
+				
+				self.onDestinationReached = function (self)
+					print(self.className.." reached destination point")
+					local ins = self.instance
+					if ins.state_machine.currentStateName ~= "idle" then
+						self:gotoState("idle")
+						self:stop()
+					end
+				end
+				-- print("Walk begin")
+			end;
+			
+			update = function(self, elapsed)
+				-- local ins = self.instance
+				-- local id = ins.animID.walk
+				
+				-- ins.animPos[id] = math.mod(ins.animPos[id] + elapsed*(self:getSpeed()*0.5), ins.animLen[id])
+				-- ins.gfx:setAnimationPos(ins.animName[id], ins.animPos[id])
+			end;
+			
+			exit = function(self)
+				self.onDestinationReached = do_nothing
+				-- print("Walk finish")
+			end;
+		};
+	};
+	
     activate = function(self, instance)
-        StateClass.activate(self, instance)
+        BaseClass.activate(self, instance)
 
-		local ins = instance
         self.needsStepCallbacks = true
 		
-		ins.target = nil
+		instance.target = nil
 		
 		-- AI
-		ins.destinationRadius = 2
-		ins.destinationReached = true
+		instance.destinationRadius = 2
+		instance.destinationReached = true
 
-		ins.agentID = -1
+		instance.agentID = -1 -- -1 means navigation agent not set
 		
-		if ins.body ~= nil then
-			local pos = navigation_nearest_point_on_navmesh(ins.body.worldPosition)
-			if pos ~= nil then
-				self:setAgentID(agent_make(pos))
-			end
+		local pos
+		
+		if instance.body ~= nil then
+			pos = instance.body.worldPosition
+		else
+			pos  = instance.gfx.localPosition
 		end
 		
+		if navigation_navmesh_loaded() then
+			self:setAgentID(agent_make(navigation_nearest_point_on_navmesh(pos) or pos))
+		end
+		
+		-- add self to map aicharacters list (useful for fast iteration or to move entire crowd)
 		if current_map ~= nil then
 			if current_map.aicharacters == nil then
 				current_map.aicharacters = {}
@@ -352,30 +513,40 @@ AICharacter =  extends (StateClass)
 			current_map.aicharacters[#current_map.aicharacters+1] = self
 		end
 		
-		ins.destination = vec(0, 0, 0)
-		ins.stopped = true
+		instance.destination = nil
+		instance.stopped = true
 
 		self.maxPerceptionAngle = 85
 		self.maxPerceptionDistance = 200
 
         instance.isActor = true
         instance.runState = false
-        local body = instance.body
-        body.ghost = true
-
-		-- self:gotoState("idle")
+		
+		if self.states then
+			instance.state_machine = StateMachine.new(self, self.states, self.defaultState or "idle")
+		end
+		
+		-- callback
+		if self.onActivate then self:onActivate() end
+		
     end;
 
     deactivate = function (self)
+		-- callback
+		if self.onDeactivate then self:onDeactivate() end
+		
         self.needsStepCallbacks = false
 		if self:getAgentID() ~= -1 then
 			agent_stop(self:getAgentID())
 			agent_destroy(self:getAgentID())
 		end
-        StateClass.deactivate(self)
+        BaseClass.deactivate(self)
     end;
 	
     destroy = function (self)
+		-- callback
+		if self.onDestroy then self:onDestroy() end
+		
 		if self:getAgentID() ~= -1 then
 			agent_stop(self:getAgentID())
 			agent_destroy(self:getAgentID())
@@ -383,46 +554,39 @@ AICharacter =  extends (StateClass)
     end;	
 	
     stepCallback = function (self, elapsed)
-		StateClass.stepCallback(self, elapsed)
+		-- BaseClass.stepCallback(self, elapsed)
+		
+		-- self.instance.state_machine:update(elapsed)
 		
 		if self:getAgentID() ~= -1 then
 			self:updatePosition(elapsed)
 			local vel = self:getVelocity()
 			if vel ~= V_ZERO then
 				local dir = norm(vec(vel.x, vel.y, 0))
-				body.worldOrientation = quat(V_NORTH, dir)
+				self:setOrientation(quat(V_NORTH, dir))
 			end
 		end
 		
     end;
 
-	empty_state = function(self, elapsed)
-		
-	end;	
-	
-	walk_state = function(self, elapsed)
-		local ins = self.instance
-
-	end;
-
-	idle_state = function(self, elapsed)
-		local ins = self.instance
-
-	end;
-
-	getTargetPosition = function()
-		if self.instance.target ~= nil and not self.instance.target.destroyed then
-			return self.instance.target.body.worldPosition
+	getTargetPosition = function(self)
+		local inst = self.instance
+		if inst.target ~= nil and not inst.target.destroyed then
+			if inst.target.instance.body then
+				return inst.target.instance.body.worldPosition
+			elseif inst.target.instance.gfx then
+				return inst.target.instance.gfx.localPosition
+			end
 		end
 	end;
 	
-	getEyePosition = function()
-		return self.instance.body.worldPosition + vec(0, 0, 1)
+	getEyePosition = function(self)
+		return self:getPosition() + vec(0, 0, 1)
 	end;	
 
 	canSee = function(self, target_pos)
 		local ins = self.instance
-		local pos = ins.body.worldPosition + vec(0, 0, 1) -- ~eye position
+		local pos = self:getEyePosition()
 
 		local distance = #(target_pos - pos)
 		
@@ -430,7 +594,7 @@ AICharacter =  extends (StateClass)
 			local _, occ = physics_cast(pos, norm(target_pos - pos) * distance, true, 0, ins.body)
 
 			if not occ then
-				local p = pos + distance * norm(ins.body.worldOrientation * V_NORTH)
+				local p = pos + distance * norm(self:getOrientation() * V_NORTH)
 
 				local angle = quat(p - pos, target_pos - pos).angle
 				if angle <= self.maxPerceptionAngle then
@@ -455,8 +619,11 @@ AICharacter =  extends (StateClass)
 			if self.instance ~= nil and self:getAgentID() ~= -1 then
 				agent_destroy(self:getAgentID())
 			end
-			self:setAgentID(agent_make(self.instance.body.worldPosition-vec(0, 0, self.placementZOffset)))
+			self:setAgentID(agent_make(self:getPosition()-vec(0, 0, self.placementZOffset)))
 		end
+		
+		-- callback
+		if self.onRestartAgent then self:onRestartAgent() end
 	end;		
 
 	getDestination = function(self)
@@ -473,48 +640,90 @@ AICharacter =  extends (StateClass)
 		agent_move_target(self:getAgentID(), new_dest, up_prev_path)
 		ins.destination = new_dest
 		self.stopped = false
-		self.velocity = vec(0, 0, 0)
-
-		self:gotoState("walk")
+		self.velocity = V_ZERO
+		
+		-- callback
+		if self.onUpdateDestination then self:onUpdateDestination() end
 	end;
 
 	destinationReached = function(self)
 		local ins = self.instance
 		if #(self:getPosition() - (ins.destination or V_ZERO)) <= ins.destinationRadius then return true end
-		return agent_distance_to_goal(self:getAgentID(), 0) < 0
+		-- return agent_distance_to_goal(self:getAgentID(), 0) < 0
 	end;	
 	
 	teleport = function (self, position)
-		local ins = self.instance
 		local new_dest = navigation_nearest_point_on_navmesh(position)
 		if not new_dest then return end
 		
 		agent_destroy(self:getAgentID())
 		self:setAgentID(agent_make(result_pos))
 		
-		ins.body.worldPosition = result_pos
+		self:setPosition(result_pos)
+		
+		-- callback
+		if self.onTeleport then self:onTeleport() end
 	end;
 	
 	isStuck = function(self)
 		return false--(self:getSpeed() <= 2 and agent_distance_to_goal(self:getAgentID(), 0) <= 5) -- TODO: get neighbours and its radius to set the value
 	end;
 	
+	setOrientation = function(self, orient) -- gfx and collision only
+		local ins = self.instance
+		
+		if ins.body then
+			sins.body.worldOrientation = orient
+		elseif ins.gfx then
+			ins.gfx.localOrientation = orient
+		end
+	end;
+	
+	getOrientation = function(self)
+		local ins = self.instance
+		
+		if ins.body then
+			return ins.body.worldOrientation
+		elseif ins.gfx then
+			return ins.gfx.localOrientation
+		end
+	end;
+	
+	setPosition = function(self, pos) -- gfx and collision only
+		local ins = self.instance
+		
+		if ins.body then
+			ins.body.worldPosition = pos
+		elseif ins.gfx then
+			ins.gfx.localPosition = pos
+		end
+	end;
+	
 	getPosition = function(self)
-		return self.instance.body.worldPosition
+		local ins = self.instance
+		
+		if ins.body then
+			return ins.body.worldPosition
+		elseif ins.gfx then
+			return ins.gfx.localPosition
+		end
+	end;
+	
+	gotoState = function(self, state)
+		self.instance.state_machine:gotoState(state)
 	end;
 	
 	updatePosition = function(self, elapsed)
-		local ins = self.instance
 		if not self.activated then return end
 		
 		if agent_active(self:getAgentID()) then
-			ins.body.worldPosition = agent_position(self:getAgentID())+vec(0, 0, self.placementZOffset)
+			self:setPosition(agent_position(self:getAgentID())+vec(0, 0, self.placementZOffset))
 		end
 		
-		if self:destinationReached() or self:isStuck() then
-			if ins.currentStateName ~= "idle" then
-				self:gotoState("idle")
-				self:stop()		
+		if self.instance.destination then
+			if self:destinationReached() and self.onDestinationReached then
+				-- callback
+				self:onDestinationReached()
 			end
 		end
 	end;	
@@ -525,7 +734,7 @@ AICharacter =  extends (StateClass)
 		if vel ~= V_ZERO then
 			ins.stopped = false
 		end
-		ins.destination = V_ZERO
+		-- ins.destination = V_ZERO
 		
 		if self.activated then
 			agent_request_velocity(self:getAgentID(), ins.manualVelocity)
@@ -533,7 +742,6 @@ AICharacter =  extends (StateClass)
 	end;
 	
 	getVelocity = function (self)
-		local ins = self.instance
 		if not self.activated then
 			return V_ZERO
 		end
@@ -541,12 +749,10 @@ AICharacter =  extends (StateClass)
 	end;	
 	
 	getSpeed = function (self)
-		local ins = self.instance
 		return #self:getVelocity()
 	end;
 	
 	isMoving = function (self)
-		local ins = self.instance
 		return self:getSpeed() ~= 0
 	end;
 	
@@ -558,15 +764,16 @@ AICharacter =  extends (StateClass)
 			ins.manualVelocity = V_ZERO
 			ins.stopped = true
 		end
+		
+		-- callback
+		if self.onStop then self:onStop() end
 	end;	
 	
 	getAgentHeight = function (self)
-		local ins = self.instance
-		return agent_height()
+		return agent_height(self:getAgentID())
 	end;		
 		
 	getAgentRadius = function (self)
-		local ins = self.instance
-		return agent_radius()
+		return agent_radius(self:getAgentID())
 	end;
 }
