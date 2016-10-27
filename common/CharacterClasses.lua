@@ -451,7 +451,6 @@ AICharacter =  double_extends(AnimMgr, BaseClass)
 				self.onUpdateDestination = function(self)
 					self:gotoState("walk")
 				end
-				-- print("Idle begin")
 			end;
 			
 			update = function(self, elapsed)
@@ -463,7 +462,7 @@ AICharacter =  double_extends(AnimMgr, BaseClass)
 			end;
 			
 			exit = function(self)
-				-- print("Idle finish")
+
 			end;
 		};
 		walk_state = {
@@ -471,14 +470,13 @@ AICharacter =  double_extends(AnimMgr, BaseClass)
 				self:setAnimation(self.instance.animID.walk, false)
 				
 				self.onDestinationReached = function (self)
-					print(self.className.." reached destination point")
+					-- print(self.className.." reached destination point")
 					local ins = self.instance
 					if ins.state_machine.currentStateName ~= "idle" then
 						self:gotoState("idle")
 						self:stop()
 					end
 				end
-				-- print("Walk begin")
 			end;
 			
 			update = function(self, elapsed)
@@ -490,8 +488,7 @@ AICharacter =  double_extends(AnimMgr, BaseClass)
 			end;
 			
 			exit = function(self)
-				self.onDestinationReached = do_nothing
-				-- print("Walk finish")
+				-- self.onDestinationReached = do_nothing
 			end;
 		};
 	};
@@ -573,7 +570,9 @@ AICharacter =  double_extends(AnimMgr, BaseClass)
     stepCallback = function (self, elapsed)
 		-- BaseClass.stepCallback(self, elapsed)
 		AnimMgr.stepCallback(self, elapsed)
-		self.instance.state_machine:update(elapsed)
+		if self.instance.state_machine then
+			self.instance.state_machine:update(elapsed)
+		end
 		
 		if self:getAgentID() ~= -1 then
 			self:updatePosition(elapsed)

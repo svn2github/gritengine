@@ -22,7 +22,7 @@ gritmap =
 	{
 		"/maps/navigation_demo/RobotScout";
 		vector3(-11.4, -12.6, 0.8);
-		properties	= {};
+		{ states = airandomwalk };
 	},
 	{
 		"/maps/navigation_demo/navmeshtest";
@@ -31,11 +31,11 @@ gritmap =
 	},{
 		"/maps/navigation_demo/RobotMed";
 		vector3(-9.224091, -13.07049, 1.890617);
-		properties	= {};
+		{ states = airandomwalk };
 	},	 {
 		"/maps/navigation_demo/RobotHeavy";
 		vector3(-5.8, -13.4, 0.9);
-		properties	= {};
+		{ states = airandomwalk };
 	},	  
 	--[[
 	{
