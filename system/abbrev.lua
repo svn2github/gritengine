@@ -236,3 +236,12 @@ function particle(name)
     return particle2
 end
 
+local function hud_object2(tab)
+    local name = curried_name
+    gfx_hud_object_add(name, tab)
+end
+
+function hud_object(name)
+    curried_name = name
+    return hud_object2
+end
