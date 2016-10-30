@@ -24,38 +24,54 @@ end
 -- empty string is still a valid state. If using .number, use tonumber(blah.value) or 0
 
 EditBoxClass = {
-    textColour = vec(1, 1, 1);
-    borderColour = 0.4 * vec(1, 1, 1);
-    padding = 4;
-    colour = 0.25 * vec(1, 1, 1);
-    texture = `CornerTextures/Filled02.png`;
     cornered = true;
+
+    backgroundTexture = `/common/hud/CornerTextures/Filled02.png`;
+    backgroundPassiveColour = vec(0.25, 0.25, 0.25);
+    backgroundHoverColour = vec(0.5, 0.25, 0);
+    backgroundEditingColour = vec(1, 0.5, 0);
+    backgroundGreyedColour = vec(0.25, 0.25, 0.25);
+
+    borderTexture = `/common/hud/CornerTextures/Border02.png`;
+    borderPassiveColour = vec(0.6, 0.6, 0.6);
+    borderHoverColour = vec(0.6, 0.6, 0.6);
+    borderEditingColour = vec(0.6, 0.6, 0.6);
+    borderGreyedColour = vec(0.6, 0.6, 0.6);
+
     font = `/common/fonts/Verdana12`;
+    textPassiveColour = vec(0.7, 0.7, 0.7);
+    textHoverColour = vec(0.7, 0.7, 0.7);
+    textEditingColour = vec(0.7, 0.7, 0.7);
+    textGreyedColour = vec(0.4, 0.4, 0.4);
+
+    font = `/common/fonts/Verdana12`;
+	selectionColour = vec(0.5, 0.5, 0.5);
+
+    padding = 4;
+    alignment = "CENTRE";
+
     value = "Text";
     number = false;
-    alignment = "CENTRE";
 	editing = false;
 	isPassword = false;
-	selection = vec(0, 0); -- begin, end
-	selectionBG = nil;
-	selectionColour = V_ID*0.5;
-	clickedInside = false;
 	
     init = function (self)
         self.needsInputCallbacks = true
         self.text = hud_text_add(self.font)
         self.text.parent = self
 
-        self.border = hud_object `Rect` {
-            texture = `CornerTextures/Border02.png`;
-            colour = self.borderColour;
-            cornered = true;
-            parent = self;
-        }
+        if self.borderTexture then
+            self.border = hud_object `Rect` {
+                texture = self.borderTexture;
+                colour = self.borderColour;
+                cornered = true;
+                parent = self;
+            }
+        end
 
         self.caret = hud_object `Rect` {
             texture = `CornerTextures/Caret.png`;
-            colour = self.textColour;
+            colour = self.textPassiveColour;
             cornered = true;
             parent = self;
         }
@@ -65,12 +81,15 @@ EditBoxClass = {
             parent = self;
         }
 		self.selectionBG.enabled = false
+
+        self.selection = vec(0, 0); -- begin, end
 		
         self.inside = false
         self:setGreyed(not not self.greyed)
         self.caret.enabled = false
 
         self:setValue(self.value)
+        self:refreshState()
     end;
 
     updateText = function (self)
@@ -83,21 +102,51 @@ EditBoxClass = {
         self.value = self.before .. self.after
     end;
     
-    setGreyed = function (self, v, no_callback)
-        if v then
-            self.text.colour = vec(0.5, 0.5, 0.5)
-            self:setEditing(false, no_callback)
-        else
-            self.text.colour = self.textColour
-        end
+    setGreyed = function (self, v)
         self.greyed = v
+        if self.editing then
+            hud_focus_grab(nil)
+        end
+        self:refreshState()
     end;
     
     destroy = function (self)
     end;
 
+    refreshState = function (self)
+        local old_state = self.lastState
+        if self.greyed then
+            self.text.colour = self.textGreyedColour
+            if self.borderTexture then
+                self.border.colour = self.borderGreyedColour
+            end
+            self.colour = self.backgroundGreyedColour
+        else
+            if self.editing then
+                self.text.colour = self.textEditingColour
+                if self.borderTexture then
+                    self.border.colour = self.borderEditingColour
+                end
+                self.colour = self.backgroundEditingColour
+            elseif self.inside then
+                self.text.colour = self.textHoverColour
+                if self.borderTexture then
+                    self.border.colour = self.borderHoverColour
+                end
+                self.colour = self.backgroundHoverColour
+            else
+                self.text.colour = self.textPassiveColour
+                if self.borderTexture then
+                    self.border.colour = self.borderPassiveColour
+                end
+                self.colour = self.backgroundPassiveColour
+            end
+        end
+    end,
+
     mouseMoveCallback = function (self, local_pos, screen_pos, inside)
         self.inside = inside and local_pos
+        self:refreshState()
 		
 		if self.clickPos then
 			-- print("clpos "..self.clickPos.." localpos "..local_pos.x-self.text.position.x)
@@ -114,21 +163,20 @@ EditBoxClass = {
 		end
     end;
 
-    setEditing = function (self, editing, no_callback)
-        local currently_editing = hud_focus == self
-        if currently_editing == editing then return end
-        if self.greyed then return end
-        hud_focus_grab(editing and self or nil)
+    setEditing = function (self, editing)
+        if self.editing == editing then return end
 		if not self.editing then
 			self:onEditing(editing)
 		end
 		self.editing = editing
 		if not editing then self:onStopEditing() end
+        self:refreshState()
     end;
 
     setFocus = function (self, editing)
         self.caret.enabled = editing
         self.needsFrameCallbacks = editing
+        self:setEditing(editing)
     end;
 
     buttonCallback = function (self, ev)
@@ -137,11 +185,11 @@ EditBoxClass = {
             if not self.inside then
 				if self.editing then
 					self:unselectAll()
-					self:setEditing(false)
+					hud_focus_grab(nil)
 				end
             else
-				self:setFocus(true)
-                self:setEditing(true)
+                if self.greyed then return end
+                hud_focus_grab(self)
                 local txt = self.value
                 local pos = text_char_pos(self.font, txt, self.inside.x + self.size.x/2 - self.padding)
 				if not self.clickPos then
@@ -157,7 +205,7 @@ EditBoxClass = {
 			self.clickPos = nil
         elseif hud_focus == self then
             if ev == "+Return" then
-                self:setEditing(false)
+                hud_focus_grab(nil)
 				self:enterCallback()
             elseif ev == "+BackSpace" or ev == "=BackSpace" then
 				if #self.selection > 0 then
@@ -260,7 +308,9 @@ EditBoxClass = {
 			end
         end
         self.caret.size = vec(self.caret.size.x, self.size.y-4)
-        self.border.size = self.size
+        if self.border then
+            self.border.size = self.size
+        end
         local tw = gfx_font_text_width(self.font, self.before)
         self.caret.position = vec(self.text.position.x -self.text.size.x/2 + tw, 0)
     end;
@@ -347,13 +397,4 @@ EditBoxClass = {
 
 }
 
-hud_class `EditBox` (extends(EditBoxClass)
-{
-	init = function (self)
-		EditBoxClass.init(self)
-	end;
-	
-	destroy = function (self)
-		EditBoxClass.destroy(self)
-	end;
-})
+hud_class `EditBox` (EditBoxClass)

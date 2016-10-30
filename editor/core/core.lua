@@ -295,8 +295,8 @@ function GED:setDebugMode(v)
     stats.enabled = v
     editor_edit_binds.enabled = not v
     editor_core_move_binds.enabled = not v
-	print(editor_edit_binds.enabled)
-	print( editor_core_move_binds.enabled)
+	-- print(editor_edit_binds.enabled)
+	-- print( editor_core_move_binds.enabled)
     editor_debug_binds.enabled = v
     editor_debug_ghost_binds.enabled = v
 

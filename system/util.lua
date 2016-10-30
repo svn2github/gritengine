@@ -677,6 +677,14 @@ end
 
 function verify_input(v, spec, level)
         level = level and (level+1) or 2
+        local simple_types = {
+            ['string'] = true,
+            ['number'] = true,
+            ['vector2'] = true,
+            ['vector3'] = true,
+            ['vector4'] = true,
+            ['quat'] = true,
+        }
         if spec[1] == "one of" then
                 for i=2,#spec do
                         if v == spec[i] then return end
@@ -705,9 +713,9 @@ function verify_input(v, spec, level)
                         local str ="\""..tostring(v).."\" unacceptable, must be inside "..low.." to "..high
                         error(str,level)
                 end
-        elseif spec[1] == "string" then
-                if type(v) ~= "string" then
-                        local str ="\""..tostring(v).."\" unacceptable, must be a string"
+        elseif simple_types[spec[1]] ~= nil then
+                if type(v) ~= spec[1] then
+                        local str ="\""..tostring(v).."\" unacceptable, must be a '" .. spec[1]
                         error(str,level)
                 end
         elseif spec[1] == "int" then
@@ -715,11 +723,6 @@ function verify_input(v, spec, level)
                 if math.floor(v) ~= v then
                         local str ="\""..tostring(v).."\" unacceptable, must be an integer"
                         error(str, level)
-                end
-        elseif spec[1] == "number" then
-                if type(v) ~= "number" then
-                        local str ="\""..tostring(v).."\" unacceptable, must be a number"
-                        error(str,level)
                 end
         elseif spec[1] == "table" then
                 local size = spec[2]
@@ -742,43 +745,81 @@ function verify_input(v, spec, level)
 end
 
 
+-- Makes tab into an "active table".
+--
+-- An active table is one where modifying fields causes automatic changes to wider engine.  A key
+-- feature of the active table is the autoUpdate field, which allows the batching of changes.  For
+-- example if two changes both force recompilation of shaders, which takes time, we would like to be
+-- able to change both settings and then recompile the shaders.  To accomplish this, use the
+-- following pattern:
+--
+-- active_table.autoUpdate = false
+-- active_table.setting1 = 'foo'
+-- active_table.setting2 = 'bar'
+-- active_table.autoUpdate = true
+--
+-- Internally, the settings are stored in two tables 'committed' and 'proposed'.  When a change is
+-- made with autoUpdate is on, or when autoUpdate is turned on after some changes, the values in
+-- 'proposed' are copied into 'committed' and put into effect via calling the 'commit' function.
+-- Since autoUpdate is initially false, it must be set to true in order to bootstrap the settings
+-- and set the initial (default) configuration (passed via 'tab').
+--
+-- While autoUpdate is false, you can call :abort() on the table to undo the changes, which also
+-- sets autoUpdate back to true.
+--
+-- Additionally, the veritication table gives a specification for what values are allowed for each
+-- setting.  This is checked on every assignment (even if autoUpdate is false).
 function make_active_table(tab, verification, commit)
 
-        local c = { autoUpdate = false }
-        local p = { }
+    local committed = { autoUpdate = false }
+    local proposed = { }
 
-        for k,v in pairs(tab) do
-                p[k] = v
+    for k, v in pairs(tab) do
+        proposed[k] = v
+    end
+
+    for k, _ in pairs(tab) do
+        tab[k] = nil
+    end
+
+    tab.committed = committed
+    tab.proposed = proposed
+    tab.spec = verification
+    tab.commit = commit
+    tab.abort = function(self)
+        for k, v in pairs(tab.committed) do
+            if k ~= 'autoUpdate' then
+                tab.proposed[k] = tab.committed[k]
+            end
         end
+        tab.autoUpdate = true
+    end;
 
-        for k,_ in pairs(tab) do
-                tab[k] = nil
+    setmetatable(tab, {
+        __index = function (self, k)
+            local v = self.committed[k]
+            if v == nil then error('No such setting: "' .. k .. '"', 2) end
+            return v
+        end,
+
+        __newindex = function (self, k, v)
+            if k == 'autoUpdate' then
+                verify_input(v, { 'one of', false, true })
+                self.committed[k] = v
+            else
+                local spec = self.spec[k]
+                if spec == nil then error('No such setting: "' .. k .. '"', 2) end
+                verify_input(v, spec, 2)
+                self.proposed[k] = v
+            end
+            if not self.committed.autoUpdate then return end
+            self.commit(self.committed, self.proposed)
+        end,
+
+        __dump = function(self, ...)
+            return dump(self.committed, ...)
         end
-
-        tab.c = c
-        tab.p = p
-
-        setmetatable(tab, {
-                __index = function (self, k)
-                        local v = self.c[k]
-                        if v == nil then error("No such setting: \""..k.."\"",2) end
-                        return v
-                end,
-                __newindex = function (self, k, v)
-                        if k == "autoUpdate" then
-                                verify_input(v,{"one of",false,true})
-                                self.c[k] = v
-                        else
-                                local spec = verification[k]
-                                if spec == nil then error("No such setting: \""..k.."\"",2) end
-                                verify_input(v,spec,2)
-                                self.p[k] = v
-                        end
-                        if not self.c.autoUpdate then return end
-                        commit(self.c, self.p)
-                end,
-                __dump = function(self,...) return dump(self.c,...) end
-        })
+    })
 
 end
 

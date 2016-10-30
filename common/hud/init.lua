@@ -7,7 +7,9 @@ include `line.lua`
 include `stack.lua`
 
 include `LoadingScreen/init.lua`
-include `Button/init.lua`
+include `button.lua`
+include `enum_button.lua`
+include `check_box.lua`
 include `label.lua`
 include `editbox.lua`
 include `scale.lua`

@@ -40,11 +40,19 @@ class = old_class
 
         
 local function hud_class2 (tab)
-    local tab2 = { }
-    for k, v in pairs(tab) do
-        tab2[k] = v
+    local super = nil
+    if type(tab) == 'string' then
+        super = hud_class_get(tab)
+    elseif type(tab) == 'userdata' then
+        super = tab
     end
-    return hud_class_add(curried_name, tab2)
+    if super ~= nil then
+        return function (tab)
+            return hud_class_add(curried_name, extends(super.dump)(tab))
+        end
+    else
+        return hud_class_add(curried_name, tab)
+    end
 end
 function hud_class (name)
     curried_name = name

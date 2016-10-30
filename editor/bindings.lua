@@ -213,7 +213,7 @@ function editor_receive_button(button, state)
 					cobj:special()
 				end
 			else
-				print("Editor has no binding for button: "..button)
+				error("Editor has no binding for button: "..button)
 			end
 		end
 	end

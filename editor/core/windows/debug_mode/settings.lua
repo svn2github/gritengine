@@ -153,6 +153,7 @@ hud_class `Settings` (extends(WindowClass)
 			offset = vec(70, -95);
 		}
 		
+        --[[
 		self.content.debug_panel.fcol = gui.checkbox({
 			caption = "Distance Fog",
 			checked = debug_cfg.fog,
@@ -192,6 +193,7 @@ hud_class `Settings` (extends(WindowClass)
 				debug_cfg.physicsWireFrame = false
 			end,
 		})		
+        ]]
 
 		self.content.debug_panel.plmod = gui.text({
 			value = "Polygon Mode: ",
@@ -199,6 +201,7 @@ hud_class `Settings` (extends(WindowClass)
 			align = vec(-1, 1);
 			offset = vec(10, -260);		
 		})
+        --[[
 		self.content.debug_panel.plmodsel = gui.selectbox({
 			parent = self.content.debug_panel;
 			choices = {
@@ -242,6 +245,7 @@ hud_class `Settings` (extends(WindowClass)
 				debug_cfg.shadowReceive = false
 			end,
 		})
+        ]]
 
 		local function clearAllPlaced()
 			for _, obj in ipairs(object_all()) do

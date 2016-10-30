@@ -1,11 +1,14 @@
 -- (c) The Grit Game Engine authors 2016, Licensed under the MIT license (https://goo.gl/YVVx3L).
 
 -- A clickable button, supporting:
--- * greying out
--- * mouseover and click effects
--- * border and base colour and texture
+-- * static background texture
+-- * static border texture
 -- * textual caption
-hud_class `.` {
+-- * dynamic effects via colour masks:
+--   * greying out
+--   * mouseover
+--   * click
+hud_class `Button` {
 
     -- Applied to both background and border textures.
     cornered=true;
@@ -53,7 +56,6 @@ hud_class `.` {
         if self.borderTexture then
             self.border = hud_object `/common/hud/Rect` {
                 texture=self.borderTexture,
-                colour=self.borderColour,
                 parent=self,
                 cornered=self.cornered,
             }
@@ -152,5 +154,3 @@ hud_class `.` {
     end;
 
 }
-
-

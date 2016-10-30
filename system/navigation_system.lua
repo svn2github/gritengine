@@ -41,10 +41,7 @@ local nav_builder_params_spec = {
 	tileSize = { "one of", 16,24,32,40,48,56,64,72,80,88,96,104,112,120,128 };
 }
 
-local function commit(c, p, flush, partial)
-    flush = flush or false
-    partial = partial or false
-
+local function commit(c, p)
     for k,v in pairs(p) do
         if c[k] ~= v then
             c[k] = v
@@ -59,6 +56,4 @@ local function commit(c, p, flush, partial)
 end
 
 make_active_table(nav_builder_params, nav_builder_params_spec, commit)
--- commit(nav_builder_params.c, nav_builder_params.p, false, true)
 nav_builder_params.autoUpdate = true
--- commit(nav_builder_params.c, nav_builder_params.p, true, false)

@@ -176,7 +176,7 @@ hud_class `StackX` {
 -- Border puts a border around a single object.  It introduces a bit of extra padding.
 hud_class `Border` {
 
-    padding = 4;
+    padding = vec(4, 4);
     texture = `CornerTextures/Border02.png`;
     size = vec(1, 1);
     cornered = true;

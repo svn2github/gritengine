@@ -419,7 +419,7 @@ editor_interface.map_editor_page =
 		-- self.toolbar:addSeparator()
 		self.toolbar:addTool("Show collision", map_editor_icons.show_collision, (
 			function()
-				debug_cfg.physicsWireFrame = not debug_cfg.physicsWireFrame
+                physics_option("DEBUG_WIREFRAME", not physics_option("DEBUG_WIREFRAME"))
 			end
 		), "Show Collision")
 		self.toolbar:addTool("Toggle Physics", map_editor_icons.toggle_physics, (

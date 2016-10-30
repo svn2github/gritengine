@@ -5,7 +5,6 @@ print "Loading user configuration"
 safe_include `/user_cfg.lua`
 
 user_cfg = user_cfg or { }
-debug_cfg = debug_cfg or { }
 user_system_bindings = user_system_bindings or { }
 
 editor_core_binds = editor_core_binds or nil
@@ -22,43 +21,14 @@ user_foot_bindings = user_foot_bindings or { }
 
 
 local user_cfg_default = {
-    shadowRes = 1024;
-    shadowEmulatePCF = false;
-    shadowFilterTaps = 4;
-    shadowFilterSize = 4;
-    shadowFilterNoise = true;
-    shadowFilterDither = false;
-    shadowPCSSPadding = 0.8;
-    shadowPCSSStart = 0.2;
-    shadowPCSSEnd0 = 20;
-    shadowPCSSEnd1 = 50;
-    shadowPCSSEnd2 = 200;
-    shadowPCSSAdj0 = 3;
-    shadowPCSSAdj1 = 1;
-    shadowPCSSAdj2 = 1;
-    shadowPCSSSpreadFactor0 = 1;
-    shadowPCSSSpreadFactor1 = 1;
-    shadowPCSSSpreadFactor2 = 0.28;
-    shadowFadeStart = 150;
     fullscreen = false;
-    res = {800,600};
+    res = vec(800, 600);
     visibility = 1;
     graphicsRAM = 512;
-    lockMemory = true;
     screenshotFormat = "png";
     mouseInvert = true;
     mouseSensitivity = 0.06;
     vsync = true;
-    anaglyph = false;
-    crossEye = false;
-    eyeSeparation = 0.06;
-    monitorHeight = 0.27;
-    monitorEyeDistance = 0.6;
-    minPerceivedDepth = 0.3;
-    maxPerceivedDepth = 2;
-    anaglyphDesaturation = 0.5;
-    anaglyphLeftMask = {1,0,0};
-    anaglyphRightMask = {0,1,1};
     lowPowerMode = false;
     metricUnits = false;
     audioMasterVolume = 1;
@@ -66,43 +36,14 @@ local user_cfg_default = {
 }
 
 local user_cfg_doc = {
-    shadowRes = "resolution of the shadow textures";
-    shadowEmulatePCF = "antialias shadow edges";
-    shadowFilterTaps = "quality of soft shadows";
-    shadowFilterSize = "size of penumbra";
-    shadowFilterNoise = "a cheap way of getting softer shadows";
-    shadowFilterDither = "another cheap way of getting softer shadows";
-    shadowPCSSPadding = "overlap between shadow regions";
-    shadowPCSSStart = "distance from camera where shadows start";
-    shadowPCSSEnd0 = "distance from camera to transition to 2nd shadow map";
-    shadowPCSSEnd1 = "distance from camera to transition to 3rd shadow map";
-    shadowPCSSEnd2 = "distance from camera where shadows end";
-    shadowPCSSAdj0 = "'optimal adjust' for 1st shadow map";
-    shadowPCSSAdj1 = "'optimal adjust' for 2nd shadow map";
-    shadowPCSSAdj2 = "'optimal adjust' for 3rd shadow map";
-    shadowPCSSSpreadFactor0 = "penumbra multiplier for 1st shadow map";
-    shadowPCSSSpreadFactor1 = "penumbra multiplier for 2st shadow map";
-    shadowPCSSSpreadFactor2 = "penumbra multiplier for 3rd shadow map";
-    shadowFadeStart = "distance where shadow starts to fade";
     fullscreen = "as opposed to windowed mode";
     res = "desktop resolution when fullscreened";
     visibility = "factor on draw distance";
     graphicsRAM = "Size of textures+mesh cache to maintain";
-    lockMemory = "avoids excessive disk IO";
     screenshotFormat = "format in which to store textures";
     mouseInvert = "whether forward motion should look down";
     mouseSensitivity = "how easy it is to turn with mouse";
     vsync = "avoid corruption due to out of sync monitor updates";
-    anaglyph = "todo";
-    crossEye = "todo";
-    eyeSeparation = "todo";
-    monitorHeight = "todo";
-    monitorEyeDistance = "todo";
-    minPerceivedDepth = "todo";
-    maxPerceivedDepth = "todo";
-    anaglyphDesaturation = "todo";
-    anaglyphLeftMask = "todo";
-    anaglyphRightMask = "todo";
     lowPowerMode = "Reduce FPS and physics accuracy";
     metricUnits = "Use the km/h units instead of mph units for HUD";
     audioMasterVolume = "Master audio volume";
@@ -110,83 +51,20 @@ local user_cfg_doc = {
 }
 
 local user_cfg_spec = {
-    shadowRes = { "one of", 128,256,512,1024,2048,4096 };
-    shadowEmulatePCF = { "one of", false, true };
-    shadowFilterTaps = { "one of", 1, 4, 9, 16, 25, 36 };
-    shadowFilterSize = { "range", 0, 40 };
-    shadowFilterNoise = { "one of", false, true };
-    shadowFilterDither = { "one of", false, true };
-    shadowPCSSPadding = { "range", 0, 100 };
-    shadowPCSSStart = { "range", 0, 10000 };
-    shadowPCSSEnd0 = { "range", 0, 10000 };
-    shadowPCSSEnd1 = { "range", 0, 10000 };
-    shadowPCSSEnd2 = { "range", 0, 10000 };
-    shadowPCSSAdj0 = { "range", 0, 10000 };
-    shadowPCSSAdj1 = { "range", 0, 10000 };
-    shadowPCSSAdj2 = { "range", 0, 10000 };
-    shadowPCSSSpreadFactor0 = { "range", 0, 20 };
-    shadowPCSSSpreadFactor1 = { "range", 0, 20 };
-    shadowPCSSSpreadFactor2 = { "range", 0, 20 };
-    shadowFadeStart = { "range", 0, 10000 };
-    res = { "table", 2, {"int range", 1, 4096}, {"int range", 1, 4096} };
+    res = { "vector2" };
     fullscreen = { "one of", false, true };
     visibility = { "range", 0, 5 }; 
     graphicsRAM = { "int range", 0, 2048 };
-    lockMemory = { "one of", false, true };
-    screenshotFormat = { "one of", "png","tga" };
+    screenshotFormat = { "one of", "png", "tga" };
     mouseInvert = { "one of", false, true };
-    mouseSensitivity = { "range", 0, 10 };
+    mouseSensitivity = { "range", 0, 1 };
     vsync = { "one of", false, true };
-    anaglyph =  { "one of", false, true };
-    crossEye =  { "one of", false, true };
-    eyeSeparation =  { "range", 0, 0.5 }; 
-    monitorHeight = { "range", 0.01, 1000 }; 
-    monitorEyeDistance =  { "range", 0.01, 1000 }; 
-    minPerceivedDepth =  { "range", 0.01, 1000 }; 
-    maxPerceivedDepth =  { "range", 0.01, 1000 }; 
-    anaglyphDesaturation =  { "range", 0, 1 }; 
-    anaglyphLeftMask = { "table", 3, {"range", 0, 1}, {"range", 0, 1} };
-    anaglyphRightMask =  { "table", 3, {"range", 0, 1}, {"range", 0, 1} };
     lowPowerMode = { "one of", false, true };
     metricUnits = { "one of", false, true };
     audioMasterVolume =  { "range", 0, 1 }; 
     vehicleCameraTrack = { "one of", false, true };
 }
             
-
-local debug_cfg_default = {
-    shadowCast = true;
-    shadowReceive = true;
-    fog = true;
-    FOV = 55;
-    farClip = 800;
-    polygonMode = "SOLID";
-    physicsWireFrame = false;
-    physicsDebugWorld = true;
-}
-
-local debug_cfg_doc = {
-    shadowCast = "enable casting phase";
-    shadowReceive = "enable receiving phase";
-    fog = "enable distance fog";
-    FOV = "field of view in degrees";
-    farClip = "how far away is maximum depth";
-    polygonMode = "wireframe, etc";
-    physicsWireFrame = "show physics meshes";
-    physicsDebugWorld = "don't limit debug display to moving objects";
-}
-
-local debug_cfg_spec = {
-    shadowCast = { "one of", false, true };
-    shadowReceive = { "one of", false, true };
-    fog = { "one of", false, true };
-    FOV = { "range", 0, 120 };
-    farClip = { "range", 1, 10000 };
-    physicsWireFrame = { "one of", false, true };
-    physicsDebugWorld = { "one of", false, true };
-}
-
-
 
 local default_user_system_bindings = {
     console = "Tab";
@@ -291,7 +169,6 @@ local function process_user_table(name, given, default)
 end
 
 process_user_table("user_cfg", user_cfg, user_cfg_default)
-process_user_table("debug_cfg", debug_cfg, debug_cfg_default)
 process_user_table("user_system_bindings", user_system_bindings, default_user_system_bindings)
 if editor_core_binds then
 	process_user_table("user_editor_core_bindings", user_editor_core_bindings, default_user_editor_core_bindings)
@@ -360,16 +237,13 @@ process_bindings2(user_foot_bindings, play_receive_button, playing_actor_binds)
 
 
 
-local function commit(c, p, flush, partial)
-
-    flush = flush or false
-    partial = partial or false
+local function commit(committed, proposed)
 
     gfx_option("AUTOUPDATE",false)
 
-    for k,v in pairs(p) do
-        if c[k] ~= v then
-            c[k] = v
+    for k, v in pairs(proposed) do
+        if committed[k] ~= v then
+            committed[k] = v
     
             if k == "shadowRes" then
                 gfx_option("SHADOW_RES",v)
@@ -415,8 +289,8 @@ local function commit(c, p, flush, partial)
             elseif k == "FOV" then
                 gfx_option("FOV",v)
             elseif k == "res" then
-                gfx_option("FULLSCREEN_WIDTH",v[1])
-                gfx_option("FULLSCREEN_HEIGHT",v[2])
+                gfx_option("FULLSCREEN_WIDTH",v.x)
+                gfx_option("FULLSCREEN_HEIGHT",v.y)
             elseif k == "fullscreen" then
                 gfx_option("FULLSCREEN",v)
             elseif k == "farClip" then
@@ -467,13 +341,13 @@ local function commit(c, p, flush, partial)
             elseif k == "anaglyphDesaturation" then
                 gfx_option("ANAGLYPH_DESATURATION",v)
             elseif k == "anaglyphLeftMask" then
-                gfx_option("ANAGLYPH_LEFT_RED_MASK",v[1])
-                gfx_option("ANAGLYPH_LEFT_GREEN_MASK",v[2])
-                gfx_option("ANAGLYPH_LEFT_BLUE_MASK",v[3])
+                gfx_option("ANAGLYPH_LEFT_RED_MASK",v.x)
+                gfx_option("ANAGLYPH_LEFT_GREEN_MASK",v.y)
+                gfx_option("ANAGLYPH_LEFT_BLUE_MASK",v.z)
             elseif k == "anaglyphRightMask" then
-                gfx_option("ANAGLYPH_RIGHT_RED_MASK",v[1])
-                gfx_option("ANAGLYPH_RIGHT_GREEN_MASK",v[2])
-                gfx_option("ANAGLYPH_RIGHT_BLUE_MASK",v[3])
+                gfx_option("ANAGLYPH_RIGHT_RED_MASK",v.x)
+                gfx_option("ANAGLYPH_RIGHT_GREEN_MASK",v.y)
+                gfx_option("ANAGLYPH_RIGHT_BLUE_MASK",v.z)
             elseif k == "lowPowerMode" then
                 -- next frame render picks this up too
                 if v then
@@ -496,20 +370,11 @@ local function commit(c, p, flush, partial)
 
     gfx_option("AUTOUPDATE",true)
 
-    if partial then return end
-
-    
 end
 
 make_active_table(user_cfg, user_cfg_spec,  commit)
-make_active_table(debug_cfg, debug_cfg_spec,  commit)
 
-commit(user_cfg.c, user_cfg.p, false, true)
-commit(debug_cfg.c, debug_cfg.p, false, true)
-debug_cfg.autoUpdate = true
 user_cfg.autoUpdate = true
-
-commit(user_cfg.c, user_cfg.p, true, false)
 
 
 
@@ -558,9 +423,8 @@ print('Reading user_cfg.lua')
         f:write("}\n\n")
     end
 
-    -- use proposed rather than current settings, to avoid writing out the autoUpdate header
-    write_table("user_cfg", user_cfg.p, user_cfg_default, user_cfg_doc)
-    write_table("debug_cfg", debug_cfg.p, debug_cfg_default, debug_cfg_doc)
+    -- use proposed rather than committed settings, to avoid writing out the autoUpdate header
+    write_table("user_cfg", user_cfg.proposed, user_cfg_default, user_cfg_doc)
     write_table("user_system_bindings", user_system_bindings, default_user_system_bindings, {})
 	if editor_core_binds then
 		write_table("user_editor_core_bindings", user_editor_core_bindings, default_user_editor_core_bindings, {})
