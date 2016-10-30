@@ -316,7 +316,10 @@ menu_pages = {
                         description,
                     },
                 }
-            end;
+            end,
+            escapePressed = function (self)
+                menu_show('main')
+            end,
         }
     end;
 
