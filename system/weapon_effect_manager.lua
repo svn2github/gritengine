@@ -186,7 +186,7 @@ WeaponEffectManager:set("Flame", WeaponFlame)
 
 -- Create objects
 WeaponCreate = {
-    class = `/common/props/junk/Money`;
+    class = `/vehicles/Scarman`;
     rotation = 'ALIGNED';  -- Or 'FIXED' or 'RANDOM'
     fireSpeed = 40;
     fireSpin = 0;

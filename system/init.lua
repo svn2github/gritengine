@@ -58,7 +58,6 @@ main = {
     physicsEnabled = true;
     physicsMaxSteps = 50;
     physicsAllocs = 0;
-    physicsDebugWorld = false;
 
     gfxFrameTime = RunningStats.new(20);
     gfxCount = 0;
@@ -209,7 +208,7 @@ function main:run (...)
         -- GRAPHICS
         if gfx_window_active() then
             physics_update_graphics(main.physicsEnabled and main.physicsLeftOver or 0)
-            if main.physicsDebugWorld then physics_draw() end
+           physics_draw()
         end
         game_manager:frameUpdate(elapsed_secs)
         object_do_frame_callbacks(elapsed_secs)
