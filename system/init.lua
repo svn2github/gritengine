@@ -15,6 +15,12 @@ hud_class_all = hud_class_all or gfx_hud_class_all
 hud_class_count = hud_class_count or gfx_hud_class_count
 hud_ray = hud_ray or gfx_hud_ray
 
+-- TODO(dcunnin): Remove these when rebuilt cpp:
+gfx_option('SHADOW_FADE_START', 150);
+gfx_option('SHADOW_FILTER_SIZE', 4);
+gfx_option('SHADOW_SPREAD_FACTOR0', 1);
+gfx_option('SHADOW_SPREAD_FACTOR1', 1);
+gfx_option('SHADOW_SPREAD_FACTOR2', 0);
 
 print "Initialising script..."
 io.stdout:setvbuf("no") -- no output buffering
