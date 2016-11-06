@@ -86,12 +86,12 @@ game_manager = {
     end;
 
     receiveButton = function (self, button, state)
-        if self.currentMode ~= nil then
-            if button == "menu" then
-                if state == '+' then
-                    menu_show('pause')
-                end
-            else
+        if button == "menu" then
+            if state == '+' then
+                menu_show('pause')
+            end
+        else
+            if self.currentMode ~= nil then
                 self.currentMode:receiveButton(button, state)
             end
         end
