@@ -1,5 +1,23 @@
 safe_destroy(editor_interface)
-editor_interface = gui.windownotebook({})
+hud_class `EditorInterface` `/common/gui/windownotebook` {
+    init = function(self)
+        self.needsInputCallbacks = true
+        hud_class_get(`/common/gui/windownotebook`).init(self)
+    end,
+    mouseMoveCallback = function (self)
+    end,
+    buttonCallback = function (self, event)
+        if event == '+left' then
+            if inside_hud() then
+                GED:leftMouseClick()
+            end
+        elseif event == '-left' then
+            GED:stopDraggingObj()
+        end
+    end,
+}
+
+editor_interface = hud_object `EditorInterface` { }
 
 include`pages/MapEditor.lua`
 include`pages/NavigationEditor.lua`

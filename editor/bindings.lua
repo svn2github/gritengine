@@ -96,14 +96,6 @@ function editor_receive_button(button, state)
 				GED:toggleMouseCapture()
 			end
 
-		elseif button == "select" then
-			if state == '+' then
-				if inside_hud() then
-					GED:leftMouseClick()
-				end
-			elseif state == '-' then
-				GED:stopDraggingObj()
-			end
 		elseif button == "selectModeTranslate" then
 			GED:setWidgetMode("translate")
 		elseif button == "selectModeRotate" then

@@ -129,7 +129,6 @@ local default_user_editor_edit_bindings = {
 	ghost = "right";
 	delete = "Delete";
 	duplicate = "C+v";
-	select = "left";
 	selectModeTranslate = "1";
 	selectModeRotate = "2";
 }
