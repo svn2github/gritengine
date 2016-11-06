@@ -93,6 +93,10 @@ editor = {
 		env.clockRate = 0
     end;
 
+    setPause = function (self, v)
+        -- Do nothing, pause controlled elsewhere.
+    end;
+
     frameCallback = function (self, elapsed_secs)
         GED:frameCallback(elapsed_secs)
     end;

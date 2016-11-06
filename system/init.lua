@@ -382,7 +382,7 @@ function debug_mode()
     ticker.text.enabled = true
 end
 
-game_manager:exit()
+menu_show('main')
 
 safe_include `/user_script.lua`
 
