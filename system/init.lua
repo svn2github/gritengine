@@ -114,16 +114,18 @@ mouse_pos_abs = V_ZERO
 
 -- also called by F11
 function physics_step (elapsed_secs)
-    local _, initial_allocs = get_alloc_stats()
+    if main.physicsEnabled then
+        local _, initial_allocs = get_alloc_stats()
 
-    object_do_step_callbacks(elapsed_secs)
-    game_manager:stepUpdate(elapsed_secs)
-    physics_update()
-    gfx_particle_pump(elapsed_secs)
+        object_do_step_callbacks(elapsed_secs)
+        game_manager:stepUpdate(elapsed_secs)
+        physics_update()
+        gfx_particle_pump(elapsed_secs)
+
+        local _, final_allocs = get_alloc_stats()
+        main.physicsAllocs = final_allocs - initial_allocs
+    end
     do_events(elapsed_secs)
-
-    local _, final_allocs = get_alloc_stats()
-    main.physicsAllocs = final_allocs - initial_allocs
 end
 
 -- also called by F11
@@ -133,8 +135,8 @@ function physics_frame_step (step_size, elapsed_secs)
     while elapsed_secs >= step_size do
         if iterations >= main.physicsMaxSteps then
             -- no more processing, throw away remaining time
-            main.physicsLeftOver = 0
-            return
+            elapsed_secs = 0
+            break
         end
         elapsed_secs = elapsed_secs - step_size
         physics_step(step_size)
@@ -193,22 +195,20 @@ function main:run (...)
         end
 
         -- PHYSICS (and game logic)
-        if main.physicsEnabled then
-            local step_size = physics_option("STEP_SIZE")
-            if main.physicsOneToOne then
-                main.physicsLeftOver = 0
-                physics_step(step_size)
-            else
-                physics_frame_step(step_size, elapsed_secs)
-				-- NAVIGATION
-				navigation_update(elapsed_secs)				
-            end
+        local step_size = physics_option("STEP_SIZE")
+        if main.physicsOneToOne then
+            main.physicsLeftOver = 0
+            physics_step(step_size)
+        else
+            physics_frame_step(step_size, elapsed_secs)
+            -- NAVIGATION
+            navigation_update(elapsed_secs)				
         end
 
         -- GRAPHICS
         if gfx_window_active() then
             physics_update_graphics(main.physicsEnabled and main.physicsLeftOver or 0)
-           physics_draw()
+            physics_draw()
         end
         game_manager:frameUpdate(elapsed_secs)
         object_do_frame_callbacks(elapsed_secs)

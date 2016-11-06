@@ -129,12 +129,14 @@ function playground:init()
     self.debugText2.text = ''
     self.debugText2.position = vec(100, 85)
 
-    main.physicsEnabled = true
-
     playing_binds.mouseCapture = true
 
     self:playerRespawn()
 
+end
+
+function playground:setPause(v)
+    main.physicsEnabled = v
 end
 
 function playground:mouseMove(rel)

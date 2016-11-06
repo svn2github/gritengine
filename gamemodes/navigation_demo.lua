@@ -195,8 +195,6 @@ function navigation_demo:init()
 	compass.enabled = false
 	
 	
-    main.physicsEnabled = true
-
     playing_binds.mouseCapture = false
 
     self:playerRespawn()
@@ -206,6 +204,10 @@ function navigation_demo:init()
 
 	self.info = gui.text({value = "Left Mouse: Move Crowd", parent = hud_bottom_left, position = vec(150, 20)})
 	
+end
+
+function navigation_demo:setPause(v)
+    main.physicsEnabled = v
 end
 
 function navigation_demo:mouseMove(rel)

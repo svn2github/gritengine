@@ -57,6 +57,7 @@ game_manager = {
 		
         new_mode:init();
         core_option("FOREGROUND_WARNINGS", true)
+        self:setPause(false)
     end;
 
     exit = function (self)
@@ -64,7 +65,6 @@ game_manager = {
             self.currentMode:destroy();
             self.currentMode = nil
         end
-        menu_show('main')
     end;
 
     frameUpdate = function (self, elapsed_secs)
@@ -101,6 +101,10 @@ game_manager = {
         if self.currentMode ~= nil then
             self.currentMode:mouseMove(rel)
         end
+    end;
+
+    setPause = function (self, v)
+        self.currentMode:setPause(v)
     end;
 }
 

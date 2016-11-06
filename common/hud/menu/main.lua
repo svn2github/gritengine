@@ -324,7 +324,7 @@ menu_pages = {
     end;
 
     pause = function()
-        main.physicsPaused = true
+        game_manager:setPause(true)
         return hud_object `MenuPage` {
             alpha = 0,
             stackMenu = function(self)
@@ -357,7 +357,7 @@ menu_pages = {
                 self:resume()
             end,
             resume = function (self)
-                main.physicsPaused = false
+                game_manager:setPause(false)
                 menu_show(nil)
             end,
         }

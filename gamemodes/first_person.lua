@@ -55,8 +55,6 @@ function fpsgame:init()
     self.player1:activate()
 	self.player1:controlBegin()
 	
-    main.physicsEnabled = true
-
     playing_binds.mouseCapture = true
 
     --main.camQuat = Q_ID
@@ -72,6 +70,10 @@ function fpsgame:init()
 	self.defaultFOV = gfx_option("FOV")
 	gfx_option("FOV", 60)
 end;
+
+function fpsgame:setPause(v)
+    main.physicsEnabled = v
+end
 
 function fpsgame:mouseMove(rel)
     local sens = user_cfg.mouseSensitivity
