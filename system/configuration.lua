@@ -239,61 +239,19 @@ process_bindings2(user_foot_bindings, play_receive_button, playing_actor_binds)
 local function commit(committed, proposed)
 
     gfx_option("AUTOUPDATE",false)
+    physics_option("AUTOUPDATE",false)
+    core_option("AUTOUPDATE",false)
+    audio_option("AUTOUPDATE",false)
 
     for k, v in pairs(proposed) do
         if committed[k] ~= v then
             committed[k] = v
     
-            if k == "shadowRes" then
-                gfx_option("SHADOW_RES",v)
-            elseif k == "shadowCast" then
-                gfx_option("SHADOW_CAST",v)
-            elseif k == "shadowReceive" then
-                gfx_option("SHADOW_RECEIVE",v)
-            elseif k == "shadowEmulatePCF" then
-                gfx_option("SHADOW_EMULATE_PCF", v)
-            elseif k == "shadowFilterTaps" then
-                gfx_option("SHADOW_FILTER_TAPS",v)
-            elseif k == "shadowFilterSize" then
-                gfx_option("SHADOW_FILTER_SIZE",v)
-            elseif k == "shadowFilterNoise" then
-                gfx_option("SHADOW_FILTER_DITHER_TEXTURE",v)
-            elseif k == "shadowFilterDither" then
-                gfx_option("SHADOW_FILTER_DITHER",v)
-            elseif k == "shadowPCSSPadding" then
-                gfx_option("SHADOW_PADDING",v)
-            elseif k == "shadowPCSSStart" then
-                gfx_option("SHADOW_START",v)
-            elseif k == "shadowPCSSEnd0" then
-                gfx_option("SHADOW_END0",v)
-            elseif k == "shadowPCSSEnd1" then
-                gfx_option("SHADOW_END1",v)
-            elseif k == "shadowPCSSEnd2" then
-                gfx_option("SHADOW_END2",v)
-            elseif k == "shadowPCSSAdj0" then
-                gfx_option("SHADOW_OPTIMAL_ADJUST0",v)
-            elseif k == "shadowPCSSAdj1" then
-                gfx_option("SHADOW_OPTIMAL_ADJUST1",v)
-            elseif k == "shadowPCSSAdj2" then
-                gfx_option("SHADOW_OPTIMAL_ADJUST2",v)
-            elseif k == "shadowPCSSSpreadFactor0" then
-                gfx_option("SHADOW_SPREAD_FACTOR0", v)
-            elseif k == "shadowPCSSSpreadFactor1" then
-                gfx_option("SHADOW_SPREAD_FACTOR1", v)
-            elseif k == "shadowPCSSSpreadFactor2" then
-                gfx_option("SHADOW_SPREAD_FACTOR2", v)
-            elseif k == "shadowFadeStart" then
-                gfx_option("SHADOW_FADE_START",v)
-
-            elseif k == "FOV" then
-                gfx_option("FOV",v)
-            elseif k == "res" then
+            if k == "res" then
                 gfx_option("FULLSCREEN_WIDTH",v.x)
                 gfx_option("FULLSCREEN_HEIGHT",v.y)
             elseif k == "fullscreen" then
                 gfx_option("FULLSCREEN",v)
-            elseif k == "farClip" then
-                gfx_option("FAR_CLIP",v)
             elseif k == "visibility" then
                 core_option("VISIBILITY",v)
         
@@ -304,11 +262,6 @@ local function commit(committed, proposed)
             elseif k == "lockMemory" then
                 if v then mlockall() else munlockall() end
 
-            elseif k == "polygonMode" then
-                gfx_option("WIREFRAME", v~="SOLID")
-                gfx_option("WIREFRAME_SOLID", v=="SOLID_WIREFRAME")
-            elseif k == "fog" then
-                gfx_option("FOG",v)
             elseif k == "physicsWireFrame" then
                 print("Physics wire frame: "..(v and "on" or "off"))
                 physics_option("DEBUG_WIREFRAME", v)
@@ -323,30 +276,6 @@ local function commit(committed, proposed)
                 gfx_option("VSYNC",v)
             elseif k == "screenshotFormat" then
                 -- nothing to do, next screenshot will pick this up
-            elseif k == "anaglyph" then
-                gfx_option("ANAGLYPH",v)
-            elseif k == "crossEye" then
-                gfx_option("CROSS_EYE",v)
-            elseif k == "eyeSeparation" then
-                gfx_option("EYE_SEPARATION",v)
-            elseif k == "monitorHeight" then
-                gfx_option("MONITOR_HEIGHT",v)
-            elseif k == "monitorEyeDistance" then
-                gfx_option("MONITOR_EYE_DISTANCE",v)
-            elseif k == "minPerceivedDepth" then
-                gfx_option("MIN_PERCEIVED_DEPTH",v)
-            elseif k == "maxPerceivedDepth" then
-                gfx_option("MAX_PERCEIVED_DEPTH",v)
-            elseif k == "anaglyphDesaturation" then
-                gfx_option("ANAGLYPH_DESATURATION",v)
-            elseif k == "anaglyphLeftMask" then
-                gfx_option("ANAGLYPH_LEFT_RED_MASK",v.x)
-                gfx_option("ANAGLYPH_LEFT_GREEN_MASK",v.y)
-                gfx_option("ANAGLYPH_LEFT_BLUE_MASK",v.z)
-            elseif k == "anaglyphRightMask" then
-                gfx_option("ANAGLYPH_RIGHT_RED_MASK",v.x)
-                gfx_option("ANAGLYPH_RIGHT_GREEN_MASK",v.y)
-                gfx_option("ANAGLYPH_RIGHT_BLUE_MASK",v.z)
             elseif k == "lowPowerMode" then
                 -- next frame render picks this up too
                 if v then
@@ -368,6 +297,9 @@ local function commit(committed, proposed)
     end
 
     gfx_option("AUTOUPDATE",true)
+    physics_option("AUTOUPDATE",true)
+    core_option("AUTOUPDATE",true)
+    audio_option("AUTOUPDATE",true)
 
 end
 
