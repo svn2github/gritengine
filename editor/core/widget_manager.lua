@@ -105,7 +105,7 @@ function widget_manager:setEditorToolbar(str)
 end
 
 function widget_manager:unselectAll()
-	physics_update()
+
 	if self.selectedObjs ~= nil then
 		for i = 0, #self.selectedObjs do
 			if self.selectedObjs[i] ~= nil and self.selectedObjs[i].instance ~= nil and self.selectedObjs[i].instance.gfx ~= nil and not self.selectedObjs[i].destroyed then
