@@ -136,7 +136,7 @@ function playground:init()
 end
 
 function playground:setPause(v)
-    main.physicsEnabled = v
+    main.physicsEnabled = not v
 end
 
 function playground:mouseMove(rel)

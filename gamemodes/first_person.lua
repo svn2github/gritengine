@@ -72,7 +72,7 @@ function fpsgame:init()
 end;
 
 function fpsgame:setPause(v)
-    main.physicsEnabled = v
+    main.physicsEnabled = not v
 end
 
 function fpsgame:mouseMove(rel)

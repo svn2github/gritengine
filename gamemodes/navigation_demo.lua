@@ -207,7 +207,7 @@ function navigation_demo:init()
 end
 
 function navigation_demo:setPause(v)
-    main.physicsEnabled = v
+    main.physicsEnabled = not v
 end
 
 function navigation_demo:mouseMove(rel)
