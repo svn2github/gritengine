@@ -644,5 +644,11 @@ end
 
 editor_interface.map_editor_page:init()
 
-local default_page = editor_interface:addPage({ caption = "Map Editor", edge_colour = vec(1, 0, 0), onSelect = function(self) editor_interface.map_editor_page:select() end, onUnselect =  function() editor_interface.map_editor_page:unselect() end, closebtn = false })
+local default_page = editor_interface:addPage({
+    caption = "Map Editor",
+    edge_colour = vec(1, 0, 0),
+    onSelect = function(self) editor_interface.map_editor_page:select() end,
+    onUnselect =  function() editor_interface.map_editor_page:unselect() end,
+    closebtn = false
+})
 default_page:select()

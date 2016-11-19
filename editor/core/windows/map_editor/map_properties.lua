@@ -1,5 +1,4 @@
-
-hud_class `Expand_List_Item` {     
+hud_class `Expand_List_Item` {
 	size = vec(300, 20);
 	alpha = 1;
 	items = {};
@@ -94,7 +93,7 @@ hud_class `Expand_List_Item` {
     end;
 }
 
-hud_class `Expand_List` {     
+hud_class `Expand_List` {
 	size = vec(0, 0);
 	alpha = 1;
 	items = {};
@@ -225,54 +224,54 @@ hud_class `Expand_List` {
     end;
 }
 
-function update_level_properties()
-	if ty.items[8] ~= nil then
-		if ty.items[1].value ~= hud_focus then
-			ty.items[1].value:setValue(current_map.name)
+local function update_level_properties()
+	if editor_ty.items[8] ~= nil then
+		if editor_ty.items[1].value ~= hud_focus then
+			editor_ty.items[1].value:setValue(current_map.name)
 		end
 		
-		if ty.items[2].value ~= hud_focus then
-			ty.items[2].value:setValue(current_map.author)
+		if editor_ty.items[2].value ~= hud_focus then
+			editor_ty.items[2].value:setValue(current_map.author)
 		end
 
-		if ty.items[3].value ~= hud_focus then
-			ty.items[3].value:setValue(current_map.description)
+		if editor_ty.items[3].value ~= hud_focus then
+			editor_ty.items[3].value:setValue(current_map.description)
 		end
 		
-		if ty.items[4].value ~= hud_focus then
-			ty.items[4].value:setValue(string.format('%.4f', current_map.spawn.pos.x).." "..string.format('%.4f', current_map.spawn.pos.y).." "..string.format('%.4f', current_map.spawn.pos.z))
+		if editor_ty.items[4].value ~= hud_focus then
+			editor_ty.items[4].value:setValue(('%.4f %.4f %.4f'):format(unpack(current_map.spawn.pos)))
 		end
-		if ty.items[5].value ~= hud_focus then
-			ty.items[5].value:setValue(string.format('%.4f', current_map.spawn.rot.w).." "..string.format('%.4f', current_map.spawn.rot.x).." "..string.format('%.4f', current_map.spawn.rot.y).." "..string.format('%.4f', current_map.spawn.rot.z))
+		if editor_ty.items[5].value ~= hud_focus then
+			editor_ty.items[5].value:setValue(('%.4f %.4f %.4f %.4f'):format(unpack(current_map.spawn.rot)))
 		end
-		if ty.items[6].value ~= hud_focus then
-			ty.items[6].value:setValue(tostring(env.clockRate))
+		if editor_ty.items[6].value ~= hud_focus then
+			editor_ty.items[6].value:setValue(tostring(env.clockRate))
 		end
 		
-		if ty.items[7].value ~= hud_focus then
-			ty.items[7].value:setValue(current_map.game_mode)
+		if editor_ty.items[7].value ~= hud_focus then
+			editor_ty.items[7].value:setValue(current_map.game_mode)
 		end
 		
 		if current_map.include ~= nil and current_map.include[1] ~= nil then
-			if ty.items[8].value ~= hud_focus then
-				ty.items[8].value:setValue(current_map.include[1])
+			if editor_ty.items[8].value ~= hud_focus then
+				editor_ty.items[8].value:setValue(current_map.include[1])
 			end	
 		end
 
 		if current_map.include ~= nil and current_map.include[2] ~= nil then
-			if ty.items[9].value ~= hud_focus then
-				ty.items[9].value:setValue(current_map.include[2])
+			if editor_ty.items[9].value ~= hud_focus then
+				editor_ty.items[9].value:setValue(current_map.include[2])
 			end
 		end
 	end
 
 end
 
-ty = ty
+editor_ty = editor_ty
 
 function editor_init_windows()
-    if ty ~= nil then safe_destroy(ty) end
-    ty = hud_object `Expand_List` {
+    if editor_ty ~= nil then safe_destroy(editor_ty) end
+    editor_ty = hud_object `Expand_List` {
         parent = editor_interface.map_editor_page.windows.level_properties,
         caption = "Common",
         needsInputCallbacks = true;
@@ -280,13 +279,18 @@ function editor_init_windows()
             update_level_properties()
         end;
     }
-    ty.needsInputCallbacks = true
+    editor_ty.needsInputCallbacks = true
 
-    ty:addItem("Name: ", "Map name", function(self) current_map.name = self.value.value end)
-    ty:addItem("Author: ", "someone", function(self) current_map.author = self.value.value end)
-    ty:addItem("Description: ", "Description", function(self) current_map.description = self.value.value end)
-    ty:addItem("Clock Rate: ", "", function(self) if tonumber(self.value.value) ~= nil then env.clockRate = tonumber(self.value.value) current_map.clock_rate = tonumber(self.value.value) end end)
-    ty:addItem("Game Mode: ", "", function(self) current_map.game_mode = self.value.value end)
-    ty:addItem("Include1: ", "", function(self) current_map.include[1] = self.value.value end)
-    ty:addItem("Include2: ", "", function(self) current_map.include[2] = self.value.value end)
+    editor_ty:addItem("Name: ", "Map name", function(self) current_map.name = self.value.value end)
+    editor_ty:addItem("Author: ", "someone", function(self) current_map.author = self.value.value end)
+    editor_ty:addItem("Description: ", "Description", function(self) current_map.description = self.value.value end)
+    editor_ty:addItem("Clock Rate: ", "", function(self)
+        if tonumber(self.value.value) ~= nil then
+            env.clockRate = tonumber(self.value.value)
+            current_map.clock_rate = tonumber(self.value.value)
+        end
+    end)
+    editor_ty:addItem("Game Mode: ", "", function(self) current_map.game_mode = self.value.value end)
+    editor_ty:addItem("Include1: ", "", function(self) current_map.include[1] = self.value.value end)
+    editor_ty:addItem("Include2: ", "", function(self) current_map.include[2] = self.value.value end)
 end

@@ -137,7 +137,7 @@ hud_class `dynamic_res_cb` {
 	end;
 }
 
-function char_count(str, char) 
+local function char_count(str, char) 
     if not str then
         return 0
     end
@@ -152,7 +152,7 @@ function char_count(str, char)
     return count
 end
 
-function get_class_dir(dir)
+local function get_class_dir(dir)
 	local alc = class_all()
 	local cnms = {}
 	local classes = {}
@@ -278,7 +278,7 @@ hud_class `content_browser_floating_object` {
 }
 
 addobjectelement = nil
-function create_floating(offset, mclass)
+local function create_floating(offset, mclass)
 	if addobjectelement == nil then
 		addobjectelement = hud_object `content_browser_floating_object` {
 			parent = hud_centre,
@@ -469,7 +469,7 @@ hud_class `ContentBrowser` (extends(WindowClass)
 	end;
 })
 
-function cb_show_object_menu(selection)
+local function cb_show_object_menu(selection)
 	show_context_menu(
 	{
 		{
@@ -493,7 +493,7 @@ function cb_show_object_menu(selection)
 	})
 end
 
-content_browserx = nil
+local content_browserx = nil
 
 function create_content_browser()
 	if content_browserx ~= nil and not content_browserx.destroyed then

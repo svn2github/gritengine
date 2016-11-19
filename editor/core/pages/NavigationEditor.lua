@@ -542,7 +542,14 @@ editor_interface.navigation_editor:init()
 
 function open_navigation_page()
 	if not editor_interface.nav_page or editor_interface.nav_page.destroyed then
-		editor_interface.nav_page = editor_interface:addPage({ caption = "Navigation Editor", edge_colour = vec(0, 1, 0), onSelect = function(self) editor_interface.navigation_editor:select() end, onUnselect =  function() editor_interface.navigation_editor:unselect() end, closebtn = true, onDestroy = function(self) editor_interface.nav_page_opened = false end })
+		editor_interface.nav_page = editor_interface:addPage({
+            caption = "Navigation Editor",
+            edge_colour = vec(0, 1, 0),
+            onSelect = function(self) editor_interface.navigation_editor:select() end,
+            onUnselect =  function() editor_interface.navigation_editor:unselect() end,
+            closebtn = true,
+            onDestroy = function(self) editor_interface.nav_page_opened = false end
+        })
 		editor_interface.nav_page_opened = true
 		editor_interface.nav_page:select()
 	elseif not editor_interface.nav_page.destroyed then

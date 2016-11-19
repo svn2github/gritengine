@@ -537,11 +537,11 @@ function wm_callback()
 
 					-- TODO: 1 or -1 depends on camera angle
 					if widget_manager.strdrag == "y" then
-						rotate(0,1,0)
+						rotate(0, 1, 0)
 					elseif widget_manager.strdrag == "z" then
-						rotate(0,0,1)
+						rotate(0, 0, 1)
 					elseif widget_manager.strdrag == "x" then
-						rotate(-1,0,0)
+						rotate(-1, 0, 0)
 					end				
 				end
 			end	
