@@ -44,6 +44,11 @@ end
 editor = {
     init = function (self)
 		navigation_reset()
+
+        -- Avoid it interfering with menu and tool bar.
+        ticker:setOffset(vec(40, 58))
+        -- Avoid distracting text while we load the HUD.
+        ticker:clear()
 	
 		gfx_option("WIREFRAME_SOLID", true) -- i don't know why but when selecting a object it just shows wireframe, so TEMPORARY?
 		-- fix glow in the arrows
@@ -51,8 +56,6 @@ editor = {
 	
         -- [dcunnin] Ideally we would declare things earlier and only instantiate them at this
         -- point.  However all the code is mixed up right now.
-		
-		ticker.text.colour = V_ID*2
 		
 		self.debug_mode_text = hud_text_add(`/common/fonts/Verdana12`)
 		self.debug_mode_text.parent = hud_bottom_left
@@ -87,7 +90,6 @@ editor = {
 		notify("The editor is very unstable, we are working on it", vec(1, 0, 0))
         GED:setDebugMode(false)
 		
-		ticker.text.enabled = false
 		env.clockRate = 0
     end;
 
@@ -144,8 +146,6 @@ editor = {
         editor_debug_binds.enabled = false
         editor_debug_ghost_binds.enabled = false
 
-		ticker.text.enabled = true
-		
 		safe_destroy(self.debug_mode_text)
 		
 		gfx_option("RENDER_SKY", true)
