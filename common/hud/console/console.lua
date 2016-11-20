@@ -39,6 +39,7 @@ hud_class `Console` {
         self.cursor.parent = self
         self.cursor.colour = self.textColour
         self.cursor.text = "|"
+        self.cursor.zOrder = 7
         self.cmdBuffer = self.cmdBuffer or {}
         self.cmdBufferPos = 0
 
