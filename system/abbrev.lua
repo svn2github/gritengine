@@ -1,7 +1,5 @@
 -- (c) David Cunningham 2009, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
-print "loading abbrev.lua" 
-
 -- use globals to avoid memory allocation and subsequent GC overhead when creating a closure
 local curried_name
 local pile_curried_name

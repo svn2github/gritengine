@@ -2,8 +2,6 @@
 
 include `client_input.lua` 
 
-print "Loading client.lua"
-
 local STATE_IDLE = 1
 local STATE_CHALLENGING = 2
 local STATE_CONNECTING = 3

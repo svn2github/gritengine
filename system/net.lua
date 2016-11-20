@@ -1,7 +1,5 @@
 -- (c) David Cunningham and the Grit Game Engine project 2012, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
-print "Loading net.lua"
-
 if net ~= nil then
     main.frameCallbacks:removeByName("net")
 end

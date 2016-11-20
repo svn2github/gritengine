@@ -1,7 +1,5 @@
 -- (c) David Cunningham 2009, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
-print "Loading procedural_batches.lua"
-
 -- TODO: error check (spelling of fields)
 ProceduralBatchClasses = ProceduralBatchClasses or {}
 

@@ -1,7 +1,5 @@
 -- (c) David Cunningham 2012, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
-print "Loading env.lua" 
-
 include `sky.lua`
 
 env_saturation_mask = 1

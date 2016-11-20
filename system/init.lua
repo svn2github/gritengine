@@ -1,7 +1,5 @@
 -- (c) David Cunningham 2011, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
-print("Starting game engine...")
-
 --lua5.2 it's so amazingly compatible
 math.mod = math.fmod
 
@@ -21,6 +19,10 @@ gfx_option('SHADOW_FILTER_SIZE', 4);
 gfx_option('SHADOW_SPREAD_FACTOR0', 1);
 gfx_option('SHADOW_SPREAD_FACTOR1', 1);
 gfx_option('SHADOW_SPREAD_FACTOR2', 0);
+
+-- Disable them as we boot the engine.
+core_option("FOREGROUND_WARNINGS", false)
+
 
 print "Initialising script..."
 io.stdout:setvbuf("no") -- no output buffering
@@ -363,4 +365,6 @@ menu_show('main')
 
 safe_include `/user_script.lua`
 
+-- Re-enable now we're in the rendering loop.
+core_option("FOREGROUND_WARNINGS", true)
 main:run(...)

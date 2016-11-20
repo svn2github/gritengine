@@ -1,7 +1,5 @@
 -- (c) David Cunningham 2012, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
-print("Loading sky.lua")
-
 sky_material `Moon` {
     emissiveMap = `starfield.dds`,
     emissiveMask = vec(0.3, 0.3, 0.3),

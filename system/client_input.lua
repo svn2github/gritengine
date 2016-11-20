@@ -1,7 +1,5 @@
 -- (c) David Cunningham and the Grit Game Engine project 2013, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
-print("Loading client_input.lua")
-
 ClientKey = {}
 
 function ClientKey:setDown(down)
