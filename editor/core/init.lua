@@ -80,6 +80,8 @@ editor = {
 		
 		if editor_cfg.load_startup_map then
 			GED:openMap(editor_cfg.startup_map)
+        else
+            GED:newMap()
 		end
 		
 		notify("The editor is very unstable, we are working on it", vec(1, 0, 0))
