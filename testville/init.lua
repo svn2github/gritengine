@@ -46,22 +46,22 @@ physical_material `Floor` {
     --proceduralBatches = { `TropPlant1`, `Stone` }
 }
 
-material `RoofTiles` { diffuseMap=`/common/tex/davec/RoofTiles_d.dds`, diffuseColour=0.5*srgb(248, 253, 255), textureScale={.25,.25} }
+material `RoofTiles` { diffuseMap=`/common/tex/davec/RoofTiles_d.dds`, diffuseMask=0.5*srgb(248, 253, 255), textureScale=vec(25, .25) }
 
-material `Floor` { diffuseMap=`/common/tex/Test.dds`, textureScale={.25,.25} }
+material `Floor` { diffuseMap=`/common/tex/Test.dds`, textureScale=vec(.25, .25) }
 
-material `RoadSurface` { diffuseMap=`/common/tex/davec/RoadSurface_d.dds`, normalMap=`/common/tex/davec/RoadSurface_n.dds`, specularMap=`/common/tex/davec/RoadSurface_s.dds` }
+material `RoadSurface` { diffuseMap=`/common/tex/davec/RoadSurface_d.dds`, normalMap=`/common/tex/davec/RoadSurface_n.dds`, glossMap=`/common/tex/davec/RoadSurface_s.dds` }
 material `BreezeBlocks` { diffuseMap=`/common/tex/davec/BreezeBlocks_d.dds`, normalMap=`/common/tex/davec/BreezeBlocks_n.dds` }
 material `RedBrickVert` { diffuseMap=`/common/tex/davec/RedBrickVert_d.dds`, normalMap=`/common/tex/davec/RedBrick_n.dds` }
 material `RedBrick` { diffuseMap=`/common/tex/davec/RedBrick_d.dds`, normalMap=`/common/tex/davec/RedBrick_n.dds` }
 
 material `RoadMarkings` {
-    overlayOffset=true,
-    alphaReject=0.5,
-    premultipliedAlpha=true,
+    --overlayOffset=true,
+    alphaRejectThreshold=0.5,
+    premultipliedAlpha=1,
     diffuseMap=`/common/tex/davec/RoadMarkings_d.dds`,
     normalMap=`/common/tex/davec/RoadMarkings_n.dds`,
-    specularMap=`/common/tex/davec/RoadMarkings_s.dds`
+    glossMap=`/common/tex/davec/RoadMarkings_s.dds`
 }
 
 class `TestFloor`   (ColClass) {receiveShadows=true,renderingDistance=1200,castShadows=true}
