@@ -352,32 +352,9 @@ end
 
 include `welcome_msg.lua`
 
-_project = {}
-
-function open_project(proj, editor)
-	local mfile = io.open(proj, "r")
-	local str = mfile:read("*all")
-	loadstring(str)()
-	mfile:close()
-	
-	if next(_project) then
-		if editor then
-			init_editor()
-			if _project.default_map ~= nil then
-				GED:open_map(_project.default_map)
-			end
-		else
-			print(_project.game_mode_name)
-			game_manager:enter(_project.game_mode_name)
-		end
-	end
-
-	_project = {}
-end
-
 function debug_mode()
     game_manager:enter('Map Editor')
-    GED:toggleDebugMode()
+    editor:toggleDebugMode()
     menu_show(nil)
     ticker.text.enabled = true
 end

@@ -7,11 +7,10 @@ gritmap =
 		cam_quat = quat(0.8154584, -0.3283081, 0.1780342, -0.4422051);
 	};
 	env_cubes = {
-		env_cube = "";
-		env_cube_dark = "";
-		env_cube_dawn = "";
-		env_cube_dusk = "";
-		env_cube_noon = "";
+		dark = nil;
+		dawn = nil;
+		dusk = nil;
+		noon = nil;
 	};
 	environment = {
 		clock_rate = 0;

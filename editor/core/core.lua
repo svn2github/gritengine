@@ -505,10 +505,16 @@ function GED:openMap(map_file)
 		if current_map == nil then
 			current_map = GritMap.new()	
 		end
-		local gmap = current_map:open(map_file)
+		local success = current_map:open(map_file)
+
+        main.camPos = current_map.editor.cam_pos
+        main.camQuat = current_map.editor.cam_quat
+        self.camPitch = quatPitch(main.camQuat)
+        self.camYaw = cam_yaw_angle()
+
 		
 		create_world_icons()
-		return gmap
+		return success
 	end
 
     -- if update_map_properties ~= nil then

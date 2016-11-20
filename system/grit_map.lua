@@ -20,11 +20,10 @@ function GritMap.new()
 		
 		env_cubes =
 		{
-			env_cube = '';
-			env_cube_dawn = '';
-			env_cube_noon = '';
-			env_cube_dusk = '';
-			env_cube_dark = '';		
+			dawn = nil;
+			noon = nil;
+			dusk = nil;
+			dark = nil;		
 		};
 
 		env_cycle_file = "";
@@ -37,63 +36,33 @@ function GritMap.new()
 end;
 
 function GritMap:applyEnvCube()
-	if self.env_cubes.env_cube ~= nil and self.env_cubes.env_cube ~= "" then
-		if resource_exists(self.env_cubes.env_cube_dawn) then
-			env_cube_dawn = self.env_cubes.env_cube_dawn
-		end
-		if resource_exists(self.env_cubes.env_cube) then
-			gfx_env_cube(0, self.env_cubes.env_cube)
-			env_cube_noon = self.env_cubes.env_cube_noon
-		end
-		if resource_exists(self.env_cubes.env_cube_dusk) then
-			env_cube_dusk = self.env_cubes.env_cube_dusk
-		end
-		if resource_exists(self.env_cubes.env_cube_dark) then
-			env_cube_dark = self.env_cubes.env_cube_dark
-		end
-	end
+    local tab = self.env_cubes
+    env_cube_dawn = tab.dawn
+    env_cube_noon = tab.noon
+    env_cube_dusk = tab.dusk
+    env_cube_dark = tab.dark
+    env_recompute()
 end
 
--- all temporary textures are saved inside 'cache/env'
-function GritMap:generateEnvCube(pos)
+function GritMap:generateEnvCube(pos, filename, hours)
+    if filename == nil then
+        math.randomseed(os.clock())
+        filename = ("editor/cache/env/myenv_%04d"):format(math.random(1000) - 1)
+    end
+
+    hours = hours or { dawn = 6, noon = 12, dusk = 18, dark = 0 }
+
 	local current_time = env.secondsSinceMidnight
-	local current_clockRate = env.clockRate
-	env.clockRate = 0
-	
-	math.randomseed(os.clock())
-	
-	-- dawn
-	env.secondsSinceMidnight = 6 * 60 * 60
-	local tex = GED.directory.."/cache/env/".."myenv_dawn"..math.random(1000)..".envcube.tiff"
-	gfx_bake_env_cube(tex, 128, pos, 0.7, vec(0, 0, 0))
-	self.env_cubes.env_cube_dawn = "/"..tex
-
-	-- noon/default
-	env.secondsSinceMidnight = 12 * 60 * 60
-	tex = GED.directory.."/cache/env/".."myenv"..math.random(1000)..".envcube.tiff"
-	gfx_bake_env_cube(tex, 128, pos, 0.7, vec(0, 0, 0))
-	self.env_cubes.env_cube = "/"..tex
-	-- noon use the same as default
-	self.env_cubes.env_cube_noon = "/"..tex
-	
-	-- dusk
-	env.secondsSinceMidnight = 18 * 60 * 60
-	tex = GED.directory.."/cache/env/".."myenv_dusk"..math.random(1000)..".envcube.tiff"
-	gfx_bake_env_cube(tex, 128, pos, 0.7, vec(0, 0, 0))
-	self.env_cubes.env_cube_dusk = "/"..tex	
-
-	-- dark
-	env.secondsSinceMidnight = 0
-	tex = GED.directory.."/cache/env/".."myenv_dark"..math.random(1000)..".envcube.tiff"
-	gfx_bake_env_cube(tex, 128, pos, 0.7, vec(0, 0, 0))
-	self.env_cubes.env_cube_dark = "/"..tex
+    for name, hour in pairs(hours) do
+        env.secondsSinceMidnight = hour * 60 * 60
+        tex = ("%s.%s.envcube.tiff"):format(filename, name)
+        gfx_bake_env_cube(tex, 128, pos, 0.7, vec(0, 0, 0))
+        self.env_cubes['env_cube_'..name] = "/"..tex
+    end
+	env.secondsSinceMidnight = current_time
 
 	self:applyEnvCube()
-	env.secondsSinceMidnight = current_time
-	env.clockRate = current_clockRate
 end
-
-in_editor = in_editor or false
 
 gritmap = gritmap or nil
 
@@ -131,14 +100,11 @@ function GritMap:open(mapfile)
 		end
 	end
 	self.env_cubes = table.clone(gritmap.env_cubes)
-	self.env_cubes.env_cube = gritmap.env_cubes.env_cube or gfx_env_cube(0)
+	
+	self.editor = table.clone(gritmap.editor)
 	
 	self.file_name = mapfile:sub(2)
 
-	if in_editor then
-		self:setCamera(gritmap.editor.cam_pos, gritmap.editor.cam_quat)
-	end
-	
 	if gritmap.environment then
 		env.secondsSinceMidnight = gritmap.environment.time or (12 * 60 * 60)
 		env.clockRate = gritmap.environment.clockRate or 0	
@@ -154,15 +120,6 @@ function GritMap:open(mapfile)
 	env_recompute()
 	gritmap = nil
 	return true
-end
-
-function GritMap:setCamera(pos, orient)
-	main.camPos = pos
-	main.camQuat = orient
-	if in_editor then
-		GED.camPitch = quatPitch(main.camQuat)
-		GED.camYaw = cam_yaw_angle()
-	end
 end
 
 function GritMap:findClassID(name)

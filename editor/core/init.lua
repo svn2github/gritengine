@@ -19,8 +19,6 @@ include `core.lua`
 
 current_map = current_map or nil
 
-in_editor = false
-
 -- Temporary
 -- Test navmesh
 test = function()
@@ -61,8 +59,6 @@ editor = {
 		self.debug_mode_text.text = "Mouse left: Use Weapon\nMouse Scroll: Change Weapon\nF: Controll Object\nTab: Console\nF1: Open debug mode menu (TODO)\nF5: Return Editor"
 		self.debug_mode_text.position = vec(self.debug_mode_text.size.x/2+10, self.debug_mode_text.size.y)
 		
-		in_editor = true
-
 		include `init_editor_interface.lua`
 
         playing_binds.enabled = true
@@ -122,6 +118,10 @@ editor = {
         editor_receive_button(button, state)
     end;
 
+    toggleDebugMode = function(self)
+        GED:toggleDebugMode()
+    end,
+
     destroy = function (self)
 		widget_manager:unselectAll()
 		
@@ -158,10 +158,3 @@ editor = {
 }
     
 game_manager:define("Map Editor", editor)
-
-function init_editor(map)
-	game_manager:enter('Map Editor')
-	if map ~= nil then
-		GED:openMap(map)
-	end
-end
