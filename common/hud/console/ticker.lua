@@ -1,5 +1,6 @@
 hud_class `Ticker` {
 
+    offset = vec(0, 0),
     height = 400;
     border = 4;
     bufferSize = 100;
@@ -19,6 +20,12 @@ hud_class `Ticker` {
         self.needsFrameCallbacks = true
         self.needsParentResizedCallbacks = true
     end;
+
+    clear = function (self)
+        self.buffer = {}
+        self.timeBuffer = {}
+        self:redraw()
+    end,
 
     print = function (self, str)
         table.insert(self.buffer,1,str)
@@ -65,9 +72,24 @@ hud_class `Ticker` {
         self.text.scroll = math.max(0, self.text.bufferHeight - self.text.size.y)
     end;
 
-    parentResizedCallback = function (self, psize)
-        self.size = vec(psize.x, self.height)
-        self.position = vec(psize.x/2, psize.y - self.height/2)
+    recomputeSize = function (self)
+        local psize 
+        if self.parent == nil then
+            psize = gfx_window_size()
+        else
+            psize = self.parent.size
+        end
+        self.size = vec(psize.x - self.offset.x, self.height)
+        self.position = vec((psize.x + self.offset.x)/2, psize.y - self.height/2 - self.offset.y)
         self.text.textWrap = self.size - self.border * vec(2,2)
+    end,
+
+    setOffset = function (self, offset)
+        self.offset = offset
+        self:recomputeSize()
+    end,
+
+    parentResizedCallback = function (self, psize)
+        self:recomputeSize()
     end;    
 }
