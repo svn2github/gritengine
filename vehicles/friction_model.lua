@@ -1,7 +1,5 @@
 -- (c) David Cunningham 2009, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
-print("Loading friction_models.lua")
-
 -- clamp values to an ellipse
 function friction_ellipse (x, x_max, y, y_max)
         x = x / x_max

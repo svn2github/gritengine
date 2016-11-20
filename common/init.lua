@@ -1,7 +1,5 @@
 -- (c) David Cunningham 2009, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
-print "Loading common assets"
-
 include `paint_shader.lua`
 include `heightmap_texture_blend_shader.lua`
 

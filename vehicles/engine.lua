@@ -1,6 +1,4 @@
 
-print("Loading engine.lua")
-
 Engine = { }
 
 function Engine.new(info)

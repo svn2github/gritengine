@@ -1,5 +1,3 @@
-print("Loading Wipeout world")
-
 local function add(name, obj, tab)
     tab = tab or {}
     tab.rot = euler(obj.rot[1],obj.rot[2],obj.rot[3])

@@ -1,5 +1,3 @@
-print("Loading wipeout classes")
-
 for i=1,20 do
     class (`barrier`..string.format("%02d",i)) (ColClass) { renderingDistance = 500 }
 end
