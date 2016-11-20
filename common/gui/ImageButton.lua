@@ -18,7 +18,6 @@ hud_class `ImageButton` (extends(_gui.class)
 	selected = false;
 	colour = _current_theme.colours.image_button.base;
 	
-	tipActive = false;
 	hoverTime = 0;
 	
 	init = function (self)
@@ -27,6 +26,7 @@ hud_class `ImageButton` (extends(_gui.class)
 		self.needsFrameCallbacks = false
 		self.dragging = false;
 		self.inside = false;
+        self.tipObj = nil
 		
 		if self.icon_texture ~= nil then
 			self.icon = create_rect({ texture = self.icon_texture, size = self.size*0.8, parent = self })
@@ -48,10 +48,8 @@ hud_class `ImageButton` (extends(_gui.class)
 
 	frameCallback = function (self, elapsed)
 		self.hoverTime = self.hoverTime + elapsed
-		if self.hoverTime >= 0.9 then
-			gui.showtip(self.tip)
-			self.tipActive = true
-			self.hoverTime = -1
+		if self.hoverTime >= 0.4 then
+			self.tipObj = gui.showtip(self.tip)
 			self.needsFrameCallbacks = false
 		end
 	end;	
@@ -62,20 +60,19 @@ hud_class `ImageButton` (extends(_gui.class)
 	
 	mousemovecb = function (self, local_pos, screen_pos, inside)
 		if self.dragging ~= true and not self.selected then
+            self.hoverTime = 0
 			if inside then
 				self.colour = self.hoverColour
-				if self.hoverTime == 0 and self.tip ~= nil then
-					self.needsFrameCallbacks = true
+                if self.tip ~= nil and self.tipObj == nil then
+                    self.needsFrameCallbacks = true
 				end
 			else
 				self.colour = self.defaultColour
-				self.needsFrameCallbacks = false
-				self.hoverTime = 0
-				
-				if self.tipActive and _tip ~= nil and type(_tip) ~= "table" then
-					_tip:destroy()
-					self.tipActive = false
-				end
+                self.needsFrameCallbacks = false
+                if self.tipObj ~= nil then
+                    self.tipObj:destroy()
+                    self.tipObj = nil
+                end
 			end
 		end
 	end;

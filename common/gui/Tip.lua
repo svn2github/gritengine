@@ -14,7 +14,7 @@ hud_class `Tip` {
 	caption = "";
 	padding = 3;
 	currentTime = 0;
-	duration = 1.5;
+	duration = 10;
 	colour = _current_theme.colours.tip.background;
 	
 	init = function (self)
@@ -23,12 +23,12 @@ hud_class `Tip` {
 		self.text.colour = _current_theme.colours.tip.text
 		self.text.text = self.caption
 		self:update()
-		self.position = self.pos + vec(self.size.x/2, -29)
+		self.position = self.pos + vec(self.size.x, -self.size.y)/2 + vec(7, -16)
 		self.needsFrameCallbacks = true
 	end;
 	
 	update = function(self)
-		self.size = vec(self.text.size.x + self.padding*2, self.text.size.y + self.padding)
+		self.size = self.text.size + vec(self.padding*2, self.padding)
 	end;
 	
 	frameCallback = function (self, elapsed)
@@ -44,10 +44,9 @@ hud_class `Tip` {
 	end;
 }
 
-_tip = {}
+local current_tip = nil
 function gui.showtip(text)
-	if _tip ~= nil and _tip.destroyed ~= nil then
-		_tip:destroy()
-	end
-	_tip = hud_object `Tip` { caption = text or "", pos = mouse_pos_abs }
+    safe_destroy(current_tip)
+	current_tip = hud_object `Tip` { caption = text or "", pos = mouse_pos_abs }
+    return current_tip
 end;
