@@ -1,96 +1,14 @@
-airandomwalk = {
-	idle_state = {
-		init = function(self, state_machine)
-			self:setAnimation(self.instance.animID.idle, false)
-			
-			self.onUpdateDestination = function(self)
-				self:gotoState("walk")
-			end
-			state_machine.idlet = 0
-			-- print(self.instance.state_machine)
-			-- print("Idle begin")
-		end;
-		
-		update = function(self, elapsed)
-			local ins = self.instance
-			local id = ins.animID.idle
-			
-			ins.animPos[id] = math.mod(ins.animPos[id] + elapsed, ins.animLen[id])
-			ins.gfx:setAnimationPos(ins.animName[id], ins.animPos[id])
-			
-			if ins.state_machine.idlet > math.random(6, 12) then
-				self:updateDestination(navigation_random_navmesh_point(), false)
-			end
-			
-			ins.state_machine.idlet = ins.state_machine.idlet + elapsed
-		end;
-		
-		exit = function(self)
-			-- print("Idle finish")
-		end;
-	};
-	walk_state = {
-		init = function(self, state_machine)
-			self:setAnimation(self.instance.animID.walk, false)
-			
-			self.onDestinationReached = function (self)
-				-- print(self.className.." reached destination point")
-				local ins = self.instance
-				if ins.state_machine.currentStateName ~= "idle" then
-					self:gotoState("idle")
-					self:stop()
-				end
-			end
-			
-			state_machine.stuckCheck = 0
-			state_machine.stuckCheckPos = self:getPosition()
-			
-			-- print("Walk begin")
-		end;
-		
-		update = function(self, elapsed, state_machine)
-			local ins = self.instance
-			local id = ins.animID.walk
-			
-			ins.animPos[id] = math.mod(ins.animPos[id] + elapsed*(self:getSpeed()*0.5), ins.animLen[id])
-			ins.gfx:setAnimationPos(ins.animName[id], ins.animPos[id])
-			
-		if state_machine.stuckCheck > 3 then
-				state_machine.stuckCheck = 0
-				-- print("stuck check: "..#(self:getPosition()-state_machine.stuckCheckPos).." "..self.className)
-				if #(self:getPosition()-state_machine.stuckCheckPos) <= 0.5 then
-					self:updateDestination(navigation_random_navmesh_point(), false)
-				end
-				state_machine.stuckCheckPos = self:getPosition()
-			end
-			
-			state_machine.stuckCheck = state_machine.stuckCheck + elapsed
-			
-		end;
-		
-		exit = function(self)
-			self.onDestinationReached = do_nothing
-			-- print("Walk finish")
-			-- state_machine.stuckCheck = 0
-		end;
-	};
-};
+local GameMode = {
+    name = 'Navigation Demo',
+    description =  "Strategic Companion's Game Demo",
+    previewImage = `GameMode.png`,
+    map = `navmap.gmap`,
+	spawnPos = vec3(-21, -22, 27),
+	spawnRot = quat(0.86, -0.3, 0.13, -0.37),
 
-
--- Game mode
-
-local navigation_demo = {
-    camYaw = 0;
-    camPitch = 0;
-    lastMouseMoveTime = 0;
-	spawnPos=vec3(-21, -22, 27);
-	spawnOrientation = quat(0.86, -0.3, 0.13, -0.37);
-	currentMap = nil;
-	
 	debugMode = false,
 	noClip = false,
 	fast = false,
-	mouseCapture = false,
 	speedSlow = 3,
 	speedFast = 100,
 	forwards = 0,
@@ -101,7 +19,7 @@ local navigation_demo = {
 	descend = 0,	
 }
 
-function navigation_demo:playerRespawn()
+function GameMode:playerRespawn()
 
     -- Use loading screen while we go back to spawn pos
     loading_screen.enabled = true
@@ -130,19 +48,21 @@ function navigation_demo:playerRespawn()
 
 	main.camPos = self.spawnPos
 	
-    main.camQuat = self.spawnOrientation
+    main.camQuat = self.spawnRot
     main.audioCentreVel = vec(0, 0, 0);
     main.audioCentreQuat = quat(1, 0, 0, 0);
 
     self.camYaw = cam_yaw_angle();
     self.camPitch = quatPitch(main.camQuat);
     self.playerCamPitch = 0;
+    self.lastMouseMoveTime = seconds()
 
     env.secondsSinceMidnight = 12 * 60 * 60
 	env.clockRate = 0
 	
+    -- TODO(dcunnin): Use disk I/O subsystem for this.
     if navigation_load_navmesh("./navigation_demo/navmap.navmesh") then
-        for i, aichar in ipairs(navigation_demo.aicharacters) do
+        for i, aichar in ipairs(self.aicharacters) do
             if not aichar.destroyed then
                 aichar:activate()
                 aichar:restartAgent()
@@ -156,7 +76,7 @@ function navigation_demo:playerRespawn()
 
 end
 
-function navigation_demo:init()
+function GameMode:init()
 	navigation_reset()
 	object_all_del()
 	
@@ -169,16 +89,16 @@ function navigation_demo:init()
 
 	env_recompute()
 
-	include_map `navmap.gmap`
+	include_map(self.map)
 
     self.aicharacters = { }
-    for _, obj in ipairs(object_all_of_class(`/navigation_demo/RobotHeavy`)) do
+    for _, obj in ipairs(object_all_of_class(`RobotHeavy`)) do
         self.aicharacters[#self.aicharacters+1] = obj
     end
-    for _, obj in ipairs(object_all_of_class(`/navigation_demo/RobotMed`)) do
+    for _, obj in ipairs(object_all_of_class(`RobotMed`)) do
         self.aicharacters[#self.aicharacters+1] = obj
     end
-    for _, obj in ipairs(object_all_of_class(`/navigation_demo/RobotScout`)) do
+    for _, obj in ipairs(object_all_of_class(`RobotScout`)) do
         self.aicharacters[#self.aicharacters+1] = obj
     end
 	
@@ -193,9 +113,10 @@ function navigation_demo:init()
 	compass.enabled = false
 	
 	
-    playing_binds.mouseCapture = false
 
     self:playerRespawn()
+
+    playing_binds.mouseCapture = false
 	gfx_option("RENDER_SKY", false)
 	
 	gfx_option("BLOOM_THRESHOLD", 1.5)
@@ -204,11 +125,11 @@ function navigation_demo:init()
 	
 end
 
-function navigation_demo:setPause(v)
+function GameMode:setPause(v)
     main.physicsEnabled = not v
 end
 
-function navigation_demo:mouseMove(rel)
+function GameMode:mouseMove(rel)
     local sens = user_cfg.mouseSensitivity
     
     local rel2 = sens * rel * vec(1, user_cfg.mouseInvert and -1 or 1)
@@ -224,7 +145,7 @@ function navigation_demo:mouseMove(rel)
 
 end
 
-function navigation_demo:receiveButton(button, state)
+function GameMode:receiveButton(button, state)
     local on_off
     if state == "+" or state == '=' then on_off = 1 end
     if state == "-" then on_off = 0 end
@@ -252,7 +173,7 @@ local function ghost_cast (pos, ray, scale)
 end
 
 
-function navigation_demo:frameCallback(elapsed_secs)
+function GameMode:frameCallback(elapsed_secs)
 
 	-- Ghosting around
 	local right = self.right - self.left
@@ -298,11 +219,11 @@ function navigation_demo:frameCallback(elapsed_secs)
     main.audioCentreVel = vec(0, 0, 0);
 end
 
-function navigation_demo:stepCallback(elapsed_secs)
+function GameMode:stepCallback(elapsed_secs)
 
 end
 
-function navigation_demo:destroy()
+function GameMode:destroy()
     playing_binds.enabled = false
     playing_actor_binds.enabled = false
     playing_vehicle_binds.enabled = false
@@ -321,15 +242,11 @@ function navigation_demo:destroy()
 end
 
 function crowd_move(pos)
-    for i, aichar in ipairs(navigation_demo.aicharacters) do
+    for i, aichar in ipairs(GameMode.aicharacters) do
         if not aichar.destroyed and aichar.activated and aichar.instance.agentID ~= -1 then
             aichar:updateDestination(pos, false)
         end
     end
 end
 
-
-game_manager:define("Navigation Demo", navigation_demo)
-game_manager:description("Navigation Demo", "Strategic Companion's Game Demo")
-game_manager:thumb("Navigation Demo", `navgame.png`)
-
+game_manager:define(GameMode)

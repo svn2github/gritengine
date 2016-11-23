@@ -7,7 +7,7 @@ include `map_classes.lua`
 include `sound_emitter_class.lua`
 include `MoveSpinClass.lua`
 
-include `gamemodes/init.lua`
+include `game_modes/init.lua`
 
 include `fonts/init.lua`
 

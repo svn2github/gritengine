@@ -1,15 +1,16 @@
 
-local playground = {
-    camYaw = 0;
-    camPitch = 0;
-    lastMouseMoveTime = 0;
-    spawnPos = vec(-53.45975, 9.918219, 1.112);
-    spawnRot = quat(-0.3363351, 0, 0, 0.9417424);
-    seaLevel = -6;
-	description = "TODO: description of playground";
+local GameMode = {
+    name = 'Playground',
+    description = 'Open World Game Demo',
+    previewImage = `GameMode.png`,
+    map = `map.gmap`,
+    spawnPos = vec(-53.45975, 9.918219, 1.112),
+    spawnRot = quat(-0.3363351, 0, 0, 0.9417424),
+
+    seaLevel = -6,
 }
 
-function playground:playerRespawn()
+function GameMode:playerRespawn()
 
     self.centreNotify.text = ''
 
@@ -17,7 +18,6 @@ function playground:playerRespawn()
         obj:deactivate()
         obj.skipNextActivation = false
     end
-
 
     self.protagonist.spawnPos = self.spawnPos
     self.protagonist.pos = self.spawnPos
@@ -61,6 +61,7 @@ function playground:playerRespawn()
     self.camYaw = 90;
     self.camPitch = 0;
     self.playerCamPitch = 0;  -- Without vehicle pitch offset
+    self.lastMouseMoveTime = seconds()
 
     self.protagonist:activate()
 
@@ -72,30 +73,21 @@ function playground:playerRespawn()
 
 end
 
-function playground:init()
+function GameMode:init()
 
     loading_screen:setMapName('Playground')
     loading_screen:setStatus('Background loading resources...')
 
-    include_map `map.gmap`
+    include_map(self.map)
 
     self.protagonist = object `/detached/characters/robot_scout` (0, 0, 0) { }
 
+    object `/vehicles/Scarman` (-49.45975, 9.918219, 1.112) { }
 
-    object `/vehicles/Scarman` (-49.45975, 9.918219, 1.112) {
-    }
-
-    object `/playground/pickup_gearUpgradeTree1` (-49.45975, 5.918219, 1.112) {
-    }
-
-    object `/playground/pickup_energyReplenish` (-44.45975, 5.918219, 1.112) {
-    }
-
-    object `/playground/pickup_tool_ioWire` (-39.45975, 5.918219, 1.112) {
-    }
-
-    object `/playground/pickup_lesserGearBundle` (-34.45975, 5.918219, 1.112) {
-    }
+    object `pickup_gearUpgradeTree1` (-49.45975, 5.918219, 1.112) { }
+    object `pickup_energyReplenish` (-44.45975, 5.918219, 1.112) { }
+    object `pickup_tool_ioWire` (-39.45975, 5.918219, 1.112) { }
+    object `pickup_lesserGearBundle` (-34.45975, 5.918219, 1.112) { }
 
 	main.speedoPos = main.camPos
 	main.speedoSpeed = 0
@@ -129,11 +121,11 @@ function playground:init()
 
 end
 
-function playground:setPause(v)
+function GameMode:setPause(v)
     main.physicsEnabled = not v
 end
 
-function playground:mouseMove(rel)
+function GameMode:mouseMove(rel)
     if self.playerDeathTimer then return end
     local sens = user_cfg.mouseSensitivity
     
@@ -150,11 +142,11 @@ function playground:mouseMove(rel)
 
 end
 
-function playground:coinPickUp()
+function GameMode:coinPickUp()
     self.coinsPickedUp = self.coinsPickedUp + 1
 end
 
-function playground:scanForBoard()
+function GameMode:scanForBoard()
     local radius = 3
     local player_body = self.protagonist.instance.body
     local player_pos = player_body.worldPosition
@@ -177,7 +169,7 @@ function playground:scanForBoard()
     self:board(best_found_vehicle)
 end
 
-function playground:board(veh)
+function GameMode:board(veh)
     self.vehicle = veh
     playing_actor_binds.enabled = false
     playing_vehicle_binds.enabled = true
@@ -192,7 +184,7 @@ function playground:board(veh)
     self.playerCamPitch = self.playerCamPitch - v_pitch
 end
 
-function playground:abandonControlObj()
+function GameMode:abandonControlObj()
     -- Disable binds before settings vehicle to nil, ensures steering, acceleration etc is reset
     playing_vehicle_binds.enabled = false
     local veh = self.vehicle
@@ -208,7 +200,7 @@ function playground:abandonControlObj()
     self.playerCamPitch = self.playerCamPitch + v_pitch
 end
 
-function playground:receiveButton(button, state)
+function GameMode:receiveButton(button, state)
     if state == '=' then return end
     local pressed = state ~= '-'
 
@@ -288,20 +280,20 @@ function playground:receiveButton(button, state)
     end
 end
 
-function playground:frameCallback(elapsed_secs)
+function GameMode:frameCallback(elapsed_secs)
     local obj = self.vehicle or self.protagonist
     local instance = obj.instance
     local body = instance.body
 
     local boom_length
 
-    if playground.playerDeathTimer then
-        playground.playerDeathTimer = playground.playerDeathTimer + elapsed_secs
+    if self.playerDeathTimer then
+        self.playerDeathTimer = self.playerDeathTimer + elapsed_secs
 
-        local stage = playground.playerDeathTimer / 4
+        local stage = self.playerDeathTimer / 4
 
         if stage > 1 then
-            playground:playerRespawn()
+            self:playerRespawn()
             return
         end
         env_saturation_mask = (1 - stage) * (1 - stage)
@@ -362,14 +354,14 @@ function playground:frameCallback(elapsed_secs)
     main.audioCentrePos = main.camPos
 end
 
-function playground:playerKill()
+function GameMode:playerKill()
     self.playerDeathTimer = 0
     self.centreNotify.text = 'WASTED!'
     playing_actor_binds.enabled = false
     playing_vehicle_binds.enabled = false
 end
 
-function playground:stepCallback(elapsed_secs)
+function GameMode:stepCallback(elapsed_secs)
     if self.vehicle ~= nil and self.vehicle.instance.exploded and not self.playerDeathTimer then
         -- In vehicle that exploded
         self:playerKill()
@@ -380,7 +372,7 @@ function playground:stepCallback(elapsed_secs)
     end
 end
 
-function playground:destroy()
+function GameMode:destroy()
     object_all_del()
     self.protagonist = nil
     self.vehicle = nil
@@ -395,6 +387,4 @@ function playground:destroy()
     playing_vehicle_binds.enabled = false
 end
 
-game_manager:define("Playground", playground)
-game_manager:description("Playground", "Open World Game Demo")
-game_manager:thumb("Playground", `GameMode.png`)
+game_manager:define(GameMode)

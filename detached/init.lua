@@ -18,7 +18,10 @@ detached_binds = InputFilter(300, "detached")
 detached_binds:bind("F2", function() game_manager.currentMode:toggleSoulMode() end)
 detached_binds.enabled = false
 
-local gamemode = {
+local GameMode = {
+    name = 'Detached',
+    description = 'Futuristic floating city',
+    previewImage = `GameMode.png`,
 
     soulMode = false,
 
@@ -29,6 +32,8 @@ local gamemode = {
             texture=`textures/logo_detached_prealpha.png`,
         }
         self:setSoulMode(false)
+
+        playing_binds.enabled = true
 
         gfx_option('SHADOW_END0', 25)
         gfx_option('SHADOW_END1', 50)
@@ -76,43 +81,13 @@ local gamemode = {
 
     stepCallback = function(self, elapsed)
     end,
+
+    mouseMove = function (self, rel)
+    end,
+
+    receiveButton = function(self, button, state)
+    end,
+
 }
 
-game_manager:define("Detached", gamemode)
-game_manager:description("Detached", "Futuristic floating city")
-game_manager:thumb("Detached", `GameMode.png`)
-
-
---[[
-include `map/area_core.lua`
-
-
-offset_exec(vector3(590,0,0), function()
-
-    include `obj_area_a.lua`
-
-    --test cars
-    object `comet` (41, -27, 17.0) { name="test_comet1" }
-    object `comet` (70, -36, 20.5) { name="test_comet2" }
-    object `comet` (-41.81092, -37.7634, -25.72889) { name="test_comet3", rot=quat(0.9987538, 0.0001587492, 2.030053e-005, -0.04990703) }
-    object `comet` (-12.23256, 9.953016, -5.700626) { name="test_comet4", rot=quat(0.6815135, 2.859916e-005, 3.439611e-005, 0.7318055) }
-    object `comet` (67.80746, 6.788282, 34.57818) { name="test_comet5", rot=quat(0.6763503, -0.00114412, 0.0005226743, -0.736579) }
-        
-
-    -- high up
-    object `characters/robot_heavy` (58,   13, 41.16) {bearing=30, name="bot5"} 
-    object `characters/robot_heavy` (59.5, 14, 41.16) {bearing=-90, name="bot3"} 
-    object `characters/robot_heavy` (58,   15, 41.16) {bearing=150, name="bot4"} 
-
-    -- in the shade
-    object `characters/robot_heavy` (72, -30, 21.16) {bearing=0, name="bot1"} 
-    object `characters/robot_scout` (79, -30, 21.16) { name="bot6" }
-    object `characters/robot_med` (77, -30, 21.16) { name="bot8" }
-
-    -- by the car
-    object `characters/robot_heavy` (44, -33, 17.112) {bearing=45, name="bot2"} 
-    object `characters/robot_scout` (48, -33, 17.112) { bearing=45, name="bot7" }
-    object `characters/robot_med` (46, -33, 17.112) { bearing=45, name="bot9" }
-
-end)
-]]
+game_manager:define(GameMode)

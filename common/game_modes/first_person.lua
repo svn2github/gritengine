@@ -629,12 +629,16 @@ class `FpsPlayer` (FpsPlayerClass) {
 ---------------
 
 FirstPersonGameMode = FirstPersonGameMode or {
+    name = 'Un-named',
+    description = 'No description',
+    previewImgae = `/common/hud/LoadingScreen/GritLogo.png`,
     map = `/editor/default_map/defaultmap.gmap`,
+    spawnRot = Q_ID,
+    spawnPos = vec(0, 0, 0),
+
     -- These must be overidden by the concrete game mode.
     playerGfxMesh = '',
     playerColMesh = '',
-    spawnRot = Q_ID,
-    spawnPos = vec(0, 0, 0),
 }
 
 -- Toggle between first person and third person camera.

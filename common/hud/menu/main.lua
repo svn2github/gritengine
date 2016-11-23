@@ -275,20 +275,18 @@ menu_pages = {
                     enabled = true;
                 }
                 local game_mode_buttons = {}
-                for key,value in spairs(game_manager.gameModes) do
-                    if key ~= "Map Editor" and key ~= "Debug Mode" then
+                for key, game_mode in spairs(game_manager.gameModes) do
+                    if key ~= "Map Editor" then
                         game_mode_buttons[#game_mode_buttons + 1] = menu_button {
-                            caption = key;
-                            gameImage = game_manager.gameThumbs[key];
-                            gameDesc = game_manager.gameDescriptions[key];
+                            caption = key,
                             pressedCallback = function(self)
                                 menu_show(nil)
                                 game_manager:enter(key)
                             end;
                             stateChangeCallback = function (self, old_state, new_state)
                                 if new_state == "HOVER" then
-                                    description:setValue(self.gameDesc);
-                                    image.texture = self.gameImage;
+                                    description:setValue(game_mode.description)
+                                    image.texture = game_mode.previewImage
                                     image.colour = vec(1, 1, 1)
                                 end
                             end;

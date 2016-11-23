@@ -42,6 +42,8 @@ test2 = function()
 end
 
 editor = {
+    name = 'Map Editor',
+
     init = function (self)
 		navigation_reset()
 
@@ -154,4 +156,4 @@ editor = {
     end;
 }
 
-game_manager:define("Map Editor", editor)
+game_manager:define(editor)
