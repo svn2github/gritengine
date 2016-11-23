@@ -7,6 +7,8 @@ include `map_classes.lua`
 include `sound_emitter_class.lua`
 include `MoveSpinClass.lua`
 
+include `gamemodes/init.lua`
+
 include `fonts/init.lua`
 
 include `hud/init.lua`
@@ -26,7 +28,6 @@ include `props/init.lua`
 include `veg/init.lua`
 include `ramps/init.lua`
 
-include `CharacterClasses.lua`
 
 --[=[
 -- Object placement bindings...

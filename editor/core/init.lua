@@ -131,11 +131,6 @@ editor = {
 		
 		GED:saveEditorConfig()
         -- GED:saveEditorInterface()
-		
-        -- current_map = nil
-        -- if gritmap ~= nil then
-            -- gritmap = nil
-        -- end
         
         playing_binds.enabled = false
         playing_actor_binds.enabled = false
@@ -158,5 +153,5 @@ editor = {
 		gfx_option("BLOOM_THRESHOLD", 1)
     end;
 }
-    
+
 game_manager:define("Map Editor", editor)

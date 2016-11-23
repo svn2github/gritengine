@@ -300,9 +300,10 @@ include `game_manager.lua`
 
 include `default_shader.lua` 
 
-safe_include `/editor/bindings.lua`  -- TODO(dcunnin):  This must be moved to /system
+-- Defines a global function that is referred by configuraton.lua.
+safe_include `/editor/bindings.lua`  -- TODO(dcunnin):  Find a way to avoid including this so early.
 
-include `grit_map.lua`
+include `map.lua`
 
 include `directory_list.lua`
 
@@ -322,35 +323,23 @@ include `audio.lua`
 
 include `net.lua` 
 
-include`navigation_system.lua`
+include `navigation_system.lua`
 
 include `weapon_effect_manager.lua`
 
-minimal = minimal or false
-if not minimal then
-	safe_include `/common/init.lua` 
-	safe_include `/vehicles/init.lua`
-else
-	safe_include `/common/fonts/init.lua`
-	safe_include `/common/hud/init.lua`
-	safe_include `/common/gui/init.lua`
-	safe_include `/common/map_classes.lua`
-	safe_include `/common/pmat/init.lua`
-	safe_include `/common/CharacterClasses.lua`
-	safe_include `/common/heightmap_texture_blend_shader.lua`
-end
+include `/common/init.lua` 
+include `/vehicles/init.lua`
 
-safe_include `/editor/init.lua`   -- TODO(dcunnin):  This must be moved to /system
+-- Should probably move to common at this point...
+include `/detached/characters/init.lua`
+
 
 -- Game modes
-local fls, _ = get_dir_list("./gamemodes")
-if fls then
-	for i = 1, #fls do
-		if fls[i] ~= nil and fls[i]:_match("^.+(%..+)$") == ".lua" then
-			include("/gamemodes/"..fls[i])
-		end
-	end
-end
+include `/editor/init.lua`
+include `/sponza/init.lua`
+include `/navigation_demo/init.lua`
+include `/playground/init.lua`
+include `/detached/init.lua`
 
 include `welcome_msg.lua`
 
@@ -358,7 +347,6 @@ function debug_mode()
     game_manager:enter('Map Editor')
     editor:toggleDebugMode()
     menu_show(nil)
-    ticker.text.enabled = true
 end
 
 menu_show('main')

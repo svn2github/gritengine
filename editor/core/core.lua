@@ -473,7 +473,7 @@ function GED:newMap(ndestroyobjs)
         end
     end
     
-    current_map = GritMap.new()
+    current_map = EditorMap.new()
     -- if update_map_properties ~= nil then
         -- update_map_properties()
     -- end
@@ -490,30 +490,24 @@ function GED:openMap(map_file)
 	-- unload_icons = true
 	
 	-- you can create a new map and include a lua that cointains object placements
-	local map_ext = get_extension(map_file)
-	if map_ext == "lua" then
-        current_map = nil
-        current_map = GritMap.new()		
-		include (mapfile)
-	elseif map_ext == "gmap" then
-		gfx_option("RENDER_SKY", true)
-		
-		navigation_reset()
-		
-		if current_map == nil then
-			current_map = GritMap.new()	
-		end
-		local success = current_map:open(map_file)
+    gfx_option("RENDER_SKY", true)
+    
+    navigation_reset()
+    
+    if current_map == nil then
+        current_map = EditorMap.new()	
+    end
 
-        main.camPos = current_map.editor.cam_pos
-        main.camQuat = current_map.editor.cam_quat
-        self.camPitch = quatPitch(main.camQuat)
-        self.camYaw = cam_yaw_angle()
+    local success = current_map:open(map_file)
 
-		
-		create_world_icons()
-		return success
-	end
+    main.camPos = current_map.editor.cam_pos
+    main.camQuat = current_map.editor.cam_quat
+    self.camPitch = quatPitch(main.camQuat)
+    self.camYaw = cam_yaw_angle()
+
+    
+    create_world_icons()
+    return success
 
     -- if update_map_properties ~= nil then
         -- update_map_properties()
@@ -535,13 +529,7 @@ function GED:saveCurrentMapAs(name)
         return false
     else
         current_map.file_name = name
-        
-        local map_ext = get_extension(name)
-        if map_ext == "gmap" then
-            return current_map:save()
-        else
-            return current_map:export(name)
-        end        
+        return current_map:save()
     end
 end;
 

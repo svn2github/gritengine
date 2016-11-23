@@ -50,7 +50,9 @@ game_manager = {
             error('No such game mode: "' .. name .. '"')
         end
         if self.currentMode ~= nil then
-            self.currentMode:destroy();
+            self.currentMode:destroy()
+            -- TODO(dcunnin): Reset all settings etc to base values.
+            object_all_del()
         end
         core_option("FOREGROUND_WARNINGS", false)
         self.currentMode = new_mode
@@ -64,6 +66,8 @@ game_manager = {
         if self.currentMode ~= nil then
             self.currentMode:destroy();
             self.currentMode = nil
+            -- TODO(dcunnin): Reset all settings etc to base values.
+            object_all_del()
         end
     end;
 

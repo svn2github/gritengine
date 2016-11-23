@@ -2,7 +2,6 @@ for i=0,382 do
     class (`sponza` .. string.format("_%02d",i)) (ColClass) { castShadows=true, renderingDistance = 400 }
 end
 
-if true then
 class `sponza_03` (ColClass) { castShadows = false; renderingDistance = 100 }
 class `sponza_74` (ColClass) { castShadows = false; renderingDistance = 100 }
 class `sponza_08` (ColClass) { castShadows = false; renderingDistance = 400 }
@@ -17,7 +16,6 @@ class `sponza_288` (ColClass) { castShadows = false; renderingDistance = 100 }
 class `sponza_289` (ColClass) { castShadows = false; renderingDistance = 100 }
 class `sponza_71` (ColClass) { castShadows = false; renderingDistance = 100 }
 class `sponza_257` (ColClass) { castShadows = false; renderingDistance = 100 }
-end
 
 material `leaf` {
     diffuseMask = vec(0.558, 0.558, 0.558),

@@ -108,6 +108,7 @@ PickUpClass = {
             self.needsStepCallbacks = false
             local found_obj = body.owner
             if found_obj == nil then return end
+            local playground = game_manager.currentMode
             if found_obj == playground.vehicle or found_obj == playground.protagonist then
                 playground:coinPickUp()
             end

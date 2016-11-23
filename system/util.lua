@@ -1,13 +1,13 @@
 -- (c) David Cunningham 2009, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
-V_ZERO  = vector3(0,0,0)
-V_ID    = vector3(1,1,1)
-V_NORTH = vector3(0,1,0)
-V_SOUTH = vector3(0,-1,0)
-V_EAST  = vector3(1,0,0)
-V_WEST  = vector3(-1,0,0)
-V_UP    = vector3(0,0,1)
-V_DOWN  = vector3(0,0,-1)
+V_ZERO  = vector3(0, 0, 0)
+V_ID    = vector3(1, 1, 1)
+V_NORTH = vector3(0, 1, 0)
+V_SOUTH = vector3(0, -1, 0)
+V_EAST  = vector3(1, 0, 0)
+V_WEST  = vector3(-1, 0, 0)
+V_UP    = vector3(0, 0, 1)
+V_DOWN  = vector3(0, 0, -1)
 
 V_FORWARDS  = V_NORTH
 V_BACKWARDS = V_SOUTH
@@ -16,7 +16,7 @@ V_BELOW     = V_DOWN
 V_LEFT      = V_WEST
 V_RIGHT     = V_EAST
 
-Q_ID = quat(1,0,0,0)
+Q_ID = quat(1, 0, 0, 0)
 
 -- Quaternions are orientation *changes*, just like vectors are really position
 -- *changes*.  As such, to use a quaternion as an orientation, we need a base
@@ -37,8 +37,8 @@ Q_BELOW     = Q_DOWN
 Q_LEFT      = Q_WEST
 Q_RIGHT     = Q_EAST
 
-function euler (x,y,z)
-        return quat(z,V_UP) * quat(y,V_NORTH) * quat(x,V_EAST)
+function euler (x, y, z)
+        return quat(z, V_UP) * quat(y, V_NORTH) * quat(x, V_EAST)
 end
 
 function tensor (q)
@@ -321,60 +321,84 @@ function table.keys(tab, limit)
         local keys = {}
         local max_key_len = 0
         local counter = 0
-        for k,v in pairs(tab) do
-                if counter < limit then
-                        keys[#keys+1] = k
-                        if max_key_len < #tostring(k) then
-                                max_key_len = #tostring(k)
-                        end
-                else
-                    return keys, counter, max_key_len
-                end
-                counter = counter + 1
+        for k,v in spairs(tab) do
+            if limit ~= true and counter >= limit then
+                return keys, counter, max_key_len
+            end
+            keys[#keys+1] = k
+            local key_len = #tostring(k)
+            if max_key_len < key_len then
+                max_key_len = key_len
+            end
+            counter = counter + 1
         end
         return keys, counter, max_key_len
 end
 
-function table.dump(tab, n, d,ind_level, colour)
-        d = d or 0
-        ind_level = ind_level or 0
-        if colour == nil then colour = true end
-        local new_ind_level = ind_level + 2
-        n = n or 100
-        local r = ""
-        local ind = (" "):rep(ind_level)
-        local ind2 = (" "):rep(new_ind_level)
-        if isarray(tab) and #tab <= 20 then
-                if #tab == 0 then
-                        return '{}'
-                end
-                r = r .. '{'
-                local sep = ' '
-                for _,v in ipairs(tab) do
-                        r = r .. sep .. dump(v, colour, n, d, ind_level)
-                        sep = ', '
-                end
-                r = r .. ' }'
-        else
-                local keys, counter, max_key_len = table.keys(tab, n)
-                table.sort(keys, function(a,b) return tostring(a) < tostring(b) end)
-                r = r .. ind .. '{'
-                for k,v in ipairs(keys) do
-                        --if k > 1 then
-                                r = r.."\n"..ind2
-                        --end
-                        local key = tostring(v)
-                        local val = dump(tab[v], colour, n, d, new_ind_level)
-                        r = r..(colour and GREEN or "")..key..(colour and RESET or "")..(colour and BOLD or "")
-                        r = r..(" "):rep(max_key_len-#key)
-                        r = r.." = "..(colour and NOBOLD or "")..val..';'
-                end
-                if counter > n then
-                        r = r.."\n"..ind2.."(and "..tostring(counter-n).." more...)"
-                end
-                r = r .. '\n' .. ind .. '}'
+function table.dump(tab, n, d, ind_level, colour)
+    d = d or 0
+    ind_level = ind_level or 0
+    if colour == nil then colour = true end
+    local new_ind_level = ind_level + 2
+    n = n or 100
+    local r = ""
+    local ind = (" "):rep(ind_level)
+    local ind2 = (" "):rep(new_ind_level)
+    if isarray(tab) then
+        if #tab == 0 then
+            return '{}'
         end
-        return r
+        if #tab <= 20 then
+            r = r .. '{'
+            local sep = ' '
+            for _,v in ipairs(tab) do
+                r = r .. sep .. dump(v, colour, n, d, ind_level)
+                sep = ', '
+            end
+            r = r .. ' }'
+        else
+            r = r .. '{\n'
+            for _,v in ipairs(tab) do
+                r = r .. ind2 .. dump(v, colour, n, d, new_ind_level) .. ',\n'
+            end
+            r = r .. ind .. '}'
+        end
+    else
+        local keys, counter, max_key_len = table.keys(tab, n)
+        table.sort(keys, function(a,b) return tostring(a) < tostring(b) end)
+        r = r .. '{'
+        local key_counter = 1
+        for k, v in ipairs(keys) do
+            r = r.."\n"..ind2
+            local key
+            if type(v) == 'number' then
+                if key_counter == v then
+                    key = nil
+                else 
+                    key = '[' .. tostring(v) .. ']'
+                end
+            else
+                if string.match(v, '^[A-Za-z_][A-Za-z0-9_]*$') then
+                    key = tostring(v)
+                else
+                    key = '["' .. tostring(v) .. '"]'
+                end
+            end
+            key_counter = key_counter + 1
+            local val = dump(tab[v], colour, n, d, new_ind_level)
+            if key ~= nil then
+                r = r..(colour and GREEN or "")..key..(colour and RESET or "")..(colour and BOLD or "")
+                r = r..(" "):rep(max_key_len-#key)
+                r = r.." = "..(colour and NOBOLD or "")
+            end
+            r = r..val..','
+        end
+        if n ~= true and counter > n then
+            r = r.."\n"..ind2.."(and "..tostring(counter-n).." more...)"
+        end
+        r = r .. '\n' .. ind .. '}'
+    end
+    return r
 end
 
 function table.unique (tab)
@@ -472,7 +496,12 @@ function spairs(t, order)
     if order then
         table.sort(keys, function(a,b) return order(t, a, b) end)
     else
-        table.sort(keys)
+        table.sort(keys, function(a, b)
+            local a_t = type(a) == 'number' and 0 or 1
+            local b_t = type(b) == 'number' and 0 or 1
+            if a_t ~= b_t then return a_t < b_t end
+            return a < b
+        end)
     end
 
     -- return the iterator function
@@ -1083,4 +1112,18 @@ function mouse_pick_pos(bias, safe)
 	if dist then
 		return (main.camPos + cast_ray * dist)
 	end
+end
+
+function dirname(file)
+    return file:match('^(.*)/[^/]*$')
+end
+
+-- Get a path from one file to another.
+function get_relative_path(from_here, to_here)
+    local dir = dirname(from_here) .. '/'
+    if to_here:sub(1, #dir) == dir then
+        return to_here:sub(#dir + 1)
+    else
+        return to_here
+    end
 end
