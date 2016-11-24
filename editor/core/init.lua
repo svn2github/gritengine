@@ -128,10 +128,18 @@ editor = {
         GED:toggleDebugMode()
     end,
 
+    toggleBoard = function(self)
+        GED:toggleBoard()
+    end,
+
+    saveEditorConfig = function(self)
+        GED:saveEditorConfig()
+    end,
+
     destroy = function (self)
 		widget_manager:unselectAll()
 		
-		GED:saveEditorConfig()
+		self:saveEditorConfig()
         -- GED:saveEditorInterface()
         
         playing_binds.enabled = false

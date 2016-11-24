@@ -16,13 +16,12 @@ playing_actor_binds = InputFilter(171, `playing_actor_binds`)
 if playing_vehicle_binds ~= nil then playing_vehicle_binds:destroy() end
 playing_vehicle_binds = InputFilter(172, `playing_vehicle_binds`)
 
-playing_binds.enabled = false
-playing_actor_binds.enabled = false
-playing_vehicle_binds.enabled = false
-
-playing_binds.mouseCapture = true
-
-system_layer = system_layer or nil
+function reset_binds()
+    playing_binds.enabled = false
+    playing_binds.mouseCapture = true
+    playing_actor_binds.enabled = false
+    playing_vehicle_binds.enabled = false
+end
 
 game_manager = {
     gameModes = { };
@@ -38,11 +37,10 @@ game_manager = {
             error('No such game mode: "' .. name .. '"')
         end
         if self.currentMode ~= nil then
-            self.currentMode:destroy()
-            -- TODO(dcunnin): Reset all settings etc to base values.
-            object_all_del()
+            self:exit()
         end
         core_option("FOREGROUND_WARNINGS", false)
+        -- TODO: Make an instance of it rather than using it as an object.
         self.currentMode = new_mode
 		
         new_mode:init();
@@ -52,10 +50,20 @@ game_manager = {
 
     exit = function (self)
         if self.currentMode ~= nil then
+            
             self.currentMode:destroy();
             self.currentMode = nil
             -- TODO(dcunnin): Reset all settings etc to base values.
+            -- Reset gfx_option, core_option, physics_option, audio_option
+            -- Push config from user_cfg
+            -- Reset environment
+            -- Reset common/hud stuff (e.g. crosshairs)
+            -- env_saturation_mask
+            -- global_exposure
             object_all_del()
+            reset_binds()
+            -- A lot of objects should now be unreachable, a good time to garbage collect.
+            gc()
         end
     end;
 

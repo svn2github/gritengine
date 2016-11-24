@@ -18,22 +18,25 @@ detached_binds = InputFilter(300, "detached")
 detached_binds:bind("F2", function() game_manager.currentMode:toggleSoulMode() end)
 detached_binds.enabled = false
 
-local GameMode = {
+local GameMode = extends(BaseGameMode) {
     name = 'Detached',
     description = 'Futuristic floating city',
     previewImage = `GameMode.png`,
+    map = `map.gmap`,
+    spawnPos = vec(0, -185, 5),
+    spawnRot = quat(1, 0, 0, 0),
 
     soulMode = false,
 
     init = function(self)
+        BaseGameMode.init(self)
+
         self.watermark = hud_object `/common/hud/Rect` {
-            parent=hud_top_left,
-            position=vector2(128, -32), 
-            texture=`textures/logo_detached_prealpha.png`,
+            parent = hud_top_left,
+            position = vector2(128, -32), 
+            texture = `textures/logo_detached_prealpha.png`,
         }
         self:setSoulMode(false)
-
-        playing_binds.enabled = true
 
         gfx_option('SHADOW_END0', 25)
         gfx_option('SHADOW_END1', 50)
@@ -41,11 +44,8 @@ local GameMode = {
         gfx_option('SHADOW_FADE_START', 250)
         gfx_option('SHADOW_FILTER_DITHER', true)
         gfx_option('SHADOW_FILTER_TAPS', 36)
-        -- map_ghost_spawn(vector3(0, -185, 5))
 
         detached_binds.enabled = true
-
-        include_map `map.gmap`
     end,
 
     setSoulMode = function(self, v)
@@ -67,27 +67,11 @@ local GameMode = {
         self:setSoulMode(not self.soulMode)
     end,
 
-    setPause = function(self, v)
-        main.physicsEnabled = not v
-    end,
-
     destroy = function(self)
+        BaseGameMode.destroy(self)
         self.watermark:destroy()
         detached_binds.enabled = false
     end,
-
-    frameCallback = function(self, elapsed)
-    end,
-
-    stepCallback = function(self, elapsed)
-    end,
-
-    mouseMove = function (self, rel)
-    end,
-
-    receiveButton = function(self, button, state)
-    end,
-
 }
 
 game_manager:define(GameMode)

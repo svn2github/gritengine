@@ -643,18 +643,19 @@ function Vehicle.setMu (self, mu_front_side, mu_front_drive, mu_side, mu_drive)
     end
 end
 
-function Vehicle.reset (self)
-    if not self.activated then error("Not activated: "..self.name) end
-    local was_driving = player_ctrl.controlObj == self
-    self.spawnPos = self.instance.body.worldPosition
-    self.rot = self.instance.body.worldOrientation
-    self:deactivate()
-    self.skipNextActivation = false
-    self:activate()
-    if was_driving then
-        player_ctrl:drive(self)
-    end
-end
+-- This logic belongs in a game mode, if anywhere.
+-- function Vehicle.reset (self)
+--     if not self.activated then error("Not activated: "..self.name) end
+--     local was_driving = player_ctrl.controlObj == self
+--     self.spawnPos = self.instance.body.worldPosition
+--     self.rot = self.instance.body.worldOrientation
+--     self:deactivate()
+--     self.skipNextActivation = false
+--     self:activate()
+--     if was_driving then
+--         player_ctrl:drive(self)
+--     end
+-- end
 
 function Vehicle.reload(self)
     ColClass.reload(self)

@@ -30,7 +30,7 @@ function editor_receive_button(button, state)
 
 		if button == "debug" then
 			if state == '+' then
-				GED:toggleDebugMode()
+				editor:toggleDebugMode()
 			end
 		elseif button == "forwards" then
 			GED.forwards = on_off

@@ -146,7 +146,7 @@ end
 
 function GED:frameCallback(elapsed_secs)
     if self.controlObj ~= nil and not self.controlObj.activated then
-        self:toggleBoard()
+        editor:toggleBoard()
     end
 
     if self.controlObj ~= nil then

@@ -54,6 +54,8 @@ main = {
     audioCentreVel = vec(0, 0, 0);
     audioCentreQuat = quat(1, 0, 0, 0);
 
+    controlObj = nil;  -- Recognized by the speedo, set by game modes.
+
     physicsLeftOver = 0;
     physicsSpeed = 1;
     physicsOneToOne = false;

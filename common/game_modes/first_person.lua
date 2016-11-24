@@ -628,14 +628,7 @@ class `FpsPlayer` (FpsPlayerClass) {
 -- GAME MODE --
 ---------------
 
-FirstPersonGameMode = FirstPersonGameMode or {
-    name = 'Un-named',
-    description = 'No description',
-    previewImgae = `/common/hud/LoadingScreen/GritLogo.png`,
-    map = `/editor/default_map/defaultmap.gmap`,
-    spawnRot = Q_ID,
-    spawnPos = vec(0, 0, 0),
-
+FirstPersonGameMode = extends(BaseGameMode) {
     -- These must be overidden by the concrete game mode.
     playerGfxMesh = '',
     playerColMesh = '',
@@ -648,7 +641,7 @@ function FirstPersonGameMode:toggleCamera()
 end
 
 function FirstPersonGameMode:init()
-    include_map(self.map)
+    BaseGameMode.init(self)
 
     -- player1 means local player
 	self.player1 = object_add(`FpsPlayer`, self.spawnPos, {
@@ -657,47 +650,20 @@ function FirstPersonGameMode:init()
         colMesh = self.playerColMesh,
     })
 	
-	playing_actor_binds:bind('x', function() game_manager.currentMode:toggleCamera() end)
-    playing_binds.enabled = true
-    playing_binds.mouseCapture = true
+	playing_actor_binds:bind('x', function() self:toggleCamera() end)
     playing_actor_binds.enabled = true
-    playing_vehicle_binds.enabled = false
 	
-    main.audioCentreVel = vec(0, 0, 0);
-    main.audioCentreQuat = quat(1, 0, 0, 0);
     self.camYaw = 90;
-    self.camPitch = 0;
     self.playerCamPitch = 0;  -- Without vehicle pitch offset
     self.lastMouseMoveTime = seconds()
 	notify("WASD = move, X = toggle third/first person camera", rgb(0, 0, 0))
 	
-	ch.enabled = true
-	stats.enabled = true
 	gfx_option("FOV", 60)
 
 	self.controlledObj = nil,
 
     self.player1:activate()
 	self.player1:controlBegin()
-end
-
-function FirstPersonGameMode:setPause(v)
-    main.physicsEnabled = not v
-end
-
-function FirstPersonGameMode:mouseMove(rel)
-    local sens = user_cfg.mouseSensitivity
-    
-    local rel2 = sens * rel * vec(1, user_cfg.mouseInvert and -1 or 1)
-    
-    self.camYaw = (self.camYaw + rel2.x) % 360
-    self.camPitch = clamp(self.camPitch + rel2.y, -90, 90)
-    self.playerCamPitch = self.camPitch
-        
-    main.camQuat = quat(self.camYaw, V_DOWN) * quat(self.camPitch, V_EAST)
-    main.audioCentreQuat = main.camQuat
-
-    self.lastMouseMoveTime = seconds()
 end
 
 function FirstPersonGameMode:receiveButton(button, state)
@@ -778,9 +744,6 @@ function FirstPersonGameMode:receiveButton(button, state)
     end
 end
 
-function FirstPersonGameMode:frameCallback(elapsed_secs)
-end
-
 function FirstPersonGameMode:controlObj(obj)
 	self.controlledObj = obj
 	obj:controlBegin()
@@ -804,7 +767,4 @@ end
 function FirstPersonGameMode:destroy()
     playing_actor_binds:unbind('x')
 	self.player1:destroy()
-	self.player1 = nil
-	ch.enabled = false
-	stats.enabled = false
 end
