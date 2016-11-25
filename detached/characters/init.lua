@@ -144,9 +144,11 @@ DetachedCharacterClass = extends (ColClass) {
         local old_update_callback = body.updateCallback
         body.updateCallback = function (p,q)
             old_update_callback(p,q)
-            instance.camAttachPos = p + vector3(0,0,self.camHeight-self.originAboveFeet)
+            instance.camAttachPos = p + vector3(0, 0, self.camHeight - self.originAboveFeet)
         end
-
+        -- This is initialized in the superclass but with old_update_callback to reinitialize it
+        -- here to the right value.
+        instance.camAttachPos = self.spawnPos + vector3(0, 0, self.camHeight - self.originAboveFeet)
     end;
 
     deactivate = function (self)
