@@ -380,17 +380,18 @@ ColClass = extends (BaseClass) {
                 end
                 local colMesh = persistent.colMesh or persistent.className..".gcol"
                 --print("adding: "..tostring(persistent).." with "..colMesh)
+                local rot = persistent.rot or quat(1,0,0,0)
                 local body = physics_body_make(
                     colMesh,
                     persistent.spawnPos,
-                    persistent.rot or quat(1,0,0,0)
+                    rot
                 )
                 body.owner = persistent;
                 instance.body = body
                 if persistent.floating then
                     instance.body:deactivate()
                 end
-                instance.camAttachPos = vector3(0,0,0)
+                instance.camAttachPos = persistent.spawnPos + rot * persistent.camAttachPos
                 -- this causes an alloc so do them here where the code is cold
                 instance.body.updateCallback = function (p,q)
                     instance.camAttachPos = p + q * persistent.camAttachPos
