@@ -41,127 +41,120 @@ test2 = function()
 	navigation_build_nav_mesh()
 end
 
-editor = {
+editor = editor or {
     name = 'Map Editor',
-
-    init = function (self)
-		navigation_reset()
-
-        -- Avoid it interfering with menu and tool bar.
-        ticker:setOffset(vec(40, 58))
-        -- Avoid distracting text while we load the HUD.
-        ticker:clear()
-	
-		gfx_option("WIREFRAME_SOLID", true) -- i don't know why but when selecting a object it just shows wireframe, so TEMPORARY?
-		-- fix glow in the arrows
-		gfx_option("BLOOM_THRESHOLD", 3)
-	
-        -- [dcunnin] Ideally we would declare things earlier and only instantiate them at this
-        -- point.  However all the code is mixed up right now.
-		
-		self.debug_mode_text = hud_text_add(`/common/fonts/Verdana12`)
-		self.debug_mode_text.parent = hud_bottom_left
-		self.debug_mode_text.text = "Mouse left: Use Weapon\nMouse Scroll: Change Weapon\nF: Controll Object\nTab: Console\nF1: Open debug mode menu (TODO)\nF5: Return Editor"
-		self.debug_mode_text.position = vec(self.debug_mode_text.size.x/2+10, self.debug_mode_text.size.y)
-		
-		include `init_editor_interface.lua`
-
-        playing_binds.enabled = true
-        playing_actor_binds.enabled = false
-        playing_vehicle_binds.enabled = false
-        editor_core_binds.enabled = true
-        editor_edit_binds.enabled = false
-        editor_debug_binds.enabled = false
-
-        self.lastMouseMoveTime = seconds()
-
-        -- Start location:  Seems as good a place as any...
-        main.camPos = vec(0, 0, 10)
-        GED.camYaw = 0
-        GED.camPitch = 0
-		
-		-- set default values/update values for window content
-        editor_init_windows()
-		
-		if editor_cfg.load_startup_map then
-			GED:openMap(editor_cfg.startup_map)
-        else
-            GED:newMap()
-		end
-		
-		notify("The editor is very unstable, we are working on it", vec(1, 0, 0))
-        GED:setDebugMode(false)
-		
-		env.clockRate = 0
-    end;
-
-    setPause = function (self, v)
-        -- Do nothing, pause controlled elsewhere.
-    end;
-
-    frameCallback = function (self, elapsed_secs)
-        GED:frameCallback(elapsed_secs)
-    end;
-
-    stepCallback = function (self, elapsed_secs)
-        GED:stepCallback(elapsed_secs)
-    end;
-
-    mouseMove = function (self, rel)
-        local sens = user_cfg.mouseSensitivity
-
-        local rel2 = sens * rel * vec(1, user_cfg.mouseInvert and -1 or 1)
-
-        GED.camYaw = (GED.camYaw + rel2.x) % 360
-        GED.camPitch = clamp(GED.camPitch + rel2.y, -90, 90)
-
-        main.camQuat = quat(GED.camYaw, V_DOWN) * quat(GED.camPitch, V_EAST)
-        main.audioCentreQuat = main.camQuat
-        self.lastMouseMoveTime = seconds()
-    end;
-
-    receiveButton = function(self, button, state)
-        editor_receive_button(button, state)
-    end;
-
-    toggleDebugMode = function(self)
-        GED:toggleDebugMode()
-    end,
-
-    toggleBoard = function(self)
-        GED:toggleBoard()
-    end,
-
-    saveEditorConfig = function(self)
-        GED:saveEditorConfig()
-    end,
-
-    destroy = function (self)
-		widget_manager:unselectAll()
-		
-		self:saveEditorConfig()
-        -- GED:saveEditorInterface()
-        
-        playing_binds.enabled = false
-        playing_actor_binds.enabled = false
-        playing_vehicle_binds.enabled = false
-        editor_core_binds.enabled = false
-        editor_core_move_binds.enabled = false
-        editor_edit_binds.enabled = false
-        editor_debug_binds.enabled = false
-        editor_debug_ghost_binds.enabled = false
-
-		safe_destroy(self.debug_mode_text)
-		
-		gfx_option("RENDER_SKY", true)
-		
-		editor_interface.map_editor_page:destroy()
-		editor_interface:destroy()
-		env.clockRate = 30
-		navigation_reset()
-		
-		gfx_option("BLOOM_THRESHOLD", 1)
-    end;
 }
 
-game_manager:define(editor)
+function editor:init()
+    navigation_reset()
+
+    -- Avoid it interfering with menu and tool bar.
+    ticker:setOffset(vec(40, 58))
+    -- Avoid distracting text while we load the HUD.
+    ticker:clear()
+
+    gfx_option("WIREFRAME_SOLID", true) -- i don't know why but when selecting a object it just shows wireframe, so TEMPORARY?
+    -- fix glow in the arrows
+    gfx_option("BLOOM_THRESHOLD", 3)
+
+    -- [dcunnin] Ideally we would declare things earlier and only instantiate them at this
+    -- point.  However all the code is mixed up right now.
+    
+    self.debug_mode_text = hud_text_add(`/common/fonts/Verdana12`)
+    self.debug_mode_text.parent = hud_bottom_left
+    self.debug_mode_text.text = "Mouse left: Use Weapon\nMouse Scroll: Change Weapon\nF: Controll Object\nTab: Console\nF1: Open debug mode menu (TODO)\nF5: Return Editor"
+    self.debug_mode_text.position = vec(self.debug_mode_text.size.x/2+10, self.debug_mode_text.size.y)
+    
+    include `init_editor_interface.lua`
+
+    playing_binds.enabled = true
+    editor_core_binds.enabled = true
+    editor_edit_binds.enabled = false
+    editor_debug_binds.enabled = false
+
+    self.lastMouseMoveTime = seconds()
+
+    -- Start location:  Seems as good a place as any...
+    main.camPos = vec(0, 0, 10)
+    GED.camYaw = 0
+    GED.camPitch = 0
+    
+    -- set default values/update values for window content
+    editor_init_windows()
+    
+    if editor_cfg.load_startup_map then
+        GED:openMap(editor_cfg.startup_map)
+    else
+        GED:newMap()
+    end
+    
+    notify("The editor is very unstable, we are working on it", vec(1, 0, 0))
+    GED:setDebugMode(false)
+    
+    env.clockRate = 0
+end
+
+function editor:setPause(v)
+    -- Do nothing, pause controlled elsewhere.
+end
+
+function editor:frameCallback(elapsed_secs)
+    GED:frameCallback(elapsed_secs)
+end
+
+function editor:stepCallback(elapsed_secs)
+    GED:stepCallback(elapsed_secs)
+end
+
+function editor:mouseMove(rel)
+    local sens = user_cfg.mouseSensitivity
+
+    local rel2 = sens * rel * vec(1, user_cfg.mouseInvert and -1 or 1)
+
+    GED.camYaw = (GED.camYaw + rel2.x) % 360
+    GED.camPitch = clamp(GED.camPitch + rel2.y, -90, 90)
+
+    main.camQuat = quat(GED.camYaw, V_DOWN) * quat(GED.camPitch, V_EAST)
+    main.audioCentreQuat = main.camQuat
+    self.lastMouseMoveTime = seconds()
+end
+
+function editor:receiveButton(button, state)
+    editor_receive_button(button, state)
+end
+
+function editor:toggleDebugMode()
+    GED:toggleDebugMode()
+end
+
+function editor:toggleBoard()
+    GED:toggleBoard()
+end
+
+function editor:saveEditorConfig()
+    GED:saveEditorConfig()
+end
+
+function editor:destroy()
+    widget_manager:unselectAll()
+    
+    self:saveEditorConfig()
+    -- GED:saveEditorInterface()
+    
+    editor_core_binds.enabled = false
+    editor_core_move_binds.enabled = false
+    editor_edit_binds.enabled = false
+    editor_debug_binds.enabled = false
+    editor_debug_ghost_binds.enabled = false
+
+    gfx_option("RENDER_SKY", true)
+    
+    editor_interface.map_editor_page:destroy()
+    editor_interface:destroy()
+    env.clockRate = 30
+    navigation_reset()
+    
+    gfx_option("BLOOM_THRESHOLD", 1)
+end
+
+game_manager:register(editor)

@@ -343,7 +343,6 @@ menu_pages = {
                     caption = "Return to main menu";
                     pressedCallback = function() 
                         game_manager:exit()
-                        menu_show("main")
                     end
                 },
                 menu_button {

@@ -27,7 +27,7 @@ game_manager = {
     gameModes = { };
     currentMode = nil;
 
-    define = function (self, mode)
+    register = function (self, mode)
         self.gameModes[mode.name] = mode
     end;
 
@@ -36,16 +36,15 @@ game_manager = {
         if new_mode == nil then
             error('No such game mode: "' .. name .. '"')
         end
+
+        core_option("FOREGROUND_WARNINGS", false)
         if self.currentMode ~= nil then
             self:exit()
         end
-        core_option("FOREGROUND_WARNINGS", false)
-        -- TODO: Make an instance of it rather than using it as an object.
-        self.currentMode = new_mode
-		
-        new_mode:init();
-        core_option("FOREGROUND_WARNINGS", true)
+        self.currentMode = make_instance({}, new_mode)
+        self.currentMode:init()
         self:setPause(false)
+        core_option("FOREGROUND_WARNINGS", true)
     end;
 
     exit = function (self)
@@ -60,10 +59,12 @@ game_manager = {
             -- Reset common/hud stuff (e.g. crosshairs)
             -- env_saturation_mask
             -- global_exposure
+            -- visibility / existence of sky bodies
             object_all_del()
             reset_binds()
             -- A lot of objects should now be unreachable, a good time to garbage collect.
             gc()
+            menu_show('main')
         end
     end;
 
@@ -110,8 +111,4 @@ game_manager = {
 
 playing_binds.mouseMoveCallback = function (rel)
     game_manager:mouseMove(rel)
-end
-
-function enter_gamemode(gm)
-	game_manager:enter(gm)
 end

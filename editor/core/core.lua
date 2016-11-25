@@ -160,7 +160,7 @@ function GED:frameCallback(elapsed_secs)
         local obj_vel_xy_speed = #(obj_vel * vector3(1,1,0))
 
         -- modify the self.camPitch and self.camYaw to track the direction the obj is travelling
-        if false and user_cfg.vehicleCameraTrack and obj.cameraTrack and seconds() - editor.lastMouseMoveTime > 1  and obj_vel_xy_speed > 5 then
+        if false and user_cfg.vehicleCameraTrack and obj.cameraTrack and seconds() - game_manager.currentMode.lastMouseMoveTime > 1  and obj_vel_xy_speed > 5 then
 
             self.camPitch = lerp(self.camPitch, obj_pitch, elapsed_secs * 2)
 
@@ -281,7 +281,7 @@ function GED:setDebugMode(v)
         end
     end
 
-	editor.debug_mode_text.enabled = v
+	game_manager.currentMode.debug_mode_text.enabled = v
 	
 	editor_interface.enabled = not v
 	

@@ -140,11 +140,13 @@ local FpsPlayerClass = extends (ColClass) {
         end
     end;
 
-	frameCallback = function (self, elapsed)	
-		self:updateCamera(elapsed)
+	frameCallback = function (self, elapsed_secs)	
+        BaseGameMode.frameCallback(self, elapsed_secs)
+		self:updateCamera(elapsed_secs)
 	end;
 	
-    stepCallback = function (self, elapsed)
+    stepCallback = function (self, elapsed_secs)
+        BaseGameMode.stepCallback(self, elapsed_secs)
 
         local instance = self.instance
         local body = instance.body
@@ -172,8 +174,8 @@ local FpsPlayerClass = extends (ColClass) {
         local jump_glide_len = gfx:getAnimationLength("jump") + gfx:getAnimationLength("glide")
 
         if instance.timeSinceLastJump ~= nil then
-            instance.timeSinceLastJump = instance.timeSinceLastJump + elapsed
-            if instance.timeSinceLastJump + elapsed >= jump_len and instance.timeSinceLastJump < jump_len then
+            instance.timeSinceLastJump = instance.timeSinceLastJump + elapsed_secs
+            if instance.timeSinceLastJump + elapsed_secs >= jump_len and instance.timeSinceLastJump < jump_len then
                 instance.fallVelocity = instance.fallVelocity + self.jumpVelocity
             end
             if instance.timeSinceLastJump >= jump_glide_len then
@@ -182,7 +184,7 @@ local FpsPlayerClass = extends (ColClass) {
         end
 
         if instance.timeSinceLastGrounded ~= nil then
-            instance.timeSinceLastGrounded = instance.timeSinceLastGrounded + elapsed
+            instance.timeSinceLastGrounded = instance.timeSinceLastGrounded + elapsed_secs
         end
 
         -- HANDLE JUMP (if pressed since last iteration)
@@ -209,11 +211,11 @@ local FpsPlayerClass = extends (ColClass) {
         -- VERTICAL MOTION
 		
         local gravity = physics_get_gravity().z
-        instance.fallVelocity = clamp(instance.fallVelocity + elapsed * gravity, -self.terminalVelocity, self.terminalVelocity)
+        instance.fallVelocity = clamp(instance.fallVelocity + elapsed_secs * gravity, -self.terminalVelocity, self.terminalVelocity)
 
         -- cast a thin disc down from the very top to the bottom + the fall distance
         local head_height = 0.1 -- the top part of teh cylinder to cast downwards
-        local max_fall_z = elapsed*instance.fallVelocity + instance.slopeAmount -- max distance it can fall (if there is no object in the way)
+        local max_fall_z = elapsed_secs*instance.fallVelocity + instance.slopeAmount -- max distance it can fall (if there is no object in the way)
         -- this allows us to stay 'attached' to a surface, so that forces etc can be applied consistently
         local fall_ray_z = max_fall_z
         if fall_ray_z < 0 and fall_ray_z > -0.1 then
@@ -251,7 +253,7 @@ local FpsPlayerClass = extends (ColClass) {
                 if ground_speed > 0 then
                     local max_ride_speed = instance.crouchState and self.maxRideSpeedCrouched or self.maxRideSpeed
                     ground_vel = norm(ground_vel) * math.min(max_ride_speed, ground_speed)
-                    curr_foot = curr_foot + ground_vel*elapsed
+                    curr_foot = curr_foot + ground_vel*elapsed_secs
                 end
             end
 
@@ -261,7 +263,7 @@ local FpsPlayerClass = extends (ColClass) {
                 local ground_impulse = vector3(0,0, landing_momentum)
                 if ground.mass * 3 < self.mass then
                     -- different logic when standing on small object
-                    ground_impulse = math.min(#ground_impulse, ground.mass * elapsed * 5) * norm(ground_impulse)
+                    ground_impulse = math.min(#ground_impulse, ground.mass * elapsed_secs * 5) * norm(ground_impulse)
                 else
                     ground_impulse = math.min(#ground_impulse, ground.mass * 5) * norm(ground_impulse)
                 end
@@ -275,7 +277,7 @@ local FpsPlayerClass = extends (ColClass) {
 
         end
 
-        local dist_try_to_move = blended_speed * elapsed
+        local dist_try_to_move = blended_speed * elapsed_secs
 
         -- LATERAL PERSONALLY DIRECTED MOVEMENT (walking, running, etc)
         if dist_try_to_move > 0 then
@@ -353,7 +355,7 @@ local FpsPlayerClass = extends (ColClass) {
             instance.stridePos = 0.0
         end
 
-        instance.speed = #(curr_foot - old_foot) / elapsed
+        instance.speed = #(curr_foot - old_foot) / elapsed_secs
 
 
         ------------
@@ -364,7 +366,7 @@ local FpsPlayerClass = extends (ColClass) {
         local control_state_desired = vector3(instance.moving and 1 or 0, instance.runState and 1 or 0, (instance.crouchState and not instance.runState) and 1 or 0)
         
         local control_state_dir = control_state_desired - control_state
-        local max_dist = elapsed*4
+        local max_dist = elapsed_secs*4
         if #control_state_dir > max_dist then
             control_state_dir = control_state_dir / #control_state_dir * max_dist
         end
@@ -427,7 +429,7 @@ local FpsPlayerClass = extends (ColClass) {
             gfx:setAnimationMask("landing", in_mask*out_mask)
             gfx:setAnimationPos("landing", instance.timeSinceLastLand)
         
-            instance.timeSinceLastLand = instance.timeSinceLastLand + elapsed
+            instance.timeSinceLastLand = instance.timeSinceLastLand + elapsed_secs
 
             if instance.timeSinceLastLand >= landing_len then
                 instance.timeSinceLastLand = nil
@@ -459,11 +461,11 @@ local FpsPlayerClass = extends (ColClass) {
         gfx:setAnimationPosNormalised("crouch_walk", instance.stridePos)
 
         -- two idle anims
-        instance.crouchIdlePos = (instance.crouchIdlePos + elapsed * instance.crouchIdleRate) % 1
+        instance.crouchIdlePos = (instance.crouchIdlePos + elapsed_secs * instance.crouchIdleRate) % 1
         gfx:setAnimationPosNormalised("crouch", instance.crouchIdlePos)
-        instance.idlePos = (instance.idlePos + elapsed * instance.idleRate) % 1
+        instance.idlePos = (instance.idlePos + elapsed_secs * instance.idleRate) % 1
         gfx:setAnimationPosNormalised("idle", instance.idlePos)
-        instance.fallingPos = instance.fallingPos + elapsed
+        instance.fallingPos = instance.fallingPos + elapsed_secs
         gfx:setAnimationPos("falling", instance.fallingPos)
 
 
@@ -472,7 +474,7 @@ local FpsPlayerClass = extends (ColClass) {
         local bearing_diff = instance.bearingAim - instance.bearing
         while bearing_diff > 180 do bearing_diff = bearing_diff - 360 end
         while bearing_diff < -180 do bearing_diff = bearing_diff + 360 end
-        bearing_diff = clamp(bearing_diff, -360*elapsed, 360*elapsed)
+        bearing_diff = clamp(bearing_diff, -360*elapsed_secs, 360*elapsed_secs)
         instance.bearing = (instance.bearing + bearing_diff) % 360
         while instance.bearing > 180 do instance.bearing = instance.bearing - 360 end
         while instance.bearing < -180 do instance.bearing = instance.bearing + 360 end
@@ -628,7 +630,7 @@ class `FpsPlayer` (FpsPlayerClass) {
 -- GAME MODE --
 ---------------
 
-FirstPersonGameMode = extends(BaseGameMode) {
+FirstPersonGameMode = extends_keep_existing(FirstPersonGameMode, BaseGameMode) {
     -- These must be overidden by the concrete game mode.
     playerGfxMesh = '',
     playerColMesh = '',
@@ -642,6 +644,8 @@ end
 
 function FirstPersonGameMode:init()
     BaseGameMode.init(self)
+
+    self:loadAtLocation(self.spawnPos)
 
     -- player1 means local player
 	self.player1 = object_add(`FpsPlayer`, self.spawnPos, {
@@ -754,6 +758,7 @@ function FirstPersonGameMode:abandonControlObj()
 end
 
 function FirstPersonGameMode:stepCallback(elapsed_secs)
+    BaseGameMode.stepCallback(self, elapsed_secs)
 	if self.player1 and self.player1.instance and self.player1.instance.body.worldPosition.z < -50 then
 		self.player1.instance.body.worldPosition = vec(0, 0, 10)
 	end
@@ -765,6 +770,7 @@ function FirstPersonGameMode:restart()
 end
 
 function FirstPersonGameMode:destroy()
+    BaseGameMode.destroy(self)
     playing_actor_binds:unbind('x')
 	self.player1:destroy()
 end

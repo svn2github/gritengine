@@ -1,4 +1,4 @@
-local GameMode = {
+local GameMode = extends_keep_existing (game_manager.gameModes['Navigation Demo'], BaseGameMode) {
     name = 'Navigation Demo',
     description =  "Strategic Companion's Game Demo",
     previewImage = `GameMode.png`,
@@ -22,32 +22,9 @@ local GameMode = {
 function GameMode:playerRespawn()
 
     -- Use loading screen while we go back to spawn pos
-    loading_screen.enabled = true
-    loading_screen:setProgress(0)
-    loading_screen:pump()
-    streamer_centre_full(self.spawnPos)
-
-	give_queue_allowance(1 + 1*get_in_queue_size())
-	
-    local to_go = get_in_queue_size()
-    local init_to_go = to_go
-    while to_go > 0 do
-        to_go = get_in_queue_size()
-        loading_screen:setProgress((init_to_go - to_go) / init_to_go)
-        loading_screen:pump()
-    end
-	
-    loading_screen:setProgress(1)
-    loading_screen:setStatus('Activating objects')
-    loading_screen:pump()
-    streamer_centre_full(self.spawnPos)
-
-    loading_screen:setStatus('All done')
-    loading_screen:pump()
-    loading_screen.enabled = false
+    self:loadAtLocation(self.spawnPos)
 
 	main.camPos = self.spawnPos
-	
     main.camQuat = self.spawnRot
     main.audioCentreVel = vec(0, 0, 0);
     main.audioCentreQuat = quat(1, 0, 0, 0);
@@ -77,19 +54,12 @@ function GameMode:playerRespawn()
 end
 
 function GameMode:init()
+    BaseGameMode.init(self)
+
 	navigation_reset()
-	object_all_del()
-	
-	loading_screen.enabled = true
-    loading_screen:setMapName('Navigation Demo')
-    loading_screen:setStatus('Background loading resources...')
 
 	navigation_debug_option("navmesh_use_tile_colours", true)
 	navigation_debug_option("enabled", true)
-
-	env_recompute()
-
-	include_map(self.map)
 
     self.aicharacters = { }
     for _, obj in ipairs(object_all_of_class(`RobotHeavy`)) do
@@ -102,7 +72,6 @@ function GameMode:init()
         self.aicharacters[#self.aicharacters+1] = obj
     end
 	
-    playing_binds.enabled = true
 	playing_actor_binds.enabled = true
 
 	playing_binds:bind("right", function() playing_binds.mouseCapture = true end, function() playing_binds.mouseCapture = false end)
@@ -112,37 +81,15 @@ function GameMode:init()
 	clock.enabled = false
 	compass.enabled = false
 	
-	
 
     self:playerRespawn()
 
-    playing_binds.mouseCapture = false
 	gfx_option("RENDER_SKY", false)
 	
 	gfx_option("BLOOM_THRESHOLD", 1.5)
 
 	self.info = gui.text({value = "Left Mouse: Move Crowd", parent = hud_bottom_left, position = vec(150, 20)})
 	
-end
-
-function GameMode:setPause(v)
-    main.physicsEnabled = not v
-end
-
-function GameMode:mouseMove(rel)
-    local sens = user_cfg.mouseSensitivity
-    
-    local rel2 = sens * rel * vec(1, user_cfg.mouseInvert and -1 or 1)
-    
-    self.camYaw = (self.camYaw + rel2.x) % 360
-    self.camPitch = clamp(self.camPitch + rel2.y, -90, 90)
-    self.playerCamPitch = self.camPitch
-        
-    main.camQuat = quat(self.camYaw, V_DOWN) * quat(self.camPitch, V_EAST)
-    main.audioCentreQuat = main.camQuat
-
-    self.lastMouseMoveTime = seconds()
-
 end
 
 function GameMode:receiveButton(button, state)
@@ -219,25 +166,15 @@ function GameMode:frameCallback(elapsed_secs)
     main.audioCentreVel = vec(0, 0, 0);
 end
 
-function GameMode:stepCallback(elapsed_secs)
-
-end
-
 function GameMode:destroy()
-    playing_binds.enabled = false
-    playing_actor_binds.enabled = false
-    playing_vehicle_binds.enabled = false
+    BaseGameMode.destroy(self)
 
 	playing_binds:unbind("right")
 	playing_binds:unbind("left")
 	
-	object_all_del()
-	
 	gfx_option("RENDER_SKY", true)
 	
 	navigation_debug_option("enabled", false)	
-	
-	safe_destroy(self.info)
 	navigation_reset()
 end
 
@@ -249,4 +186,4 @@ function crowd_move(pos)
     end
 end
 
-game_manager:define(GameMode)
+game_manager:register(GameMode)

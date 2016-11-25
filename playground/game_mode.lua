@@ -1,5 +1,4 @@
-
-local GameMode = extends(ThirdPersonGameMode) {
+local GameMode = extends_keep_existing (game_manager.gameModes['Playground'], ThirdPersonGameMode) {
     name = 'Playground',
     description = 'Open World Game Demo',
     previewImage = `GameMode.png`,
@@ -28,11 +27,10 @@ function GameMode:init()
     self.coinsTotal = 1
 
     self:playerRespawn()
-
 end
 
 function GameMode:coinPickUp()
     self.coinsPickedUp = self.coinsPickedUp + 1
 end
 
-game_manager:define(GameMode)
+game_manager:register(GameMode)

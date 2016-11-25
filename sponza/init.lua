@@ -1,6 +1,6 @@
 include `defs.lua`
 
-local GameMode = extends (FirstPersonGameMode) {
+local GameMode = extends_keep_existing (game_manager.gameModes['Sponza FPS'], FirstPersonGameMode) {
     name = 'Sponza FPS',
     description = 'Sponza (First Person Demo)',
     previewImage = `GameMode.png`,
@@ -12,4 +12,4 @@ local GameMode = extends (FirstPersonGameMode) {
     playerColMesh = `/detached/characters/robot_med/robot_med.gcol`,
 }
 
-game_manager:define(GameMode)
+game_manager:register(GameMode)

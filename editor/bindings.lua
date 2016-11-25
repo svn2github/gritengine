@@ -22,6 +22,7 @@ editor_debug_binds.enabled = false
 editor_debug_ghost_binds.enabled = false
 
 function editor_receive_button(button, state)
+    editor = game_manager.currentMode
     local on_off
     if state == "+" or state == '=' then on_off = 1 end
     if state == "-" then on_off = 0 end
