@@ -58,6 +58,8 @@ FlyingCar = extends (ColClass) {
     controllable = "VEHICLE";
     boomLengthMin = 3;
     boomLengthMax = 15;
+    driverExitPos = vector3(-1.45, -0.24, 0.49);
+    driverExitQuat = Q_ID;
 
     wobblePeriod = 4; -- seconds
     wobbleAmplitude = 0.04; -- metres
