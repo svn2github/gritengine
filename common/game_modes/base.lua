@@ -42,14 +42,13 @@ function BaseGameMode:loadAtLocation()
 
     loading_screen:pump()
 
-    give_queue_allowance(1 + 1*get_in_queue_size())
-    
     local to_go = get_in_queue_size()
     local init_to_go = to_go
     while to_go > 0 do
         to_go = get_in_queue_size()
         loading_screen:setProgress((init_to_go - to_go) / init_to_go)
         loading_screen:pump()
+        give_queue_allowance(1 + to_go)
     end
     loading_screen:setProgress(1)
     loading_screen:setStatus('Activating objects')
