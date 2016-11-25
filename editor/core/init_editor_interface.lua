@@ -9,10 +9,10 @@ hud_class `EditorInterface` `/common/gui/windownotebook` {
     buttonCallback = function (self, event)
         if event == '+left' then
             if inside_hud() then
-                GED:leftMouseClick()
+                game_manager.currentMode:leftMouseClick()
             end
         elseif event == '-left' then
-            GED:stopDraggingObj()
+            game_manager.currentMode:stopDraggingObj()
         end
     end,
 }

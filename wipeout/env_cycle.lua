@@ -1,4 +1,4 @@
-sky_cycle = {
+return {
  {
   saturation = 1;
   particleAmbient = { 1, 1, 1 };

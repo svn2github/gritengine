@@ -7,7 +7,11 @@
 --  http://www.opensource.org/licenses/mit-license.php
 ------------------------------------------------------------------------------
 
-GED = {
+-- The editor is a special kind of game mode.  This is the root of the editor state.  Ultimately,
+-- everything is initialized and managed from here.
+
+Editor = Editor or {
+    name = 'Map Editor',
 
     debugMode = false,
     noClip = false,
@@ -41,10 +45,10 @@ GED = {
     
     game_data_dir = "editor";
 	playGameMode = "fpsgame";
-};
+}
 
 
-function GED:toggleBoard(mobj)
+function Editor:toggleBoard(mobj)
     if self.controlObj ~= nil then
         -- Currently controlling an object.  Exit it.
         playing_actor_binds.enabled = false
@@ -82,7 +86,7 @@ function GED:toggleBoard(mobj)
 end
 
 -- if the widget is under mouse cursor, then start dragging, otherwise select an object
-function GED:selectObj()
+function Editor:selectObj()
 	if self.selectionEnabled then
 		if input_filter_pressed("Shift") then
 			widget_manager:select(true, true)
@@ -90,17 +94,17 @@ function GED:selectObj()
 			widget_manager:select(true, false)
 		end
 	end
-end;
+end
 
-function GED:leftMouseClick()
+function Editor:leftMouseClick()
 	self:selectObj()
-end;
+end
 
-function GED:stopDraggingObj()
+function Editor:stopDraggingObj()
     widget_manager:stopDragging()
-end;
+end
 
-function GED:deleteSelection()
+function Editor:deleteSelection()
     local selobjs = {}
 	
 	for i = 1, #widget_manager.selectedObjs do
@@ -115,9 +119,9 @@ function GED:deleteSelection()
 			safe_destroy(selobjs[i])
 		end
 	end
-end;
+end
 
-function GED:duplicateSelection()
+function Editor:duplicateSelection()
     if widget_manager ~= nil and widget_manager.selectedObjs ~= nil then
 		for i = 1, #widget_manager.selectedObjs do
 			if not widget_manager.selectedObjs[i].destroyed and widget_manager.selectedObjs[i].instance ~= nil then
@@ -128,25 +132,25 @@ function GED:duplicateSelection()
 			end
 		end
     end
-end;
+end
 
-function GED:destroyAllEditorObjects()
+function Editor:destroyAllEditorObjects()
     local objs = object_all()
     for i = 1, #objs do
         if objs[i].editorObject ~= nil then
             safe_destroy(objs[i])
         end
     end
-end;
+end
 
 local function ghost_cast (pos, ray, scale)
     local fraction, _, n = physics_sweep_sphere(scale*.15, pos, ray, true, 1)
     return fraction, n
 end
 
-function GED:frameCallback(elapsed_secs)
+function Editor:frameCallback(elapsed_secs)
     if self.controlObj ~= nil and not self.controlObj.activated then
-        editor:toggleBoard()
+        self:toggleBoard()
     end
 
     if self.controlObj ~= nil then
@@ -239,21 +243,21 @@ function GED:frameCallback(elapsed_secs)
     main.streamerCentre = main.camPos
     main.audioCentrePos = main.camPos
     main.audioCentreVel = vec(0, 0, 0);
-end;
+end
 
-function GED:stepCallback(elapsed_secs)
+function Editor:stepCallback(elapsed_secs)
     if self.debugMode then
         WeaponEffectManager:stepCallback(elapsed_secs, main.camPos, main.camQuat)
     end
-end;
+end
 
-function GED:setMouseCapture(v)
+function Editor:setMouseCapture(v)
     self.mouseCapture = v
     ch.enabled = v
     playing_binds.mouseCapture = v
 end
 
-function GED:toggleMouseCapture()
+function Editor:toggleMouseCapture()
     -- Only called when we are in debug mode
     self:setMouseCapture(not self.mouseCapture)
     if self.mouseCapture then
@@ -268,7 +272,7 @@ function GED:toggleMouseCapture()
     end
 end
 
-function GED:setDebugMode(v)
+function Editor:setDebugMode(v)
     -- Detach any object we may be controlling
     
 	if widget_manager then
@@ -331,16 +335,16 @@ function GED:setDebugMode(v)
 			self.debugModeSettingsWindow.enabled = false
 		end
     end
-end;
+end
 
-include`/editor/core/windows/debug_mode/settings.lua`
+include `windows/debug_mode/settings.lua`
 
-function GED:createDebugModeSettingsWindow()
+function Editor:createDebugModeSettingsWindow()
 	if self.debugModeSettingsWindow ~= nil and not self.debugModeSettingsWindow.destroyed then
 		self.debugModeSettingsWindow:destroy()
 	end
 
-	self.debugModeSettingsWindow = hud_object `/editor/core/windows/debug_mode/Settings` {
+	self.debugModeSettingsWindow = hud_object `windows/debug_mode/Settings` {
 		title = "Debug Mode Settings";
 		parent = hud_centre;
 		position = vec(0, 0);
@@ -354,15 +358,15 @@ function GED:createDebugModeSettingsWindow()
 	_windows[#_windows+1] = self.debugModeSettingsWindow
 end
 
-function GED:toggleDebugMode()
+function Editor:toggleDebugMode()
     self:setDebugMode(not self.debugMode)
 end
 
-function GED:play()
+function Editor:play()
 	print("Currently disabled")
 end
 
-function GED:setPlayMode(v)
+function Editor:setPlayMode(v)
 	self.playGameMode:editorDebug(v)
 
 	editor_interface.enabled = not v
@@ -399,9 +403,9 @@ function GED:setPlayMode(v)
         end
 
     end
-end;
+end
 
-function GED:togglePlayMode()
+function Editor:togglePlayMode()
     self:setPlayMode(not self.playMode)
 end
 
@@ -444,11 +448,11 @@ function inside_hud()
     return false
 end
 
-function GED:generateEnvCube(pos)
+function Editor:generateEnvCube(pos)
     current_map:generateEnvCube(pos)
-end;
+end
 
-function GED:newMap(ndestroyobjs)
+function Editor:newMap(ndestroyobjs)
     gfx_option("RENDER_SKY", true)
 	
 	unload_icons = true
@@ -477,9 +481,9 @@ function GED:newMap(ndestroyobjs)
     -- if update_map_properties ~= nil then
         -- update_map_properties()
     -- end
-end;
+end
 
-function GED:openMap(map_file)
+function Editor:openMap(map_file)
     if map_file == nil then
 			open_map_dialog()
         return
@@ -512,18 +516,18 @@ function GED:openMap(map_file)
     -- if update_map_properties ~= nil then
         -- update_map_properties()
     -- end
-end;
+end
 
 -- save current map, if have a "file_name" specified
-function GED:saveCurrentMap()
+function Editor:saveCurrentMap()
     if #current_map.file_name > 0 then
         current_map:save()
     else
         self:saveCurrentMapAs()
     end
-end;
+end
 
-function GED:saveCurrentMapAs(name)
+function Editor:saveCurrentMapAs(name)
     if name == nil then
 		save_map_dialog()
         return false
@@ -531,17 +535,17 @@ function GED:saveCurrentMapAs(name)
         current_map.file_name = name
         return current_map:save()
     end
-end;
+end
 
 -- turn the toolbar icons as selected and change mode
-function GED:setWidgetMode(mode)
+function Editor:setWidgetMode(mode)
     if widget_manager.mode == mode then return end
     
     widget_manager:set_mode(mode)
-end;
+end
 
 -- save editor interface windows
-function GED:saveEditorInterface()
+function Editor:saveEditorInterface()
     editor_interface_cfg = {
       content_browser   =   {
         opened   = (editor_interface.map_editor_page.windows.content_browser == nil and false or true) or not editor_interface.map_editor_page.windows.content_browser.destroyed;
@@ -601,10 +605,10 @@ function GED:saveEditorInterface()
     file:write(dump(editor_interface_cfg, false))
 
     file:close()
-end;
+end
 
 -- save editor config
-function GED:saveEditorConfig()
+function Editor:saveEditorConfig()
     local file = io.open("editor/config/config.lua", "w")
 
     if file == nil then error("Could not open file", 1) end
@@ -618,23 +622,113 @@ function GED:saveEditorConfig()
     file:write(dump(editor_cfg, false))
 
     file:close()
-end;
+end
 
-function GED:undo()
-end;
+function Editor:undo()
+end
 
-function GED:redo()
-end;
+function Editor:redo()
+end
 
-function GED:cutObject()
-end;
+function Editor:cutObject()
+end
 
-function GED:copyObject()
-end;
+function Editor:copyObject()
+end
 
-function GED:pasteObject()
-end;
+function Editor:pasteObject()
+end
 
-function exit_editor()
-	game_manager:exit()
-end;
+function Editor:init()
+    navigation_reset()
+
+    -- Avoid it interfering with menu and tool bar.
+    ticker:setOffset(vec(40, 58))
+    -- Avoid distracting text while we load the HUD.
+    ticker:clear()
+
+    gfx_option("WIREFRAME_SOLID", true) -- i don't know why but when selecting a object it just shows wireframe, so TEMPORARY?
+    -- fix glow in the arrows
+    gfx_option("BLOOM_THRESHOLD", 3)
+
+    -- [dcunnin] Ideally we would declare things earlier and only instantiate them at this
+    -- point.  However all the code is mixed up right now.
+    
+    self.debug_mode_text = hud_text_add(`/common/fonts/Verdana12`)
+    self.debug_mode_text.parent = hud_bottom_left
+    self.debug_mode_text.text = "Mouse left: Use Weapon\nMouse Scroll: Change Weapon\nF: Controll Object\nTab: Console\nF1: Open debug mode menu (TODO)\nF5: Return Editor"
+    self.debug_mode_text.position = vec(self.debug_mode_text.size.x/2+10, self.debug_mode_text.size.y)
+    
+    include `init_editor_interface.lua`
+
+    playing_binds.enabled = true
+    editor_core_binds.enabled = true
+    editor_edit_binds.enabled = false
+    editor_debug_binds.enabled = false
+
+    self.lastMouseMoveTime = seconds()
+
+    -- Start location:  Seems as good a place as any...
+    main.camPos = vec(0, 0, 10)
+    self.camYaw = 0
+    self.camPitch = 0
+    
+    -- set default values/update values for window content
+    editor_init_windows()
+    
+    if editor_cfg.load_startup_map then
+        self:openMap(editor_cfg.startup_map)
+    else
+        self:newMap()
+    end
+    
+    notify("The editor is very unstable, we are working on it", vec(1, 0, 0))
+    self:setDebugMode(false)
+    
+    env.clockRate = 0
+end
+
+function Editor:setPause(v)
+    -- Do nothing, pause controlled elsewhere.
+end
+
+function Editor:mouseMove(rel)
+    local sens = user_cfg.mouseSensitivity
+
+    local rel2 = sens * rel * vec(1, user_cfg.mouseInvert and -1 or 1)
+
+    self.camYaw = (self.camYaw + rel2.x) % 360
+    self.camPitch = clamp(self.camPitch + rel2.y, -90, 90)
+
+    main.camQuat = quat(self.camYaw, V_DOWN) * quat(self.camPitch, V_EAST)
+    main.audioCentreQuat = main.camQuat
+    self.lastMouseMoveTime = seconds()
+end
+
+function Editor:receiveButton(button, state)
+    editor_receive_button(button, state)
+end
+
+function Editor:destroy()
+    widget_manager:unselectAll()
+    
+    self:saveEditorConfig()
+    -- self:saveEditorInterface()
+    
+    editor_core_binds.enabled = false
+    editor_core_move_binds.enabled = false
+    editor_edit_binds.enabled = false
+    editor_debug_binds.enabled = false
+    editor_debug_ghost_binds.enabled = false
+
+    gfx_option("RENDER_SKY", true)
+    
+    editor_interface.map_editor_page:destroy()
+    editor_interface:destroy()
+    env.clockRate = 30
+    navigation_reset()
+    
+    gfx_option("BLOOM_THRESHOLD", 1)
+end
+
+game_manager:register(Editor)

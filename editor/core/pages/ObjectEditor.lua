@@ -54,7 +54,7 @@ function ed_object_editor_page:select()
 			toggle_vehicle_wheels(self.object, true)
 		end
 		main.camPos = self.object.spawnPos
-		GED:toggleBoard(self.object)
+		game_manager.currentMode:toggleBoard(self.object)
 	end
 end;
 
@@ -71,7 +71,7 @@ end;
 
 function ed_object_editor_page:unselect()
 	if self.object ~= nil and not self.object.destroyed then
-		GED:toggleBoard()
+		game_manager.currentMode:toggleBoard()
 	end
 	
 	local objs = object_all()
@@ -90,8 +90,8 @@ function ed_object_editor_page:unselect()
 	lens_flare.enabled = true
 	main.camPos = self.camPos
 	main.camQuat = self.camQuat
-	GED.camPitch = quatPitch(main.camQuat)
-	GED.camYaw = cam_yaw_angle()	
+	game_manager.currentMode.camPitch = quatPitch(main.camQuat)
+	game_manager.currentMode.camYaw = cam_yaw_angle()	
 end;
 
 function ed_object_editor_page:init()

@@ -2,6 +2,9 @@
 
 include `sky.lua`
 
+env_cycle = include `env_cycle.lua`
+
+
 env_saturation_mask = 1
 
 env_cube_dawn_time = 6*60*60
@@ -195,8 +198,6 @@ local function change (self, k, v)
     maybe_commit(self)
 end
 
-
-include `env_cycle.lua`
 
 --[[
 function save_env_cycle(filename)

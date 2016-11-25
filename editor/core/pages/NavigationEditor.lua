@@ -76,7 +76,7 @@ editor_interface.navigation_editor =
 		self.windows.debug.enabled = true
 		self.menubar.enabled = true
 		self.statusbar.enabled = true
-		GED.selectionEnabled = false
+		game_manager.currentMode.selectionEnabled = false
 		
 		extra_inside_hud = function()
 			if mouse_pos_abs.x > gfx_window_size().x - editor_interface.navigation_editor.propertiesToolpanel.size.x then
@@ -95,10 +95,10 @@ editor_interface.navigation_editor =
 		self.windows.debug.enabled = false
 		self.menubar.enabled = false
 		self.statusbar.enabled = false
-		GED.selectionEnabled = true
+		game_manager.currentMode.selectionEnabled = true
 		-- playing_binds:unbind("left")
 		
-		GED.leftMouseClick = function(self) self:selectObj() end;
+		game_manager.currentMode.leftMouseClick = function(self) self:selectObj() end;
 		extra_inside_hud = function() return false end;
 	end;
 	

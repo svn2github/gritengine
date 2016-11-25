@@ -347,7 +347,7 @@ include `welcome_msg.lua`
 
 function debug_mode()
     game_manager:enter('Map Editor')
-    editor:toggleDebugMode()
+    game_manager.currentMode:toggleDebugMode()
     menu_show(nil)
 end
 

@@ -29,7 +29,7 @@ hud_class `Tools` (extends(WindowClass)
 		self.size = self.size
 		
 		--playing_binds:bind("middle", function() local pos = mouse_pick_pos() if pos then navigation_add_obstacle(pos) end end)
-		GED.leftMouseClick = function() local pos = mouse_pick_pos() if pos then navigation_add_obstacle(pos) end end;
+		game_manager.currentMode.leftMouseClick = function() local pos = mouse_pick_pos() if pos then navigation_add_obstacle(pos) end end;
 	end;
 	
 	show_offmesh_tool = function(self)
@@ -60,7 +60,7 @@ hud_class `Tools` (extends(WindowClass)
 		end
 		
 		-- playing_binds:bind("middle", offmeshclick)
-		GED.leftMouseClick = function() offmeshclick() end;
+		game_manager.currentMode.leftMouseClick = function() offmeshclick() end;
 		
 		self.tool.bxsz = gui.boxsizer(true, "vertical", self.tool)
 		self.tool.bxsz.zOrder = 5
@@ -80,7 +80,7 @@ hud_class `Tools` (extends(WindowClass)
 		safe_destroy(self.tool)
 		self.tool = gui.object({ parent = self, size = vec(100, 100), alpha = 0, colour = vec(1, 0, 1), align = vec(0, 1), expand_x = true })
 		-- playing_binds:bind("middle", function() end)
-		GED.leftMouseClick = function()  end;
+		game_manager.currentMode.leftMouseClick = function()  end;
 	end;	
 	
 	show_crowd_tool = function(self)
@@ -95,7 +95,7 @@ hud_class `Tools` (extends(WindowClass)
 			parent = self.tool,
 			onSelect = function(self)
 				-- playing_binds:bind("middle", function() local pos = mouse_pick_pos() if pos then agent_add(pos) end end)
-				GED.leftMouseClick = function() local pos = mouse_pick_pos() if pos then agent_make(pos) end end;
+				game_manager.currentMode.leftMouseClick = function() local pos = mouse_pick_pos() if pos then agent_make(pos) end end;
 			end,
 			align = vec(-1, 0),
 			offset =  vec(10, 0)
@@ -107,7 +107,7 @@ hud_class `Tools` (extends(WindowClass)
 			parent = self.tool,
 			onSelect = function(self)
 				-- playing_binds:bind("middle", function() local pos = mouse_pick_pos() if pos then crowd_move_to(pos) end end)
-				GED.leftMouseClick = function() local pos = mouse_pick_pos() if pos then crowd_move_to(pos) end end;
+				game_manager.currentMode.leftMouseClick = function() local pos = mouse_pick_pos() if pos then crowd_move_to(pos) end end;
 			end,
 			align = vec(-1, 0),
 			offset =  vec(10, 0)
@@ -118,7 +118,7 @@ hud_class `Tools` (extends(WindowClass)
 			parent = self.tool,
 			onSelect = function(self)
 				-- playing_binds:bind("middle", function() end)
-				GED.leftMouseClick = function()  end;
+				game_manager.currentMode.leftMouseClick = function()  end;
 			end,
 			align = vec(-1, 0),
 			offset =  vec(10, 0)

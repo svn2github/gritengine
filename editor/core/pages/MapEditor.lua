@@ -11,7 +11,7 @@ function open_map_dialog()
 		choices = { "Grit Map (*.gmap)", "Lua Script (*.lua)" };
 		callback = function(self, str)
 			if resource_exists("/"..str) then
-				if GED:openMap("/"..str) then
+				if game_manager.currentMode:openMap("/"..str) then
 					notify("Loaded!", vec(0, 0.5, 1), V_ID)
 					return true
 				else
@@ -40,7 +40,7 @@ function save_map_dialog()
 			if resource_exists("/"..str) then
 				local save_overwrite = function (boolean)
 					if boolean then
-						if GED:saveCurrentMapAs(str) then
+						if game_manager.currentMode:saveCurrentMapAs(str) then
 							notify("Saved!", vec(0, 1, 0), V_ID)
 							self:destroy()
 						else
@@ -51,7 +51,7 @@ function save_map_dialog()
 				create_dialog("SAVE", "Would you like to overwrite "..str.."?", "yesnocancel", save_overwrite)
 				return false
 			else
-				if GED:saveCurrentMapAs(str) then
+				if game_manager.currentMode:saveCurrentMapAs(str) then
 					notify("Saved!", vec(0, 1, 0), V_ID)
 					return true
 				else
@@ -113,27 +113,27 @@ editor_interface.map_editor_page =
 			items = {
 				{
 					callback = function()
-						GED:newMap()
+						game_manager.currentMode:newMap()
 					end;
 					name = "New";
 					tip = "Creates a new map";
 					icon = map_editor_icons.new15;
 				},
 				{
-					callback = function() GED:openMap() end;
+					callback = function() game_manager.currentMode:openMap() end;
 					name = "Open";
 					tip = "Open a map";
 					icon = map_editor_icons.open15;
 				},
 				{},
 				{
-					callback = function() GED:saveCurrentMap() end;
+					callback = function() game_manager.currentMode:saveCurrentMap() end;
 					name = "Save";
 					tip = "Save the current map";
 					icon = map_editor_icons.save15;
 				},
 				{
-					callback = function() GED:saveCurrentMapAs() end;
+					callback = function() game_manager.currentMode:saveCurrentMapAs() end;
 					name = "Save As";
 					tip = "Save as the current map";
 					icon = map_editor_icons.save_as15;
@@ -142,8 +142,8 @@ editor_interface.map_editor_page =
 				{
 					callback = function()
 						-- TODO: prompt if user want to save his work
-						GED:saveEditorInterface()
-						exit_editor()
+						game_manager.currentMode:saveEditorInterface()
+                        game_manager:exit()
 					end;
 					name = "Exit";
 					tip = "Exit the editor";
@@ -155,41 +155,41 @@ editor_interface.map_editor_page =
 		self.menus.editMenu = gui.menubar_menu({
 			items = {
 				{
-					callback = function() GED:undo() end;
+					callback = function() game_manager.currentMode:undo() end;
 					name = "Undo";
 					tip = "Undo last action";
 					icon = map_editor_icons.undo;
 				},
 				{
-					callback = function() GED:redo() end;
+					callback = function() game_manager.currentMode:redo() end;
 					name = "Redo";
 					tip = "Redo last action";
 					icon = map_editor_icons.redo;
 				},
 				{},
 				{
-					callback = function() GED:cutObject() end;
+					callback = function() game_manager.currentMode:cutObject() end;
 					name = "Cut";
 					tip = "Cut selected object";
 				},
 				{
-					callback = function() GED:copyObject() end;
+					callback = function() game_manager.currentMode:copyObject() end;
 					name = "Copy";
 					tip = "Copy selected object";
 				},
 				{
-					callback = function() GED:pasteObject() end;
+					callback = function() game_manager.currentMode:pasteObject() end;
 					name = "Paste";
 					tip = "Paste object";
 				},
 				{
-					callback = function() if widget_manager.selectedObj ~= nil then GED:duplicateSelection() end end;
+					callback = function() if widget_manager.selectedObj ~= nil then game_manager.currentMode:duplicateSelection() end end;
 					name = "Duplicate";
 					tip = "Duplicate current selection";
 				},
 				{},
 				{
-					callback = function() GED:generateEnvCube(main.camPos) end;
+					callback = function() game_manager.currentMode:generateEnvCube(main.camPos) end;
 					name = "Gen Env Cubes";
 					tip = "Generate and apply env cube";
 					icon = map_editor_icons.solid;
@@ -290,21 +290,21 @@ editor_interface.map_editor_page =
 		self.menus.gameMenu = gui.menubar_menu({
 			items = {
 				{
-					callback = function() --GED:play()
+					callback = function() --game_manager.currentMode:play()
 					end;
 					name = "Play";
 					tip = "Play on viewport";
 					icon = map_editor_icons.controller;
 				},
 				{
-					callback = function() GED:toggleDebugMode() end;
+					callback = function() game_manager.currentMode:toggleDebugMode() end;
 					name = "Debug [F5]";
 					tip = "Enter Debug Mode";
 					icon = map_editor_icons.play;
 				},		
 				-- {},
 				-- {
-					-- callback = function() GED:runGame() end;
+					-- callback = function() game_manager.currentMode:runGame() end;
 					-- name = "Run game";
 					-- tip = "Run game in a new window";
 					-- icon = map_editor_icons.play;
@@ -369,13 +369,13 @@ editor_interface.map_editor_page =
 			alpha = 0;
 		})
 
-		self.toolbar:addTool("New", map_editor_icons.new, (function(self) GED:newMap() end), "Create new map")
-		self.toolbar:addTool("Open", map_editor_icons.open, (function(self) GED:openMap() end), "Open Map")
-		self.toolbar:addTool("Save", map_editor_icons.save, (function(self) GED:saveCurrentMap() end), "Save Current Map")
-		self.toolbar:addTool("Save As", map_editor_icons.save_as, (function(self) GED:saveCurrentMapAs() end), "Save Map As")
+		self.toolbar:addTool("New", map_editor_icons.new, (function(self) game_manager.currentMode:newMap() end), "Create new map")
+		self.toolbar:addTool("Open", map_editor_icons.open, (function(self) game_manager.currentMode:openMap() end), "Open Map")
+		self.toolbar:addTool("Save", map_editor_icons.save, (function(self) game_manager.currentMode:saveCurrentMap() end), "Save Current Map")
+		self.toolbar:addTool("Save As", map_editor_icons.save_as, (function(self) game_manager.currentMode:saveCurrentMapAs() end), "Save Map As")
 		self.toolbar:addSeparator()
-		self.toolbar:addTool("Undo", map_editor_icons.undo, (function(self) GED:undo() end), "Undo")
-		self.toolbar:addTool("Redo", map_editor_icons.redo, (function(self) GED:redo() end), "Redo")
+		self.toolbar:addTool("Undo", map_editor_icons.undo, (function(self) game_manager.currentMode:undo() end), "Undo")
+		self.toolbar:addTool("Redo", map_editor_icons.redo, (function(self) game_manager.currentMode:redo() end), "Redo")
 		self.toolbar:addSeparator()
 		
 		self.toolbar:addTool("Local, World", map_editor_icons.w_global, (function(self)
@@ -397,9 +397,9 @@ editor_interface.map_editor_page =
 		-- self.toolbar:addSeparator()
 		-- self.toolbar:addTool("Pivot", `../icons/pivot_centre.png`, (function(self)  end), "")
 		self.toolbar:addSeparator()
-		self.toolbar:addTool("Controller", map_editor_icons.controller, (function(self) GED:play() end), "Play")
-		--self.toolbar:addTool("Play", `../icons/play.png`, (function(self) GED:simulate() end), "")
-		--self.toolbar:addTool("Stop", `../icons/stop.png`, (function(self) GED:stopSimulate() end), "")
+		self.toolbar:addTool("Controller", map_editor_icons.controller, (function(self) game_manager.currentMode:play() end), "Play")
+		--self.toolbar:addTool("Play", `../icons/play.png`, (function(self) game_manager.currentMode:simulate() end), "")
+		--self.toolbar:addTool("Stop", `../icons/stop.png`, (function(self) game_manager.currentMode:stopSimulate() end), "")
 		--self.toolbar:addTool("Play Window", `icons/play_window.png`, (function(self) runGame() end), "")
 		self.toolbar:addSeparator()
 		self.toolbar:addTool("Toggle Postprocessing", map_editor_icons.view_mode,(
@@ -443,30 +443,30 @@ editor_interface.map_editor_page =
 		self.widget_menu = {}
 
 		self.widget_menu[0] = self.mlefttoolbar:addTool("Select", map_editor_icons.select, (function(self)
-			 GED:setWidgetMode("select")
+			 game_manager.currentMode:setWidgetMode("select")
 			editor_interface.map_editor_page:unselectAllWidgets()
 			self:select(true)
 		end), "Selection Mode")
 
 		self.widget_menu[1] = self.mlefttoolbar:addTool("Translate", map_editor_icons.translate, (function(self)
-			GED:setWidgetMode("translate")
+			game_manager.currentMode:setWidgetMode("translate")
 			editor_interface.map_editor_page:unselectAllWidgets()
 			self:select(true)
 		end), "Translate")
 
 		self.widget_menu[2] = self.mlefttoolbar:addTool("Rotate", map_editor_icons.rotate, (function(self)
-			GED:setWidgetMode("rotate")
+			game_manager.currentMode:setWidgetMode("rotate")
 			editor_interface.map_editor_page:unselectAllWidgets()
 			self:select(true)
 		end), "Rotate")
 
 		-- self.widget_menu[3] = self.mlefttoolbar:addTool("Scale", `../icons/scale.png`, (function(self)
-			-- GED:setWidgetMode(3)
+			-- game_manager.currentMode:setWidgetMode(3)
 			-- editor_interface.map_editor_page:unselectAllWidgets()
 			-- self:select(true)
 		-- end), "Scale")
 
-		GED:setWidgetMode("translate")
+		game_manager.currentMode:setWidgetMode("translate")
         self.widget_menu[1]:select(true)
 		
 		self.mlefttoolbar:addSeparator()

@@ -178,12 +178,13 @@ function GameMode:destroy()
 	navigation_reset()
 end
 
+game_manager:register(GameMode)
+
 function crowd_move(pos)
-    for i, aichar in ipairs(GameMode.aicharacters) do
+    for i, aichar in ipairs(game_manager.currentMode.aicharacters) do
         if not aichar.destroyed and aichar.activated and aichar.instance.agentID ~= -1 then
             aichar:updateDestination(pos, false)
         end
     end
 end
 
-game_manager:register(GameMode)

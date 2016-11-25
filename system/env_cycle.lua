@@ -1,4 +1,4 @@
-env_cycle = { {
+return { {
   cloudColour   = vector3(0.07395056, 0.05947809, 0.04674862);
   cloudCoverage = 0.74874023474476;
   diffuseLight  = vector3(0.06420685, 0.07775416, 0.1035562);

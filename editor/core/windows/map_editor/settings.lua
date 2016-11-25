@@ -71,7 +71,7 @@ hud_class `Settings` (extends(WindowClass)
 		
 		self.content.themes_panel.theme_selectbox.onSelect = function(self)
 			_current_theme = editor_themes[self.selected.name]
-			GED:saveEditorInterface()
+			game_manager.currentMode:saveEditorInterface()
 			restart_editor_gui()
 		end;
 		
@@ -106,8 +106,8 @@ hud_class `Settings` (extends(WindowClass)
 			
 			self.content.system_panel.game_mode_selectbox.onSelect = function(self)
 				editor_cfg.default_game_mode = self.selected.name
-				GED:saveEditorConfig()
-				-- GED.playGameMode = self.selected.name
+				game_manager.currentMode:saveEditorConfig()
+				-- game_manager.currentMode.playGameMode = self.selected.name
 			end;
 		end
 		self.content:addPage(self.content.general_panel, "General")

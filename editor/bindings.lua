@@ -22,85 +22,85 @@ editor_debug_binds.enabled = false
 editor_debug_ghost_binds.enabled = false
 
 function editor_receive_button(button, state)
-    editor = game_manager.currentMode
+    local editor = game_manager.currentMode
     local on_off
     if state == "+" or state == '=' then on_off = 1 end
     if state == "-" then on_off = 0 end
 	if not hud_focus then
-		local cobj = GED.controlObj
+		local cobj = editor.controlObj
 
 		if button == "debug" then
 			if state == '+' then
 				editor:toggleDebugMode()
 			end
 		elseif button == "forwards" then
-			GED.forwards = on_off
+			editor.forwards = on_off
 
 		elseif button == "forwards" then
-			GED.forwards = on_off
+			editor.forwards = on_off
 
 		elseif button == "backwards" then
-			GED.backwards = on_off
+			editor.backwards = on_off
 
 		elseif button == "strafeLeft" then
-			GED.left = on_off
+			editor.left = on_off
 
 		elseif button == "strafeRight" then
-			GED.right = on_off
+			editor.right = on_off
 
 		elseif button == "ascend" then
-			GED.ascend = on_off
+			editor.ascend = on_off
 		elseif button == "descend" then
-			GED.descend = on_off
+			editor.descend = on_off
 		elseif button == "faster" then
 			if state == '+' then
-				GED.fast = true
+				editor.fast = true
 			elseif state == '-' then
-				GED.fast = false
+				editor.fast = false
 			end
 		elseif button == "delete" then
 			if state == '+' then
-				GED:deleteSelection()
+				editor:deleteSelection()
 			end
 
 		elseif button == "duplicate" then
 			if state == '+' then
-				GED:duplicateSelection()
+				editor:duplicateSelection()
 			end
 
 		elseif button == "board" then
 			if state == '+' then
-				GED:toggleBoard()
+				editor:toggleBoard()
 			end
 
 		elseif button == "walkBoard" then
 			if state == '+' then
-				GED:toggleBoard()
+				editor:toggleBoard()
 			end
 
 		elseif button == "driveAbandon" then
 			if state == '+' then
-				GED:toggleBoard()
+				editor:toggleBoard()
 			end
 
 		elseif button == "ghost" then
 			if state == '+' then
 				if inside_hud() then
-					GED:setMouseCapture(true)
+					editor:setMouseCapture(true)
 				end
 			elseif state == '-' then
-				GED:setMouseCapture(false)
+				editor:setMouseCapture(false)
 			end
 
 		elseif button == "toggleGhost" then
 			if state == '+' then
-				GED:toggleMouseCapture()
+				editor:toggleMouseCapture()
 			end
 
 		elseif button == "selectModeTranslate" then
-			GED:setWidgetMode("translate")
+			editor:setWidgetMode("translate")
 		elseif button == "selectModeRotate" then
-			GED:setWidgetMode("rotate")
+			editor:setWidgetMode("rotate")
 		elseif button == "weaponPrimary" then
 			if not mouse_inside_any_window() then
 				if state == '+' then

@@ -4,7 +4,7 @@ hud_class `Settings` (extends(WindowClass)
 		WindowClass.init(self)
 		
 		self.close_btn.pressedCallback = function (self)
-			GED:toggleMouseCapture()
+			game_manager.currentMode:toggleMouseCapture()
 		end;
 
 		self.content = gui.notebook(self)

@@ -1,4 +1,4 @@
-sky_cycle = { {
+return { {
   saturation             = 1;
   cloudColour            = { 0.073950562557002, 0.059478093755388, 0.046748624992688 };
   cloudCoverage          = 0.74874023474476;
