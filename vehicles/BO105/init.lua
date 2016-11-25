@@ -20,6 +20,10 @@ class `.` (Plane) {
         {[0] = 7000; [30] = 5000; [100] = 0; },
     },
 
+    thrustPos = {
+        vec(0, 0, 0)
+    },
+
     --Aerodynamic Surfaces. For each surface: Center of pressure, "Up" direction, glide ratio, lift curve (in N/(m/s)^2). Sin(AoA) used instead of AoA.
     surfaceInfo = { },
 
