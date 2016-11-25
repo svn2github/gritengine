@@ -548,6 +548,20 @@ function extends (parent)
         end
 end
 
+function extends_keep_existing(existing, parent)
+    return function (child)
+        if existing == nil then
+            existing = child
+        end
+        for k,v in pairs(parent) do
+                if child[k] == nil then
+                        existing[k] = v
+                end
+        end
+        return existing
+    end
+end
+
 function make_instance_mt(class,fr,fw,fts)
         fr = fr or function() return nil end
         fw = fw or function() return nil end
