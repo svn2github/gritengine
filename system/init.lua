@@ -3,23 +3,6 @@
 --lua5.2 it's so amazingly compatible
 math.mod = math.fmod
 
-hud_text_add = hud_text_add or gfx_hud_text_add
-hud_object_add = hud_object_add or gfx_hud_object_add
-hud_text_add = hud_text_add or gfx_hud_text_add
-hud_class_add = hud_class_add or gfx_hud_class_add
-hud_class_get = hud_class_get or gfx_hud_class_get
-hud_class_has = hud_class_has or gfx_hud_class_has
-hud_class_all = hud_class_all or gfx_hud_class_all
-hud_class_count = hud_class_count or gfx_hud_class_count
-hud_ray = hud_ray or gfx_hud_ray
-
--- TODO(dcunnin): Remove these when rebuilt cpp:
-gfx_option('SHADOW_FADE_START', 150);
-gfx_option('SHADOW_FILTER_SIZE', 4);
-gfx_option('SHADOW_SPREAD_FACTOR0', 1);
-gfx_option('SHADOW_SPREAD_FACTOR1', 1);
-gfx_option('SHADOW_SPREAD_FACTOR2', 0);
-
 -- Disable them as we boot the engine.
 core_option("FOREGROUND_WARNINGS", false)
 
@@ -301,9 +284,6 @@ end
 include `game_manager.lua` 
 
 include `default_shader.lua` 
-
--- Defines a global function that is referred by configuraton.lua.
-safe_include `/editor/bindings.lua`  -- TODO(dcunnin):  Find a way to avoid including this so early.
 
 include `map.lua`
 

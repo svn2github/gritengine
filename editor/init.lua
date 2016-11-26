@@ -1,5 +1,4 @@
 include `assets/init.lua`
-include `core/init.lua`
 include `map.lua`
 
 -- Loads all editor configuration.  You can delete files in config/ and fall back to the default
@@ -12,6 +11,8 @@ include `default_config/recent.lua`
 safe_include `config/recent.lua`
 
 include `core/widget_manager.lua`
+include `core/init_editor_interface.lua`
+
 include `core/game_mode.lua`
 
 current_map = current_map or nil

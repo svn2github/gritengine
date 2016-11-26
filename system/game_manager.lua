@@ -16,12 +16,36 @@ playing_actor_binds = InputFilter(171, `playing_actor_binds`)
 if playing_vehicle_binds ~= nil then playing_vehicle_binds:destroy() end
 playing_vehicle_binds = InputFilter(172, `playing_vehicle_binds`)
 
+
+if editor_core_binds ~= nil then editor_core_binds:destroy() end
+editor_core_binds = InputFilter(45, `editor_core_binds`)
+
+if editor_core_move_binds ~= nil then editor_core_move_binds:destroy() end
+editor_core_move_binds = InputFilter(46, `editor_core_move_binds`)
+
+if editor_edit_binds ~= nil then editor_edit_binds:destroy() end
+editor_edit_binds = InputFilter(47, `editor_edit_binds`)
+
+if editor_debug_binds ~= nil then editor_debug_binds:destroy() end
+editor_debug_binds = InputFilter(48, `editor_debug_binds`)
+
+if editor_debug_ghost_binds ~= nil then editor_debug_ghost_binds:destroy() end
+editor_debug_ghost_binds = InputFilter(49, `editor_debug_ghost_binds`)
+
+
 function reset_binds()
     playing_binds.enabled = false
     playing_binds.mouseCapture = true
     playing_actor_binds.enabled = false
     playing_vehicle_binds.enabled = false
+
+    editor_core_binds.enabled = false
+    editor_core_move_binds.enabled = false
+    editor_edit_binds.enabled = false
+    editor_debug_binds.enabled = false
+    editor_debug_ghost_binds.enabled = false
 end
+reset_binds()
 
 game_manager = {
     gameModes = { };

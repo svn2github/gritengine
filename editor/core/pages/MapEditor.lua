@@ -63,8 +63,7 @@ function save_map_dialog()
 	})
 end
 
-editor_interface.map_editor_page = 
-{
+local map_editor_page = {
 	windows = {};
 	
 	select = function(self)
@@ -196,7 +195,7 @@ editor_interface.map_editor_page =
 				},	
 				{},
 				{
-					callback = function() open_window(editor_interface.map_editor_page.windows.settings)end;
+					callback = function() open_window(self.windows.settings)end;
 					name = "Editor Settings";
 					tip = "Open Editor Settings";
 					icon = map_editor_icons.config;
@@ -207,9 +206,9 @@ editor_interface.map_editor_page =
 		self.menus.viewMenu = gui.menubar_menu({
 			items = {
 				{
-					callback = function(self)
-						editor_interface.map_editor_page.statusbar.enabled = not editor_interface.map_editor_page.statusbar.enabled
-						self.icon.enabled = editor_interface.map_editor_page.statusbar.enabled
+					callback = function(self2)
+						self.statusbar.enabled = not self.statusbar.enabled
+						self2.icon.enabled = self.statusbar.enabled
 					end;
 					name = "Show Status bar";
 					tip = "Show Status bar";
@@ -217,8 +216,8 @@ editor_interface.map_editor_page =
 				},		
 				{},
 				-- {
-					-- callback = function(self)
-						-- open_window(editor_interface.map_editor_page.windows.content_browser)
+					-- callback = function()
+						-- open_window(self.windows.content_browser)
 					-- end;
 					-- name = "Content browser";
 					-- tip = "Open Content Browser window";
@@ -226,31 +225,31 @@ editor_interface.map_editor_page =
 				-- },
 				
 				-- {
-					-- callback = function() open_window(editor_interface.map_editor_page.windows.event_editor) end;
+					-- callback = function() open_window(self.windows.event_editor) end;
 					-- name = "Event Editor";
 					-- tip = "Open Event Editor window";
 					-- icon = map_editor_icons.event_editor;
 				-- },
 				-- {
-					-- callback = function() open_window(editor_interface.map_editor_page.windows.object_properties) end;
+					-- callback = function() open_window(self.windows.object_properties) end;
 					-- name = "Object Properties";
 					-- tip = "Open Object Properties window";
 					-- icon = map_editor_icons.object_properties;
 				-- },
 				-- {
-					-- callback = function() open_window(editor_interface.map_editor_page.windows.material_editor) end;
+					-- callback = function() open_window(self.windows.material_editor) end;
 					-- name = "Material Editor";
 					-- tip = "Open Material Editor window";
 					-- icon = map_editor_icons.material_editor;
 				-- },
 				-- {
-					-- callback = function() open_window(editor_interface.map_editor_page.windows.level_properties) end;
+					-- callback = function() open_window(self.windows.level_properties) end;
 					-- name = "Map properties";
 					-- tip = "Open Map Properties window";
 					-- icon = map_editor_icons.world_properties;
 				-- },
 				-- {
-					-- callback = function() open_window(editor_interface.map_editor_page.windows.outliner) end;
+					-- callback = function() open_window(self.windows.outliner) end;
 					-- name = "Outliner";
 					-- tip = "Open Outliner window";
 					-- icon = map_editor_icons.new;
@@ -411,11 +410,11 @@ editor_interface.map_editor_page =
 		self.toolbar:addTool("Wireframe mode", map_editor_icons.wireframe, (function(self) gfx_option("WIREFRAME_SOLID", false) gfx_option("WIREFRAME", true) gfx_option("RENDER_SKY", false) end), "View Mode: Wireframe")
 		self.toolbar:addTool("Solid Wireframe Mode", map_editor_icons.solid_wireframe, (function(self) gfx_option("WIREFRAME_SOLID", true) gfx_option("WIREFRAME", true) gfx_option("RENDER_SKY", true) end), "View Mode: Solid Wireframe")
 		self.toolbar:addSeparator()
-		-- self.toolbar:addTool("Object properties", `../icons/properties.png`, (function(self) open_window(editor_interface.map_editor_page.windows.object_properties) end), "")
-		-- self.toolbar:addTool("Content Browser", `../icons/content_browser.png`, (function(self) open_window(editor_interface.map_editor_page.windows.content_browser) end), "")
-		-- self.toolbar:addTool("Event Editor", `../icons/event_editor.png`, (function(self) open_window(editor_interface.map_editor_page.windows.event_editor) end), "")
-		-- self.toolbar:addTool("Material Editor", `../icons/material_editor.png`, (function(self) open_window(editor_interface.map_editor_page.windows.material_editor) end), "")
-		-- self.toolbar:addTool("Level Configuration", `../icons/level_config.png`, (function(self) open_window(editor_interface.map_editor_page.windows.level_properties) end), "")
+		-- self.toolbar:addTool("Object properties", `../icons/properties.png`, (function() open_window(self.windows.object_properties) end), "")
+		-- self.toolbar:addTool("Content Browser", `../icons/content_browser.png`, (function() open_window(self.windows.content_browser) end), "")
+		-- self.toolbar:addTool("Event Editor", `../icons/event_editor.png`, (function() open_window(self.windows.event_editor) end), "")
+		-- self.toolbar:addTool("Material Editor", `../icons/material_editor.png`, (function() open_window(self.windows.material_editor) end), "")
+		-- self.toolbar:addTool("Level Configuration", `../icons/level_config.png`, (function() open_window(self.windows.level_properties) end), "")
 		-- self.toolbar:addSeparator()
 		self.toolbar:addTool("Show collision", map_editor_icons.show_collision, (
 			function()
@@ -428,7 +427,7 @@ editor_interface.map_editor_page =
 			end
 		), "Toggle Physics")
 		self.toolbar:addSeparator()
-		self.toolbar:addTool("Editor Settings", map_editor_icons.config, (function(self) open_window(editor_interface.map_editor_page.windows.settings) end), "Editor Settings")
+		self.toolbar:addTool("Editor Settings", map_editor_icons.config, (function() open_window(self.windows.settings) end), "Editor Settings")
 
 		self.mlefttoolbar = gui.toolbar({
 			parent = hud_centre;
@@ -500,19 +499,16 @@ editor_interface.map_editor_page =
 		-- Windows
 		-- TODO: replace all these windows to dynamic windows (properly declared as a class)
 		-- self.windows.content_browser = gui.window('Content Browser', vec2(editor_interface_cfg.content_browser.position[1], editor_interface_cfg.content_browser.position[2]), true, vec2(editor_interface_cfg.content_browser.size[1], editor_interface_cfg.content_browser.size[2]), vec2(640, 400), vec2(800, 600))
-		include`../windows/map_editor/content_browser.lua`
 		
 		self.windows.content_browser = create_content_browser()
 		
 		self.windows.event_editor = gui.window('Event Editor', vec2(editor_interface_cfg.event_editor.position[1], editor_interface_cfg.event_editor.position[2]), true, vec2(editor_interface_cfg.event_editor.size[1], editor_interface_cfg.event_editor.size[2]), vec2(350, 200), vec2(800, 600))
 		self.windows.level_properties = gui.window('Map Properties', vec2(editor_interface_cfg.level_properties.position[1], editor_interface_cfg.level_properties.position[2]), true, vec2(editor_interface_cfg.level_properties.size[1], editor_interface_cfg.level_properties.size[2]), vec2(380, 225), vec2(800, 600))
-		include`../windows/map_editor/map_properties.lua`
 		self.windows.material_editor = gui.window('Material Editor', vec2(editor_interface_cfg.material_editor.position[1], editor_interface_cfg.material_editor.position[2]), true, vec2(editor_interface_cfg.material_editor.size[1], editor_interface_cfg.material_editor.size[2]), vec2(350, 200), vec2(800, 600))
 		self.windows.object_properties = gui.window('Properties', vec2(editor_interface_cfg.object_properties.position[1], editor_interface_cfg.object_properties.position[2]), true, vec2(editor_interface_cfg.object_properties.size[1], editor_interface_cfg.object_properties.size[2]), vec2(350, 200), vec2(800, 600))
 		self.windows.outliner = gui.window('Outliner', vec2(editor_interface_cfg.outliner.position[1], editor_interface_cfg.outliner.position[2]), true, vec2(editor_interface_cfg.outliner.size[1], editor_interface_cfg.outliner.size[2]), vec2(350, 200), vec2(800, 600))
 		-- self.windows.settings = gui.window('Editor Settings', vec2(editor_interface_cfg.settings.position[1], editor_interface_cfg.settings.position[2]), true, vec2(editor_interface_cfg.settings.size[1], editor_interface_cfg.settings.size[2]), vec2(350, 200), vec2(800, 600))
 
-		include`../windows/map_editor/settings.lua`
 		
 		if self.windows.settings ~= nil and not self.windows.settings.destroyed then
 			self.windows.settings:destroy()
@@ -615,23 +611,24 @@ editor_interface.map_editor_page =
 	
 }
 
+
+-- used for restart editor GUI
+local editor_tools = {}
+
+local function restart_editor_tools()
+	for i=1, #editor_tools do
+		local tl = editor_tools[i]
+		editor_interface.map_editor_page.mlefttoolbar:addTool(tl.name, tl.icon, tl.cb, tl.name)
+	end
+end
+
 function restart_editor_gui()
-	safe_include`/common/gui/init.lua`
+	safe_include `/common/gui/init.lua`
 	editor_interface.map_editor_page:destroy()
 	editor_interface.map_editor_page:init()
 	editor_interface.map_editor_page:select()
 	editor_interface:reloadTheme()
 	restart_editor_tools()
-end
-
--- used for restart editor GUI
-editor_tools = {}
-
-function restart_editor_tools()
-	for i=1, #editor_tools do
-		local tl = editor_tools[i]
-		editor_interface.map_editor_page.mlefttoolbar:addTool(tl.name, tl.icon, tl.cb, tl.name)
-	end
 end
 
 function add_editor_tool(name, icon, cb)
@@ -642,13 +639,18 @@ function add_editor_tool(name, icon, cb)
 	editor_interface.map_editor_page.mlefttoolbar:addTool(name, icon, cb, name)
 end
 
-editor_interface.map_editor_page:init()
+function make_map_editor_page()
+    local self = make_instance({}, map_editor_page)
+    self:init()
 
-local default_page = editor_interface:addPage({
-    caption = "Map Editor",
-    edge_colour = vec(1, 0, 0),
-    onSelect = function(self) editor_interface.map_editor_page:select() end,
-    onUnselect =  function() editor_interface.map_editor_page:unselect() end,
-    closebtn = false
-})
-default_page:select()
+    local default_page = editor_interface:addPage({
+        caption = "Map Editor",
+        edge_colour = vec(1, 0, 0),
+        onSelect = function() self:select() end,
+        onUnselect =  function() self:unselect() end,
+        closebtn = false
+    })
+    default_page:select()
+
+    return self
+end

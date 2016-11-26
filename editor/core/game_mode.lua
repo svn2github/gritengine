@@ -337,8 +337,6 @@ function Editor:setDebugMode(v)
     end
 end
 
-include `windows/debug_mode/settings.lua`
-
 function Editor:createDebugModeSettingsWindow()
 	if self.debugModeSettingsWindow ~= nil and not self.debugModeSettingsWindow.destroyed then
 		self.debugModeSettingsWindow:destroy()
@@ -460,7 +458,7 @@ function Editor:newMap(ndestroyobjs)
 	navigation_reset()
 	
 	-- no fog and a smooth background colour
-	include `edenv.lua`
+	env_cycle = include `edenv.lua`
     env_recompute()
 	
 	widget_manager:unselectAll()
@@ -659,7 +657,7 @@ function Editor:init()
     self.debug_mode_text.text = "Mouse left: Use Weapon\nMouse Scroll: Change Weapon\nF: Controll Object\nTab: Console\nF1: Open debug mode menu (TODO)\nF5: Return Editor"
     self.debug_mode_text.position = vec(self.debug_mode_text.size.x/2+10, self.debug_mode_text.size.y)
     
-    include `init_editor_interface.lua`
+    make_editor_interface()
 
     playing_binds.enabled = true
     editor_core_binds.enabled = true
@@ -706,7 +704,193 @@ function Editor:mouseMove(rel)
 end
 
 function Editor:receiveButton(button, state)
-    editor_receive_button(button, state)
+    local on_off
+    if state == "+" or state == '=' then on_off = 1 end
+    if state == "-" then on_off = 0 end
+	if not hud_focus then
+		local cobj = self.controlObj
+
+		if button == "debug" then
+			if state == '+' then
+				self:toggleDebugMode()
+			end
+		elseif button == "forwards" then
+			self.forwards = on_off
+
+		elseif button == "forwards" then
+			self.forwards = on_off
+
+		elseif button == "backwards" then
+			self.backwards = on_off
+
+		elseif button == "strafeLeft" then
+			self.left = on_off
+
+		elseif button == "strafeRight" then
+			self.right = on_off
+
+		elseif button == "ascend" then
+			self.ascend = on_off
+		elseif button == "descend" then
+			self.descend = on_off
+		elseif button == "faster" then
+			if state == '+' then
+				self.fast = true
+			elseif state == '-' then
+				self.fast = false
+			end
+		elseif button == "delete" then
+			if state == '+' then
+				self:deleteSelection()
+			end
+
+		elseif button == "duplicate" then
+			if state == '+' then
+				self:duplicateSelection()
+			end
+
+		elseif button == "board" then
+			if state == '+' then
+				self:toggleBoard()
+			end
+
+		elseif button == "walkBoard" then
+			if state == '+' then
+				self:toggleBoard()
+			end
+
+		elseif button == "driveAbandon" then
+			if state == '+' then
+				self:toggleBoard()
+			end
+
+		elseif button == "ghost" then
+			if state == '+' then
+				if inside_hud() then
+					self:setMouseCapture(true)
+				end
+			elseif state == '-' then
+				self:setMouseCapture(false)
+			end
+
+		elseif button == "toggleGhost" then
+			if state == '+' then
+				self:toggleMouseCapture()
+			end
+
+		elseif button == "selectModeTranslate" then
+			self:setWidgetMode("translate")
+		elseif button == "selectModeRotate" then
+			self:setWidgetMode("rotate")
+		elseif button == "weaponPrimary" then
+			if not mouse_inside_any_window() then
+				if state == '+' then
+					WeaponEffectManager:primaryEngage(main.camPos, main.camQuat)
+				elseif state == '-' then
+					WeaponEffectManager:primaryDisengage()
+				end
+			end
+		elseif button == "weaponSecondary" then
+			if not mouse_inside_any_window() then
+				if state == '+' then
+					WeaponEffectManager:secondaryEngage(main.camPos, main.camQuat)
+				elseif state == '-' then
+					WeaponEffectManager:secondaryDisengage()
+				end
+			end
+		elseif button == "weaponSwitchUp" then
+			if state == '+' then
+				WeaponEffectManager:select(WeaponEffectManager:getNext())
+			end
+
+		elseif button == "weaponSwitchDown" then
+			if state == '+' then
+				WeaponEffectManager:select(WeaponEffectManager:getPrev())
+			end
+
+		elseif button == "pausePhysics" then
+			if state == '+' then
+				main.physicsEnabled = not main.physicsEnabled
+			end
+		else
+			local pressed = state ~= '-'
+			if state == '=' then return end
+
+			if button == 'walkForwards' then
+				cobj:setForwards(pressed)
+			elseif button == 'walkBackwards' then
+				cobj:setBackwards(pressed)
+			elseif button == 'walkLeft' then
+				cobj:setLeft(pressed)
+			elseif button == 'walkRight' then
+				cobj:setRight(pressed)
+			elseif button == 'walkBoard' then
+				if state == '+' then
+					self:scanForBoard()
+				end
+			elseif button == 'walkJump' then
+				cobj:setJump(pressed)
+			elseif button == 'walkRun' then
+				cobj:setRun(pressed)
+			elseif button == 'walkCrouch' then
+				cobj:setCrouch(pressed)
+			elseif button == 'walkZoomIn' then
+				cobj:controlZoomIn()
+			elseif button == 'walkZoomOut' then
+				cobj:controlZoomOut()
+			elseif button == 'walkCamera' then
+				-- toggle between regular_chase_cam_update, top_down_cam_update, top_angled_cam_update
+
+			elseif button == 'driveForwards' then
+				cobj:setForwards(pressed)
+			elseif button == 'driveBackwards' then
+				cobj:setBackwards(pressed)
+			elseif button == 'driveLeft' then
+				cobj:setLeft(pressed)
+			elseif button == 'driveRight' then
+				cobj:setRight(pressed)
+			elseif button == 'driveZoomIn' then
+				cobj:controlZoomIn()
+			elseif button == 'driveZoomOut' then
+				cobj:controlZoomOut()
+			elseif button == 'driveCamera' then
+				-- toggle between regular_chase_cam_update, top_down_cam_update, top_angled_cam_update
+
+			elseif button == 'driveSpecialUp' then
+				cobj:setSpecialUp(pressed)
+			elseif button == 'driveSpecialDown' then
+				cobj:setSpecialDown(pressed)
+			elseif button == 'driveSpecialLeft' then
+				cobj:setSpecialLeft(pressed)
+			elseif button == 'driveSpecialRight' then
+				cobj:setSpecialRight(pressed)
+			elseif button == 'driveAltUp' then
+				cobj:setAltUp(pressed)
+			elseif button == 'driveAltDown' then
+				cobj:setAltDown(pressed)
+			elseif button == 'driveAltLeft' then
+				cobj:setAltLeft(pressed)
+			elseif button == 'driveAltRight' then
+				cobj:setAltRight(pressed)
+			elseif button == 'driveAbandon' then
+				if state == '+' then
+					self:abandonControlObj()
+				end
+			elseif button == 'driveHandbrake' then
+				cobj:setHandbrake(pressed)
+			elseif button == 'driveLights' then
+				if state == '+' then
+					cobj:setLights()
+				end
+			elseif button == 'driveSpecialToggle' then
+				if state == '+' then
+					cobj:special()
+				end
+			else
+				error("Editor has no binding for button: "..button)
+			end
+		end
+	end
 end
 
 function Editor:destroy()

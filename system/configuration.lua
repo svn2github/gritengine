@@ -5,14 +5,12 @@ safe_include `/user_cfg.lua`
 user_cfg = user_cfg or { }
 user_system_bindings = user_system_bindings or { }
 
-editor_core_binds = editor_core_binds or nil
-if editor_core_binds then
-    user_editor_core_bindings = user_editor_core_bindings or { }
-    user_editor_core_move_bindings = user_editor_core_move_bindings or { }
-    user_editor_edit_bindings = user_editor_edit_bindings or { }
-    user_editor_debug_bindings = user_editor_debug_bindings or { }
-    user_editor_debug_ghost_bindings = user_editor_debug_ghost_bindings or { }
-end
+user_editor_core_bindings = user_editor_core_bindings or { }
+user_editor_core_move_bindings = user_editor_core_move_bindings or { }
+user_editor_edit_bindings = user_editor_edit_bindings or { }
+user_editor_debug_bindings = user_editor_debug_bindings or { }
+user_editor_debug_ghost_bindings = user_editor_debug_ghost_bindings or { }
+
 user_playing_bindings = user_playing_bindings or { }
 user_drive_bindings = user_drive_bindings or { }
 user_foot_bindings = user_foot_bindings or { }
@@ -167,13 +165,11 @@ end
 
 process_user_table("user_cfg", user_cfg, user_cfg_default)
 process_user_table("user_system_bindings", user_system_bindings, default_user_system_bindings)
-if editor_core_binds then
-    process_user_table("user_editor_core_bindings", user_editor_core_bindings, default_user_editor_core_bindings)
-    process_user_table("user_editor_core_move_bindings", user_editor_core_move_bindings, default_user_editor_core_move_bindings)
-    process_user_table("user_editor_edit_bindings", user_editor_edit_bindings, default_user_editor_edit_bindings)
-    process_user_table("user_editor_debug_bindings", user_editor_debug_bindings, default_user_editor_debug_bindings)
-    process_user_table("user_editor_debug_ghost_bindings", user_editor_debug_ghost_bindings, default_user_editor_debug_ghost_bindings)
-end
+process_user_table("user_editor_core_bindings", user_editor_core_bindings, default_user_editor_core_bindings)
+process_user_table("user_editor_core_move_bindings", user_editor_core_move_bindings, default_user_editor_core_move_bindings)
+process_user_table("user_editor_edit_bindings", user_editor_edit_bindings, default_user_editor_edit_bindings)
+process_user_table("user_editor_debug_bindings", user_editor_debug_bindings, default_user_editor_debug_bindings)
+process_user_table("user_editor_debug_ghost_bindings", user_editor_debug_ghost_bindings, default_user_editor_debug_ghost_bindings)
 process_user_table("user_playing_bindings", user_playing_bindings, default_user_playing_bindings)
 process_user_table("user_drive_bindings", user_drive_bindings, default_user_drive_bindings)
 process_user_table("user_foot_bindings", user_foot_bindings, default_user_foot_bindings)
@@ -212,18 +208,17 @@ local function system_receive_button(button, state)
     end
 end
 
-process_bindings2(user_system_bindings, system_receive_button, system_binds)
-if editor_core_binds then
-    process_bindings2(user_editor_core_bindings, editor_receive_button, editor_core_binds)
-    process_bindings2(user_editor_core_move_bindings, editor_receive_button, editor_core_move_binds)
-    process_bindings2(user_editor_edit_bindings, editor_receive_button, editor_edit_binds)
-    process_bindings2(user_editor_debug_bindings, editor_receive_button, editor_debug_binds)
-    process_bindings2(user_editor_debug_ghost_bindings, editor_receive_button, editor_debug_ghost_binds)
-end
-
 local function play_receive_button(button, state)
     game_manager:receiveButton(button, state)
 end
+
+process_bindings2(user_system_bindings, system_receive_button, system_binds)
+
+process_bindings2(user_editor_core_bindings, play_receive_button, editor_core_binds)
+process_bindings2(user_editor_core_move_bindings, play_receive_button, editor_core_move_binds)
+process_bindings2(user_editor_edit_bindings, play_receive_button, editor_edit_binds)
+process_bindings2(user_editor_debug_bindings, play_receive_button, editor_debug_binds)
+process_bindings2(user_editor_debug_ghost_bindings, play_receive_button, editor_debug_ghost_binds)
 
 process_bindings2(user_playing_bindings, play_receive_button, playing_binds)
 process_bindings2(user_drive_bindings, play_receive_button, playing_vehicle_binds)

@@ -1,4 +1,14 @@
-safe_destroy(editor_interface)
+include `pages/ObjectEditor.lua`
+include `pages/MapEditor.lua`
+include `pages/NavigationEditor.lua`
+include `windows/debug_mode/settings.lua`
+include `windows/map_editor/settings.lua`
+include `windows/map_editor/content_browser.lua`
+include `windows/map_editor/map_properties.lua`
+include `windows/navigation_editor/tools.lua`
+include `windows/navigation_editor/debug.lua`
+
+
 hud_class `EditorInterface` `/common/gui/windownotebook` {
     init = function(self)
         self.needsInputCallbacks = true
@@ -17,18 +27,21 @@ hud_class `EditorInterface` `/common/gui/windownotebook` {
     end,
 }
 
-editor_interface = hud_object `EditorInterface` { }
+editor_interface = editor_interface or nil
 
-include `pages/MapEditor.lua`
-include `pages/NavigationEditor.lua`
+function make_editor_interface()
+    editor_interface = hud_object `EditorInterface` { }
 
--- add the button to the editor toolbar
-add_editor_tool("Navigation Editor", map_editor_icons.navigation, function(self) open_navigation_page() end)
+    editor_interface.map_editor_page = make_map_editor_page()
+    editor_interface.navigation_editor = make_navigation_editor()
 
-include `pages/ObjectEditor.lua`
+    -- add the button to the editor toolbar
+    add_editor_tool("Navigation Editor", map_editor_icons.navigation, function(self) open_navigation_page() end)
 
--- store temporary pages
-editor_interface.pagelist = {}
+    -- store temporary pages
+    editor_interface.pagelist = {}
+end
+
 
 function new_object_ed_page(name, cntb, sel)
 	editor_interface.pagelist[#editor_interface.pagelist+1] = ed_object_editor_page.new()

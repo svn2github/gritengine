@@ -1,7 +1,4 @@
-include`/editor/core/windows/navigation_editor/tools.lua`
-include`/editor/core/windows/navigation_editor/debug.lua`
-
-function open_navmesh_dialog()
+local function open_navmesh_dialog()
 	gui.open_file_dialog({
 		title = "Open navmesh";
 		parent = hud_centre;
@@ -28,7 +25,7 @@ function open_navmesh_dialog()
 	})
 end
 
-function save_navmesh_dialog()
+local function save_navmesh_dialog()
 	gui.save_file_dialog({
 		title = "Save navmesh";
 		parent = hud_centre;
@@ -66,8 +63,7 @@ function save_navmesh_dialog()
 	})
 end
 
-editor_interface.navigation_editor = 
-{
+local navigation_editor = {
 	windows = {};
 	
 	select = function(self)
@@ -79,7 +75,7 @@ editor_interface.navigation_editor =
 		game_manager.currentMode.selectionEnabled = false
 		
 		extra_inside_hud = function()
-			if mouse_pos_abs.x > gfx_window_size().x - editor_interface.navigation_editor.propertiesToolpanel.size.x then
+			if mouse_pos_abs.x > gfx_window_size().x - self.propertiesToolpanel.size.x then
 				return true
 			end
 			return false
@@ -474,15 +470,15 @@ editor_interface.navigation_editor =
 			alpha = 0;
 		})
 		
-		self.toolbar:addTool("Crowd Tool", nav_editor_icons.agent, (function(self) editor_interface.navigation_editor.windows.tools:show_crowd_tool() end), "Crowd Tool")
-		self.toolbar:addTool("Create Offmesh Links", nav_editor_icons.offmeshcon, (function(self) editor_interface.navigation_editor.windows.tools:show_offmesh_tool() end), "Create Offmesh Links")
-		self.toolbar:addTool("Create Convex Volumes", nav_editor_icons.convexvolume, (function(self) editor_interface.navigation_editor.windows.tools:show_convex_tool() end), "Create Convex Volumes")
-		self.toolbar:addTool("Create Temporary Obstacles", nav_editor_icons.obstacle, (function(self) editor_interface.navigation_editor.windows.tools:show_temp_obstacle_tool() end), "Create Temporary Obstacles")
+		self.toolbar:addTool("Crowd Tool", nav_editor_icons.agent, (function() self.windows.tools:show_crowd_tool() end), "Crowd Tool")
+		self.toolbar:addTool("Create Offmesh Links", nav_editor_icons.offmeshcon, (function() self.windows.tools:show_offmesh_tool() end), "Create Offmesh Links")
+		self.toolbar:addTool("Create Convex Volumes", nav_editor_icons.convexvolume, (function() self.windows.tools:show_convex_tool() end), "Create Convex Volumes")
+		self.toolbar:addTool("Create Temporary Obstacles", nav_editor_icons.obstacle, (function() self.windows.tools:show_temp_obstacle_tool() end), "Create Temporary Obstacles")
 		self.toolbar:addSeparator()
-		self.toolbar:addTool("Tool", nav_editor_icons.tool, (function(self) editor_interface.navigation_editor.windows.tools.enabled = not editor_interface.navigation_editor.windows.tools.enabled end), "Tool")
-		self.toolbar:addTool("Debug", map_editor_icons.view_mode, (function(self) editor_interface.navigation_editor.windows.debug.enabled = not editor_interface.navigation_editor.windows.debug.enabled end), "Debug")
+		self.toolbar:addTool("Tool", nav_editor_icons.tool, (function() self.windows.tools.enabled = not self.windows.tools.enabled end), "Tool")
+		self.toolbar:addTool("Debug", map_editor_icons.view_mode, (function() self.windows.debug.enabled = not self.windows.debug.enabled end), "Debug")
 
-		self.toolbar:addTool("Toggle Properties Panel", map_editor_icons.config, (function(self) editor_interface.navigation_editor.propertiesToolpanel.enabled = not editor_interface.navigation_editor.propertiesToolpanel.enabled end), "Toggle Properties Panel")
+		self.toolbar:addTool("Toggle Properties Panel", map_editor_icons.config, (function() self.propertiesToolpanel.enabled = not self.propertiesToolpanel.enabled end), "Toggle Properties Panel")
 		
 		self.statusbar = gui.statusbar({ parent = hud_bottom_left, size = vec(0, 20) })
 
@@ -538,7 +534,13 @@ editor_interface.navigation_editor =
 	end;	
 }
 
-editor_interface.navigation_editor:init()
+
+function make_navigation_editor()
+    local self = make_instance({}, navigation_editor)
+    self:init()
+    return self
+end
+
 
 function open_navigation_page()
 	if not editor_interface.nav_page or editor_interface.nav_page.destroyed then
