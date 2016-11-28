@@ -447,12 +447,13 @@ function inside_hud()
 end
 
 function Editor:generateEnvCube(pos)
-    current_map:generateEnvCube(pos)
+    self.map:generateEnvCube(pos)
 end
 
-function Editor:newMap(ndestroyobjs)
+function Editor:newMap()
     gfx_option("RENDER_SKY", true)
 	
+    -- Triggers particles to disappear.  We need a better way to render sprites.
 	unload_icons = true
 	
 	navigation_reset()
@@ -463,19 +464,15 @@ function Editor:newMap(ndestroyobjs)
 	
 	widget_manager:unselectAll()
 	
-	-- ndestroyobjs = doesn't destroy current objects
-	if not ndestroyobjs then
-		object_all_del()
-	end
     -- destroy old editor objects
-    local remaining_editor_objects = object_all()
-    for i = 1, #remaining_editor_objects do
-        if remaining_editor_objects[i].editorObject then
-            safe_destroy(remaining_editor_objects[i])
-        end
-    end
+    -- local remaining_editor_objects = object_all()
+    -- for i = 1, #remaining_editor_objects do
+    --     if remaining_editor_objects[i].editorObject then
+    --         safe_destroy(remaining_editor_objects[i])
+    --     end
+    -- end
     
-    current_map = EditorMap.new()
+    self.map:reset()
     -- if update_map_properties ~= nil then
         -- update_map_properties()
     -- end
@@ -483,7 +480,7 @@ end
 
 function Editor:openMap(map_file)
     if map_file == nil then
-			open_map_dialog()
+        open_map_dialog()
         return
     end
 
@@ -496,21 +493,14 @@ function Editor:openMap(map_file)
     
     navigation_reset()
     
-    if current_map == nil then
-        current_map = EditorMap.new()	
-    end
-
-    local success = current_map:open(map_file)
-
-    main.camPos = current_map.editor.cam_pos
-    main.camQuat = current_map.editor.cam_quat
+    self.map:open(map_file)
+    main.camPos = self.map.current.editor.cam_pos
+    main.camQuat = self.map.current.editor.cam_quat
     self.camPitch = quatPitch(main.camQuat)
     self.camYaw = cam_yaw_angle()
 
     
     create_world_icons()
-    return success
-
     -- if update_map_properties ~= nil then
         -- update_map_properties()
     -- end
@@ -518,8 +508,8 @@ end
 
 -- save current map, if have a "file_name" specified
 function Editor:saveCurrentMap()
-    if #current_map.file_name > 0 then
-        current_map:save()
+    if self.map.filename then
+        self.map:save()
     else
         self:saveCurrentMapAs()
     end
@@ -530,8 +520,7 @@ function Editor:saveCurrentMapAs(name)
 		save_map_dialog()
         return false
     else
-        current_map.file_name = name
-        return current_map:save()
+        return self.map:saveAs(name)
     end
 end
 
@@ -640,6 +629,12 @@ end
 function Editor:init()
     navigation_reset()
 
+    self.map = EditorMap.new()
+    main.camPos = self.map.current.editor.cam_pos
+    main.camQuat = self.map.current.editor.cam_quat
+    self.camPitch = quatPitch(main.camQuat)
+    self.camYaw = cam_yaw_angle()
+
     -- Avoid it interfering with menu and tool bar.
     ticker:setOffset(vec(40, 58))
     -- Avoid distracting text while we load the HUD.
@@ -666,11 +661,6 @@ function Editor:init()
 
     self.lastMouseMoveTime = seconds()
 
-    -- Start location:  Seems as good a place as any...
-    main.camPos = vec(0, 0, 10)
-    self.camYaw = 0
-    self.camPitch = 0
-    
     -- set default values/update values for window content
     editor_init_windows()
     

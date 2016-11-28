@@ -10,12 +10,10 @@ safe_include `config/interface.lua`
 include `default_config/recent.lua`
 safe_include `config/recent.lua`
 
-include `core/widget_manager.lua`
-include `core/init_editor_interface.lua`
+include `widget_manager.lua`
+include `init_editor_interface.lua`
 
-include `core/game_mode.lua`
-
-current_map = current_map or nil
+include `game_mode.lua`
 
 -- Temporary
 -- Test navmesh

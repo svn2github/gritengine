@@ -105,27 +105,27 @@ class `widget` {} {
     renderingDistance = 10000;
 	editorObject = true;
 	
-    init = function (persistent)
+    init = function (self)
 
     end;
 
-    activate = function (persistent,instance)
-        persistent.needsFrameCallbacks = true
+    activate = function (self,instance)
+        self.needsFrameCallbacks = true
 		
 		if valid_object(instance.pivot) then
 			instance.pivot:destroy()
 		end
 		
         instance.pivot = gfx_body_make()
-        instance.pivot.localPosition = persistent.spawnPos
-        instance.pivot.localOrientation = persistent.rot
+        instance.pivot.localPosition = self.spawnPos
+        instance.pivot.localOrientation = self.rot
 		
 		instance.scale = 1
 		
 		instance.initialOrientations = instance.pivot.localOrientation
 		instance.pivotInitialOrientation = {}
 		
-		persistent:updateArrows(persistent)
+		self:updateArrows(self)
     end;
 
 	setMaterial = function(self, component, highlight)
@@ -158,14 +158,14 @@ class `widget` {} {
 		end
 	end;
 	
-	updateArrows = function(persistent)
-		local instance = persistent.instance
+	updateArrows = function(self)
+		local instance = self.instance
 		local pivot_or = instance.pivot.localOrientation
 
 		if instance.mode == nil then instance.mode = "translate" end
-		if persistent.mode ~= nil then instance.mode = persistent.mode end
+		if self.mode ~= nil then instance.mode = self.mode end
 		
-		if persistent.rotating ~= nil then instance.rotating = persistent.rotating end
+		if self.rotating ~= nil then instance.rotating = self.rotating end
 
 		if widget_manager.dragged ~= nil then instance.dragged = widget_manager.dragged end
 
@@ -246,9 +246,9 @@ class `widget` {} {
 		end
 	end;
 
-    deactivate = function (persistent)
-		persistent.needsFrameCallbacks = false
-		local instance = persistent.instance
+    deactivate = function (self)
+		self.needsFrameCallbacks = false
+		local instance = self.instance
 		instance.x:destroy()
 		instance.y:destroy()
 		instance.z:destroy()
@@ -277,11 +277,11 @@ class `widget` {} {
 		end
 	end;
 	
-    frameCallback = function (persistent, elapsed)
-        -- if persistent.destroyed or not persistent.instance.pivot or not persistent.instance.pivot.destroyed then return end
+    frameCallback = function (self, elapsed)
+        -- if self.destroyed or not self.instance.pivot or not self.instance.pivot.destroyed then return end
 		
-		local inst = persistent.instance
-		if not inst.pivot or persistent.destroyed then return end
+		local inst = self.instance
+		if not inst.pivot or self.destroyed then return end
 		
 		inst.scale = ((2 * math.tan(math.rad(gfx_option("FOV")) / 2)) * #(main.camPos - inst.pivot.localPosition))*0.025
 
@@ -315,43 +315,32 @@ class `widget` {} {
 			inst.yz.instance.gfx.localScale = vecsize
 		end
 
-		if inst.dragged ~= nil then
-			for i = 1, #inst.dragged do
-				if inst.dragged[i] ~= nil and inst.dragged[i].instance ~= nil and not inst.dragged[i].destroyed then
-					local dpos = pivot_pos - widget_manager.initialPosition*2 + inst.dragged[i].initialPosition
-					local initpos = inst.dragged[i].initialPosition
+        local editor = game_manager.currentMode
 
-					local new_pos = inst.dragged[i].spawnPos
-					-- if math.abs(#dpos) >= widget_manager.step_size then
-						-- new_pos = initpos + dpos
-					-- end
-					if input_filter_pressed("Ctrl") then
-						new_pos = vec(
-							math.floor(dpos.x/widget_manager.step_size)*widget_manager.step_size+initpos.x,
-							math.floor(dpos.y/widget_manager.step_size)*widget_manager.step_size+initpos.y,
-							math.floor(dpos.z/widget_manager.step_size)*widget_manager.step_size+initpos.z
-						)
-					else
-						new_pos = widget_manager.initialPosition - inst.dragged[i].initialPosition + pivot_pos
-					end
-					
-					inst.dragged[i].spawnPos = new_pos
-					
-					if inst.dragged[i].instance.body ~= nil then
-						inst.dragged[i].instance.body.worldPosition = new_pos
-					elseif inst.dragged[i].instance.gfx ~= nil then
-						inst.dragged[i].instance.gfx.localPosition = new_pos
-					elseif inst.dragged[i].instance.audio ~= nil then
-						inst.dragged[i].instance.audio.position = new_pos
-						inst.dragged[i].pos = new_pos
-					end
-				end
+		if inst.dragged ~= nil then
+			for i, obj in ipairs(inst.dragged) do
+                local dpos = pivot_pos - widget_manager.initialPosition*2 + obj.initialPosition
+                local initpos = obj.initialPosition
+
+                local new_pos
+                if input_filter_pressed("Ctrl") then
+                    new_pos = vec(
+                        math.floor(dpos.x / widget_manager.step_size) * widget_manager.step_size + initpos.x,
+                        math.floor(dpos.y / widget_manager.step_size) * widget_manager.step_size + initpos.y,
+                        math.floor(dpos.z / widget_manager.step_size) * widget_manager.step_size + initpos.z
+                    )
+                else
+                    new_pos = widget_manager.initialPosition - obj.initialPosition + pivot_pos
+                end
+                
+                editor.map:setPosition(obj.name, new_pos)
 			end
 		end
     end;
 	
-	rotate = function(persistent, rot)
-		local inst = persistent.instance
+	rotate = function(self, rot)
+        local editor = game_manager.currentMode
+		local inst = self.instance
 
 		if widget_manager.space_mode == "local" then
 			inst.pivot.localOrientation = inst.pivotInitialOrientation * rot
@@ -359,41 +348,20 @@ class `widget` {} {
 			inst.pivot.localOrientation = rot * inst.pivotInitialOrientation
 		end
 		
-		for i = 1, #inst.dragged do
-			if inst.dragged[i] ~= nil and inst.dragged[i].instance ~= nil and not inst.dragged[i].destroyed then
-				local new_orientation = inst.initialOrientations[i] * rot
-
-				if inst.dragged[i].instance.body ~= nil then
-					inst.dragged[i].instance.body.worldOrientation = new_orientation
-				elseif inst.dragged[i].instance.gfx ~= nil then
-					inst.dragged[i].instance.gfx.localOrientation = new_orientation
-				elseif inst.dragged[i].instance.audio ~= nil then
-					inst.dragged[i].instance.audio.orientation = new_orientation
-				end	
-				
-				inst.dragged[i].rot = new_orientation
-			end
+		for i, obj in ipairs(inst.dragged) do
+            editor.map:setOrientation(obj.name, inst.initialOrientations[i] * rot)
 		end
 	end;
 	
-	setInitialOrientations = function(persistent)
-		local inst = persistent.instance
+	setInitialOrientations = function(self)
+        local editor = game_manager.currentMode
+		local inst = self.instance
 
 		inst.pivotInitialOrientation = inst.pivot.localOrientation
 		inst.initialOrientations = {}
-		for i = 1, #inst.dragged do
-			if inst.dragged[i] ~= nil and inst.dragged[i].instance ~= nil and not inst.dragged[i].destroyed then
-				local initialorientation
-				
-				if inst.dragged[i].instance.body ~= nil then
-					initialorientation = inst.dragged[i].instance.body.worldOrientation
-				elseif inst.dragged[i].instance.gfx ~= nil then
-					initialorientation = inst.dragged[i].instance.gfx.localOrientation
-				elseif inst.dragged[i].instance.audio ~= nil then
-					initialorientation = inst.dragged[i].instance.audio.orientation
-				end				
-				
-				inst.initialOrientations[#inst.initialOrientations+1] = initialorientation
+        for i, obj in ipairs(inst.dragged) do
+			if obj ~= nil and obj.instance ~= nil and not obj.destroyed then
+				inst.initialOrientations[#inst.initialOrientations+1] = editor.map:getOrientation(obj.name)
 			end
 		end
 	end;

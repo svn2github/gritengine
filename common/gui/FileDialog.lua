@@ -260,12 +260,12 @@ hud_class `FileDialog` (extends(WindowClass)
 		WindowClass.init(self)
 		
 		self.currentdir = "/";
-		
+
 		self.ok_button = gui.button({
 			caption = "OK";
 			parent = self;
-			pressedCallback = function (self)
-				self.parent:handleCallback()
+			pressedCallback = function ()
+				self:handleCallback()
 			end;
 			cornered = true;
 			texture = _gui_textures.button;
@@ -277,8 +277,8 @@ hud_class `FileDialog` (extends(WindowClass)
 		self.cancel_button = gui.button({
 			caption = "Cancel";
 			parent = self;
-			pressedCallback = function (self)
-				self.parent.enabled = false
+			pressedCallback = function ()
+				self.enabled = false
 			end;
 			cornered = true;
 			texture = _gui_textures.button;
@@ -298,16 +298,16 @@ hud_class `FileDialog` (extends(WindowClass)
 			size = vec(22, 22);
 			zOrder = 4;
 		})	
-		self.selectbox.onSelect = function(self)
-			self.parent:update_file_explorer(self.parent.currentdir)
+		self.selectbox.onSelect = function()
+			self:update_file_explorer(self.currentdir)
 		end;
 		
 		self.file_edbox = hud_object `window_editbox` {
 			parent = self;
 			value = "";
 			alignment = "LEFT";
-			enterCallback = function(self)
-				self.parent:handleCallback()
+			enterCallback = function()
+				self:handleCallback()
 			end;
 			size = vec(50, 20);
 			align = vec(-1, -1);
@@ -339,13 +339,13 @@ hud_class `FileDialog` (extends(WindowClass)
 		self.scrollarea:setContent(self.file_explorer)
 		
 		self.updir_btn = gui.imagebutton({
-			pressedCallback = function(self)
-				if self.parent.currentdir == "/" or self.parent.currentdir == "" then return end
-				self.parent.currentdir = self.parent.currentdir:reverse():sub(self.parent.currentdir:reverse():find("/", 2)+1):reverse()
+			pressedCallback = function()
+				if self.currentdir == "/" or self.currentdir == "" then return end
+				self.currentdir = self.currentdir:reverse():sub(self.currentdir:reverse():find("/", 2)+1):reverse()
 				
-				if self.parent.currentdir == "" then self.parent.currentdir = "/" end
-				self.parent.dir_edbox:setValue(self.parent.currentdir)
-				self.parent:update_file_explorer(self.parent.currentdir)
+				if self.currentdir == "" then self.currentdir = "/" end
+				self.dir_edbox:setValue(self.currentdir)
+				self:update_file_explorer(self.currentdir)
 			end;
 			icon_texture = _gui_textures.arrow_up;
 			parent = self;

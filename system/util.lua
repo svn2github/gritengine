@@ -1141,3 +1141,12 @@ function get_relative_path(from_here, to_here)
         return to_here
     end
 end
+
+function assert_path(path)
+    assert(path:sub(1, 1) == '/', ('"%s" did not begin with /'):format(path))
+end
+
+function assert_path_file_type(path, file_type)
+    assert_path(path)
+    assert(path:sub(-1 - #file_type, -1) == '.'..file_type, ('"%s" did not end in .%s'):format(path, file_type))
+end

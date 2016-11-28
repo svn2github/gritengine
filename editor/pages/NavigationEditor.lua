@@ -498,7 +498,7 @@ local navigation_editor = {
 			self.windows.tools:destroy()
 		end
 
-		self.windows.tools = hud_object `/editor/core/windows/navigation_editor/Tools` {
+		self.windows.tools = hud_object `/editor/windows/navigation_editor/Tools` {
 			title = "Tools";
 			parent = hud_centre;
 			position = vec(-390, 100);
@@ -518,7 +518,7 @@ local navigation_editor = {
 			self.windows.debug:destroy()
 		end
 
-		self.windows.debug = hud_object `/editor/core/windows/navigation_editor/Debug` {
+		self.windows.debug = hud_object `/editor/windows/navigation_editor/Debug` {
 			title = "Debug";
 			parent = hud_centre;
 			position = vec(-390, -200);

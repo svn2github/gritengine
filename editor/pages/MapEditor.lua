@@ -10,11 +10,15 @@ function open_map_dialog()
 		alpha = 1;
 		choices = { "Grit Map (*.gmap)", "Lua Script (*.lua)" };
 		callback = function(self, str)
-			if resource_exists("/"..str) then
-				if game_manager.currentMode:openMap("/"..str) then
+            str = '/' .. str
+			if resource_exists(str) then
+                local status, msg = pcall(game_manager.currentMode.openMap, game_manager.currentMode, str)
+                if status then
 					notify("Loaded!", vec(0, 0.5, 1), V_ID)
+                    -- error 'wat'
 					return true
 				else
+                    error_handler(msg)
 					notify("Error: Could not open map file!", vec(1, 0, 0), V_ID)
 				end
 			else
@@ -37,13 +41,16 @@ function save_map_dialog()
 		alpha = 1;
 		choices = { "Grit Map (*.gmap)", "Lua Script (*.lua)" };
 		callback = function(self, str)
-			if resource_exists("/"..str) then
+            str = '/' .. str
+			if resource_exists(str) then
 				local save_overwrite = function (boolean)
 					if boolean then
-						if game_manager.currentMode:saveCurrentMapAs(str) then
+                        local status, msg = pcall(game_manager.currentMode.saveCurrentMapAs, game_manager.currentMode, str)
+                        if status then
 							notify("Saved!", vec(0, 1, 0), V_ID)
 							self:destroy()
 						else
+                            error_handler(msg)
 							notify("Error!", vec(1, 0, 0), V_ID)
 						end
 					end
@@ -51,10 +58,12 @@ function save_map_dialog()
 				create_dialog("SAVE", "Would you like to overwrite "..str.."?", "yesnocancel", save_overwrite)
 				return false
 			else
-				if game_manager.currentMode:saveCurrentMapAs(str) then
+                local status, msg = pcall(game_manager.currentMode.saveCurrentMapAs, game_manager.currentMode, str)
+                if status then
 					notify("Saved!", vec(0, 1, 0), V_ID)
 					return true
 				else
+                    error_handler(msg)
 					notify("Error!", vec(1, 0, 0), V_ID)
 					return false
 				end
@@ -514,7 +523,7 @@ local map_editor_page = {
 			self.windows.settings:destroy()
 		end
 		
-		self.windows.settings = hud_object `/editor/core/windows/map_editor/Settings` {
+		self.windows.settings = hud_object `/editor/windows/map_editor/Settings` {
 			title = "Editor Settings";
 			parent = hud_centre;
 			position = vec2(editor_interface_cfg.settings.position[1], editor_interface_cfg.settings.position[2]);
