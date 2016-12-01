@@ -94,7 +94,6 @@ local navigation_editor = {
 		game_manager.currentMode.selectionEnabled = true
 		-- playing_binds:unbind("left")
 		
-		game_manager.currentMode.leftMouseClick = function(self) self:selectObj() end;
 		extra_inside_hud = function() return false end;
 	end;
 	

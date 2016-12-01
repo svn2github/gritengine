@@ -167,8 +167,6 @@ class `widget` {} {
 		
 		if self.rotating ~= nil then instance.rotating = self.rotating end
 
-		if widget_manager.dragged ~= nil then instance.dragged = widget_manager.dragged end
-
 		instance.mode = widget_manager.mode
 
 		if valid_object(instance.x) then
@@ -276,24 +274,18 @@ class `widget` {} {
 			inst.yz.instance.gfx.localOrientation = orientation * euler(90, 0, 90)				
 		end
 	end;
-	
-    frameCallback = function (self, elapsed)
-        -- if self.destroyed or not self.instance.pivot or not self.instance.pivot.destroyed then return end
+
+    updatePivot = function (self, new_position, new_orientation)
 		
 		local inst = self.instance
-		if not inst.pivot or self.destroyed then return end
-		
-		inst.scale = ((2 * math.tan(math.rad(gfx_option("FOV")) / 2)) * #(main.camPos - inst.pivot.localPosition))*0.025
 
-		local vecsize = vec(inst.scale, inst.scale, inst.scale)
-		
-		local pivot_pos = inst.pivot.localPosition
-		local new_orientation = inst.pivot.localOrientation
-		
+		local scale = ((2 * math.tan(math.rad(gfx_option("FOV")) / 2)) * #(main.camPos - new_position))*0.025
+		local vecsize = scale * vec(1, 1, 1)
+
 		if inst.x.instance and inst.y.instance and inst.z.instance then
-			inst.x.instance.gfx.localPosition = pivot_pos
-			inst.y.instance.gfx.localPosition = pivot_pos
-			inst.z.instance.gfx.localPosition = pivot_pos
+			inst.x.instance.gfx.localPosition = new_position
+			inst.y.instance.gfx.localPosition = new_position
+			inst.z.instance.gfx.localPosition = new_position
 			
 			inst.x.instance.gfx.localOrientation = new_orientation * euler(0, 0, -90)
 			inst.y.instance.gfx.localOrientation = new_orientation
@@ -306,9 +298,9 @@ class `widget` {} {
 		
 		if (inst.mode == "translate" or inst.mode == "scale") and
 		(inst.xy.instance and inst.xz.instance and inst.yz.instance) then
-			inst.xy.instance.gfx.localPosition = pivot_pos
-			inst.xz.instance.gfx.localPosition = pivot_pos
-			inst.yz.instance.gfx.localPosition = pivot_pos
+			inst.xy.instance.gfx.localPosition = new_position
+			inst.xz.instance.gfx.localPosition = new_position
+			inst.yz.instance.gfx.localPosition = new_position
 			
 			inst.xy.instance.gfx.localScale = vecsize
 			inst.xz.instance.gfx.localScale = vecsize
@@ -317,9 +309,9 @@ class `widget` {} {
 
         local editor = game_manager.currentMode
 
-		if inst.dragged ~= nil then
-			for i, obj in ipairs(inst.dragged) do
-                local dpos = pivot_pos - widget_manager.initialPosition*2 + obj.initialPosition
+		if widget_manager.selectedObjs ~= nil then
+			for i, obj in ipairs(widget_manager.selectedObjs) do
+                local dpos = new_position - widget_manager.initialPosition*2 + obj.initialPosition
                 local initpos = obj.initialPosition
 
                 local new_pos
@@ -330,12 +322,22 @@ class `widget` {} {
                         math.floor(dpos.z / widget_manager.step_size) * widget_manager.step_size + initpos.z
                     )
                 else
-                    new_pos = widget_manager.initialPosition - obj.initialPosition + pivot_pos
+                    new_pos = widget_manager.initialPosition - obj.initialPosition + new_position
                 end
                 
-                editor.map:setPosition(obj.name, new_pos)
+                editor.map:proposePosition(obj.name, new_pos)
+                editor.map:applyChange()
 			end
 		end
+    end,
+	
+    frameCallback = function (self, elapsed)
+        -- if self.destroyed or not self.instance.pivot or not self.instance.pivot.destroyed then return end
+		
+		local inst = self.instance
+		if not inst.pivot or self.destroyed then return end
+		
+        self:updatePivot(inst.pivot.localPosition, inst.pivot.localOrientation)
     end;
 	
 	rotate = function(self, rot)
@@ -348,8 +350,9 @@ class `widget` {} {
 			inst.pivot.localOrientation = rot * inst.pivotInitialOrientation
 		end
 		
-		for i, obj in ipairs(inst.dragged) do
-            editor.map:setOrientation(obj.name, inst.initialOrientations[i] * rot)
+		for i, obj in ipairs(widget_manager.selectedObjs) do
+            editor.map:proposeOrientation(obj.name, inst.initialOrientations[i] * rot)
+            editor.map:applyChange()
 		end
 	end;
 	
@@ -359,12 +362,13 @@ class `widget` {} {
 
 		inst.pivotInitialOrientation = inst.pivot.localOrientation
 		inst.initialOrientations = {}
-        for i, obj in ipairs(inst.dragged) do
+        for i, obj in ipairs(widget_manager.selectedObjs) do
 			if obj ~= nil and obj.instance ~= nil and not obj.destroyed then
 				inst.initialOrientations[#inst.initialOrientations+1] = editor.map:getOrientation(obj.name)
 			end
 		end
 	end;
+
 	highlight = function(self, component)
 		if component == nil then
 			if self.instance.highlighted then

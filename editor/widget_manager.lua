@@ -87,11 +87,9 @@ end
 
 function widget_manager:set_mode(mode)
 	self.mode = mode
-	if valid_object(self.widget) and self.widget.instance.dragged ~= nil and self.widget.instance.dragged[1].instance ~= nil then
+	if valid_object(self.widget) then
 		self.widget.rotating = self.mode == "rotate"
-		self.dragged = self.widget.instance.dragged
 		self.widget:updateArrows()
-		self.dragged = nil
 	end
 end
 
@@ -133,19 +131,23 @@ function widget_manager:startDragging(widget_component)
 	self.strdrag = widget_component
     local pivot_pos = self.widget.instance.pivot.localPosition
 	if self.mode == "translate" then
-		local gh = gfx_world_to_screen(main.camPos, main.camQuat, pivot_pos)
-		
-		self.initialobjposdelta = pivot_pos - isect_line_plane(
+
+        local plane_obj = self.widget.instance[self.strdrag]
+		local clicked_point_on_plane = isect_line_plane(
             main.camPos,
 			main.camPos + gfx_screen_to_world(main.camPos, main.camQuat, mouse_pos_abs),
 			pivot_pos,
-			self.widget.instance[self.strdrag].instance.gfx.localOrientation * V_UP
+			plane_obj.instance.gfx.localOrientation * V_UP  -- normal of plane
 		)
-		
-		self.msinitpos = mouse_pos_abs - vec(gh.x, gh.y)
+		self.initialobjposdelta = pivot_pos - clicked_point_on_plane
+
+		local pivot_pos_ss = gfx_world_to_screen(main.camPos, main.camQuat, pivot_pos)
+		self.msinitpos = mouse_pos_abs - pivot_pos_ss.xy
+
 	elseif self.mode == "rotate" then
 		self.msinitpos = mouse_pos_abs
 		self.widget:setInitialOrientations()
+
 	end
 	self.objinitpos = pivot_pos
 	-- input_filter_set_cursor_hidden(true)	
@@ -221,9 +223,6 @@ function widget_manager:selectSingleObject()
 		if self.selectedObjs == nil then self.selectedObjs = {} end
 		self.selectedObjs[1] = selected
 		
-		if valid_object(self.widget) then
-			self.widget.instance.dragged = self.selectedObjs
-		end
 	elseif self.selectedObjs and self.selectedObjs[1] then
 		self:unselectAll()
 	end
@@ -262,9 +261,6 @@ function widget_manager:addObject()
 				self.widget.instance.pivot.localPosition = self:calcCentreOffsets()
 			end
 			
-			if valid_object(self.widget) then
-				self.widget.instance.dragged = self.selectedObjs
-			end
 		end
 	end	
 end
@@ -300,8 +296,6 @@ function widget_manager:selectAll()
 				else
 					self.widget.instance.pivot.localPosition = self:calcCentreOffsets()
 				end
-				
-				self.widget.instance.dragged = self.selectedObjs
 			end
 		end	
 	end
@@ -436,8 +430,12 @@ function widget_manager:rayCastToWidget()
 	return obj
 end
 
-function widget_manager:select(mode, multi)
-    if mode == false then
+function widget_manager:select(enabled, multi)
+    local editor = game_manager.currentMode
+    if enabled == false then
+        if self.strdrag ~= nil then
+            --editor.map:applyChange()
+        end
 		self.strdrag = nil
 	else
 		if self.selectedObjs == nil then
@@ -451,10 +449,10 @@ function widget_manager:select(mode, multi)
 			if widget_component then
 				self:startDragging(widget_component)
 			else
-				if not multi then
-					self:selectSingleObject()
-				elseif multi then
+				if multi then
 					self:addObject()
+				else
+					self:selectSingleObject()
 				end
 			end
 		end	

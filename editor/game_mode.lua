@@ -86,18 +86,11 @@ function Editor:toggleBoard(mobj)
 end
 
 -- if the widget is under mouse cursor, then start dragging, otherwise select an object
-function Editor:selectObj()
-	if self.selectionEnabled then
-		if input_filter_pressed("Shift") then
-			widget_manager:select(true, true)
-		else
-			widget_manager:select(true, false)
-		end
-	end
-end
-
 function Editor:leftMouseClick()
-	self:selectObj()
+	if self.selectionEnabled then
+        local multi = input_filter_pressed("Shift")
+        widget_manager:select(true, multi)
+	end
 end
 
 function Editor:stopDraggingObj()
@@ -494,8 +487,7 @@ function Editor:openMap(map_file)
     navigation_reset()
     
     self.map:open(map_file)
-    main.camPos = self.map.current.editor.cam_pos
-    main.camQuat = self.map.current.editor.cam_quat
+    main.camPos, main.camQuat = self.map:getEditorCamPosQuat()
     self.camPitch = quatPitch(main.camQuat)
     self.camYaw = cam_yaw_angle()
 
@@ -630,8 +622,7 @@ function Editor:init()
     navigation_reset()
 
     self.map = EditorMap.new()
-    main.camPos = self.map.current.editor.cam_pos
-    main.camQuat = self.map.current.editor.cam_quat
+    main.camPos, main.camQuat = self.map:getEditorCamPosQuat()
     self.camPitch = quatPitch(main.camQuat)
     self.camYaw = cam_yaw_angle()
 
