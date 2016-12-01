@@ -109,22 +109,15 @@ class `widget` {} {
 
     end;
 
-    activate = function (self,instance)
-        self.needsFrameCallbacks = true
-		
-		if valid_object(instance.pivot) then
-			instance.pivot:destroy()
-		end
-		
-        instance.pivot = gfx_body_make()
-        instance.pivot.localPosition = self.spawnPos
-        instance.pivot.localOrientation = self.rot
+    activate = function (self, instance)
+
+		self:updateArrows(self.rot)
+        self:updatePivot(self.spawnPos, self.rot)
 		
 		instance.scale = 1
 		
-		instance.pivotInitialOrientation = instance.pivot.localOrientation
+		instance.pivotInitialOrientation = self.rot
 		
-		self:updateArrows(self)
     end;
 
 	setMaterial = function(self, component, highlight)
@@ -157,9 +150,8 @@ class `widget` {} {
 		end
 	end;
 	
-	updateArrows = function(self)
+	updateArrows = function(self, pivot_or)
 		local instance = self.instance
-		local pivot_or = instance.pivot.localOrientation
 
 		if instance.mode == nil then instance.mode = "translate" end
 		if self.mode ~= nil then instance.mode = self.mode end
@@ -244,7 +236,6 @@ class `widget` {} {
 	end;
 
     deactivate = function (self)
-		self.needsFrameCallbacks = false
 		local instance = self.instance
 		instance.x:destroy()
 		instance.y:destroy()
@@ -254,12 +245,11 @@ class `widget` {} {
 			instance.xz:destroy()
 			instance.yz:destroy()
 		end
-		instance.pivot:destroy()
     end;	
 
 	setOrientation = function(self, orientation)
 		local inst = self.instance
-		inst.pivot.localOrientation = orientation
+        self.widgetOrientation = orientation
 		
 		if inst.x.instance and inst.y.instance and inst.z.instance then
 			inst.x.instance.gfx.localOrientation = orientation * euler(0, 0, -90)
@@ -275,7 +265,7 @@ class `widget` {} {
 	end;
 
     updatePivot = function (self, new_position, new_orientation)
-		
+
 		local inst = self.instance
 
 		local scale = ((2 * math.tan(math.rad(gfx_option("FOV")) / 2)) * #(main.camPos - new_position))*0.025
@@ -306,6 +296,9 @@ class `widget` {} {
 			inst.yz.instance.gfx.localScale = vecsize
 		end
 
+        self.widgetPosition = new_position
+        self.widgetOrientation = new_orientation
+		
         if widget_manager.strdrag ~= nil then
             local editor = game_manager.currentMode
             for i, obj in ipairs(widget_manager.selectedObjs) do
@@ -328,23 +321,14 @@ class `widget` {} {
         end
     end,
 	
-    frameCallback = function (self, elapsed)
-        -- if self.destroyed or not self.instance.pivot or not self.instance.pivot.destroyed then return end
-		
-		local inst = self.instance
-		if not inst.pivot or self.destroyed then return end
-		
-        self:updatePivot(inst.pivot.localPosition, inst.pivot.localOrientation)
-    end;
-	
 	rotate = function(self, rot)
         local editor = game_manager.currentMode
 		local inst = self.instance
 
 		if widget_manager.space_mode == "local" then
-			inst.pivot.localOrientation = inst.pivotInitialOrientation * rot
+			self.widgetOrientation = inst.pivotInitialOrientation * rot
 		else
-			inst.pivot.localOrientation = rot * inst.pivotInitialOrientation
+			self.widgetOrientation = rot * inst.pivotInitialOrientation
 		end
 		
 		for i, obj in ipairs(widget_manager.selectedObjs) do
@@ -352,9 +336,8 @@ class `widget` {} {
 		end
 	end;
 	
-	setInitialOrientations = function(self)
-		local inst = self.instance
-		inst.pivotInitialOrientation = inst.pivot.localOrientation
+	setInitialOrientation = function(self)
+		inst.pivotInitialOrientation = self.widgetOrientation
 	end;
 
 	highlight = function(self, component)
