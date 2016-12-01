@@ -33,13 +33,12 @@ local arrow_bounds = vec(1, 8, 1)
 
 widget_manager = {
 	mode = "translate";
-	selectedObjs = nil;
+	selectedObjs = {};
 	offsets = {};
 	rotationOffsets = {};
 	initialPosition = vec(0, 0, 0);
-	lastobj = nil;
 	widget = nil;
-	strdrag = nil;
+	strdrag = nil;  -- nil if we're not currently dragging, otherwise the axis / plane
 	space_mode = "local"; -- "world", "local"
 	pivot_centre = "active object"; -- "individual origins", "active object" or "centre point"
 	step_size = 0.5;
@@ -76,11 +75,11 @@ end
 function widget_manager:setSpaceMode(mode)
     local editor = game_manager.currentMode
 	self.space_mode = mode
-	if self.widget and self.widget.instance and valid_object(self.selectedObjs[1]) then
+	if self.widget and self.widget.instance then
 		if mode == "world" then
 			self.widget:setOrientation(Q_ID)
 		else
-			self.widget:setOrientation(editor.map:getOrientation(self.selectedObjs[1].name))
+			self.widget:setOrientation(editor.map:getOrientation(self.selectedObjs[1]))
 		end
 	end
 end
@@ -102,15 +101,10 @@ end
 function widget_manager:unselectAll()
     local editor = game_manager.currentMode
 
-	if self.selectedObjs ~= nil then
-		for i, obj in ipairs(self.selectedObjs) do
-			if obj ~= nil and obj.instance ~= nil and obj.instance.gfx ~= nil and not obj.destroyed then
-                editor.map:setSelected(obj.name, false)
-				obj.instance.body.worldPosition = obj.spawnPos
-			end
-		end
-		self.selectedObjs = nil
-	end
+    for i, obj in ipairs(self.selectedObjs) do
+        editor.map:setSelected(obj, false)
+    end
+    self.selectedObjs = {}
 	
 	self.setEditorToolbar("Selected: none")
 	safe_destroy(self.widget)
@@ -119,9 +113,7 @@ function widget_manager:unselectAll()
 end
 
 function widget_manager:stopDragging()
-	input_filter_set_cursor_hidden(false)
     self:select(false)
-	-- self.initialPosition = self.widget.instance.pivot.localPosition
 	-- self.selectedObjs[1].initialPosition = self.selectedObjs[1].instance.body.worldPosition
 	-- self.selectedObjs[1].initialOrientation = self.selectedObjs[1].instance.body.worldOrientation
 end
@@ -150,16 +142,13 @@ function widget_manager:startDragging(widget_component)
 
 	end
 	self.objinitpos = pivot_pos
-	-- input_filter_set_cursor_hidden(true)	
 end
 
 function widget_manager:calcOffsets()
     local editor = game_manager.currentMode
 	self.offsets = {}
-	for i = 1, #self.selectedObjs do
-		if valid_object(self.selectedObjs[i]) then
-			self.offsets[i] = editor.map:getPosition(self.selectedObjs[i].name)-self.widget.instance.pivot.localPosition
-		end
+    for i, obj in ipairs(self.selectedObjs) do
+        self.offsets[i] = editor.map:getPosition(obj) - self.widget.instance.pivot.localPosition
 	end
 end
 
@@ -169,9 +158,7 @@ function widget_manager:calcCentreOffsets()
 	local mid_point = V_ZERO
 
     for i, obj in ipairs(self.selectedObjs) do
-		if valid_object(obj) then
-			mid_point = mid_point + editor.map:getPosition(obj.name)
-		end
+        mid_point = mid_point + editor.map:getPosition(obj)
 	end
 
 	mid_point = mid_point / #self.selectedObjs
@@ -179,11 +166,20 @@ function widget_manager:calcCentreOffsets()
 	-- set offsets
 	self.offsets = {}
     for i, obj in ipairs(self.selectedObjs) do
-		if valid_object(obj) then
-			self.offsets[i] = editor.map:getPosition(obj.name) - mid_point
-		end
+        self.offsets[i] = editor.map:getPosition(obj) - mid_point
 	end
 	return mid_point
+end
+
+function widget_manager:updateWidgetFromSelection()
+    -- TODO(dcunnin): Support multiple selected objects
+    local selected = self.selectedObjs[1]
+    if not selected then return end
+
+    local editor = game_manager.currentMode
+    local initial_position = editor.map:getPosition(selected)
+    local initial_orientation = editor.map:getOrientation(selected)
+    self:enablewidget(initial_position, initial_orientation)
 end
 
 function widget_manager:selectSingleObject()
@@ -205,25 +201,20 @@ function widget_manager:selectSingleObject()
 	-- end
 	
 	if b ~= nil then
-		local selected = b.owner
+		local selected = b.owner.name
 		
-		if self.selectedObjs and selected == self.selectedObjs[1] then return end
+		if selected == self.selectedObjs[1] then return end
 		
 		self:unselectAll()
-		
-		selected.initialPosition = editor.map:getPosition(selected.name)
-		selected.initialOrientation = editor.map:getOrientation(selected.name)
 
-		self:setEditorToolbar("Selected: "..selected.name)
+		self:setEditorToolbar("Selected: " .. selected)
 
-        editor.map:setSelected(selected.name, true)
-		
-		self:enablewidget(selected.initialPosition, selected.initialOrientation)
-		
-		if self.selectedObjs == nil then self.selectedObjs = {} end
-		self.selectedObjs[1] = selected
-		
-	elseif self.selectedObjs and self.selectedObjs[1] then
+        editor.map:setSelected(selected, true)
+		self.selectedObjs = { selected }
+
+        self:updateWidgetFromSelection()
+
+	elseif self.selectedObjs[1] then
 		self:unselectAll()
 	end
 end
@@ -234,19 +225,16 @@ function widget_manager:addObject()
 	local _, b = physics_cast(main.camPos, ray, true, 0)
 	if b ~= nil then
         local target_obj = b.owner
-		if self.selectedObjs == nil then self.selectedObjs = {} end
 		local isonthelist = false
-		for i = 1, #self.selectedObjs do
-			if valid_object(self.selectedObjs[i]) then
-				if self.selectedObjs[i] == target_obj then
+        for i, obj in ipairs(self.selectedObjs) do
+			if valid_object(obj) then
+				if obj.name == target_obj.name then
 					isonthelist = true
 				end
 			end
 		end
 		if not isonthelist then
 			self.selectedObjs[#self.selectedObjs+1] = target_obj
-			target_obj.initialPosition = editor.map:getPosition(target_obj.name)
-			target_obj.initialOrientation = editor.map:getOrientation(target_obj.name)
 		end
 		self:setEditorToolbar("Selected: Multiple")
         editor.map:setSelected(target_obj.name, true)
@@ -271,19 +259,16 @@ function widget_manager:selectAll()
 	
 	for i, b in ipairs(objs) do
 		if valid_object(b) then
-			if self.selectedObjs == nil then self.selectedObjs = {} end
 			local isonthelist = false
-			for i = 1, #self.selectedObjs do
-				if valid_object(self.selectedObjs[i]) then
-					if self.selectedObjs[i] == b then
+            for i, obj in ipairs(self.selectedObjs) do
+				if valid_object(obj) then
+					if obj == b.name then
 						isonthelist = true
 					end
 				end
 			end
 			if not isonthelist then
-				self.selectedObjs[#self.selectedObjs+1] = b
-                b.initialPosition = editor.map:getPosition(b.name)
-                b.initialOrientation = editor.map:getOrientation(b.name)
+				self.selectedObjs[#self.selectedObjs+1] = b.name
 			end
 
             editor.map:setSelected(b.name, true)
@@ -434,11 +419,12 @@ function widget_manager:select(enabled, multi)
     local editor = game_manager.currentMode
     if enabled == false then
         if self.strdrag ~= nil then
-            --editor.map:applyChange()
+            self.initialPosition = self.widget.instance.pivot.localPosition
+            editor.map:applyChange()
         end
 		self.strdrag = nil
 	else
-		if self.selectedObjs == nil then
+		if #self.selectedObjs == 0 then
 			self:selectSingleObject()
 		else
 			local widget_component = nil

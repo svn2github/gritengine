@@ -122,8 +122,7 @@ class `widget` {} {
 		
 		instance.scale = 1
 		
-		instance.initialOrientations = instance.pivot.localOrientation
-		instance.pivotInitialOrientation = {}
+		instance.pivotInitialOrientation = instance.pivot.localOrientation
 		
 		self:updateArrows(self)
     end;
@@ -307,28 +306,26 @@ class `widget` {} {
 			inst.yz.instance.gfx.localScale = vecsize
 		end
 
-        local editor = game_manager.currentMode
-
-		if widget_manager.selectedObjs ~= nil then
-			for i, obj in ipairs(widget_manager.selectedObjs) do
-                local dpos = new_position - widget_manager.initialPosition*2 + obj.initialPosition
-                local initpos = obj.initialPosition
+        if widget_manager.strdrag ~= nil then
+            local editor = game_manager.currentMode
+            for i, obj in ipairs(widget_manager.selectedObjs) do
+                local obj_initial_pos = editor.map:getPosition(obj)
+                local dpos = new_position - widget_manager.initialPosition * 2 + obj_initial_pos
 
                 local new_pos
                 if input_filter_pressed("Ctrl") then
                     new_pos = vec(
-                        math.floor(dpos.x / widget_manager.step_size) * widget_manager.step_size + initpos.x,
-                        math.floor(dpos.y / widget_manager.step_size) * widget_manager.step_size + initpos.y,
-                        math.floor(dpos.z / widget_manager.step_size) * widget_manager.step_size + initpos.z
+                        math.floor(dpos.x / widget_manager.step_size) * widget_manager.step_size + obj_initial_pos.x,
+                        math.floor(dpos.y / widget_manager.step_size) * widget_manager.step_size + obj_initial_pos.y,
+                        math.floor(dpos.z / widget_manager.step_size) * widget_manager.step_size + obj_initial_pos.z
                     )
                 else
-                    new_pos = widget_manager.initialPosition - obj.initialPosition + new_position
+                    new_pos = widget_manager.initialPosition - obj_initial_pos + new_position
                 end
                 
-                editor.map:proposePosition(obj.name, new_pos)
-                editor.map:applyChange()
-			end
-		end
+                editor.map:proposePosition(obj, new_pos)
+            end
+        end
     end,
 	
     frameCallback = function (self, elapsed)
@@ -351,22 +348,13 @@ class `widget` {} {
 		end
 		
 		for i, obj in ipairs(widget_manager.selectedObjs) do
-            editor.map:proposeOrientation(obj.name, inst.initialOrientations[i] * rot)
-            editor.map:applyChange()
+            editor.map:proposeOrientation(obj, editor.map:getOrientation(obj) * rot)
 		end
 	end;
 	
 	setInitialOrientations = function(self)
-        local editor = game_manager.currentMode
 		local inst = self.instance
-
 		inst.pivotInitialOrientation = inst.pivot.localOrientation
-		inst.initialOrientations = {}
-        for i, obj in ipairs(widget_manager.selectedObjs) do
-			if obj ~= nil and obj.instance ~= nil and not obj.destroyed then
-				inst.initialOrientations[#inst.initialOrientations+1] = editor.map:getOrientation(obj.name)
-			end
-		end
 	end;
 
 	highlight = function(self, component)

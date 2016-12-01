@@ -11,6 +11,18 @@
 -- undo history.
 
 
+-- Open problems:
+--
+-- Need to rebuild all objects from scratch when recovering to an undo level, as we don't know what
+-- was destroyed / created / changed.  It should be possible to compute a structural diff between
+-- the two states to find out what has changed, and then only update those objects.  Alternatively
+-- we can record the diff as opposed to recording the whole history.
+--
+-- Rebuilding the map each time leads to non-determistic effects with object placement (grass) and
+-- car colours changing.  However, this is a general problem since removing an object and then
+-- undoing it will cause any random initialization to be reset.
+
+
 EditorMap = EditorMap or {
     undoLevelsMax = 100,
 }
@@ -30,17 +42,57 @@ function EditorMap.new()
     return self
 end
 
--- Return to the default (empty) map.
-function EditorMap:reset()
+-- Add all visual representations of objects.
+function EditorMap:populateMap()
+    for name, object in pairs(self.currentState.objects) do
+        local body = table.clone(object[3])
+        body.name = name
+        object_add(object[1], object[2], body)
+    end
+end
+
+-- Remove all visual representations of objects.
+function EditorMap:depopulateMap()
     for k, v in pairs(self.currentState.objects) do
         if object_has(k) then
             object_get(k):destroy()
         end
     end
+end
+
+-- Return to the default (empty) map.
+function EditorMap:reset()
+    self:depopulateMap()
     self.currentState = map_build_empty()
+    -- No need to populateMap, there are no objects.
     self.undoLevels = {}
+    self.redoLevels = {}
     self.filename = nil
     self:applyEnvironment()
+end
+
+function EditorMap:undo()
+    assert(self.proposed == nil)
+    if #self.undoLevels == 0 then
+        -- No more undo levels.
+        return
+    end
+    self:depopulateMap()
+    table.insert(self.redoLevels, 1, self.currentState)
+    self.currentState = table.remove(self.undoLevels, 1)
+    self:populateMap()
+end
+
+function EditorMap:redo()
+    assert(self.proposed == nil)
+    if #self.redoLevels == 0 then
+        -- No more redo levels.
+        return
+    end
+    self:depopulateMap()
+    table.insert(self.undoLevels, 1, self.currentState)
+    self.currentState = table.remove(self.redoLevels, 1)
+    self:populateMap()
 end
 
 function EditorMap:getEditorCamPosQuat()
@@ -52,11 +104,7 @@ function EditorMap:open(filename)
     assert_path_file_type(filename, 'gmap')
     self:reset()
     self.currentState = include(filename)
-    for name, object in pairs(self.currentState.objects) do
-        local body = table.clone(object[3])
-        body.name = name
-        object_add(object[1], object[2], body)
-    end
+    self:populateMap()
     self.filename = filename
     self.undoLevels = {}
     self:applyEnvironment()
@@ -128,6 +176,8 @@ function EditorMap:pushUndoLevel(tab)
         self.undoLevels[#self.undoLevels] = nil
     end
     table.insert(self.undoLevels, 1, tab)
+    -- As soon as we made a change, we forked history, so we cannot go forwards again.
+    self.redoLevels = {}
 end
 
 -- Updates currentState to clone a path, so that we can modify it.  The path must lead to a table.
@@ -161,13 +211,22 @@ function EditorMap:setSelected(name, v)
 end
 
 
--- Fetches object data from either proposed or currentState, depending on whether a new
--- postition is being proposed.
-function EditorMap:getObject(name)
+-- Always fetches object data from currentState.
+function EditorMap:getCurrentObject(name)
     local state = self.currentState
-    if self.proposed then
-        state = self.proposed.state
+    local obj_decl = state.objects[name]
+    if obj_decl == nil then
+        error(('No such object: "%s"'):format(name))
     end
+    return obj_decl
+end
+
+
+-- Always fetches object data from proposed state.
+-- postition is being proposed.
+function EditorMap:getProposedObject(name)
+    assert(self.proposed ~= nil)
+    local state = self.proposed.state
     local obj_decl = state.objects[name]
     if obj_decl == nil then
         error(('No such object: "%s"'):format(name))
@@ -177,8 +236,7 @@ end
 
 
 -- Internal function to make the object match the current / proposed state of the map.
-function EditorMap:updateObjectVisualisation(name)
-    local obj = self:getObject(name)
+function EditorMap:updateObjectVisualisation(name, obj)
     local pos, rot = obj[2], obj[3].rot
 
     local obj_actual = object_get(name)
@@ -205,7 +263,7 @@ end
 
 -- Get an object's position.
 function EditorMap:getPosition(name)
-    local obj_decl = self:getObject(name)
+    local obj_decl = self:getCurrentObject(name)
     return obj_decl[2]
 end
 
@@ -213,12 +271,12 @@ end
 function EditorMap:proposePosition(name, v)
     local obj_decl = self:initProposed(name)
     obj_decl[2] = v
-    self:updateObjectVisualisation(name)
+    self:updateObjectVisualisation(name, obj_decl)
 end
 
 -- Get an object's orientation.
 function EditorMap:getOrientation(name)
-    local obj_decl = self:getObject(name)
+    local obj_decl = self:getCurrentObject(name)
     return obj_decl[3].rot or Q_ID
 end
 
@@ -231,15 +289,14 @@ function EditorMap:proposeOrientation(name, v)
     else
         obj_decl[3].rot = v
     end
-
-    self:updateObjectVisualisation(name)
+    self:updateObjectVisualisation(name, obj_decl)
 end
 
 
 -- Rename an object.
 function EditorMap:rename(old_name, new_name)
     assert(self.proposed == nil)
-    local obj_decl = self:getObject(old_name)
+    local obj_decl = self:getCurrentObject(old_name)
     if self.currentState.objects[new_name] ~= nil then
         error(('Already an object called: "%s"'):format(new_name))
     end
@@ -253,6 +310,7 @@ end
 function EditorMap:applyChange()
     self:pushUndoLevel(self.currentState)
     self.currentState = self.proposed.state
+    local name = self.proposed.name
     self.proposed = nil
 end
 
@@ -260,13 +318,13 @@ end
 function EditorMap:cancelChange()
     local name = self.proposed.objectName
     self.proposed = nil
-    self:updateObjectVisualisation(name)
+    self:updateObjectVisualisation(name, self:getCurrentObject(name))
 end
 
 
 function EditorMap:initProposed(name)
     if self.proposed == nil then
-        local obj_decl = self:getObject(name)
+        local obj_decl = self:getCurrentObject(name)
         self.proposed = {
             name = name,
             state = table.clone(self.currentState),
@@ -281,36 +339,4 @@ function EditorMap:initProposed(name)
     end
     return self.proposed.state.objects[name]
 end
-
--- proposeValue(1)
---  - init proposed
---  - set proposed
---  - update object
--- proposeValue(2)
---  - set proposed
---  - update object
--- cancelChange()
---  - deinit proposed
---  - update object
-
--- proposeValue(1)
---  - init proposed
---  - set proposed
---  - update object
--- proposeValue(2)
---  - set proposed
---  - update object
--- applyChange()
---  - push undo level
---  - copy currentState to undo
---  - copy proposed to currentState
---  - deinit proposed
---  - update object
-
-
--- Open problems:
--- Need to rebuild all objects from scratch when recovering to an undo level, as we don't know what
--- was destroyed / created / changed.  It should be possible to do a structural diff to find out,
--- and then only update those objects...
--- Need an end of dragging event to apply the change.
 

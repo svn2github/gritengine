@@ -604,9 +604,13 @@ function Editor:saveEditorConfig()
 end
 
 function Editor:undo()
+    self.map:undo()
+    widget_manager:updateWidgetFromSelection()
 end
 
 function Editor:redo()
+    self.map:redo()
+    widget_manager:updateWidgetFromSelection()
 end
 
 function Editor:cutObject()
