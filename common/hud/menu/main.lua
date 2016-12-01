@@ -95,14 +95,12 @@ menu_pages = {
                 menu_button {
                     caption = "Debug Mode";
                     pressedCallback = function() 
-                        menu_show(nil)
                         debug_mode()
                     end
                 },
                 menu_button {
                     caption = "Editor";
                     pressedCallback = function() 
-                        menu_show(nil)
                         game_manager:enter("Map Editor")
                     end
                 },
@@ -280,7 +278,6 @@ menu_pages = {
                         game_mode_buttons[#game_mode_buttons + 1] = menu_button {
                             caption = key,
                             pressedCallback = function(self)
-                                menu_show(nil)
                                 game_manager:enter(key)
                             end;
                             stateChangeCallback = function (self, old_state, new_state)

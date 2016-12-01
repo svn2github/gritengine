@@ -69,6 +69,7 @@ game_manager = {
         self.currentMode:init()
         self:setPause(false)
         core_option("FOREGROUND_WARNINGS", true)
+        menu_show(nil)
     end;
 
     exit = function (self)
