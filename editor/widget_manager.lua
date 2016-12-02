@@ -11,23 +11,6 @@
 -- Select objects without collision
 -- Select sounds, particles
 
--- return an object list from a physics_cast
-local function get_pc_ol(...)
-	local t = {...}
-	if t == nil then return nil end
-	local it = 2
-	local mobjs = {}
-	for i=1, #t/4 do
-		mobjs[#mobjs+1] = t[it].owner
-		it = it + 4
-	end
-	if(next(mobjs)) then
-		return mobjs
-	else
-		return nil
-	end
-end
-
 local dummy_bounds = vec(2, 2, 0.2)
 local arrow_bounds = vec(1, 8, 1)
 
@@ -66,9 +49,9 @@ function widget_manager:enablewidget(pos, mrot)
 		mrot = Q_ID
 	end
 	
-	self.widget = object (`/editor/assets/widget`) (pos) { name = "widget_obj", mode = self.mode, rot = mrot, rotating = self.mode == "rotate" }
-	self.widget:activate()
 	self.initialPosition = pos
+	self.widget = object (`assets/Widget`) (pos) { name = "widget_obj", mode = self.mode, rot = mrot, rotating = self.mode == "rotate" }
+	self.widget:activate()
 	main.frameCallbacks:insert("widget_manager", wm_callback)
 end
 
@@ -219,6 +202,32 @@ function widget_manager:selectSingleObject()
 	end
 end
 
+function widget_manager:updateSelectedPos(new_position, new_orientation)
+    self.widget:updatePivot(new_position, new_orientation)
+
+    if widget_manager.strdrag ~= nil then
+        local editor = game_manager.currentMode
+        for i, obj in ipairs(widget_manager.selectedObjs) do
+            local obj_initial_pos = editor.map:getPosition(obj)
+            local dpos = new_position - widget_manager.initialPosition * 2 + obj_initial_pos
+
+            local new_pos
+            if input_filter_pressed("Ctrl") then
+                new_pos = vec(
+                    math.floor(dpos.x / widget_manager.step_size) * widget_manager.step_size + obj_initial_pos.x,
+                    math.floor(dpos.y / widget_manager.step_size) * widget_manager.step_size + obj_initial_pos.y,
+                    math.floor(dpos.z / widget_manager.step_size) * widget_manager.step_size + obj_initial_pos.z
+                )
+            else
+                new_pos = widget_manager.initialPosition - obj_initial_pos + new_position
+            end
+            
+            editor.map:proposePosition(obj, new_pos)
+        end
+    end
+end
+
+
 function widget_manager:addObject()
     local editor = game_manager.currentMode
 	local ray = 1000 * gfx_screen_to_world(main.camPos, main.camQuat, mouse_pos_abs)
@@ -249,7 +258,7 @@ function widget_manager:addObject()
 				pivot_pos = self:calcCentreOffsets()
 			end
 			
-            self.widget:updatePivot(pivot_pos, pivot_rot)
+            self:updateSelectedPos(pivot_pos, pivot_rot)
 		end
 	end	
 end
@@ -285,7 +294,7 @@ function widget_manager:selectAll()
 				else
 					pivot_pos = self:calcCentreOffsets()
 				end
-                self.widget:updatePivot(pivot_pos, pivot_rot)
+                self:updateSelectedPos(pivot_pos, pivot_rot)
 			end
 		end	
 	end
@@ -450,6 +459,13 @@ function widget_manager:select(enabled, multi)
 	end
 end
 
+function widget_manager:setSelectedOrientation(rot)
+    local editor = game_manager.currentMode
+    for i, obj in ipairs(widget_manager.selectedObjs) do
+        editor.map:proposeOrientation(obj, editor.map:getOrientation(obj) * rot)
+    end
+end
+	
 function wm_callback()
     local self = widget_manager
 
@@ -521,11 +537,13 @@ function wm_callback()
 							posz = p.z
 						end					
 					end
-                    self.widget:updatePivot(vec(posx, posy, posz), self.widget.widgetOrientation)
+                    self:updateSelectedPos(vec(posx, posy, posz), self.widget.widgetOrientation)
 				elseif self.mode == "rotate" then
-					local function rotate(x,y,z)
+					local function rotate(x, y, z)
 						if self.widget ~= nil and self.widget.instance ~= nil then
-							self.widget:rotate(quat(mouse_delta.x + mouse_delta.y, vec(x,y,z)))
+                            local rot = quat(mouse_delta.x + mouse_delta.y, vec(x, y, z))
+							self.widget:rotate(rot)
+                            self:setSelectedOrientation(rot)
 						end
 					end
 

@@ -100,7 +100,7 @@ get_material(`line_2`):setDepthBias(0, 0, 50000, 50000)
 get_material(`line_dragging`):setDepthBias(0, 0, 50000, 50000)
 ]]
 
-class `widget` {} {
+class `Widget` {} {
 
     renderingDistance = 10000;
 	editorObject = true;
@@ -298,31 +298,9 @@ class `widget` {} {
 
         self.widgetPosition = new_position
         self.widgetOrientation = new_orientation
-		
-        if widget_manager.strdrag ~= nil then
-            local editor = game_manager.currentMode
-            for i, obj in ipairs(widget_manager.selectedObjs) do
-                local obj_initial_pos = editor.map:getPosition(obj)
-                local dpos = new_position - widget_manager.initialPosition * 2 + obj_initial_pos
-
-                local new_pos
-                if input_filter_pressed("Ctrl") then
-                    new_pos = vec(
-                        math.floor(dpos.x / widget_manager.step_size) * widget_manager.step_size + obj_initial_pos.x,
-                        math.floor(dpos.y / widget_manager.step_size) * widget_manager.step_size + obj_initial_pos.y,
-                        math.floor(dpos.z / widget_manager.step_size) * widget_manager.step_size + obj_initial_pos.z
-                    )
-                else
-                    new_pos = widget_manager.initialPosition - obj_initial_pos + new_position
-                end
-                
-                editor.map:proposePosition(obj, new_pos)
-            end
-        end
     end,
-	
+
 	rotate = function(self, rot)
-        local editor = game_manager.currentMode
 		local inst = self.instance
 
 		if widget_manager.space_mode == "local" then
@@ -331,9 +309,6 @@ class `widget` {} {
 			self.widgetOrientation = rot * inst.pivotInitialOrientation
 		end
 		
-		for i, obj in ipairs(widget_manager.selectedObjs) do
-            editor.map:proposeOrientation(obj, editor.map:getOrientation(obj) * rot)
-		end
 	end;
 	
 	setInitialOrientation = function(self)
