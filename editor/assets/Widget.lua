@@ -114,40 +114,33 @@ class `Widget` {} {
 
         if self.rotating ~= nil then instance.rotating = self.rotating end
 
-        instance.x = safe_destroy(instance.x)
-        instance.y = safe_destroy(instance.y)
-        instance.z = safe_destroy(instance.z)
-        instance.xy = safe_destroy(instance.xy)
-        instance.xz = safe_destroy(instance.xz)
-        instance.yz = safe_destroy(instance.yz)
-    
-        instance.x = gfx_body_make((`arrow_%s.mesh`):format(widget_manager.mode))
-        instance.x.localOrientation = pivot_or * euler(0, 0, -90)
-        instance.x:setMaterial(`arrow`, `red`)
-        instance.x:setMaterial(`line`, `red`)
+        local orientations = {
+            x = euler(0, 0, -90),
+            y = euler(0, 0, 0),
+            z = euler(90, 0, -90),
+        }
 
-        instance.y = gfx_body_make((`arrow_%s.mesh`):format(widget_manager.mode))
-        instance.y:setMaterial(`arrow`, `green`)
-        instance.y:setMaterial(`line`, `green`)
+        for _, component in ipairs{'x', 'y', 'z'} do
+            safe_destroy(instance[component])
+            instance[component] = gfx_body_make((`arrow_%s.mesh`):format(widget_manager.mode))
+            instance[component].castShadows = false
+            instance[component].localOrientation = pivot_or * orientations[component]
+            instance[component]:setMaterial(`arrow`, self.axisColours[component])
+        end
 
-        instance.z = gfx_body_make((`arrow_%s.mesh`):format(widget_manager.mode))
-        instance.z.localOrientation = pivot_or * euler(90, 0, -90)
-        instance.z:setMaterial(`arrow`, `blue`)
-        instance.z:setMaterial(`line`, `blue`)
+        local plane_orientations = {
+            xy = euler(0, 0, 0),
+            xz = euler(0, -90, -90),
+            yz = euler(90, 0, 90),
+        }
 
-        if widget_manager.mode == "translate" or widget_manager.mode == "scale" then
-            instance.xy = gfx_body_make(`dummy_plane.mesh`)
-            instance.xy.localOrientation = pivot_or
-
-            instance.xz = gfx_body_make(`dummy_plane.mesh`)
-            instance.xz.localOrientation = pivot_or * euler(0, -90, -90)
-            instance.xz:setMaterial(`line_1`, `red`)
-            instance.xz:setMaterial(`line_2`, `blue`)
-    
-            instance.yz = gfx_body_make(`dummy_plane.mesh`)
-            instance.yz.localOrientation = pivot_or * euler(90, 0, 90)
-            instance.yz:setMaterial(`line_1`, `blue`)
-            instance.yz:setMaterial(`line_2`, `green`)
+        for _, component in ipairs{'xy', 'xz', 'yz'} do
+            instance[component] = safe_destroy(instance[component])
+            if widget_manager.mode == "translate" or widget_manager.mode == "scale" then
+                instance[component] = gfx_body_make(`dummy_plane.mesh`)
+                instance[component].castShadows = false
+                instance[component].localOrientation = pivot_or * plane_orientations[component]
+            end
         end
     end,
 

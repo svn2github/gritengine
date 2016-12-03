@@ -1,4 +1,4 @@
 include `spawn_point.lua`
-include `widget_manager.lua`
+include `Widget.lua`
 include `icons/init.lua`
 include `WorldIcons.lua`
