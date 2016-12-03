@@ -95,7 +95,11 @@ function EditorMap:redo()
     self:populateMap()
 end
 
-function EditorMap:getEditorCamPosQuat()
+function EditorMap:setEditorCamPosOrientation(pos, orientation)
+    self.currentState.editor.cam_pos, self.currentState.editor.cam_quat = pos, orientation
+end
+
+function EditorMap:getEditorCamPosOrientation()
     return self.currentState.editor.cam_pos, self.currentState.editor.cam_quat
 end
 

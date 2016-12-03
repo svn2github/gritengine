@@ -487,7 +487,7 @@ function Editor:openMap(map_file)
     navigation_reset()
     
     self.map:open(map_file)
-    main.camPos, main.camQuat = self.map:getEditorCamPosQuat()
+    main.camPos, main.camQuat = self.map:getEditorCamPosOrientation()
     self.camPitch = quatPitch(main.camQuat)
     self.camYaw = cam_yaw_angle()
 
@@ -501,6 +501,7 @@ end
 -- save current map, if have a "file_name" specified
 function Editor:saveCurrentMap()
     if self.map.filename then
+        self.map:setEditorCamPosOrientation(main.camPos, main.camQuat)
         self.map:save()
     else
         self:saveCurrentMapAs()
@@ -512,6 +513,7 @@ function Editor:saveCurrentMapAs(name)
 		save_map_dialog()
         return false
     else
+        self.map:setEditorCamPosOrientation(main.camPos, main.camQuat)
         return self.map:saveAs(name)
     end
 end
@@ -626,7 +628,7 @@ function Editor:init()
     navigation_reset()
 
     self.map = EditorMap.new()
-    main.camPos, main.camQuat = self.map:getEditorCamPosQuat()
+    main.camPos, main.camQuat = self.map:getEditorCamPosOrientation()
     self.camPitch = quatPitch(main.camQuat)
     self.camYaw = cam_yaw_angle()
 
