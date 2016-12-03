@@ -3,64 +3,64 @@
 -- MATERIALS
 -- the plane
 material `face` {
-	diffuseMask = vec(1, 0.5, 0),
-	backfaces = true,
-	alphaMask = 0.0,
+    diffuseMask = vec(1, 0.5, 0),
+    backfaces = true,
+    alphaMask = 0.0,
     sceneBlend = "ALPHA",
 }
 -- the plane dragging
 material `face_dragging` {
-	diffuseMask = vec(1, 1, 0),
-	backfaces = true,
-	alphaMask = 0.5,
+    diffuseMask = vec(1, 1, 0),
+    backfaces = true,
+    alphaMask = 0.5,
     sceneBlend = "ALPHA",
 }
 -- plane line 1
 material `line_1` {
-	diffuseMask = vec(0, 1, 0),
-	emissiveMask = vec(0, 1, 0),
+    diffuseMask = vec(0, 1, 0),
+    emissiveMask = vec(0, 1, 0),
     additionalLighting = true,
 }
 -- plane line 2
 material `line_2` {
-	diffuseMask = vec(1, 0, 0),
-	emissiveMask = vec(1, 0, 0),
+    diffuseMask = vec(1, 0, 0),
+    emissiveMask = vec(1, 0, 0),
     additionalLighting = true,
 }
 -- all arrows line material
 material `line` {
-	diffuseMask = vec(0, 1, 0),
-	emissiveMask = vec(0, 1, 0),
+    diffuseMask = vec(0, 1, 0),
+    emissiveMask = vec(0, 1, 0),
     additionalLighting = true,
 }
 
 material `yellow` {
-	diffuseMask = vec(1, 1, 0),
-	emissiveMask = vec(1, 1, 0),
+    diffuseMask = vec(1, 1, 0),
+    emissiveMask = vec(1, 1, 0),
     additionalLighting = true,
 }
 -- all arrows `arrow` material
 material `arrow` {
-	diffuseMask = vec(0, 1, 0),
-	emissiveMask = vec(0, 1, 0),
+    diffuseMask = vec(0, 1, 0),
+    emissiveMask = vec(0, 1, 0),
     additionalLighting = true,
 }
 
 material `green` {
-	diffuseMask = vec(0, 1, 0),
-	emissiveMask = vec(0, 1, 0),
+    diffuseMask = vec(0, 1, 0),
+    emissiveMask = vec(0, 1, 0),
     additionalLighting = true,
 }
 
 material `red` {
-	diffuseMask = vec(1, 0, 0),
-	emissiveMask = vec(1, 0, 0),
+    diffuseMask = vec(1, 0, 0),
+    emissiveMask = vec(1, 0, 0),
     additionalLighting = true,
 }
 
 material `blue` {
-	diffuseMask = vec(0, 0, 1),
-	emissiveMask = vec(0, 0, 1),
+    diffuseMask = vec(0, 0, 1),
+    emissiveMask = vec(0, 0, 1),
     additionalLighting = true,
 }
 
@@ -83,7 +83,7 @@ class `Widget` {} {
 
     renderingDistance = 10000,
 
-	editorObject = true,
+    editorObject = true,
 
     axisColours = {
         x = `red`,
@@ -99,20 +99,20 @@ class `Widget` {} {
 
     init = function(self)
     end,
-	
+    
     activate = function(self, instance)
-		self:updateArrows(self.rot)
+        self:updateArrows(self.rot)
         self:updatePivot(self.spawnPos, self.rot)
-		instance.scale = 1
+        instance.scale = 1
     end,
 
     -- (Re)creates the objects representing individual parts of the widget.
     -- Call this every time widget_manager.mode updates.
     -- The positions of the objects should then be controlled via updatePivot.
-	updateArrows = function(self, pivot_or)
-		local instance = self.instance
+    updateArrows = function(self, pivot_or)
+        local instance = self.instance
 
-		if self.rotating ~= nil then instance.rotating = self.rotating end
+        if self.rotating ~= nil then instance.rotating = self.rotating end
 
         instance.x = safe_destroy(instance.x)
         instance.y = safe_destroy(instance.y)
@@ -122,37 +122,37 @@ class `Widget` {} {
         instance.yz = safe_destroy(instance.yz)
     
         instance.x = gfx_body_make((`arrow_%s.mesh`):format(widget_manager.mode))
-		instance.x.localOrientation = pivot_or * euler(0, 0, -90)
-		instance.x:setMaterial(`arrow`, `red`)
-		instance.x:setMaterial(`line`, `red`)
+        instance.x.localOrientation = pivot_or * euler(0, 0, -90)
+        instance.x:setMaterial(`arrow`, `red`)
+        instance.x:setMaterial(`line`, `red`)
 
         instance.y = gfx_body_make((`arrow_%s.mesh`):format(widget_manager.mode))
-		instance.y:setMaterial(`arrow`, `green`)
-		instance.y:setMaterial(`line`, `green`)
+        instance.y:setMaterial(`arrow`, `green`)
+        instance.y:setMaterial(`line`, `green`)
 
         instance.z = gfx_body_make((`arrow_%s.mesh`):format(widget_manager.mode))
-		instance.z.localOrientation = pivot_or * euler(90, 0, -90)
-		instance.z:setMaterial(`arrow`, `blue`)
-		instance.z:setMaterial(`line`, `blue`)
+        instance.z.localOrientation = pivot_or * euler(90, 0, -90)
+        instance.z:setMaterial(`arrow`, `blue`)
+        instance.z:setMaterial(`line`, `blue`)
 
-		if widget_manager.mode == "translate" or widget_manager.mode == "scale" then
+        if widget_manager.mode == "translate" or widget_manager.mode == "scale" then
             instance.xy = gfx_body_make(`dummy_plane.mesh`)
-			instance.xy.localOrientation = pivot_or
+            instance.xy.localOrientation = pivot_or
 
             instance.xz = gfx_body_make(`dummy_plane.mesh`)
-			instance.xz.localOrientation = pivot_or * euler(0, -90, -90)
-			instance.xz:setMaterial(`line_1`, `red`)
-			instance.xz:setMaterial(`line_2`, `blue`)
-	
+            instance.xz.localOrientation = pivot_or * euler(0, -90, -90)
+            instance.xz:setMaterial(`line_1`, `red`)
+            instance.xz:setMaterial(`line_2`, `blue`)
+    
             instance.yz = gfx_body_make(`dummy_plane.mesh`)
-			instance.yz.localOrientation = pivot_or * euler(90, 0, 90)
-			instance.yz:setMaterial(`line_1`, `blue`)
-			instance.yz:setMaterial(`line_2`, `green`)
-		end
-	end,
+            instance.yz.localOrientation = pivot_or * euler(90, 0, 90)
+            instance.yz:setMaterial(`line_1`, `blue`)
+            instance.yz:setMaterial(`line_2`, `green`)
+        end
+    end,
 
     deactivate = function(self)
-		local instance = self.instance
+        local instance = self.instance
         safe_destroy(instance.x)
         safe_destroy(instance.y)
         safe_destroy(instance.z)
@@ -164,25 +164,25 @@ class `Widget` {} {
 
     -- Call whenever the camera moves or self.widgetPosition is updated.
     updatePivotScale = function(self)
-		local inst = self.instance
+        local inst = self.instance
 
-		local scale = ((2 * math.tan(math.rad(gfx_option("FOV")) / 2)) * #(main.camPos - self.widgetPosition))*0.025
-		local scale3 = scale * vec(1, 1, 1)
+        local scale = ((2 * math.tan(math.rad(gfx_option("FOV")) / 2)) * #(main.camPos - self.widgetPosition))*0.025
+        local scale3 = scale * vec(1, 1, 1)
         inst.x.localScale = scale3
         inst.y.localScale = scale3
         inst.z.localScale = scale3
 
-		if widget_manager.mode == "translate" or widget_manager.mode == "scale" then
-			inst.xy.localScale = scale3
-			inst.xz.localScale = scale3
-			inst.yz.localScale = scale3
-		end
+        if widget_manager.mode == "translate" or widget_manager.mode == "scale" then
+            inst.xy.localScale = scale3
+            inst.xz.localScale = scale3
+            inst.yz.localScale = scale3
+        end
     end,
 
     -- Call when the pivot is moved to a new location due to changes in selection, dragging, etc.
     updatePivot = function(self, new_position, new_orientation)
 
-		local inst = self.instance
+        local inst = self.instance
 
         inst.x.localPosition = new_position
         inst.y.localPosition = new_position
@@ -192,12 +192,12 @@ class `Widget` {} {
         inst.y.localOrientation = new_orientation
         inst.z.localOrientation = new_orientation * euler(90, 0, -90)
         
-		
-		if widget_manager.mode == "translate" or widget_manager.mode == "scale" then
-			inst.xy.localPosition = new_position
-			inst.xz.localPosition = new_position
-			inst.yz.localPosition = new_position
-		end
+        
+        if widget_manager.mode == "translate" or widget_manager.mode == "scale" then
+            inst.xy.localPosition = new_position
+            inst.xz.localPosition = new_position
+            inst.yz.localPosition = new_position
+        end
 
         self.widgetPosition = new_position
         self.widgetOrientation = new_orientation
@@ -206,8 +206,8 @@ class `Widget` {} {
     end,
 
     -- Choose which component should be highlighted (nil for none).
-	highlight = function(self, highlighted_component)
-		local inst = self.instance
+    highlight = function(self, highlighted_component)
+        local inst = self.instance
 
         for _, component in ipairs{'xy', 'xz', 'yz'} do
             local line1, line2 = component:sub(1, 1), component:sub(2, 2)
@@ -232,5 +232,5 @@ class `Widget` {} {
                 inst[component]:setMaterial(`line`, self.axisColours[component])
             end
         end
-	end,
+    end,
 }
