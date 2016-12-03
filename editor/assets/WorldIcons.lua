@@ -5,9 +5,9 @@ particle `LampIcon` {
     map = `icons/map_editor/lamp_icon.png`;
     frames = { 0,0, 128, 128, }; frame = 0;
     behaviour = function(particle, elapsed)
-		if unload_icons then
-			return false
-		end
+        if unload_icons then
+            return false
+        end
     end;
 }       
 
@@ -28,10 +28,10 @@ particle `SoundIcon` {
     map = `icons/map_editor/sound_icon.png`;
     frames = { 0,0, 128, 128, }; frame = 0;
     behaviour = function(particle, elapsed)
-		particle.position = particle.p.pos
-		if unload_icons then
-			return false
-		end
+        particle.position = particle.p.pos
+        if unload_icons then
+            return false
+        end
     end;
 }       
 
@@ -44,22 +44,22 @@ function emit_sound_icon (pos, pr)
         emissive = colour*0.5;
         diffuse = colour;
         dimensions = size*V_ID;
-		p = pr;
+        p = pr;
     })
 end 
 
 function create_world_icons()
-	unload_icons = false
-	for k, v in ipairs(object_all()) do
-		-- if v and not v.destroyed and v.instance and v.instance.audio then
-		if class_get(v.className).type == "SoundEmitterClass" then
-			emit_sound_icon(v.pos, v)
-		end
-	end
+    unload_icons = false
+    for k, v in ipairs(object_all()) do
+        -- if v and not v.destroyed and v.instance and v.instance.audio then
+        if class_get(v.className).type == "SoundEmitterClass" then
+            emit_sound_icon(v.pos, v)
+        end
+    end
 end
 
 -- for k, v in ipairs(object_all()) do
-	-- if v and not v.destroyed and v.instance and v.instance.audio then
-		-- qw = v
-	-- end
+    -- if v and not v.destroyed and v.instance and v.instance.audio then
+        -- qw = v
+    -- end
 -- end

@@ -44,11 +44,11 @@ end
 
 
 function new_object_ed_page(name, cntb, sel)
-	editor_interface.pagelist[#editor_interface.pagelist+1] = ed_object_editor_page.new()
-	editor_interface.pagelist[#editor_interface.pagelist].meshname = name
-	editor_interface.pagelist[#editor_interface.pagelist].content_browser = cntb
+    editor_interface.pagelist[#editor_interface.pagelist+1] = ed_object_editor_page.new()
+    editor_interface.pagelist[#editor_interface.pagelist].meshname = name
+    editor_interface.pagelist[#editor_interface.pagelist].content_browser = cntb
 
-	editor_interface.pagelist[#editor_interface.pagelist].button = editor_interface:addPage({
+    editor_interface.pagelist[#editor_interface.pagelist].button = editor_interface:addPage({
         caption = name,
         edge_colour = vec(0, 1, 1),
         page = editor_interface.pagelist[#editor_interface.pagelist],
@@ -56,8 +56,8 @@ function new_object_ed_page(name, cntb, sel)
         onUnselect = function(self) self.page:unselect() end,
         onInit = function(self) self.page:init() end,
     })
-	
-	if sel then
-		editor_interface.pagelist[#editor_interface.pagelist].button:select()
-	end
+    
+    if sel then
+        editor_interface.pagelist[#editor_interface.pagelist].button:select()
+    end
 end

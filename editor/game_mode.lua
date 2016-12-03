@@ -29,8 +29,8 @@ Editor = Editor or {
     camPitch = 0,
     lastMouseMoveTime = 0,
 
-	selectionEnabled = true;
-	
+    selectionEnabled = true;
+    
     controlObj = nil,
 
     -- holds editor camera position and rotation to get back when stop playing
@@ -44,7 +44,7 @@ Editor = Editor or {
     map_dir = "map_templates";
     
     game_data_dir = "editor";
-	playGameMode = "fpsgame";
+    playGameMode = "fpsgame";
 }
 
 
@@ -87,10 +87,10 @@ end
 
 -- if the widget is under mouse cursor, then start dragging, otherwise select an object
 function Editor:leftMouseClick()
-	if self.selectionEnabled then
+    if self.selectionEnabled then
         local multi = input_filter_pressed("Shift")
         widget_manager:select(true, multi)
-	end
+    end
 end
 
 function Editor:stopDraggingObj()
@@ -99,31 +99,31 @@ end
 
 function Editor:deleteSelection()
     local selobjs = {}
-	
-	for i = 1, #widget_manager.selectedObjs do
-		if not widget_manager.selectedObjs[i].destroyed and widget_manager.selectedObjs[i].instance ~= nil then
-			selobjs[#selobjs+1] = widget_manager.selectedObjs[i]
-		end
-	end		
+    
+    for i = 1, #widget_manager.selectedObjs do
+        if not widget_manager.selectedObjs[i].destroyed and widget_manager.selectedObjs[i].instance ~= nil then
+            selobjs[#selobjs+1] = widget_manager.selectedObjs[i]
+        end
+    end        
     widget_manager:unselectAll()
-	
-	for i = 1, #selobjs do
-		if not selobjs[i].destroyed then
-			safe_destroy(selobjs[i])
-		end
-	end
+    
+    for i = 1, #selobjs do
+        if not selobjs[i].destroyed then
+            safe_destroy(selobjs[i])
+        end
+    end
 end
 
 function Editor:duplicateSelection()
     if widget_manager ~= nil and widget_manager.selectedObjs ~= nil then
-		for i = 1, #widget_manager.selectedObjs do
-			if not widget_manager.selectedObjs[i].destroyed and widget_manager.selectedObjs[i].instance ~= nil then
-				object (widget_manager.selectedObjs[i].className) (widget_manager.selectedObjs[i].instance.body.worldPosition)
-				{
-					rot = widget_manager.selectedObjs[i].instance.body.worldOrientation;
-				}
-			end
-		end
+        for i = 1, #widget_manager.selectedObjs do
+            if not widget_manager.selectedObjs[i].destroyed and widget_manager.selectedObjs[i].instance ~= nil then
+                object (widget_manager.selectedObjs[i].className) (widget_manager.selectedObjs[i].instance.body.worldPosition)
+                {
+                    rot = widget_manager.selectedObjs[i].instance.body.worldOrientation;
+                }
+            end
+        end
     end
 end
 
@@ -255,33 +255,33 @@ function Editor:toggleMouseCapture()
     self:setMouseCapture(not self.mouseCapture)
     if self.mouseCapture then
         -- Various other nice GUI things
-		if self.debugModeSettingsWindow ~= nil and not self.debugModeSettingsWindow.destroyed then
-			self.debugModeSettingsWindow.enabled = false
-		end
-	else
-		if self.debugModeSettingsWindow ~= nil and not self.debugModeSettingsWindow.destroyed then
-			self.debugModeSettingsWindow.enabled = true
-		end
+        if self.debugModeSettingsWindow ~= nil and not self.debugModeSettingsWindow.destroyed then
+            self.debugModeSettingsWindow.enabled = false
+        end
+    else
+        if self.debugModeSettingsWindow ~= nil and not self.debugModeSettingsWindow.destroyed then
+            self.debugModeSettingsWindow.enabled = true
+        end
     end
 end
 
 function Editor:setDebugMode(v)
     -- Detach any object we may be controlling
     
-	if widget_manager then
-		widget_manager:unselectAll()
-	end
-	
-	if not v then
+    if widget_manager then
+        widget_manager:unselectAll()
+    end
+    
+    if not v then
         if self.controlObj ~= nil then
             self:toggleBoard()
         end
     end
 
-	game_manager.currentMode.debug_mode_text.enabled = v
-	
-	editor_interface.enabled = not v
-	
+    game_manager.currentMode.debug_mode_text.enabled = v
+    
+    editor_interface.enabled = not v
+    
     self.debugMode = v
     main.physicsEnabled = v
     self:setMouseCapture(v)
@@ -290,19 +290,19 @@ function Editor:setDebugMode(v)
     stats.enabled = v
     editor_edit_binds.enabled = not v
     editor_core_move_binds.enabled = not v
-	-- print(editor_edit_binds.enabled)
-	-- print( editor_core_move_binds.enabled)
+    -- print(editor_edit_binds.enabled)
+    -- print( editor_core_move_binds.enabled)
     editor_debug_binds.enabled = v
     editor_debug_ghost_binds.enabled = v
 
-	if editor_interface.map_editor_page ~= nil then
-		if v then
-			editor_interface.map_editor_page:unselect()
-		else
-			editor_interface.map_editor_page:select()
-		end
-	end
-	
+    if editor_interface.map_editor_page ~= nil then
+        if v then
+            editor_interface.map_editor_page:unselect()
+        else
+            editor_interface.map_editor_page:select()
+        end
+    end
+    
     if not v then
         if self.controlObj ~= nil then
             self:toggleBoard()
@@ -318,35 +318,35 @@ function Editor:setDebugMode(v)
                 obj.skipNextActivation = false
             end
         end
-		if self.debugModeSettingsWindow ~= nil and not self.debugModeSettingsWindow.destroyed then
-			self.debugModeSettingsWindow.enabled = false
-		end
-	else
-		notify("Press F5 to return to the editor", vec(1, 0.5, 0), vec(1, 1, 1))
-		if self.debugModeSettingsWindow == nil or self.debugModeSettingsWindow.destroyed then
-			self:createDebugModeSettingsWindow()
-			self.debugModeSettingsWindow.enabled = false
-		end
+        if self.debugModeSettingsWindow ~= nil and not self.debugModeSettingsWindow.destroyed then
+            self.debugModeSettingsWindow.enabled = false
+        end
+    else
+        notify("Press F5 to return to the editor", vec(1, 0.5, 0), vec(1, 1, 1))
+        if self.debugModeSettingsWindow == nil or self.debugModeSettingsWindow.destroyed then
+            self:createDebugModeSettingsWindow()
+            self.debugModeSettingsWindow.enabled = false
+        end
     end
 end
 
 function Editor:createDebugModeSettingsWindow()
-	if self.debugModeSettingsWindow ~= nil and not self.debugModeSettingsWindow.destroyed then
-		self.debugModeSettingsWindow:destroy()
-	end
+    if self.debugModeSettingsWindow ~= nil and not self.debugModeSettingsWindow.destroyed then
+        self.debugModeSettingsWindow:destroy()
+    end
 
-	self.debugModeSettingsWindow = hud_object `windows/debug_mode/Settings` {
-		title = "Debug Mode Settings";
-		parent = hud_centre;
-		position = vec(0, 0);
-		resizeable = true;
-		size = vec(620, 500);
-		min_size = vec2(620, 500);
-		-- colour = _current_theme.colours.window.background;
-		alpha = 1;	
-	}
+    self.debugModeSettingsWindow = hud_object `windows/debug_mode/Settings` {
+        title = "Debug Mode Settings";
+        parent = hud_centre;
+        position = vec(0, 0);
+        resizeable = true;
+        size = vec(620, 500);
+        min_size = vec2(620, 500);
+        -- colour = _current_theme.colours.window.background;
+        alpha = 1;    
+    }
 
-	_windows[#_windows+1] = self.debugModeSettingsWindow
+    _windows[#_windows+1] = self.debugModeSettingsWindow
 end
 
 function Editor:toggleDebugMode()
@@ -354,14 +354,14 @@ function Editor:toggleDebugMode()
 end
 
 function Editor:play()
-	print("Currently disabled")
+    print("Currently disabled")
 end
 
 function Editor:setPlayMode(v)
-	self.playGameMode:editorDebug(v)
+    self.playGameMode:editorDebug(v)
 
-	editor_interface.enabled = not v
-	
+    editor_interface.enabled = not v
+    
     self.playMode = v
     main.physicsEnabled = v
     self:setMouseCapture(v)
@@ -369,14 +369,14 @@ function Editor:setPlayMode(v)
     editor_edit_binds.enabled = not v
     editor_core_move_binds.enabled = not v
 
-	if editor_interface.map_editor_page ~= nil then
-		if v then
-			editor_interface.map_editor_page:unselect()
-		else
-			editor_interface.map_editor_page:select()
-		end
-	end
-	
+    if editor_interface.map_editor_page ~= nil then
+        if v then
+            editor_interface.map_editor_page:unselect()
+        else
+            editor_interface.map_editor_page:select()
+        end
+    end
+    
     if not v then
         if self.controlObj ~= nil then
             self:toggleBoard()
@@ -412,16 +412,16 @@ end
 
 -- return true if the mouse cursor is inside any active menu
 function mouse_inside_any_menu()
-	for i = 1, #_menus do
-		if _menus[i] ~= nil and not _menus[i].destroyed then
-			if is_inside_menu(_menus[i]) then return true end
-		end
-	end
+    for i = 1, #_menus do
+        if _menus[i] ~= nil and not _menus[i].destroyed then
+            if is_inside_menu(_menus[i]) then return true end
+        end
+    end
     return false
 end
 
 function extra_inside_hud()
-	return false
+    return false
 end
 
 function inside_hud()
@@ -445,18 +445,18 @@ end
 
 function Editor:newMap()
     gfx_option("RENDER_SKY", true)
-	
+    
     -- Triggers particles to disappear.  We need a better way to render sprites.
-	unload_icons = true
-	
-	navigation_reset()
-	
-	-- no fog and a smooth background colour
-	env_cycle = include `edenv.lua`
+    unload_icons = true
+    
+    navigation_reset()
+    
+    -- no fog and a smooth background colour
+    env_cycle = include `edenv.lua`
     env_recompute()
-	
-	widget_manager:unselectAll()
-	
+    
+    widget_manager:unselectAll()
+    
     -- destroy old editor objects
     -- local remaining_editor_objects = object_all()
     -- for i = 1, #remaining_editor_objects do
@@ -477,11 +477,11 @@ function Editor:openMap(map_file)
         return
     end
 
-	widget_manager:unselectAll()
+    widget_manager:unselectAll()
 
-	-- unload_icons = true
-	
-	-- you can create a new map and include a lua that cointains object placements
+    -- unload_icons = true
+    
+    -- you can create a new map and include a lua that cointains object placements
     gfx_option("RENDER_SKY", true)
     
     navigation_reset()
@@ -510,7 +510,7 @@ end
 
 function Editor:saveCurrentMapAs(name)
     if name == nil then
-		save_map_dialog()
+        save_map_dialog()
         return false
     else
         self.map:setEditorCamPosOrientation(main.camPos, main.camQuat)
@@ -694,190 +694,190 @@ function Editor:receiveButton(button, state)
     local on_off
     if state == "+" or state == '=' then on_off = 1 end
     if state == "-" then on_off = 0 end
-	if not hud_focus then
-		local cobj = self.controlObj
+    if not hud_focus then
+        local cobj = self.controlObj
 
-		if button == "debug" then
-			if state == '+' then
-				self:toggleDebugMode()
-			end
-		elseif button == "forwards" then
-			self.forwards = on_off
+        if button == "debug" then
+            if state == '+' then
+                self:toggleDebugMode()
+            end
+        elseif button == "forwards" then
+            self.forwards = on_off
 
-		elseif button == "forwards" then
-			self.forwards = on_off
+        elseif button == "forwards" then
+            self.forwards = on_off
 
-		elseif button == "backwards" then
-			self.backwards = on_off
+        elseif button == "backwards" then
+            self.backwards = on_off
 
-		elseif button == "strafeLeft" then
-			self.left = on_off
+        elseif button == "strafeLeft" then
+            self.left = on_off
 
-		elseif button == "strafeRight" then
-			self.right = on_off
+        elseif button == "strafeRight" then
+            self.right = on_off
 
-		elseif button == "ascend" then
-			self.ascend = on_off
-		elseif button == "descend" then
-			self.descend = on_off
-		elseif button == "faster" then
-			if state == '+' then
-				self.fast = true
-			elseif state == '-' then
-				self.fast = false
-			end
-		elseif button == "delete" then
-			if state == '+' then
-				self:deleteSelection()
-			end
+        elseif button == "ascend" then
+            self.ascend = on_off
+        elseif button == "descend" then
+            self.descend = on_off
+        elseif button == "faster" then
+            if state == '+' then
+                self.fast = true
+            elseif state == '-' then
+                self.fast = false
+            end
+        elseif button == "delete" then
+            if state == '+' then
+                self:deleteSelection()
+            end
 
-		elseif button == "duplicate" then
-			if state == '+' then
-				self:duplicateSelection()
-			end
+        elseif button == "duplicate" then
+            if state == '+' then
+                self:duplicateSelection()
+            end
 
-		elseif button == "board" then
-			if state == '+' then
-				self:toggleBoard()
-			end
+        elseif button == "board" then
+            if state == '+' then
+                self:toggleBoard()
+            end
 
-		elseif button == "walkBoard" then
-			if state == '+' then
-				self:toggleBoard()
-			end
+        elseif button == "walkBoard" then
+            if state == '+' then
+                self:toggleBoard()
+            end
 
-		elseif button == "driveAbandon" then
-			if state == '+' then
-				self:toggleBoard()
-			end
+        elseif button == "driveAbandon" then
+            if state == '+' then
+                self:toggleBoard()
+            end
 
-		elseif button == "ghost" then
-			if state == '+' then
-				if inside_hud() then
-					self:setMouseCapture(true)
-				end
-			elseif state == '-' then
-				self:setMouseCapture(false)
-			end
+        elseif button == "ghost" then
+            if state == '+' then
+                if inside_hud() then
+                    self:setMouseCapture(true)
+                end
+            elseif state == '-' then
+                self:setMouseCapture(false)
+            end
 
-		elseif button == "toggleGhost" then
-			if state == '+' then
-				self:toggleMouseCapture()
-			end
+        elseif button == "toggleGhost" then
+            if state == '+' then
+                self:toggleMouseCapture()
+            end
 
-		elseif button == "selectModeTranslate" then
-			self:setWidgetMode("translate")
-		elseif button == "selectModeRotate" then
-			self:setWidgetMode("rotate")
-		elseif button == "weaponPrimary" then
-			if not mouse_inside_any_window() then
-				if state == '+' then
-					WeaponEffectManager:primaryEngage(main.camPos, main.camQuat)
-				elseif state == '-' then
-					WeaponEffectManager:primaryDisengage()
-				end
-			end
-		elseif button == "weaponSecondary" then
-			if not mouse_inside_any_window() then
-				if state == '+' then
-					WeaponEffectManager:secondaryEngage(main.camPos, main.camQuat)
-				elseif state == '-' then
-					WeaponEffectManager:secondaryDisengage()
-				end
-			end
-		elseif button == "weaponSwitchUp" then
-			if state == '+' then
-				WeaponEffectManager:select(WeaponEffectManager:getNext())
-			end
+        elseif button == "selectModeTranslate" then
+            self:setWidgetMode("translate")
+        elseif button == "selectModeRotate" then
+            self:setWidgetMode("rotate")
+        elseif button == "weaponPrimary" then
+            if not mouse_inside_any_window() then
+                if state == '+' then
+                    WeaponEffectManager:primaryEngage(main.camPos, main.camQuat)
+                elseif state == '-' then
+                    WeaponEffectManager:primaryDisengage()
+                end
+            end
+        elseif button == "weaponSecondary" then
+            if not mouse_inside_any_window() then
+                if state == '+' then
+                    WeaponEffectManager:secondaryEngage(main.camPos, main.camQuat)
+                elseif state == '-' then
+                    WeaponEffectManager:secondaryDisengage()
+                end
+            end
+        elseif button == "weaponSwitchUp" then
+            if state == '+' then
+                WeaponEffectManager:select(WeaponEffectManager:getNext())
+            end
 
-		elseif button == "weaponSwitchDown" then
-			if state == '+' then
-				WeaponEffectManager:select(WeaponEffectManager:getPrev())
-			end
+        elseif button == "weaponSwitchDown" then
+            if state == '+' then
+                WeaponEffectManager:select(WeaponEffectManager:getPrev())
+            end
 
-		elseif button == "pausePhysics" then
-			if state == '+' then
-				main.physicsEnabled = not main.physicsEnabled
-			end
-		else
-			local pressed = state ~= '-'
-			if state == '=' then return end
+        elseif button == "pausePhysics" then
+            if state == '+' then
+                main.physicsEnabled = not main.physicsEnabled
+            end
+        else
+            local pressed = state ~= '-'
+            if state == '=' then return end
 
-			if button == 'walkForwards' then
-				cobj:setForwards(pressed)
-			elseif button == 'walkBackwards' then
-				cobj:setBackwards(pressed)
-			elseif button == 'walkLeft' then
-				cobj:setLeft(pressed)
-			elseif button == 'walkRight' then
-				cobj:setRight(pressed)
-			elseif button == 'walkBoard' then
-				if state == '+' then
-					self:scanForBoard()
-				end
-			elseif button == 'walkJump' then
-				cobj:setJump(pressed)
-			elseif button == 'walkRun' then
-				cobj:setRun(pressed)
-			elseif button == 'walkCrouch' then
-				cobj:setCrouch(pressed)
-			elseif button == 'walkZoomIn' then
-				cobj:controlZoomIn()
-			elseif button == 'walkZoomOut' then
-				cobj:controlZoomOut()
-			elseif button == 'walkCamera' then
-				-- toggle between regular_chase_cam_update, top_down_cam_update, top_angled_cam_update
+            if button == 'walkForwards' then
+                cobj:setForwards(pressed)
+            elseif button == 'walkBackwards' then
+                cobj:setBackwards(pressed)
+            elseif button == 'walkLeft' then
+                cobj:setLeft(pressed)
+            elseif button == 'walkRight' then
+                cobj:setRight(pressed)
+            elseif button == 'walkBoard' then
+                if state == '+' then
+                    self:scanForBoard()
+                end
+            elseif button == 'walkJump' then
+                cobj:setJump(pressed)
+            elseif button == 'walkRun' then
+                cobj:setRun(pressed)
+            elseif button == 'walkCrouch' then
+                cobj:setCrouch(pressed)
+            elseif button == 'walkZoomIn' then
+                cobj:controlZoomIn()
+            elseif button == 'walkZoomOut' then
+                cobj:controlZoomOut()
+            elseif button == 'walkCamera' then
+                -- toggle between regular_chase_cam_update, top_down_cam_update, top_angled_cam_update
 
-			elseif button == 'driveForwards' then
-				cobj:setForwards(pressed)
-			elseif button == 'driveBackwards' then
-				cobj:setBackwards(pressed)
-			elseif button == 'driveLeft' then
-				cobj:setLeft(pressed)
-			elseif button == 'driveRight' then
-				cobj:setRight(pressed)
-			elseif button == 'driveZoomIn' then
-				cobj:controlZoomIn()
-			elseif button == 'driveZoomOut' then
-				cobj:controlZoomOut()
-			elseif button == 'driveCamera' then
-				-- toggle between regular_chase_cam_update, top_down_cam_update, top_angled_cam_update
+            elseif button == 'driveForwards' then
+                cobj:setForwards(pressed)
+            elseif button == 'driveBackwards' then
+                cobj:setBackwards(pressed)
+            elseif button == 'driveLeft' then
+                cobj:setLeft(pressed)
+            elseif button == 'driveRight' then
+                cobj:setRight(pressed)
+            elseif button == 'driveZoomIn' then
+                cobj:controlZoomIn()
+            elseif button == 'driveZoomOut' then
+                cobj:controlZoomOut()
+            elseif button == 'driveCamera' then
+                -- toggle between regular_chase_cam_update, top_down_cam_update, top_angled_cam_update
 
-			elseif button == 'driveSpecialUp' then
-				cobj:setSpecialUp(pressed)
-			elseif button == 'driveSpecialDown' then
-				cobj:setSpecialDown(pressed)
-			elseif button == 'driveSpecialLeft' then
-				cobj:setSpecialLeft(pressed)
-			elseif button == 'driveSpecialRight' then
-				cobj:setSpecialRight(pressed)
-			elseif button == 'driveAltUp' then
-				cobj:setAltUp(pressed)
-			elseif button == 'driveAltDown' then
-				cobj:setAltDown(pressed)
-			elseif button == 'driveAltLeft' then
-				cobj:setAltLeft(pressed)
-			elseif button == 'driveAltRight' then
-				cobj:setAltRight(pressed)
-			elseif button == 'driveAbandon' then
-				if state == '+' then
-					self:abandonControlObj()
-				end
-			elseif button == 'driveHandbrake' then
-				cobj:setHandbrake(pressed)
-			elseif button == 'driveLights' then
-				if state == '+' then
-					cobj:setLights()
-				end
-			elseif button == 'driveSpecialToggle' then
-				if state == '+' then
-					cobj:special()
-				end
-			else
-				error("Editor has no binding for button: "..button)
-			end
-		end
-	end
+            elseif button == 'driveSpecialUp' then
+                cobj:setSpecialUp(pressed)
+            elseif button == 'driveSpecialDown' then
+                cobj:setSpecialDown(pressed)
+            elseif button == 'driveSpecialLeft' then
+                cobj:setSpecialLeft(pressed)
+            elseif button == 'driveSpecialRight' then
+                cobj:setSpecialRight(pressed)
+            elseif button == 'driveAltUp' then
+                cobj:setAltUp(pressed)
+            elseif button == 'driveAltDown' then
+                cobj:setAltDown(pressed)
+            elseif button == 'driveAltLeft' then
+                cobj:setAltLeft(pressed)
+            elseif button == 'driveAltRight' then
+                cobj:setAltRight(pressed)
+            elseif button == 'driveAbandon' then
+                if state == '+' then
+                    self:abandonControlObj()
+                end
+            elseif button == 'driveHandbrake' then
+                cobj:setHandbrake(pressed)
+            elseif button == 'driveLights' then
+                if state == '+' then
+                    cobj:setLights()
+                end
+            elseif button == 'driveSpecialToggle' then
+                if state == '+' then
+                    cobj:special()
+                end
+            else
+                error("Editor has no binding for button: "..button)
+            end
+        end
+    end
 end
 
 function Editor:destroy()
