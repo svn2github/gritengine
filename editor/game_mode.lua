@@ -127,15 +127,6 @@ function Editor:duplicateSelection()
     end
 end
 
-function Editor:destroyAllEditorObjects()
-    local objs = object_all()
-    for i = 1, #objs do
-        if objs[i].editorObject ~= nil then
-            safe_destroy(objs[i])
-        end
-    end
-end
-
 local function ghost_cast (pos, ray, scale)
     local fraction, _, n = physics_sweep_sphere(scale*.15, pos, ray, true, 1)
     return fraction, n
@@ -456,14 +447,6 @@ function Editor:newMap()
     env_recompute()
     
     widget_manager:unselectAll()
-    
-    -- destroy old editor objects
-    -- local remaining_editor_objects = object_all()
-    -- for i = 1, #remaining_editor_objects do
-    --     if remaining_editor_objects[i].editorObject then
-    --         safe_destroy(remaining_editor_objects[i])
-    --     end
-    -- end
     
     self.map:reset()
     -- if update_map_properties ~= nil then

@@ -96,9 +96,8 @@ end;
 
 function ed_object_editor_page:init()
     self.object = object (self.content_browser.currentdir.."/"..self.meshname) (0, 0, -10000) {
-    editorObject = true,
-    objectEditor = true,
-    init = function(persistent) persistent.instance.gfx.enabled = false end
+        objectEditor = true,
+        init = function(persistent) persistent.instance.gfx.enabled = false end
     }
     self.object:activate()
 end;

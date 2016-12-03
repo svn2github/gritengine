@@ -7,5 +7,4 @@ material `spawn_point` {
 class `spawn_point` (ColClass) {
     renderingDistance = 1000.0;
     castShadows = false;
-    editorObject = true;
 }

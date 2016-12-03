@@ -44,21 +44,23 @@ local function isect_line_plane(line_a, line_b, plane_pos, plane_normal)
 end
 
 function widget_manager:enablewidget(pos, mrot)
-    if self.widget ~= nil then safe_destroy(self.widget) main.frameCallbacks:removeByName("widget_manager") end
+    if self.widget ~= nil then
+        safe_destroy(self.widget)
+        main.frameCallbacks:removeByName("widget_manager")  
+    end
     if self.space_mode == "world" then
         mrot = Q_ID
     end
     
     self.initialPosition = pos
-    self.widget = object (`assets/Widget`) (pos) { name = "widget_obj", mode = self.mode, rot = mrot, rotating = self.mode == "rotate" }
-    self.widget:activate()
+    self.widget = Widget.new(pos, mrot)
     main.frameCallbacks:insert("widget_manager", wm_callback)
 end
 
 function widget_manager:setSpaceMode(mode)
     local editor = game_manager.currentMode
     self.space_mode = mode
-    if self.widget and self.widget.instance then
+    if self.widget then
         local new_rot = editor.map:getOrientation(self.selectedObjs[1])
         if mode == "world" then
             new_rot = Q_ID
@@ -70,8 +72,7 @@ end
 
 function widget_manager:set_mode(mode)
     self.mode = mode
-    if valid_object(self.widget) then
-        self.widget.rotating = self.mode == "rotate"
+    if self.widget ~= nil then
         self.widget:updateArrows(self.widget.widgetPosition)
     end
 end
@@ -91,24 +92,22 @@ function widget_manager:unselectAll()
     self.selectedObjs = {}
     
     self.setEditorToolbar("Selected: none")
-    safe_destroy(self.widget)
+    self.widget = safe_destroy(self.widget)
     
     main.frameCallbacks:insert("widget_manager", wm_callback)
 end
 
 function widget_manager:stopDragging()
     self:select(false)
-    -- self.selectedObjs[1].initialPosition = self.selectedObjs[1].instance.body.worldPosition
-    -- self.selectedObjs[1].initialOrientation = self.selectedObjs[1].instance.body.worldOrientation
 end
 
 function widget_manager:startDragging(widget_component)
-    if not valid_object(self.widget) then return end
+    if self.widget == nil then return end
     self.strdrag = widget_component
     local pivot_pos = self.widget.widgetPosition
     if self.mode == "translate" then
 
-        local plane_obj = self.widget.instance[self.strdrag]
+        local plane_obj = self.widget[self.strdrag]
         local clicked_point_on_plane = isect_line_plane(
             main.camPos,
             main.camPos + gfx_screen_to_world(main.camPos, main.camQuat, mouse_pos_abs),
@@ -249,7 +248,7 @@ function widget_manager:addObject()
         self:setEditorToolbar("Selected: Multiple")
         editor.map:setSelected(target_obj, true)
 
-        if valid_object(self.widget) then
+        if self.widget ~= nil then
             local pivot_pos = editor.map:getPosition(target_obj)
             local pivot_rot = editor.map:getOrientation(target_obj)
             
@@ -358,6 +357,7 @@ function widget_manager:bbMouseSelect(pos, rot, scale)
     return intersectRayAABoxV(ppos, dir, bmin, bmax)
 end
 
+--[[
 function widget_manager:selectNonPhysicalObjects()
     local obj = nil
 
@@ -383,15 +383,15 @@ function widget_manager:selectNonPhysicalObjects()
     end
     return obj
 end
+]]
 
 function widget_manager:rayCastToWidget()
     local obj = nil
     local lastdistance = nil
     if self.widget == nil then return end
-    if self.widget.instance == nil then return end
-    local scale = self.widget.instance.scale
+    local scale = self.widget.scale
     
-    local wi = self.widget.instance
+    local wi = self.widget
     local axm = { "x", "y", "z" }
     local dxm = { "xy", "xz", "yz" }
 
@@ -441,7 +441,7 @@ function widget_manager:select(enabled, multi)
             self:selectSingleObject()
         else
             local widget_component = nil
-            if valid_object(self.widget) then
+            if self.widget ~= nil then
                 widget_component = self:rayCastToWidget()
             end
             
@@ -481,7 +481,7 @@ function wm_callback()
         end
         
         -- widget dragging
-        if self.msinitpos ~= nil and valid_object(self.widget) then
+        if self.msinitpos ~= nil and self.widget ~= nil then
             local mouse_delta = (mouse_pos_abs - self.msinitpos)
             local pivot_pos = self.widget.widgetPosition
 
@@ -495,12 +495,12 @@ function wm_callback()
                         main.camPos,
                         main.camPos + gfx_screen_to_world(main.camPos, main.camQuat, mouse_pos_abs),
                         initpos,
-                        self.widget.instance[self.strdrag].localOrientation * V_UP
+                        self.widget[self.strdrag].localOrientation * V_UP
                     ) + self.initialobjposdelta
 
                     if self.space_mode == "local" then
                         local pos = V_ZERO
-                        local dir = self.widget.instance[self.strdrag].localOrientation * V_NORTH
+                        local dir = self.widget[self.strdrag].localOrientation * V_NORTH
                         local offset = (inv(self.widget.widgetOrientation)*(p-initpos))
                         
                         if self.strdrag == "x" then
@@ -539,7 +539,7 @@ function wm_callback()
                     self:updateSelectedPos(vec(posx, posy, posz), self.widget.widgetOrientation)
                 elseif self.mode == "rotate" then
                     local function rotate(x, y, z)
-                        if self.widget ~= nil and self.widget.instance ~= nil then
+                        if self.widget ~= nil then
                             local rot = quat(mouse_delta.x + mouse_delta.y, vec(x, y, z))
                             local new_rot
                             if self.space_mode == "local" then

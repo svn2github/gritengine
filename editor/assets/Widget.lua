@@ -79,11 +79,7 @@ get_material(`line_2`):setDepthBias(0, 0, 50000, 50000)
 get_material(`line_dragging`):setDepthBias(0, 0, 50000, 50000)
 ]]
 
-class `Widget` {} {
-
-    renderingDistance = 10000,
-
-    editorObject = true,
+Widget = {
 
     axisColours = {
         x = `red`,
@@ -97,22 +93,17 @@ class `Widget` {} {
         yz = { `blue`, `green` },
     },
 
-    init = function(self)
-    end,
-    
-    activate = function(self, instance)
-        self:updateArrows(self.rot)
-        self:updatePivot(self.spawnPos, self.rot)
-        instance.scale = 1
+    new = function(pos, rot)
+        local self = make_instance({}, Widget)
+        self:updateArrows(rot)
+        self:updatePivot(pos, rot)
+        return self
     end,
 
     -- (Re)creates the objects representing individual parts of the widget.
     -- Call this every time widget_manager.mode updates.
     -- The positions of the objects should then be controlled via updatePivot.
     updateArrows = function(self, pivot_or)
-        local instance = self.instance
-
-        if self.rotating ~= nil then instance.rotating = self.rotating end
 
         local orientations = {
             x = euler(0, 0, -90),
@@ -121,11 +112,11 @@ class `Widget` {} {
         }
 
         for _, component in ipairs{'x', 'y', 'z'} do
-            safe_destroy(instance[component])
-            instance[component] = gfx_body_make((`arrow_%s.mesh`):format(widget_manager.mode))
-            instance[component].castShadows = false
-            instance[component].localOrientation = pivot_or * orientations[component]
-            instance[component]:setMaterial(`arrow`, self.axisColours[component])
+            safe_destroy(self[component])
+            self[component] = gfx_body_make((`arrow_%s.mesh`):format(widget_manager.mode))
+            self[component].castShadows = false
+            self[component].localOrientation = pivot_or * orientations[component]
+            self[component]:setMaterial(`arrow`, self.axisColours[component])
         end
 
         local plane_orientations = {
@@ -135,61 +126,60 @@ class `Widget` {} {
         }
 
         for _, component in ipairs{'xy', 'xz', 'yz'} do
-            instance[component] = safe_destroy(instance[component])
+            safe_destroy(self[component])
             if widget_manager.mode == "translate" or widget_manager.mode == "scale" then
-                instance[component] = gfx_body_make(`dummy_plane.mesh`)
-                instance[component].castShadows = false
-                instance[component].localOrientation = pivot_or * plane_orientations[component]
+                self[component] = gfx_body_make(`dummy_plane.mesh`)
+                self[component].castShadows = false
+                self[component].localOrientation = pivot_or * plane_orientations[component]
+            else
+                self[component] = nil
             end
         end
     end,
 
-    deactivate = function(self)
-        local instance = self.instance
-        safe_destroy(instance.x)
-        safe_destroy(instance.y)
-        safe_destroy(instance.z)
-        safe_destroy(instance.xy)
-        safe_destroy(instance.xz)
-        safe_destroy(instance.yz)
+    destroy = function(self)
+        safe_destroy(self.x)
+        safe_destroy(self.y)
+        safe_destroy(self.z)
+        safe_destroy(self.xy)
+        safe_destroy(self.xz)
+        safe_destroy(self.yz)
     end,
 
 
     -- Call whenever the camera moves or self.widgetPosition is updated.
     updatePivotScale = function(self)
-        local inst = self.instance
 
         local scale = ((2 * math.tan(math.rad(gfx_option("FOV")) / 2)) * #(main.camPos - self.widgetPosition))*0.025
         local scale3 = scale * vec(1, 1, 1)
-        inst.x.localScale = scale3
-        inst.y.localScale = scale3
-        inst.z.localScale = scale3
+        self.scale = scale
+        self.x.localScale = scale3
+        self.y.localScale = scale3
+        self.z.localScale = scale3
 
         if widget_manager.mode == "translate" or widget_manager.mode == "scale" then
-            inst.xy.localScale = scale3
-            inst.xz.localScale = scale3
-            inst.yz.localScale = scale3
+            self.xy.localScale = scale3
+            self.xz.localScale = scale3
+            self.yz.localScale = scale3
         end
     end,
 
     -- Call when the pivot is moved to a new location due to changes in selection, dragging, etc.
     updatePivot = function(self, new_position, new_orientation)
 
-        local inst = self.instance
-
-        inst.x.localPosition = new_position
-        inst.y.localPosition = new_position
-        inst.z.localPosition = new_position
+        self.x.localPosition = new_position
+        self.y.localPosition = new_position
+        self.z.localPosition = new_position
         
-        inst.x.localOrientation = new_orientation * euler(0, 0, -90)
-        inst.y.localOrientation = new_orientation
-        inst.z.localOrientation = new_orientation * euler(90, 0, -90)
+        self.x.localOrientation = new_orientation * euler(0, 0, -90)
+        self.y.localOrientation = new_orientation
+        self.z.localOrientation = new_orientation * euler(90, 0, -90)
         
         
         if widget_manager.mode == "translate" or widget_manager.mode == "scale" then
-            inst.xy.localPosition = new_position
-            inst.xz.localPosition = new_position
-            inst.yz.localPosition = new_position
+            self.xy.localPosition = new_position
+            self.xz.localPosition = new_position
+            self.yz.localPosition = new_position
         end
 
         self.widgetPosition = new_position
@@ -200,29 +190,29 @@ class `Widget` {} {
 
     -- Choose which component should be highlighted (nil for none).
     highlight = function(self, highlighted_component)
-        local inst = self.instance
 
         for _, component in ipairs{'xy', 'xz', 'yz'} do
             local line1, line2 = component:sub(1, 1), component:sub(2, 2)
             if highlighted_component == component then
-                inst[component]:setMaterial(`line_1`, `yellow`)
-                inst[component]:setMaterial(`line_2`, `yellow`)
-                inst[component]:setMaterial(`face`, `face_dragging`)
-                inst[line1]:setMaterial(`line`, `yellow`)
-                inst[line2]:setMaterial(`line`, `yellow`)
+                self[component]:setMaterial(`line_1`, `yellow`)
+                self[component]:setMaterial(`line_2`, `yellow`)
+                self[component]:setMaterial(`face`, `face_dragging`)
+                self[line1]:setMaterial(`line`, `yellow`)
+                self[line2]:setMaterial(`line`, `yellow`)
             else
-                inst[component]:setMaterial(`line_1`, self.planeColours[component][1])
-                inst[component]:setMaterial(`line_2`, self.planeColours[component][2])
-                inst[component]:setMaterial(`face`, `face`)
-                inst[line1]:setMaterial(`line`, self.axisColours[line1])
-                inst[line2]:setMaterial(`line`, self.axisColours[line2])
+                self[component]:setMaterial(`line_1`, self.planeColours[component][1])
+                self[component]:setMaterial(`line_2`, self.planeColours[component][2])
+                self[component]:setMaterial(`face`, `face`)
+                self[line1]:setMaterial(`line`, self.axisColours[line1])
+                self[line2]:setMaterial(`line`, self.axisColours[line2])
             end
         end
+
         for _, component in ipairs{'x', 'y', 'z'} do
             if highlighted_component == component then
-                inst[component]:setMaterial(`line`, `yellow`)
+                self[component]:setMaterial(`line`, `yellow`)
             else
-                inst[component]:setMaterial(`line`, self.axisColours[component])
+                self[component]:setMaterial(`line`, self.axisColours[component])
             end
         end
     end,
