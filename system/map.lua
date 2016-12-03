@@ -188,7 +188,8 @@ function map_write_to_file(map, filename)
     file:write('    },\n')
     file:write('    objects = {\n')
 
-    for name, object in pairs(map.objects or {}) do
+    -- A canonical order is important for diffs and version control merges.
+    for name, object in spairs(map.objects or {}) do
         local class_name, obj_pos, body = object[1], object[2], object[3]
         file:write(('        ["%s"] = {\n'):format(name))
         file:write(('            `%s`,\n'):format(get_relative_path(filename, class_name)))
