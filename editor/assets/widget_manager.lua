@@ -63,27 +63,6 @@ material `blue` {
 	emissiveMask = vec(0, 0, 1),
     additionalLighting = true,
 }
--- CLASSES
-class `dummy_plane` (BaseClass) {
-	renderingDistance = 1000.0;
-	castShadows = false;
-	editorObject = true;
-}
-class `arrow_translate` (BaseClass) {
-	renderingDistance = 1000.0;
-	castShadows = false;
-	editorObject = true;
-}
-class `arrow_scale` (BaseClass) {
-	renderingDistance = 1000.0;
-	castShadows = false;
-	editorObject = true;
-}
-class `arrow_rotate` (BaseClass) {
-	renderingDistance = 1000.0;
-	castShadows = false;
-	editorObject = true;
-}
 
 --[[
 -- These Ogre materials no-longer exist, we will have to figure out another way of rendering on top.
@@ -102,234 +81,156 @@ get_material(`line_dragging`):setDepthBias(0, 0, 50000, 50000)
 
 class `Widget` {} {
 
-    renderingDistance = 10000;
-	editorObject = true;
+    renderingDistance = 10000,
+
+	editorObject = true,
+
+    axisColours = {
+        x = `red`,
+        y = `green`,
+        z = `blue`,
+    },
+
+    planeColours = {
+        xy = { `green`, `red` },
+        xz = { `red`, `blue` },
+        yz = { `blue`, `green` },
+    },
+
+    init = function(self)
+    end,
 	
-    init = function (self)
-
-    end;
-
-    activate = function (self, instance)
-
+    activate = function(self, instance)
 		self:updateArrows(self.rot)
         self:updatePivot(self.spawnPos, self.rot)
-		
 		instance.scale = 1
-		
-		instance.pivotInitialOrientation = self.rot
-		
-    end;
+    end,
 
-	setMaterial = function(self, component, highlight)
-		local inst = self.instance
-
-		if valid_object(inst[component]) then
-			if not highlight then
-				if #component == 1 then
-					inst[component].instance.gfx:setMaterial(`line`, inst[component].defmat)
-				elseif #component == 2 then
-					inst[component].instance.gfx:setMaterial(`line_1`, inst[component].defmat1)
-					inst[component].instance.gfx:setMaterial(`line_2`, inst[component].defmat2)
-					inst[component].instance.gfx:setMaterial(`face`, `face`)
-					
-					inst[component:sub(1, 1)].instance.gfx:setMaterial(`line`, inst[component:sub(1, 1)].defmat)
-					inst[component:sub(2, 2)].instance.gfx:setMaterial(`line`, inst[component:sub(2, 2)].defmat)
-				end
-			else
-				if #component == 1 then
-					inst[component].instance.gfx:setMaterial(`line`, `yellow`)
-				elseif #component == 2 then
-					inst[component].instance.gfx:setMaterial(`line_1`, `yellow`)
-					inst[component].instance.gfx:setMaterial(`line_2`, `yellow`)
-					inst[component].instance.gfx:setMaterial(`face`, `face_dragging`)
-					
-					inst[component:sub(1, 1)].instance.gfx:setMaterial(`line`, `yellow`)
-					inst[component:sub(2, 2)].instance.gfx:setMaterial(`line`, `yellow`)
-				end
-			end
-		end
-	end;
-	
+    -- (Re)creates the objects representing individual parts of the widget.
+    -- Call this every time widget_manager.mode updates.
+    -- The positions of the objects should then be controlled via updatePivot.
 	updateArrows = function(self, pivot_or)
 		local instance = self.instance
 
-		if instance.mode == nil then instance.mode = "translate" end
-		if self.mode ~= nil then instance.mode = self.mode end
-		
 		if self.rotating ~= nil then instance.rotating = self.rotating end
 
-		instance.mode = widget_manager.mode
+        instance.x = safe_destroy(instance.x)
+        instance.y = safe_destroy(instance.y)
+        instance.z = safe_destroy(instance.z)
+        instance.xy = safe_destroy(instance.xy)
+        instance.xz = safe_destroy(instance.xz)
+        instance.yz = safe_destroy(instance.yz)
+    
+        instance.x = gfx_body_make((`arrow_%s.mesh`):format(widget_manager.mode))
+		instance.x.localOrientation = pivot_or * euler(0, 0, -90)
+		instance.x:setMaterial(`arrow`, `red`)
+		instance.x:setMaterial(`line`, `red`)
 
-		if valid_object(instance.x) then
-			instance.x:destroy()
-		end
-		
-		instance.x = object (`arrow_`..instance.mode) (0, 0, 0) {name = "widget_x"}
-		instance.x:activate()
-		instance.x.instance.gfx.localOrientation = pivot_or * euler(0, 0, -90)
-		instance.x.instance.gfx:setMaterial(`arrow`, `red`)
-		instance.x.instance.gfx:setMaterial(`line`, `red`)
-		instance.x.defmat = `red`
-		instance.x.wc = "x"
+        instance.y = gfx_body_make((`arrow_%s.mesh`):format(widget_manager.mode))
+		instance.y:setMaterial(`arrow`, `green`)
+		instance.y:setMaterial(`line`, `green`)
 
-		if valid_object(instance.y) then
-			instance.y:destroy()
-		end
-		
-		instance.y = object (`arrow_`..instance.mode) (0, 0, 0) {name = "widget_y"}
-		instance.y:activate()
-		instance.y.instance.gfx:setMaterial(`arrow`, `green`)
-		instance.y.instance.gfx:setMaterial(`line`, `green`)
-		instance.y.defmat = `green`
-		instance.y.wc = "y"
+        instance.z = gfx_body_make((`arrow_%s.mesh`):format(widget_manager.mode))
+		instance.z.localOrientation = pivot_or * euler(90, 0, -90)
+		instance.z:setMaterial(`arrow`, `blue`)
+		instance.z:setMaterial(`line`, `blue`)
 
-		if valid_object(instance.z) then
-			instance.z:destroy()
-		end
-		
-		instance.z = object (`arrow_`..instance.mode) (0, 0, 0) {name = "widget_z"}
-		instance.z:activate()
-		instance.z.instance.gfx.localOrientation = pivot_or * euler(90, 0, -90)
-		instance.z.instance.gfx:setMaterial(`arrow`, `blue`)
-		instance.z.instance.gfx:setMaterial(`line`, `blue`)
-		instance.z.defmat = `blue`
-		instance.z.wc = "z"
+		if widget_manager.mode == "translate" or widget_manager.mode == "scale" then
+            instance.xy = gfx_body_make(`dummy_plane.mesh`)
+			instance.xy.localOrientation = pivot_or
 
-		if valid_object(instance.xy) then
-			instance.xy:destroy()
-		end
-
-		if valid_object(instance.xz) then
-			instance.xz:destroy()
-		end
-		
-		if valid_object(instance.yz) then
-			instance.yz:destroy()
-		end
-
-		if instance.mode == "translate" or instance.mode == "scale" then
-			instance.xy = object `dummy_plane` (0, 0, 0) {name = "widget_xy"}
-			instance.xy:activate()
-			instance.xy.instance.gfx.localOrientation = pivot_or
-			instance.xy.defmat1 = `green`
-			instance.xy.defmat2 = `red`
-			instance.xy.wc = "xy"
-
-			instance.xz = object `dummy_plane` (0, 0, 0) {name = "widget_xz"}
-			instance.xz:activate()
-			instance.xz.instance.gfx.localOrientation = pivot_or * euler(0, -90, -90)
-			instance.xz.instance.gfx:setMaterial(`line_1`, `red`)
-			instance.xz.instance.gfx:setMaterial(`line_2`, `blue`)
-			instance.xz.defmat1 = `red`
-			instance.xz.defmat2 = `blue`
-			instance.xz.wc = "xz"
+            instance.xz = gfx_body_make(`dummy_plane.mesh`)
+			instance.xz.localOrientation = pivot_or * euler(0, -90, -90)
+			instance.xz:setMaterial(`line_1`, `red`)
+			instance.xz:setMaterial(`line_2`, `blue`)
 	
-			instance.yz = object `dummy_plane` (0, 0, 0) {name = "widget_yz"}
-			instance.yz:activate()
-			instance.yz.instance.gfx.localOrientation = pivot_or * euler(90, 0, 90)
-			instance.yz.instance.gfx:setMaterial(`line_1`, `blue`)
-			instance.yz.instance.gfx:setMaterial(`line_2`, `green`)
-			instance.yz.defmat1 = `blue`
-			instance.yz.defmat2 = `green`
-			instance.yz.wc = "yz"
+            instance.yz = gfx_body_make(`dummy_plane.mesh`)
+			instance.yz.localOrientation = pivot_or * euler(90, 0, 90)
+			instance.yz:setMaterial(`line_1`, `blue`)
+			instance.yz:setMaterial(`line_2`, `green`)
 		end
-	end;
+	end,
 
-    deactivate = function (self)
+    deactivate = function(self)
 		local instance = self.instance
-		instance.x:destroy()
-		instance.y:destroy()
-		instance.z:destroy()
-		if instance.mode == "translate" or instance.mode == "scale" then
-			instance.xy:destroy()
-			instance.xz:destroy()
-			instance.yz:destroy()
-		end
-    end;	
+        safe_destroy(instance.x)
+        safe_destroy(instance.y)
+        safe_destroy(instance.z)
+        safe_destroy(instance.xy)
+        safe_destroy(instance.xz)
+        safe_destroy(instance.yz)
+    end,
 
-	setOrientation = function(self, orientation)
-		local inst = self.instance
-        self.widgetOrientation = orientation
-		
-		if inst.x.instance and inst.y.instance and inst.z.instance then
-			inst.x.instance.gfx.localOrientation = orientation * euler(0, 0, -90)
-			inst.y.instance.gfx.localOrientation = orientation
-			inst.z.instance.gfx.localOrientation = orientation * euler(90, 0, -90)
-		end
-		if (inst.mode == "translate" or inst.mode == "scale") and
-		(inst.xy.instance and inst.xz.instance and inst.yz.instance) then
-			inst.xy.instance.gfx.localOrientation = orientation
-			inst.xz.instance.gfx.localOrientation = orientation * euler(0, -90, -90)
-			inst.yz.instance.gfx.localOrientation = orientation * euler(90, 0, 90)				
-		end
-	end;
 
-    updatePivot = function (self, new_position, new_orientation)
-
+    -- Call whenever the camera moves or self.widgetPosition is updated.
+    updatePivotScale = function(self)
 		local inst = self.instance
 
-		local scale = ((2 * math.tan(math.rad(gfx_option("FOV")) / 2)) * #(main.camPos - new_position))*0.025
-		local vecsize = scale * vec(1, 1, 1)
+		local scale = ((2 * math.tan(math.rad(gfx_option("FOV")) / 2)) * #(main.camPos - self.widgetPosition))*0.025
+		local scale3 = scale * vec(1, 1, 1)
+        inst.x.localScale = scale3
+        inst.y.localScale = scale3
+        inst.z.localScale = scale3
 
-		if inst.x.instance and inst.y.instance and inst.z.instance then
-			inst.x.instance.gfx.localPosition = new_position
-			inst.y.instance.gfx.localPosition = new_position
-			inst.z.instance.gfx.localPosition = new_position
-			
-			inst.x.instance.gfx.localOrientation = new_orientation * euler(0, 0, -90)
-			inst.y.instance.gfx.localOrientation = new_orientation
-			inst.z.instance.gfx.localOrientation = new_orientation * euler(90, 0, -90)
-			
-			inst.x.instance.gfx.localScale = vecsize
-			inst.y.instance.gfx.localScale = vecsize
-			inst.z.instance.gfx.localScale = vecsize
+		if widget_manager.mode == "translate" or widget_manager.mode == "scale" then
+			inst.xy.localScale = scale3
+			inst.xz.localScale = scale3
+			inst.yz.localScale = scale3
 		end
+    end,
+
+    -- Call when the pivot is moved to a new location due to changes in selection, dragging, etc.
+    updatePivot = function(self, new_position, new_orientation)
+
+		local inst = self.instance
+
+        inst.x.localPosition = new_position
+        inst.y.localPosition = new_position
+        inst.z.localPosition = new_position
+        
+        inst.x.localOrientation = new_orientation * euler(0, 0, -90)
+        inst.y.localOrientation = new_orientation
+        inst.z.localOrientation = new_orientation * euler(90, 0, -90)
+        
 		
-		if (inst.mode == "translate" or inst.mode == "scale") and
-		(inst.xy.instance and inst.xz.instance and inst.yz.instance) then
-			inst.xy.instance.gfx.localPosition = new_position
-			inst.xz.instance.gfx.localPosition = new_position
-			inst.yz.instance.gfx.localPosition = new_position
-			
-			inst.xy.instance.gfx.localScale = vecsize
-			inst.xz.instance.gfx.localScale = vecsize
-			inst.yz.instance.gfx.localScale = vecsize
+		if widget_manager.mode == "translate" or widget_manager.mode == "scale" then
+			inst.xy.localPosition = new_position
+			inst.xz.localPosition = new_position
+			inst.yz.localPosition = new_position
 		end
 
         self.widgetPosition = new_position
         self.widgetOrientation = new_orientation
+
+        self:updatePivotScale()
     end,
 
-	rotate = function(self, rot)
+    -- Choose which component should be highlighted (nil for none).
+	highlight = function(self, highlighted_component)
 		local inst = self.instance
 
-		if widget_manager.space_mode == "local" then
-			self.widgetOrientation = inst.pivotInitialOrientation * rot
-		else
-			self.widgetOrientation = rot * inst.pivotInitialOrientation
-		end
-		
-	end;
-	
-	setInitialOrientation = function(self)
-		inst.pivotInitialOrientation = self.widgetOrientation
-	end;
-
-	highlight = function(self, component)
-		if component == nil then
-			if self.instance.highlighted then
-				self:setMaterial(self.instance.highlighted, false)
-				self.instance.highlighted = nil
-			end
-			return
-		end
-		local c_obj = self.instance[component]
-			if c_obj and not c_obj.destroyed and c_obj.instance then
-			if self.instance.highlighted then
-				self:setMaterial(self.instance.highlighted, false)
-			end
-			self.instance.highlighted = component
-			self:setMaterial(component, true)
-		end
-	end;
+        for _, component in ipairs{'xy', 'xz', 'yz'} do
+            local line1, line2 = component:sub(1, 1), component:sub(2, 2)
+            if highlighted_component == component then
+                inst[component]:setMaterial(`line_1`, `yellow`)
+                inst[component]:setMaterial(`line_2`, `yellow`)
+                inst[component]:setMaterial(`face`, `face_dragging`)
+                inst[line1]:setMaterial(`line`, `yellow`)
+                inst[line2]:setMaterial(`line`, `yellow`)
+            else
+                inst[component]:setMaterial(`line_1`, self.planeColours[component][1])
+                inst[component]:setMaterial(`line_2`, self.planeColours[component][2])
+                inst[component]:setMaterial(`face`, `face`)
+                inst[line1]:setMaterial(`line`, self.axisColours[line1])
+                inst[line2]:setMaterial(`line`, self.axisColours[line2])
+            end
+        end
+        for _, component in ipairs{'x', 'y', 'z'} do
+            if highlighted_component == component then
+                inst[component]:setMaterial(`line`, `yellow`)
+            else
+                inst[component]:setMaterial(`line`, self.axisColours[component])
+            end
+        end
+	end,
 }

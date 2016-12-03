@@ -59,11 +59,12 @@ function widget_manager:setSpaceMode(mode)
     local editor = game_manager.currentMode
 	self.space_mode = mode
 	if self.widget and self.widget.instance then
+        local new_rot = editor.map:getOrientation(self.selectedObjs[1])
 		if mode == "world" then
-			self.widget:setOrientation(Q_ID)
-		else
-			self.widget:setOrientation(editor.map:getOrientation(self.selectedObjs[1]))
+            new_rot = Q_ID
 		end
+        -- Change orientation only.
+        self.widget:updatePivot(self.widget.widgetPosition, new_rot)
 	end
 end
 
@@ -112,7 +113,7 @@ function widget_manager:startDragging(widget_component)
             main.camPos,
 			main.camPos + gfx_screen_to_world(main.camPos, main.camQuat, mouse_pos_abs),
 			pivot_pos,
-			plane_obj.instance.gfx.localOrientation * V_UP  -- normal of plane
+			plane_obj.localOrientation * V_UP  -- normal of plane
 		)
 		self.initialobjposdelta = pivot_pos - clicked_point_on_plane
 
@@ -121,7 +122,7 @@ function widget_manager:startDragging(widget_component)
 
 	elseif self.mode == "rotate" then
 		self.msinitpos = mouse_pos_abs
-		self.widget:setInitialOrientation()
+		self.pivotInitialOrientation = self.widget.widgetOrientation
 
 	end
 	self.objinitpos = pivot_pos
@@ -205,21 +206,21 @@ end
 function widget_manager:updateSelectedPos(new_position, new_orientation)
     self.widget:updatePivot(new_position, new_orientation)
 
-    if widget_manager.strdrag ~= nil then
+    if self.strdrag ~= nil then
         local editor = game_manager.currentMode
-        for i, obj in ipairs(widget_manager.selectedObjs) do
+        for i, obj in ipairs(self.selectedObjs) do
             local obj_initial_pos = editor.map:getPosition(obj)
-            local dpos = new_position - widget_manager.initialPosition * 2 + obj_initial_pos
+            local dpos = new_position - self.initialPosition * 2 + obj_initial_pos
 
             local new_pos
             if input_filter_pressed("Ctrl") then
                 new_pos = vec(
-                    math.floor(dpos.x / widget_manager.step_size) * widget_manager.step_size + obj_initial_pos.x,
-                    math.floor(dpos.y / widget_manager.step_size) * widget_manager.step_size + obj_initial_pos.y,
-                    math.floor(dpos.z / widget_manager.step_size) * widget_manager.step_size + obj_initial_pos.z
+                    math.floor(dpos.x / self.step_size) * self.step_size + obj_initial_pos.x,
+                    math.floor(dpos.y / self.step_size) * self.step_size + obj_initial_pos.y,
+                    math.floor(dpos.z / self.step_size) * self.step_size + obj_initial_pos.z
                 )
             else
-                new_pos = widget_manager.initialPosition - obj_initial_pos + new_position
+                new_pos = self.initialPosition - obj_initial_pos + new_position
             end
             
             editor.map:proposePosition(obj, new_pos)
@@ -390,30 +391,28 @@ function widget_manager:rayCastToWidget()
 	if self.widget.instance == nil then return end
 	local scale = self.widget.instance.scale
 	
+    local wi = self.widget.instance
+    local axm = { "x", "y", "z" }
+    local dxm = { "xy", "xz", "yz" }
+
 	for i = 1, 3 do
 		local pos, orient
 		local offset
-			
-		local wi = self.widget.instance
-		local axm = { "x", "y", "z" }
-		local dxm = { "xy", "xz", "yz" }
 		
 		-- arrows
-		if valid_object(wi[axm[i]]) then
-			pos, orient  = wi[axm[i]].instance.gfx.localPosition, wi[axm[i]].instance.gfx.localOrientation
-			offset = orient * (4 * scale * V_FORWARDS)
-			
-			local kq, kna = self:bbMouseSelect(pos + offset, orient, arrow_bounds * scale)
+        pos, orient  = wi[axm[i]].localPosition, wi[axm[i]].localOrientation
+        offset = orient * (4 * scale * V_FORWARDS)
+        
+        local kq, kna = self:bbMouseSelect(pos + offset, orient, arrow_bounds * scale)
 
-			if kq and (lastdistance == nil or kna < lastdistance)  then
-				obj = i == 1 and "x" or i == 2 and "y" or i == 3 and "z"
-				lastdistance = kna
-			end
-		end
+        if kq and (lastdistance == nil or kna < lastdistance)  then
+            obj = i == 1 and "x" or i == 2 and "y" or i == 3 and "z"
+            lastdistance = kna
+        end
 		
 		-- dummies
-		if valid_object(wi[dxm[i]]) then
-			pos, orient  = wi[dxm[i]].instance.gfx.localPosition, wi[dxm[i]].instance.gfx.localOrientation
+		if wi[dxm[i]] ~= nil then
+			pos, orient  = wi[dxm[i]].localPosition, wi[dxm[i]].localOrientation
 
 			offset =  ((orient * V_RIGHT) + (orient * V_FORWARDS)) * scale
 			
@@ -461,7 +460,7 @@ end
 
 function widget_manager:setSelectedOrientation(rot)
     local editor = game_manager.currentMode
-    for i, obj in ipairs(widget_manager.selectedObjs) do
+    for i, obj in ipairs(self.selectedObjs) do
         editor.map:proposeOrientation(obj, editor.map:getOrientation(obj) * rot)
     end
 end
@@ -496,12 +495,12 @@ function wm_callback()
 						main.camPos,
 						main.camPos + gfx_screen_to_world(main.camPos, main.camQuat, mouse_pos_abs),
 						initpos,
-						self.widget.instance[self.strdrag].instance.gfx.localOrientation * V_UP
+						self.widget.instance[self.strdrag].localOrientation * V_UP
 					) + self.initialobjposdelta
 
 					if self.space_mode == "local" then
 						local pos = V_ZERO
-						local dir = self.widget.instance[self.strdrag].instance.gfx.localOrientation * V_NORTH
+						local dir = self.widget.instance[self.strdrag].localOrientation * V_NORTH
 						local offset = (inv(self.widget.widgetOrientation)*(p-initpos))
 						
 						if self.strdrag == "x" then
@@ -542,7 +541,13 @@ function wm_callback()
 					local function rotate(x, y, z)
 						if self.widget ~= nil and self.widget.instance ~= nil then
                             local rot = quat(mouse_delta.x + mouse_delta.y, vec(x, y, z))
-							self.widget:rotate(rot)
+                            local new_rot
+                            if self.space_mode == "local" then
+                                new_rot = self.pivotInitialOrientation * rot
+                            else
+                                new_rot = rot * self.pivotInitialOrientation
+                            end
+                            self.widget:updatePivot(self.widget.widgetPosition, new_rot)
                             self:setSelectedOrientation(rot)
 						end
 					end
@@ -558,6 +563,7 @@ function wm_callback()
 				end
 			end	
 		end
+        self.widget:updatePivotScale()
 	else
 		main.frameCallbacks:removeByName("widget_manager")
 	end
