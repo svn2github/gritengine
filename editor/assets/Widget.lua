@@ -191,20 +191,22 @@ Widget = {
     -- Choose which component should be highlighted (nil for none).
     highlight = function(self, highlighted_component)
 
-        for _, component in ipairs{'xy', 'xz', 'yz'} do
-            local line1, line2 = component:sub(1, 1), component:sub(2, 2)
-            if highlighted_component == component then
-                self[component]:setMaterial(`line_1`, `yellow`)
-                self[component]:setMaterial(`line_2`, `yellow`)
-                self[component]:setMaterial(`face`, `face_dragging`)
-                self[line1]:setMaterial(`line`, `yellow`)
-                self[line2]:setMaterial(`line`, `yellow`)
-            else
-                self[component]:setMaterial(`line_1`, self.planeColours[component][1])
-                self[component]:setMaterial(`line_2`, self.planeColours[component][2])
-                self[component]:setMaterial(`face`, `face`)
-                self[line1]:setMaterial(`line`, self.axisColours[line1])
-                self[line2]:setMaterial(`line`, self.axisColours[line2])
+        if widget_manager.mode == "translate" or widget_manager.mode == "scale" then
+            for _, component in ipairs{'xy', 'xz', 'yz'} do
+                local line1, line2 = component:sub(1, 1), component:sub(2, 2)
+                if highlighted_component == component then
+                    self[component]:setMaterial(`line_1`, `yellow`)
+                    self[component]:setMaterial(`line_2`, `yellow`)
+                    self[component]:setMaterial(`face`, `face_dragging`)
+                    self[line1]:setMaterial(`line`, `yellow`)
+                    self[line2]:setMaterial(`line`, `yellow`)
+                else
+                    self[component]:setMaterial(`line_1`, self.planeColours[component][1])
+                    self[component]:setMaterial(`line_2`, self.planeColours[component][2])
+                    self[component]:setMaterial(`face`, `face`)
+                    self[line1]:setMaterial(`line`, self.axisColours[line1])
+                    self[line2]:setMaterial(`line`, self.axisColours[line2])
+                end
             end
         end
 

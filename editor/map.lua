@@ -32,6 +32,7 @@ function EditorMap.new()
         -- Note that currentState and undoLevels must be immutable values.  This is important to
         -- allow saving memory by aliasing parts of the map that did not change in the history.
         currentState = map_build_empty(),
+        -- Either nil or { names = {...}, state = {...} }
         proposed = nil,
         undoLevels = {},  -- 
         redoLevels = {},
@@ -62,6 +63,7 @@ end
 
 -- Return to the default (empty) map.
 function EditorMap:reset()
+    assert(self.proposed == nil)
     self:depopulateMap()
     self.currentState = map_build_empty()
     -- No need to populateMap, there are no objects.
@@ -105,6 +107,7 @@ end
 
 -- Open a map from disk.
 function EditorMap:open(filename)
+    assert(self.proposed == nil)
     assert_path_file_type(filename, 'gmap')
     self:reset()
     self.currentState = include(filename)
@@ -116,6 +119,7 @@ end
 
 -- Save to a file but do not change the current filename.
 function EditorMap:export(filename)
+    assert(self.proposed == nil)
     map_write_to_file(self.currentState, filename)
 end
 
@@ -238,6 +242,10 @@ function EditorMap:getProposedObject(name)
     return obj_decl
 end
 
+function EditorMap:iterCurrentObjects()
+    return spairs(self.currentState.objects)
+end
+
 
 -- Internal function to make the object match the current / proposed state of the map.
 function EditorMap:updateObjectVisualisation(name, obj)
@@ -314,33 +322,36 @@ end
 function EditorMap:applyChange()
     self:pushUndoLevel(self.currentState)
     self.currentState = self.proposed.state
-    local name = self.proposed.name
     self.proposed = nil
 end
 
 
 function EditorMap:cancelChange()
-    local name = self.proposed.objectName
+    for _, name in ipairs(self.proposed.names) do
+        self:updateObjectVisualisation(name, self:getCurrentObject(name))
+    end
     self.proposed = nil
-    self:updateObjectVisualisation(name, self:getCurrentObject(name))
 end
 
 
 function EditorMap:initProposed(name)
     if self.proposed == nil then
-        local obj_decl = self:getCurrentObject(name)
         self.proposed = {
-            name = name,
+            names = {},
             state = table.clone(self.currentState),
         }
+    end
+
+    if find(self.proposed.names, name) ~= nil then
+        -- Already in it, nothing to do.
+    else
+        local obj_decl = self:getCurrentObject(name)
+        self.proposed.names[#self.proposed.names] = name
         self.proposed.state.objects = table.clone(self.proposed.state.objects)
         self.proposed.state.objects[name] = table.clone(self.proposed.state.objects[name])
         self.proposed.state.objects[name][3] = table.clone(self.proposed.state.objects[name][3])
-    else
-        if self.proposed.name ~= name then
-            error 'Concurrent modification to two different objects.'
-        end
     end
+
     return self.proposed.state.objects[name]
 end
 

@@ -89,7 +89,7 @@ end
 function Editor:leftMouseClick()
     if self.selectionEnabled then
         local multi = input_filter_pressed("Shift")
-        widget_manager:select(true, multi)
+        widget_manager:select(multi)
     end
 end
 
@@ -133,6 +133,8 @@ local function ghost_cast (pos, ray, scale)
 end
 
 function Editor:frameCallback(elapsed_secs)
+    widget_manager:frameCallback(elapsed_secs)
+
     if self.controlObj ~= nil and not self.controlObj.activated then
         self:toggleBoard()
     end
@@ -503,9 +505,7 @@ end
 
 -- turn the toolbar icons as selected and change mode
 function Editor:setWidgetMode(mode)
-    if widget_manager.mode == mode then return end
-    
-    widget_manager:set_mode(mode)
+    widget_manager:setMode(mode)
 end
 
 -- save editor interface windows
@@ -590,12 +590,12 @@ end
 
 function Editor:undo()
     self.map:undo()
-    widget_manager:updateWidgetFromSelection()
+    widget_manager:updateWidget()
 end
 
 function Editor:redo()
     self.map:redo()
-    widget_manager:updateWidgetFromSelection()
+    widget_manager:updateWidget()
 end
 
 function Editor:cutObject()

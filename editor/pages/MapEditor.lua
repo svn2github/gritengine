@@ -386,21 +386,21 @@ local map_editor_page = {
         self.toolbar:addTool("Redo", map_editor_icons.redo, (function(self) game_manager.currentMode:redo() end), "Redo")
         self.toolbar:addSeparator()
         
-        self.toolbar:addTool("Local, World", map_editor_icons.w_global, (function(self)
+        self.toolbar:addTool("Local, Global", map_editor_icons.w_global, (function(self)
             if self.mode == nil then
-                self.mode = "world"
+                self.mode = "global"
             end
             
-            if self.mode == "world" then
+            if self.mode == "global" then
                 self.texture = map_editor_icons.w_local
                 self.mode = "local"
                 widget_manager:setSpaceMode("local")
             else
                 self.texture = map_editor_icons.w_global
-                self.mode = "world"
-                widget_manager:setSpaceMode("world")
+                self.mode = "global"
+                widget_manager:setSpaceMode("global")
             end
-        end), "Set Widget Mode World/Local")
+        end), "Set Widget Mode Global/Local")
 
         -- self.toolbar:addSeparator()
         -- self.toolbar:addTool("Pivot", `../icons/pivot_centre.png`, (function(self)  end), "")
@@ -474,7 +474,7 @@ local map_editor_page = {
             -- self:select(true)
         -- end), "Scale")
 
-        game_manager.currentMode:setWidgetMode("translate")
+        assert(widget_manager.mode == 'translate')
         self.widget_menu[1]:select(true)
         
         self.mlefttoolbar:addSeparator()

@@ -235,12 +235,12 @@ function table.clone(tab)
         return r
 end
 
-function find(haystack,needle)
-        for k,v in pairs(haystack) do
-                if v==needle then
-                        return k
-                end
+function find(haystack, needle)
+    for k, v in pairs(haystack) do
+        if v == needle then
+            return k
         end
+    end
 end
 
 function filter(tab,c)
