@@ -43,21 +43,29 @@ function EditorMap.new()
     return self
 end
 
+function EditorMap:populateOne(name, object)
+    local body = table.clone(object[3] or {})
+    body.name = name
+    object_add(object[1], object[2], body)
+end
+
+function EditorMap:depopulateOne(name)
+    if object_has(name) then
+        object_get(name):destroy()
+    end
+end
+
 -- Add all visual representations of objects.
 function EditorMap:populateMap()
     for name, object in pairs(self.currentState.objects) do
-        local body = table.clone(object[3])
-        body.name = name
-        object_add(object[1], object[2], body)
+        self:populateOne(name, object)
     end
 end
 
 -- Remove all visual representations of objects.
 function EditorMap:depopulateMap()
-    for k, v in pairs(self.currentState.objects) do
-        if object_has(k) then
-            object_get(k):destroy()
-        end
+    for name, _ in pairs(self.currentState.objects) do
+        self:depopulateOne(name)
     end
 end
 
@@ -314,8 +322,39 @@ function EditorMap:rename(old_name, new_name)
     end
     self:pushUndoLevel(table.clone(self.currentState))
     self.currentState.objects = table.clone(self.currentState.objects)
-    self.currentState.objects[new_name] = obj_decl
     self.currentState.objects[old_name] = nil
+    self.depopulateOne(old_name, obj_decl)
+    self.currentState.objects[new_name] = obj_decl
+    self.populateOne(new_name, obj_decl)
+end
+
+
+-- Add an object.
+function EditorMap:add(name, class, pos, data)
+    assert(self.proposed == nil)
+    local obj_decl = self:getCurrentObject(name)
+    if self.currentState.objects[name] ~= nil then
+        error(('Already an object called: "%s"'):format(name))
+    end
+    self:pushUndoLevel(table.clone(self.currentState))
+    self.currentState.objects = table.clone(self.currentState.objects)
+    obj_decl = {class, pos, data}
+    self.currentState.objects[name] = obj_decl
+    self.populateOne(name, obj_decl)
+end
+
+
+-- Delete an object.
+function EditorMap:delete(name)
+    assert(self.proposed == nil)
+    local obj_decl = self:getCurrentObject(name)
+    if self.currentState.objects[name] == nil then
+        error(('No object called: "%s"'):format(name))
+    end
+    self:pushUndoLevel(table.clone(self.currentState))
+    self.currentState.objects = table.clone(self.currentState.objects)
+    self.currentState.objects[name] = nil
+    self.depopulateOne(name, obj_decl)
 end
 
 
