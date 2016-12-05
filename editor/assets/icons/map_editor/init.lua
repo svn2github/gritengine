@@ -12,6 +12,7 @@ map_editor_icons = {
     open = `open.png`,
     pivot_centre = `pivot_centre.png`,
     pivot_selected = `pivot_selected.png`,
+    pivot_individual = `pivot_individual.png`,
     play = `play.png`,
     redo = `redo.png`,
     rotate = `rotate.png`,

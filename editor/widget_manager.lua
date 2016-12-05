@@ -15,15 +15,15 @@ local dummy_bounds = vec(2, 2, 0.2)
 local arrow_bounds = vec(1, 8, 1)
 
 widget_manager = {
-    mode = "translate";
     selectedObjs = {};
     offsets = {};
     rotationOffsets = {};
     widget = nil;
     dragComponent = nil;  -- nil if we're not currently dragging, otherwise the axis / plane
-    spaceMode = "global"; -- "global", "local"
-    pivot_centre = "active object"; -- "individual origins", "active object" or "centre point"
-    step_size = 0.5;
+    mode = "translate";  -- 'global', 'rotate'
+    spaceMode = "global";  -- "global", "local"
+    pivotPoint = "centre point";  -- "individual origins", "active object" or "centre point"
+    gridSize = 0.5;  -- When using grid snap, what to snap to.
 };
 
 -- reference: math_geom.c from Blender
@@ -40,20 +40,6 @@ local function isect_line_plane(line_a, line_b, plane_pos, plane_normal)
         return
     end
 end
-
--- Widget exists iff #selectedObjs > 0
-
--- Widget home position is the average of all selected
--- Widget home orientation is Q_ID unless local space mode in which case use selectedObjs[#selectedObjs]
-
--- When not dragging, position and orientation match home pos / ort
--- selection / mode only changes while not dragging
--- While translating:
---  position offset according to drag
---  selected objects also updated with new positions
--- While rotating:
---  widget is rotated according to drag
---  objects rotated around widget (for now, other modes possible)
 
 function widget_manager:updateWidget()
     if #self.selectedObjs == 0 then
@@ -105,6 +91,10 @@ end
 function widget_manager:setMode(mode)
     self.mode = mode
     self:updateWidget()
+end
+
+function widget_manager:setPivotPoint(v)
+    self.pivotPoint = v
 end
 
 function widget_manager:setEditorToolbar(str)
@@ -394,7 +384,7 @@ function widget_manager:frameCallback(elapsed_secs)
         self.widget:updatePivot(self.widgetPos + translation, self.widgetOrt)
 
         if input_filter_pressed("Ctrl") then
-            translation = math.floor(translation / step_size) * step_size
+            translation = math.floor(translation / gridSize) * gridSize
         end
 
         local editor = game_manager.currentMode
@@ -421,15 +411,24 @@ function widget_manager:frameCallback(elapsed_secs)
             axis = self.widgetOrt * axis
         end
 
-        -- TODO: use pivot_centre:  "individual origins", "active object" or "centre point"
-        local origin = self.widgetPos
-
         local transform = quat(rotation_amount, axis)
 
         local editor = game_manager.currentMode
 
         self.widget:updatePivot(self.widgetPos, transform * self.widgetOrt)
         for i, obj in ipairs(self.selectedObjs) do
+
+            local origin
+            if self.pivotPoint == 'individual origins' then
+                origin = editor.map:getPosition(obj)
+            elseif self.pivotPoint == 'active object' then
+                origin = editor.map:getPosition(self.selectedObjs[#self.selectedObjs])
+            elseif self.pivotPoint == 'centre point' then
+                origin = self.widgetPos
+            else
+                error('Unrecognised pivotPoint: ' .. self.pivotPoint)
+            end
+
             editor.map:proposeOrientation(obj, transform * editor.map:getOrientation(obj))
             local new_pos = transform * (editor.map:getPosition(obj) - origin) + origin
             editor.map:proposePosition(obj, new_pos)

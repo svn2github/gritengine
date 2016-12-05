@@ -403,12 +403,24 @@ local map_editor_page = {
         end), "Set Widget Mode Global/Local")
 
         -- self.toolbar:addSeparator()
-        -- self.toolbar:addTool("Pivot", `../icons/pivot_centre.png`, (function(self)  end), "")
-        self.toolbar:addSeparator()
-        self.toolbar:addTool("Controller", map_editor_icons.controller, (function(self) game_manager.currentMode:play() end), "Play")
-        --self.toolbar:addTool("Play", `../icons/play.png`, (function(self) game_manager.currentMode:simulate() end), "")
-        --self.toolbar:addTool("Stop", `../icons/stop.png`, (function(self) game_manager.currentMode:stopSimulate() end), "")
-        --self.toolbar:addTool("Play Window", `icons/play_window.png`, (function(self) runGame() end), "")
+        self.toolbar:addTool("Pivot", map_editor_icons.pivot_centre, (function(self)
+            if self.pivotPoint == nil then
+                self.pivotPoint = 'centre point'
+            end
+
+            if self.pivotPoint == 'centre point' then
+                self.pivotPoint = 'individual origins'
+                self.texture = map_editor_icons.pivot_individual
+            elseif self.pivotPoint == 'individual origins' then
+                self.pivotPoint = 'active object'
+                self.texture = map_editor_icons.pivot_selected
+            elseif self.pivotPoint == 'active object' then
+                self.pivotPoint = 'centre point'
+                self.texture = map_editor_icons.pivot_centre
+            end
+            widget_manager:setPivotPoint(self.pivotPoint)
+        end), "Set what to rotate around")
+
         self.toolbar:addSeparator()
         self.toolbar:addTool("Toggle Postprocessing", map_editor_icons.view_mode,(
             function(self)
