@@ -120,39 +120,6 @@ function widget_manager:selectAll()
         editor.map:setSelected(target_obj, true)
     end
     self:updateWidget()
-
-    --[[    Old code, for reference.
-    local editor = game_manager.currentMode
-    local objs = object_all()
-    for i, b in ipairs(objs) do
-        if valid_object(b) then
-            local target_obj = b.name
-            local isonthelist = false
-            for i, obj in ipairs(self.selectedObjs) do
-                if valid_object(obj) then
-                    if obj == target_obj then
-                        isonthelist = true
-                    end
-                end
-            end
-            if not isonthelist then
-                self.selectedObjs[#self.selectedObjs+1] = target_obj
-            end
-
-            if valid_object(self.widget) then
-                local pivot_pos = editor.map:getPosition(target_obj)
-                local pivot_rot = editor.map:getOrientation(target_obj)
-                
-                if self.pivot_centre == "active object" then
-                    self:calcOffsets(pivot_pos)
-                else
-                    pivot_pos = self:calcCentreOffsets()
-                end
-                self:updateSelectedPos(pivot_pos, pivot_rot)
-            end
-        end    
-    end
-    ]]
 end
 
 function widget_manager:unselectAll()
@@ -237,28 +204,6 @@ function widget_manager:startDragging(widget_component)
     if self.widget == nil then return end
     self.dragComponent = widget_component
     self.absMouseBeforeDrag = mouse_pos_abs
---[[
-    if self.mode == "translate" then
-
-
-        local component_gfx_body = self.widget[self.dragComponent]
-        local clicked_point_on_plane = isect_line_plane(
-            main.camPos,
-            main.camPos + gfx_screen_to_world(main.camPos, main.camQuat, mouse_pos_abs),
-            self.widgetPos,
-            component_gfx_body.localOrientation * V_UP  -- normal of plane
-        )
-        self.worldMouseToWidget = clicked_point_on_plane - self.widgetPos
-
-        local pivot_pos_ss = gfx_world_to_screen(main.camPos, main.camQuat, self.widgetPos)
-        self.msinitpos = mouse_pos_abs - pivot_pos_ss.xy
-
-    elseif self.mode == "rotate" then
-        self.msinitpos = mouse_pos_abs
-        self.pivotInitialOrientation = self.widget.widgetOrientation
-
-    end
-]]
 end
 
 function widget_manager:stopDragging()
@@ -268,48 +213,6 @@ function widget_manager:stopDragging()
         self:updateWidget()
     end
     self.dragComponent = nil
-end
-
-function widget_manager:calcOffsets(widget_pos)
-    local editor = game_manager.currentMode
-    self.offsets = {}
-    for i, obj in ipairs(self.selectedObjs) do
-        self.offsets[i] = editor.map:getPosition(obj) - widget_pos
-    end
-end
-
-function widget_manager:calcCentreOffsets()
-    local editor = game_manager.currentMode
-    -- calc the middle point
-    local mid_point = V_ZERO
-
-    for i, obj in ipairs(self.selectedObjs) do
-        mid_point = mid_point + editor.map:getPosition(obj)
-    end
-
-    mid_point = mid_point / #self.selectedObjs
-
-    -- set offsets
-    self.offsets = {}
-    for i, obj in ipairs(self.selectedObjs) do
-        self.offsets[i] = editor.map:getPosition(obj) - mid_point
-    end
-    return mid_point
-end
-
-function widget_manager:updateSelectedPos(translation)
-
-    -- Don't snap the widget?
-    self.widget:updatePivot(self.widgetPos + translation, self.widgetOrt)
-
-    if input_filter_pressed("Ctrl") then
-        translation = math.floor(translation / step_size) * step_size
-    end
-
-    local editor = game_manager.currentMode
-    for i, obj in ipairs(self.selectedObjs) do
-        editor.map:proposePosition(obj, editor.map:getPosition(obj) + translation)
-    end
 end
 
 -- Reference: http://gamedev.stackexchange.com/questions/18436/most-efficient-aabb-vs-ray-collision-algorithms by Jeroen Baert
@@ -440,9 +343,6 @@ function widget_manager:rayCastToWidget()
     return obj
 end
 
-function widget_manager:setSelectedOrientation(transform)
-end
-    
 function widget_manager:frameCallback(elapsed_secs)
 
     if self.widget == nil then
@@ -490,7 +390,17 @@ function widget_manager:frameCallback(elapsed_secs)
             translation = dot(dir, translation) * dir
         end
 
-        self:updateSelectedPos(translation)
+        -- Don't snap the widget?
+        self.widget:updatePivot(self.widgetPos + translation, self.widgetOrt)
+
+        if input_filter_pressed("Ctrl") then
+            translation = math.floor(translation / step_size) * step_size
+        end
+
+        local editor = game_manager.currentMode
+        for i, obj in ipairs(self.selectedObjs) do
+            editor.map:proposePosition(obj, editor.map:getPosition(obj) + translation)
+        end
 
     elseif self.mode == "rotate" then
 
@@ -511,6 +421,7 @@ function widget_manager:frameCallback(elapsed_secs)
             axis = self.widgetOrt * axis
         end
 
+        -- TODO: use pivot_centre:  "individual origins", "active object" or "centre point"
         local origin = self.widgetPos
 
         local transform = quat(rotation_amount, axis)
