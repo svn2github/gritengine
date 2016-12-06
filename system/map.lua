@@ -151,6 +151,14 @@ function include_map(mapfile)
     include(map.environment.env_cycle_file or `/system/env_cycle.lua`)
 end
 
+local function quoted_or_nil(v)
+    if v == nil then
+        return "nil"
+    else
+        return ("%q"):format(v)
+    end
+end
+
 
 -- Writes a file that if included would return a value that is equivalent to 'map'.
 function map_write_to_file(map, filename)
@@ -172,10 +180,10 @@ function map_write_to_file(map, filename)
     file:write(('        cam_quat = %s,\n'):format(map.editor.cam_quat))
     file:write('    },\n')
     file:write('    env_cubes = {\n')
-    file:write(("        dawn = %q,\n"):format(map.env_cubes.dawn))
-    file:write(("        noon = %q,\n"):format(map.env_cubes.noon))
-    file:write(("        dusk = %q,\n"):format(map.env_cubes.dusk))
-    file:write(("        dark = %q,\n"):format(map.env_cubes.dark))
+    file:write(("        dawn = %s,\n"):format(quoted_or_nil(map.env_cubes.dawn)))
+    file:write(("        noon = %s,\n"):format(quoted_or_nil(map.env_cubes.noon)))
+    file:write(("        dusk = %s,\n"):format(quoted_or_nil(map.env_cubes.dusk)))
+    file:write(("        dark = %s,\n"):format(quoted_or_nil(map.env_cubes.dark)))
     file:write('    },\n')
     file:write('    environment = {\n')
     file:write(('        time = %s,\n'):format(map.environment.time))
