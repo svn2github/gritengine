@@ -221,8 +221,14 @@ hud_class `content_browser_floating_object` {
             local cast_ray = 1000 * gfx_screen_to_world(main.camPos, main.camQuat, mouse_pos_abs)
             local dist
             
-            if self.obj ~= nil and not self.obj.destroyed and self.obj.instance ~= nil and self.obj.instance.body ~= nil then
-            dist = physics_cast(main.camPos, cast_ray, true, 0, self.obj.instance.body)
+            local body = nil
+            if self.obj ~= nil then
+                body = game_manager.currentMode.map:getPhysicalRepresentation(self.obj)
+                -- Might still be nil if the object has no physical representation or is streamed
+                -- out.
+            end
+            if body ~= nil then
+                dist = physics_cast(main.camPos, cast_ray, true, 0, body)
             else
                 dist = physics_cast(main.camPos, cast_ray, true, 0)
             end
@@ -231,21 +237,17 @@ hud_class `content_browser_floating_object` {
             
             if self.obj == nil then
                 self.alpha = 0
-                self.obj = object_add(self.obclass, pos, { name = "Unnamed:"..self.obclass..":"..math.random(0, 50000) })
-                self.obj:activate()
+                local name = ('Unnamed:%s:%d'):format(self.obclass, math.random(0, 50000))
+                game_manager.currentMode.map:add(name, self.obclass, pos)
+                self.obj = name
+                -- self.obj = object_add(self.obclass, pos, { name = name })
+                -- self.obj:activate()
             else
-                if self.obj.instance then
-                    if self.obj.instance.body then
-                        self.obj.instance.body.worldPosition = pos
-                    elseif self.obj.instance.gfx then
-                        self.obj.instance.gfx.localPosition = pos
-                    end
-                    self.obj.spawnPos = pos
-                end
+                game_manager.currentMode.map:proposePosition(self.obj, pos)
             end
         else
             self.alpha = 1
-            safe_destroy(self.obj)
+            game_manager.currentMode.map:cancelChange()
             self.obj = nil
         end
     end;
@@ -254,10 +256,12 @@ hud_class `content_browser_floating_object` {
             --
         elseif ev == "-left" then
             if not insidew() and self.positioning then
-                safe_destroy(self.obj)
+                game_manager.currentMode.map:cancelChange()
                 self.obj = nil
             end
-            if self.obj ~= nil and not self.obj.destroyed then
+            if self.obj ~= nil then
+                game_manager.currentMode.map:applyChange()
+                self.obj = nil
                 -- current_map:registerObject(self.obj)
             end
             -- if insidew() then

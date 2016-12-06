@@ -21,6 +21,10 @@
 -- Rebuilding the map each time leads to non-determistic effects with object placement (grass) and
 -- car colours changing.  However, this is a general problem since removing an object and then
 -- undoing it will cause any random initialization to be reset.
+--
+-- It is assumed Grit classes follow a certain protocol, e.g. instance.body, instance.gfx, body.rot,
+-- etc.  This should be documented, and ideally a simpler "editor interface" should be defined for
+-- objects to play nicely with the editor.
 
 
 EditorMap = EditorMap or {
@@ -229,25 +233,23 @@ end
 
 -- Always fetches object data from currentState.
 function EditorMap:getCurrentObject(name)
-    local state = self.currentState
-    local obj_decl = state.objects[name]
-    if obj_decl == nil then
-        error(('No such object: "%s"'):format(name))
-    end
-    return obj_decl
+    return self.currentState.objects[name]
 end
 
 
 -- Always fetches object data from proposed state.
--- postition is being proposed.
 function EditorMap:getProposedObject(name)
     assert(self.proposed ~= nil)
-    local state = self.proposed.state
-    local obj_decl = state.objects[name]
-    if obj_decl == nil then
-        error(('No such object: "%s"'):format(name))
+    return self.proposed.state.objects[name]
+end
+
+function EditorMap:getPhysicalRepresentation(name)
+    local obj_actual = object_get(name)
+    if obj_actual.activated then
+        return obj_actual.instance.body
+    else
+        return nil
     end
-    return obj_decl
 end
 
 function EditorMap:iterCurrentObjects()
@@ -257,9 +259,17 @@ end
 
 -- Internal function to make the object match the current / proposed state of the map.
 function EditorMap:updateObjectVisualisation(name, obj)
-    local pos, rot = obj[2], obj[3].rot
-
     local obj_actual = object_get(name)
+    if obj == nil then
+        obj_actual:destroy()
+        return
+    end
+
+    local pos, rot = obj[2], Q_ID
+    if obj[3] ~= nil and obj[3].rot ~= nil then
+        rot = obj[3].rot
+    end
+
     obj_actual.pos = pos
     obj_actual.spawnPos = pos
     obj_actual.rot = rot
@@ -297,7 +307,11 @@ end
 -- Get an object's orientation.
 function EditorMap:getOrientation(name)
     local obj_decl = self:getCurrentObject(name)
-    return obj_decl[3].rot or Q_ID
+    local rot = Q_ID
+    if obj_decl[3] ~= nil and obj_decl[3].rot ~= nil then
+        rot = obj_decl[3].rot
+    end
+    return rot
 end
 
 
@@ -329,18 +343,16 @@ function EditorMap:rename(old_name, new_name)
 end
 
 
--- Add an object.
+-- Add an object.  The additional is only a proposal, it will be ratified by applyChange().
 function EditorMap:add(name, class, pos, data)
     assert(self.proposed == nil)
     local obj_decl = self:getCurrentObject(name)
     if self.currentState.objects[name] ~= nil then
         error(('Already an object called: "%s"'):format(name))
     end
-    self:pushUndoLevel(table.clone(self.currentState))
-    self.currentState.objects = table.clone(self.currentState.objects)
-    obj_decl = {class, pos, data}
-    self.currentState.objects[name] = obj_decl
-    self.populateOne(name, obj_decl)
+    obj_decl = self:initProposed(name, {class, pos, data})
+    -- The object, if the change is cancelled, is cleaned up by updateObjectVisualisation.
+    self:populateOne(name, obj_decl)
 end
 
 
@@ -359,6 +371,10 @@ end
 
 
 function EditorMap:applyChange()
+    if self.proposed == nil then
+        -- If no changes to apply, then silently return.
+        return
+    end
     self:pushUndoLevel(self.currentState)
     self.currentState = self.proposed.state
     self.proposed = nil
@@ -366,6 +382,10 @@ end
 
 
 function EditorMap:cancelChange()
+    if self.proposed == nil then
+        -- If no changes to cancel, then silently return.
+        return
+    end
     for _, name in ipairs(self.proposed.names) do
         self:updateObjectVisualisation(name, self:getCurrentObject(name))
     end
@@ -373,12 +393,15 @@ function EditorMap:cancelChange()
 end
 
 
-function EditorMap:initProposed(name)
+-- If obj is nil, then we're modifying an existing object.  Otherwise, we're
+-- adding a new object.
+function EditorMap:initProposed(name, obj)
     if self.proposed == nil then
         self.proposed = {
             names = {},
             state = table.clone(self.currentState),
         }
+        self.proposed.state.objects = table.clone(self.proposed.state.objects)
     end
 
     if find(self.proposed.names, name) ~= nil then
@@ -386,9 +409,13 @@ function EditorMap:initProposed(name)
     else
         local obj_decl = self:getCurrentObject(name)
         self.proposed.names[#self.proposed.names] = name
-        self.proposed.state.objects = table.clone(self.proposed.state.objects)
-        self.proposed.state.objects[name] = table.clone(self.proposed.state.objects[name])
-        self.proposed.state.objects[name][3] = table.clone(self.proposed.state.objects[name][3])
+        if obj == nil then
+            -- Avoid aliasing the object or body, so we can modify it without
+            -- those changes appearing in currentState.
+            obj = table.clone(self.proposed.state.objects[name])
+            obj[3] = table.clone(obj[3])
+        end
+        self.proposed.state.objects[name] = obj
     end
 
     return self.proposed.state.objects[name]

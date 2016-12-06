@@ -7,8 +7,8 @@ return {
         description = "Insert description here",
     },
     editor = {
-        cam_pos = vec(8.285466, -39.710979, 22.161283),
-        cam_quat = quat(-0.930757, 0.1339583, 0.04846578, -0.3367456),
+        cam_pos = vec(358.208130, -288.598846, 79.696594),
+        cam_quat = quat(0.8576328, -0.2307648, 0.1194128, -0.4437953),
     },
     env_cubes = {
         dawn = "/system/env_cube_dawn.envcube.tiff",
@@ -26,6 +26,20 @@ return {
             `img/Road2`,
             vec(139.893005, 148.147003, 30.050900),
             {}
+        },
+        ["Unnamed:/playground/img/buildings/hangar:12481"] = {
+            `img/buildings/hangar`,
+            vec(386.217865, -220.576309, 48.713448),
+            {
+              rot = quat(-0.2756374, 0, 0, 0.9612617),
+            }
+        },
+        ["Unnamed:/playground/img/buildings/hangar:23605"] = {
+            `img/buildings/hangar`,
+            vec(428.627228, -300.718231, 48.865337),
+            {
+              rot = quat(-0.2756374, 0, 0, 0.9612617),
+            }
         },
         ["Waterfall"] = {
             `img/Waterfall`,

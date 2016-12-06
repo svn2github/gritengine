@@ -493,7 +493,13 @@ local map_editor_page = {
         
         self.mlefttoolbar:addTool("Object Properties", map_editor_icons.object_properties, function(self) open_window(editor_interface.map_editor_page.windows.object_properties) end, "Map Properties")
         --self.mlefttoolbar:addTool("Content Browser", map_editor_icons.content_browser, function(self) if editor_interface.map_editor_page.windows.content_browser == nil or editor_interface.map_editor_page.windows.content_browser.destroyed then editor_interface.map_editor_page.windows.content_browser = create_content_browser() end end, "Content Browser")
-        self.mlefttoolbar:addTool("Content Browser", map_editor_icons.content_browser, function(self) local wnd = editor_interface.map_editor_page.windows.content_browser if not wnd.destroyed then wnd.enabled = not wnd.enabled end end, "Content Browser")
+        self.mlefttoolbar:addTool("Content Browser", map_editor_icons.content_browser, function(self)
+            local wnd = editor_interface.map_editor_page.windows.content_browser
+            if not wnd.destroyed then
+                wnd.enabled = not wnd.enabled
+            end
+        end, "Content Browser")
+
         self.mlefttoolbar:addTool("Event Editor", map_editor_icons.event_editor, function(self) open_window(editor_interface.map_editor_page.windows.event_editor) end, "Event Editor")
         self.mlefttoolbar:addTool("Map Config", map_editor_icons.world_properties, function(self) open_window(editor_interface.map_editor_page.windows.level_properties) end, "Map Config")
         self.mlefttoolbar:addSeparator()
