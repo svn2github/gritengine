@@ -399,8 +399,8 @@ hud_class `.` {
         if hours < 0 or hours >= 24 then error("Invalid time in hours: "..hours) end
         -- TODO: write me
         local the_env = nil
-        local hours_dist = 12
-        for i,env_cycle_instant in ipairs(env_cycle) do
+        local hours_dist = 13
+        for i, env_cycle_instant in ipairs(env_cycle) do
             local dist = math.abs(env_cycle_instant.time - hours)
             if dist > 12 then dist = 24 - dist end
             if dist < hours_dist then
@@ -462,7 +462,7 @@ hud_class `.` {
     load = function (self)
         xpcall(function()
             local filename = self.fileName.value
-            include(filename)
+            env_cycle = include(filename)
             print("Read env cycle from \""..filename.."\"")
             self:updateFromEnvCycle()
             env_recompute()
