@@ -322,6 +322,7 @@ include `/sponza/init.lua`
 include `/navigation_demo/init.lua`
 include `/playground/init.lua`
 include `/detached/init.lua`
+include `/wipeout/init.lua`
 
 include `welcome_msg.lua`
 
