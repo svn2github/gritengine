@@ -4,23 +4,42 @@
 -- map).  The state of those objects should match the state in map.currentState.objects, up to user
 -- interaction effects like selection / hiding of objects.
 --
--- A map modification is performed as follows:
--- 1) Call proposeValue(name, v) to update the GUI with the new value of the object.  This does not
--- have any lasting change, as it does not update currentState.
--- 2) Either call cancelChange() or applyChange() to make the change permanent.  This updates the
--- undo history.
+-- A map modification with GUI feedback must follow this protocol:
+--
+-- 1) Call proposeValue(name, v) any number of times to update the GUI with the new value of the
+-- object.  This does not have any lasting change, as it does not update currentState.
+--
+-- 2) Either call cancelChange() to return to the original state, or applyChange() to make the
+-- change permanent.  This updates the undo history.
+--
+-- A similar protocol is used for adding objects.  Changes to multiple objects can be proposed /
+-- applied, and can be cancelled / undone / redone atomically.
 
 
--- Open problems:
+-----------------
+-- CAUTION!!! ---
+-- --------------
+
+-- When changing this code, do not modify any tables under 'currentState' or 'proposed' without
+-- cloning them first (to ensure that the pointers are unique).  This is because these tables are
+-- aliased in lots of places, such as undo levels and the clipboard.  Modifying the objects without
+-- cloning them will cause bugs that are very hard to catch.
+
+
+-- Open problem:
 --
 -- Need to rebuild all objects from scratch when recovering to an undo level, as we don't know what
 -- was destroyed / created / changed.  It should be possible to compute a structural diff between
 -- the two states to find out what has changed, and then only update those objects.  Alternatively
--- we can record the diff as opposed to recording the whole history.
+-- we can record history as a sequence of relative changes as opposed to a sequence of absolute
+-- values.
 --
 -- Rebuilding the map each time leads to non-determistic effects with object placement (grass) and
 -- car colours changing.  However, this is a general problem since removing an object and then
--- undoing it will cause any random initialization to be reset.
+-- undoing it will also cause any random initialization to be reset.
+
+
+-- Open problem:
 --
 -- It is assumed Grit classes follow a certain protocol, e.g. instance.body, instance.gfx, body.rot,
 -- etc.  This should be documented, and ideally a simpler "editor interface" should be defined for
@@ -50,7 +69,7 @@ end
 function EditorMap:populateOne(name, object)
     local body = table.clone(object[3] or {})
     body.name = name
-    object_add(object[1], object[2], body)
+    return object_add(object[1], object[2], body)
 end
 
 function EditorMap:depopulateOne(name)
@@ -337,36 +356,40 @@ function EditorMap:rename(old_name, new_name)
     self:pushUndoLevel(table.clone(self.currentState))
     self.currentState.objects = table.clone(self.currentState.objects)
     self.currentState.objects[old_name] = nil
-    self.depopulateOne(old_name, obj_decl)
+    self:depopulateOne(old_name)
     self.currentState.objects[new_name] = obj_decl
-    self.populateOne(new_name, obj_decl)
+    local obj_actual = self:populateOne(new_name, obj_decl)
+    obj_actual:activate()
 end
 
 
--- Add an object.  The additional is only a proposal, it will be ratified by applyChange().
+-- Add an object.  The addition is only a proposal, it will be ratified by applyChange().
 function EditorMap:add(name, class, pos, data)
-    assert(self.proposed == nil)
     local obj_decl = self:getCurrentObject(name)
     if self.currentState.objects[name] ~= nil then
         error(('Already an object called: "%s"'):format(name))
     end
     obj_decl = self:initProposed(name, {class, pos, data})
     -- The object, if the change is cancelled, is cleaned up by updateObjectVisualisation.
-    self:populateOne(name, obj_decl)
+    local obj_actual = self:populateOne(name, obj_decl)
+    obj_actual:activate()
 end
 
 
--- Delete an object.
-function EditorMap:delete(name)
+-- Delete an array of objects.
+function EditorMap:delete(names)
     assert(self.proposed == nil)
-    local obj_decl = self:getCurrentObject(name)
-    if self.currentState.objects[name] == nil then
-        error(('No object called: "%s"'):format(name))
+    for _, name in ipairs(names) do
+        if self.currentState.objects[name] == nil then
+            error(('No object called: "%s"'):format(name))
+        end
     end
     self:pushUndoLevel(table.clone(self.currentState))
     self.currentState.objects = table.clone(self.currentState.objects)
-    self.currentState.objects[name] = nil
-    self.depopulateOne(name, obj_decl)
+    for _, name in ipairs(names) do
+        self.currentState.objects[name] = nil
+        self:depopulateOne(name)
+    end 
 end
 
 

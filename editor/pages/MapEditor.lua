@@ -191,7 +191,7 @@ local map_editor_page = {
                     tip = "Paste object";
                 },
                 {
-                    callback = function() if widget_manager.selectedObj ~= nil then game_manager.currentMode:duplicateSelection() end end;
+                    callback = function() game_manager.currentMode:duplicateSelection() end;
                     name = "Duplicate";
                     tip = "Duplicate current selection";
                 },

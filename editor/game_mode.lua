@@ -98,33 +98,11 @@ function Editor:stopDraggingObj()
 end
 
 function Editor:deleteSelection()
-    local selobjs = {}
-    
-    for i = 1, #widget_manager.selectedObjs do
-        if not widget_manager.selectedObjs[i].destroyed and widget_manager.selectedObjs[i].instance ~= nil then
-            selobjs[#selobjs+1] = widget_manager.selectedObjs[i]
-        end
-    end        
-    widget_manager:unselectAll()
-    
-    for i = 1, #selobjs do
-        if not selobjs[i].destroyed then
-            safe_destroy(selobjs[i])
-        end
-    end
+    widget_manager:deleteSelection()
 end
 
 function Editor:duplicateSelection()
-    if widget_manager ~= nil and widget_manager.selectedObjs ~= nil then
-        for i = 1, #widget_manager.selectedObjs do
-            if not widget_manager.selectedObjs[i].destroyed and widget_manager.selectedObjs[i].instance ~= nil then
-                object (widget_manager.selectedObjs[i].className) (widget_manager.selectedObjs[i].instance.body.worldPosition)
-                {
-                    rot = widget_manager.selectedObjs[i].instance.body.worldOrientation;
-                }
-            end
-        end
-    end
+    widget_manager:duplicateSelection()
 end
 
 local function ghost_cast (pos, ray, scale)
@@ -599,12 +577,16 @@ function Editor:redo()
 end
 
 function Editor:cutObject()
+    widget_manager:copySelectionToClipboard()
+    widget_manager:deleteSelection()
 end
 
 function Editor:copyObject()
+    widget_manager:copySelectionToClipboard()
 end
 
 function Editor:pasteObject()
+    widget_manager:paste()
 end
 
 function Editor:init()

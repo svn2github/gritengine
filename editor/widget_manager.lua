@@ -15,16 +15,15 @@ local dummy_bounds = vec(2, 2, 0.2)
 local arrow_bounds = vec(1, 8, 1)
 
 widget_manager = {
-    selectedObjs = {};
-    offsets = {};
-    rotationOffsets = {};
-    widget = nil;
-    dragComponent = nil;  -- nil if we're not currently dragging, otherwise the axis / plane
-    mode = "translate";  -- 'global', 'rotate'
-    spaceMode = "global";  -- "global", "local"
-    pivotPoint = "centre point";  -- "individual origins", "active object" or "centre point"
-    gridSize = 0.5;  -- When using grid snap, what to snap to.
-};
+    clipboard = {},
+    selectedObjs = {},
+    widget = nil,
+    dragComponent = nil,  -- nil if we're not currently dragging, otherwise the axis / plane
+    mode = "translate",  -- 'global', 'rotate'
+    spaceMode = "global",  -- "global", "local"
+    pivotPoint = "centre point",  -- "individual origins", "active object" or "centre point"
+    gridSize = 0.5,  -- When using grid snap, what to snap to.
+}
 
 -- reference: math_geom.c from Blender
 local function isect_line_plane(line_a, line_b, plane_pos, plane_normal)
@@ -146,6 +145,8 @@ function widget_manager:getObjectUnderCursor()
     return b.owner.name
 end
 
+-- If you click on a widget component, then starts dragging.
+-- Otherwise, modifies the set of selected objects.
 function widget_manager:select(multi)
     local editor = game_manager.currentMode
 
@@ -197,12 +198,76 @@ function widget_manager:startDragging(widget_component)
 end
 
 function widget_manager:stopDragging()
-    local editor = game_manager.currentMode
-    if self.dragComponent ~= nil then
-        editor.map:applyChange()
-        self:updateWidget()
+    if self.dragComponent == nil then
+        -- Wasn't actually dragging anything, silently return.
+        return
     end
+    local editor = game_manager.currentMode
+    editor.map:applyChange()
+    self:updateWidget()
     self.dragComponent = nil
+end
+
+function widget_manager:deleteSelection()
+    local editor = game_manager.currentMode
+    for i, obj in ipairs(self.selectedObjs) do
+        editor.map:setSelected(obj, false)
+    end
+    editor.map:delete(self.selectedObjs)
+    self.selectedObjs = {}
+end
+
+function widget_manager:copySelectionToClipboard()
+    local editor = game_manager.currentMode
+    self.clipboard = {}
+    for _, obj_name in ipairs(self.selectedObjs) do
+        self.clipboard[obj_name] = editor.map:getCurrentObject(obj_name)
+    end
+end
+
+function widget_manager:uniqueName(orig_name)
+    local editor = game_manager.currentMode
+    if editor.map:getCurrentObject(orig_name) == nil then
+        return orig_name
+    end
+    local base, counter = orig_name:match('(.*)_([0-9]+)')
+    if base == nil then
+        base = orig_name
+        counter = 1
+    else
+        counter = counter + 1
+    end
+    while true do
+        local new_name = ("%s_%d"):format(base, counter)
+        if editor.map:getCurrentObject(new_name) == nil then
+            return new_name
+        end
+        counter = counter + 1
+    end
+end
+
+function widget_manager:paste()
+    local editor = game_manager.currentMode
+    self:unselectAll()
+    for orig_name, obj_decl in pairs(self.clipboard) do
+        local name = self:uniqueName(orig_name)
+        local class_name, pos, data = obj_decl[1], obj_decl[2], obj_decl[3]
+        pos = pos + vec(1, 1, 0)
+        editor.map:add(name, class_name, pos, data)
+        self.selectedObjs[#self.selectedObjs + 1] = name
+    end
+    editor.map:applyChange()
+    for _, name in pairs(self.selectedObjs) do
+        editor.map:setSelected(name, true)
+    end
+    self:updateWidget()
+end
+
+function widget_manager:duplicateSelection()
+    local saved_clipboard = self.clipboard
+    self:copySelectionToClipboard()
+    self:paste()
+    self.clipboard = saved_clipboard
 end
 
 -- Reference: http://gamedev.stackexchange.com/questions/18436/most-efficient-aabb-vs-ray-collision-algorithms by Jeroen Baert
