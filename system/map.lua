@@ -1,7 +1,7 @@
 -- Copyright (c) The Grit Game Engine authors 2016 (MIT license)
 
 --[[
-A Grit map is a data only (new computation) format for storing maps (collections of object
+A Grit map is a data only (no computation) format for storing maps (collections of object
 placements) on disk.  It should be possible for a machine to read and output the map again, hence
 being a data only format.  Being data-only, it is analogous to JSON, but in the Lua syntax.
 
@@ -9,7 +9,7 @@ On disk, a grit map has the following structure:
 
 return { ... }
 
-Where the object is structured like the return type of map_build_empty below:
+Where the table is structured like the table returned by map_build_empty below:
 ]]
 
 function map_build_empty()

@@ -17,9 +17,15 @@ return {
         dark = nil,
     },
     environment = {
-        time = 43200,
+        time = 0,
         clock_rate = 0,
         env_cycle_file = `env_cycle.lua`,
+    },
+    env_cubes = {
+        dark = `wipeout.envcube.tiff`,
+        dawn = nil,
+        dusk = nil,
+        noon = nil,
     },
     objects = {
         ["unnamed_0"] = {
