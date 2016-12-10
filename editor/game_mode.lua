@@ -53,7 +53,7 @@ function Editor:toggleBoard(mobj)
         -- Currently controlling an object.  Exit it.
         playing_actor_binds.enabled = false
         playing_vehicle_binds.enabled = false
-        editor_debug_ghost_binds.enabled = true
+        editor_cam_binds.enabled = true
 
         self.controlObj:controlAbandon()
         -- When on foot there is no vehicle pitch.
@@ -74,7 +74,7 @@ function Editor:toggleBoard(mobj)
             print("Cannot board object: " .. tostring(obj))
             return
         end
-        editor_debug_ghost_binds.enabled = false
+        editor_cam_binds.enabled = false
         obj:controlBegin()
         self.controlObj = obj
         print('controlObj now '..tostring(obj))
@@ -97,12 +97,16 @@ function Editor:stopDraggingObj()
     widget_manager:stopDragging()
 end
 
-function Editor:deleteSelection()
-    widget_manager:deleteSelection()
+function Editor:unselectAll()
+    widget_manager:unselectAll()
 end
 
-function Editor:duplicateSelection()
-    widget_manager:duplicateSelection()
+function Editor:deleteSelected()
+    widget_manager:deleteSelected()
+end
+
+function Editor:duplicateSelected()
+    widget_manager:duplicateSelected()
 end
 
 local function ghost_cast (pos, ray, scale)
@@ -219,9 +223,10 @@ function Editor:setMouseCapture(v)
     self.mouseCapture = v
     ch.enabled = v
     playing_binds.mouseCapture = v
+    editor_cam_binds.enabled = v
 end
 
-function Editor:toggleMouseCapture()
+function Editor:toggleDebugModeSettings()
     -- Only called when we are in debug mode
     self:setMouseCapture(not self.mouseCapture)
     if self.mouseCapture then
@@ -260,11 +265,8 @@ function Editor:setDebugMode(v)
     compass.enabled = v
     stats.enabled = v
     editor_edit_binds.enabled = not v
-    editor_core_move_binds.enabled = not v
-    -- print(editor_edit_binds.enabled)
-    -- print( editor_core_move_binds.enabled)
+    editor_object_binds.enabled = not v
     editor_debug_binds.enabled = v
-    editor_debug_ghost_binds.enabled = v
 
     if editor_interface.map_editor_page ~= nil then
         if v then
@@ -322,53 +324,6 @@ end
 
 function Editor:toggleDebugMode()
     self:setDebugMode(not self.debugMode)
-end
-
-function Editor:play()
-    print("Currently disabled")
-end
-
-function Editor:setPlayMode(v)
-    self.playGameMode:editorDebug(v)
-
-    editor_interface.enabled = not v
-    
-    self.playMode = v
-    main.physicsEnabled = v
-    self:setMouseCapture(v)
-
-    editor_edit_binds.enabled = not v
-    editor_core_move_binds.enabled = not v
-
-    if editor_interface.map_editor_page ~= nil then
-        if v then
-            editor_interface.map_editor_page:unselect()
-        else
-            editor_interface.map_editor_page:select()
-        end
-    end
-    
-    if not v then
-        if self.controlObj ~= nil then
-            self:toggleBoard()
-        end
-
-        for _, obj in ipairs(object_all()) do
-            if obj.destroyed then 
-                -- Skip
-            elseif obj.debugObject == true then
-                safe_destroy(obj)
-            else
-                obj:deactivate()
-                obj.skipNextActivation = false
-            end
-        end
-
-    end
-end
-
-function Editor:togglePlayMode()
-    self:setPlayMode(not self.playMode)
 end
 
 function is_inside_menu(menu)
@@ -576,16 +531,16 @@ function Editor:redo()
     widget_manager:updateWidget()
 end
 
-function Editor:cutObject()
-    widget_manager:copySelectionToClipboard()
-    widget_manager:deleteSelection()
+function Editor:cutSelected()
+    widget_manager:copySelectedToClipboard()
+    widget_manager:deleteSelected()
 end
 
-function Editor:copyObject()
-    widget_manager:copySelectionToClipboard()
+function Editor:copySelected()
+    widget_manager:copySelectedToClipboard()
 end
 
-function Editor:pasteObject()
+function Editor:paste()
     widget_manager:paste()
 end
 
@@ -617,8 +572,9 @@ function Editor:init()
     make_editor_interface()
 
     playing_binds.enabled = true
-    editor_core_binds.enabled = true
-    editor_edit_binds.enabled = false
+    editor_binds.enabled = true
+    editor_edit_binds.enabled = true
+    editor_object_binds.enabled = true
     editor_debug_binds.enabled = false
 
     self.lastMouseMoveTime = seconds()
@@ -666,8 +622,6 @@ function Editor:receiveButton(button, state)
             if state == '+' then
                 self:toggleDebugMode()
             end
-        elseif button == "forwards" then
-            self.forwards = on_off
 
         elseif button == "forwards" then
             self.forwards = on_off
@@ -693,12 +647,37 @@ function Editor:receiveButton(button, state)
             end
         elseif button == "delete" then
             if state == '+' then
-                self:deleteSelection()
+                self:deleteSelected()
+            end
+
+        elseif button == "cut" then
+            if state == '+' then
+                self:cutSelected()
+            end
+
+        elseif button == "copy" then
+            if state == '+' then
+                self:copySelected()
+            end
+
+        elseif button == "paste" then
+            if state == '+' then
+                self:paste()
+            end
+
+        elseif button == "undo" then
+            if state == '+' then
+                self:undo()
+            end
+
+        elseif button == "redo" then
+            if state == '+' then
+                self:redo()
             end
 
         elseif button == "duplicate" then
             if state == '+' then
-                self:duplicateSelection()
+                self:duplicateSelected()
             end
 
         elseif button == "board" then
@@ -716,7 +695,7 @@ function Editor:receiveButton(button, state)
                 self:toggleBoard()
             end
 
-        elseif button == "ghost" then
+        elseif button == "mouseCapture" then
             if state == '+' then
                 if inside_hud() then
                     self:setMouseCapture(true)
@@ -725,9 +704,9 @@ function Editor:receiveButton(button, state)
                 self:setMouseCapture(false)
             end
 
-        elseif button == "toggleGhost" then
+        elseif button == "toggleDebugModeSettings" then
             if state == '+' then
-                self:toggleMouseCapture()
+                self:toggleDebugModeSettings()
             end
 
         elseif button == "selectModeTranslate" then
@@ -851,12 +830,6 @@ function Editor:destroy()
     self:saveEditorConfig()
     -- self:saveEditorInterface()
     
-    editor_core_binds.enabled = false
-    editor_core_move_binds.enabled = false
-    editor_edit_binds.enabled = false
-    editor_debug_binds.enabled = false
-    editor_debug_ghost_binds.enabled = false
-
     gfx_option("RENDER_SKY", true)
     
     editor_interface.map_editor_page:destroy()

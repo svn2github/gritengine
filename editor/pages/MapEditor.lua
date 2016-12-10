@@ -176,22 +176,33 @@ local map_editor_page = {
                 },
                 {},
                 {
-                    callback = function() game_manager.currentMode:cutObject() end;
+                    callback = function() game_manager.currentMode:unselectAll() end;
+                    name = "Unselect All";
+                    tip = "Unselect all";
+                },
+                {
+                    callback = function() game_manager.currentMode:cutSelected() end;
                     name = "Cut";
                     tip = "Cut selected object";
                 },
                 {
-                    callback = function() game_manager.currentMode:copyObject() end;
+                    callback = function() game_manager.currentMode:copySelected() end;
                     name = "Copy";
                     tip = "Copy selected object";
                 },
                 {
-                    callback = function() game_manager.currentMode:pasteObject() end;
+                    callback = function() game_manager.currentMode:pasteClipboard() end;
                     name = "Paste";
                     tip = "Paste object";
                 },
+                {},
                 {
-                    callback = function() game_manager.currentMode:duplicateSelection() end;
+                    callback = function() game_manager.currentMode:deleteSelected() end;
+                    name = "Delete";
+                    tip = "Delete current selection";
+                },
+                {
+                    callback = function() game_manager.currentMode:duplicateSelected() end;
                     name = "Duplicate";
                     tip = "Duplicate current selection";
                 },
@@ -466,7 +477,7 @@ local map_editor_page = {
              game_manager.currentMode:setWidgetMode("select")
             editor_interface.map_editor_page:unselectAllWidgets()
             self:select(true)
-        end), "Selection Mode")
+        end), "Selected Mode")
 
         self.widget_menu[1] = self.mlefttoolbar:addTool("Translate", map_editor_icons.translate, (function(self)
             game_manager.currentMode:setWidgetMode("translate")

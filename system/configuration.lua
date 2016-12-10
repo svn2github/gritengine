@@ -2,20 +2,28 @@
 
 safe_include `/user_cfg.lua`
 
+
+-- Sanitize "given" table, apply default values.
+local function process_user_table(name, given, default)
+    for k, v in pairs(given) do
+        if default[k] == nil then
+            print(("%s contained unrecognised field \"%s\", ignoring."):format(name, k))
+            given[k] = nil
+        end
+    end
+    for k, v in pairs(default) do
+        if given[k] == nil then
+            given[k] = default[k]
+        end
+    end
+end
+
+
+---------------------------
+-- GENERAL CONFIGURATION --
+---------------------------
+
 user_cfg = user_cfg or { }
-user_system_bindings = user_system_bindings or { }
-
-user_editor_core_bindings = user_editor_core_bindings or { }
-user_editor_core_move_bindings = user_editor_core_move_bindings or { }
-user_editor_edit_bindings = user_editor_edit_bindings or { }
-user_editor_debug_bindings = user_editor_debug_bindings or { }
-user_editor_debug_ghost_bindings = user_editor_debug_ghost_bindings or { }
-
-user_playing_bindings = user_playing_bindings or { }
-user_drive_bindings = user_drive_bindings or { }
-user_foot_bindings = user_foot_bindings or { }
-
-
 local user_cfg_default = {
     fullscreen = false;
     res = vec(800, 600);
@@ -30,6 +38,7 @@ local user_cfg_default = {
     audioMasterVolume = 1;
     vehicleCameraTrack = true;
 }
+process_user_table("user_cfg", user_cfg, user_cfg_default)
 
 local user_cfg_doc = {
     fullscreen = "as opposed to windowed mode";
@@ -61,174 +70,6 @@ local user_cfg_spec = {
     vehicleCameraTrack = { "one of", false, true };
 }
             
-
-local default_user_system_bindings = {
-    console = "Tab";
-    screenShot = "F12";
-}
-
-local default_user_playing_bindings = {
-    menu = "Escape";
-}
-
-local default_user_drive_bindings = {
-    driveForwards = "w";
-    driveBackwards = "s";
-    driveLeft = "a";
-    driveRight = "d";
-    driveSpecialLeft = "q";
-    driveSpecialRight = "e";
-    driveSpecialUp = "PageUp";
-    driveSpecialDown = "PageDown";
-    driveAltUp = "Up";
-    driveAltDown = "Down";
-    driveAltLeft = "Left";
-    driveAltRight = "Right";
-    driveAbandon = "f";
-    driveHandbrake = "Space";
-    driveLights = "l";
-    driveZoomIn = {"up","S+v"};
-    driveZoomOut = {"down","v"};
-    driveCamera = "c";
-    driveSpecialToggle = "BackSpace";
-}
-
-local default_user_foot_bindings = {
-    walkForwards = "w";
-    walkBackwards = "s";
-    walkLeft = "a";
-    walkRight = "d";
-    walkBoard = "f";
-    walkJump = "Space";
-    walkCrouch = "c";
-    walkRun = "Shift";
-    walkZoomIn = {"up","S+v"};
-    walkZoomOut = {"down","v"};
-    walkCamera = "c";
-}
-
-local default_user_editor_core_bindings = {
-    debug = "F5";
-}
-
-local default_user_editor_core_move_bindings = {
-    forwards = "w";
-    backwards = "s";
-    strafeLeft = "a";
-    strafeRight = "d";
-    ascend = "Space";
-    descend = "c";
-    faster = "Shift";
-}
-
-local default_user_editor_edit_bindings = {
-    ghost = "right";
-    delete = "Delete";
-    duplicate = "C+v";
-    selectModeTranslate = "1";
-    selectModeRotate = "2";
-}
-
-local default_user_editor_debug_bindings = {
-    toggleGhost = "F1";
-    pausePhysics = "F2";
-}
-
-local default_user_editor_debug_ghost_bindings = {
-    board = "f";
-    weaponPrimary = "left";
-    weaponSecondary = "right";
-    weaponSwitchUp = {"e", "up"};
-    weaponSwitchDown = {"q", "down"};
-    forwards = "w";
-    backwards = "s";
-    strafeLeft = "a";
-    strafeRight = "d";
-    ascend = "Space";
-    descend = "c";
-    faster = "Shift";
-}
-
-local function process_user_table(name, given, default)
-    for k, v in pairs(given) do
-        if default[k] == nil then
-            print(name.." contained unrecognised field \""..k.."\", ignoring.")
-            given[k] = nil
-        end
-    end
-    for k, v in pairs(default) do
-        if given[k] == nil then
-            given[k] = default[k]
-        end
-    end
-end
-
-process_user_table("user_cfg", user_cfg, user_cfg_default)
-process_user_table("user_system_bindings", user_system_bindings, default_user_system_bindings)
-process_user_table("user_editor_core_bindings", user_editor_core_bindings, default_user_editor_core_bindings)
-process_user_table("user_editor_core_move_bindings", user_editor_core_move_bindings, default_user_editor_core_move_bindings)
-process_user_table("user_editor_edit_bindings", user_editor_edit_bindings, default_user_editor_edit_bindings)
-process_user_table("user_editor_debug_bindings", user_editor_debug_bindings, default_user_editor_debug_bindings)
-process_user_table("user_editor_debug_ghost_bindings", user_editor_debug_ghost_bindings, default_user_editor_debug_ghost_bindings)
-process_user_table("user_playing_bindings", user_playing_bindings, default_user_playing_bindings)
-process_user_table("user_drive_bindings", user_drive_bindings, default_user_drive_bindings)
-process_user_table("user_foot_bindings", user_foot_bindings, default_user_foot_bindings)
-
-
-local function process_bindings2(bindings, func, input_filter)
-    local function bind_it(name, key)
-        input_filter:bind(
-            key,
-            function () func(name, '+') end,
-            function () func(name, '-') end,
-            function () func(name, '=') end)
-    end
-    for name, key_or_keys in pairs(bindings) do
-        if type(key_or_keys) == "table" then
-            for _,key in ipairs(key_or_keys) do
-                bind_it(name, key)
-            end
-        else
-            bind_it(name, key_or_keys)
-        end
-    end
-end
-
-local function system_receive_button(button, state)
-    if button == "console" and state == '+' then
-        if input_filter_pressed("Ctrl") then
-            system_layer:setEnabled(true)
-            system_layer:selectConsole(true)
-            hud_focus_grab(console)
-        else
-            system_layer:setEnabled(not system_layer.enabled)
-        end
-    elseif button == "screenShot" and state == '+' then
-        capturer:singleScreenShot()
-    end
-end
-
-local function play_receive_button(button, state)
-    game_manager:receiveButton(button, state)
-end
-
-process_bindings2(user_system_bindings, system_receive_button, system_binds)
-
-process_bindings2(user_editor_core_bindings, play_receive_button, editor_core_binds)
-process_bindings2(user_editor_core_move_bindings, play_receive_button, editor_core_move_binds)
-process_bindings2(user_editor_edit_bindings, play_receive_button, editor_edit_binds)
-process_bindings2(user_editor_debug_bindings, play_receive_button, editor_debug_binds)
-process_bindings2(user_editor_debug_ghost_bindings, play_receive_button, editor_debug_ghost_binds)
-
-process_bindings2(user_playing_bindings, play_receive_button, playing_binds)
-process_bindings2(user_drive_bindings, play_receive_button, playing_vehicle_binds)
-process_bindings2(user_foot_bindings, play_receive_button, playing_actor_binds)
-
-
-
-
-
-
 local function commit(committed, proposed)
 
     gfx_option("AUTOUPDATE",false)
@@ -301,12 +142,183 @@ make_active_table(user_cfg, user_cfg_spec,  commit)
 user_cfg.autoUpdate = true
 
 
+--------------
+-- BINDINGS --
+--------------
+
+-- Takes the map of bindings and binds the given func to every bind.  The function takes the name of
+-- the binding and the event: '+' '-' or '='.
+local function process_bindings(bindings, func, input_filter)
+    local function bind_it(name, key)
+        input_filter:bind(
+            key,
+            function () func(name, '+') end,
+            function () func(name, '-') end,
+            function () func(name, '=') end)
+    end
+    for name, key_or_keys in pairs(bindings) do
+        if type(key_or_keys) == "table" then
+            for _,key in ipairs(key_or_keys) do
+                bind_it(name, key)
+            end
+        else
+            bind_it(name, key_or_keys)
+        end
+    end
+end
 
 
+user_system_bindings = user_system_bindings or { }
+local default_user_system_bindings = {
+    console = "Tab";
+    screenShot = "F12";
+}
+process_user_table("user_system_bindings", user_system_bindings, default_user_system_bindings)
+local function system_receive_button(button, state)
+    if button == "console" and state == '+' then
+        if input_filter_pressed("Ctrl") then
+            system_layer:setEnabled(true)
+            system_layer:selectConsole(true)
+            hud_focus_grab(console)
+        else
+            system_layer:setEnabled(not system_layer.enabled)
+        end
+    elseif button == "screenShot" and state == '+' then
+        capturer:singleScreenShot()
+    end
+end
+process_bindings(user_system_bindings, system_receive_button, system_binds)
+
+
+local function game_manager_receive_button(button, state)
+    game_manager:receiveButton(button, state)
+end
+
+user_playing_bindings = user_playing_bindings or { }
+local default_user_playing_bindings = {
+    menu = "Escape";
+}
+process_user_table("user_playing_bindings", user_playing_bindings, default_user_playing_bindings)
+process_bindings(user_playing_bindings, game_manager_receive_button, playing_binds)
+
+user_drive_bindings = user_drive_bindings or { }
+local default_user_drive_bindings = {
+    driveForwards = "w";
+    driveBackwards = "s";
+    driveLeft = "a";
+    driveRight = "d";
+    driveSpecialLeft = "q";
+    driveSpecialRight = "e";
+    driveSpecialUp = "PageUp";
+    driveSpecialDown = "PageDown";
+    driveAltUp = "Up";
+    driveAltDown = "Down";
+    driveAltLeft = "Left";
+    driveAltRight = "Right";
+    driveAbandon = "f";
+    driveHandbrake = "Space";
+    driveLights = "l";
+    driveZoomIn = {"up","S+v"};
+    driveZoomOut = {"down","v"};
+    driveCamera = "c";
+    driveSpecialToggle = "BackSpace";
+}
+process_user_table("user_drive_bindings", user_drive_bindings, default_user_drive_bindings)
+process_bindings(user_drive_bindings, game_manager_receive_button, playing_vehicle_binds)
+
+user_foot_bindings = user_foot_bindings or { }
+local default_user_foot_bindings = {
+    walkForwards = "w";
+    walkBackwards = "s";
+    walkLeft = "a";
+    walkRight = "d";
+    walkBoard = "f";
+    walkJump = "Space";
+    walkCrouch = "c";
+    walkRun = "Shift";
+    walkZoomIn = {"up","S+v"};
+    walkZoomOut = {"down","v"};
+    walkCamera = "c";
+}
+process_user_table("user_foot_bindings", user_foot_bindings, default_user_foot_bindings)
+process_bindings(user_foot_bindings, game_manager_receive_button, playing_actor_binds)
+
+
+-- The editor has 4 modes:
+-- 1) Editing objects
+-- 2) Editing camera (i.e. moving around)
+-- 3) Debug (moving camera around)
+-- 4) Debug (controlling object)
+
+-- Available in (1) (2) (3) (4)
+user_editor_bindings = user_editor_bindings or { }
+local default_user_editor_bindings = {
+    debug = "F5";
+}
+process_user_table("user_editor_bindings", user_editor_bindings, default_user_editor_bindings)
+process_bindings(user_editor_bindings, game_manager_receive_button, editor_binds)
+
+-- Available in (1) (2)
+user_editor_edit_bindings = user_editor_edit_bindings or { }
+local default_user_editor_edit_bindings = {
+    mouseCapture = "right";
+}
+process_user_table("user_editor_edit_bindings", user_editor_edit_bindings, default_user_editor_edit_bindings)
+process_bindings(user_editor_edit_bindings, game_manager_receive_button, editor_edit_binds)
+
+-- Available in (2) (3)
+user_editor_cam_bindings = user_editor_cam_bindings or { }
+local default_user_editor_cam_bindings = {
+    forwards = "w";
+    backwards = "s";
+    strafeLeft = "a";
+    strafeRight = "d";
+    ascend = "Space";
+    descend = "c";
+    faster = "Shift";
+}
+process_user_table("user_editor_cam_bindings", user_editor_cam_bindings, default_user_editor_cam_bindings)
+process_bindings(user_editor_cam_bindings, game_manager_receive_button, editor_cam_binds)
+
+-- Available in (1)
+user_editor_object_bindings = user_editor_object_bindings or { }
+local default_user_editor_object_bindings = {
+    delete = "Delete";
+    duplicate = "C+d";
+    cut = "C+x";
+    copy = "C+c";
+    paste = "C+v";
+    undo = "C+z";
+    redo = "C+y";
+    unselectAll = "C+S+a";
+    selectModeTranslate = "1";
+    selectModeRotate = "2";
+}
+process_user_table("user_editor_object_bindings", user_editor_object_bindings, default_user_editor_object_bindings)
+process_bindings(user_editor_object_bindings, game_manager_receive_button, editor_object_binds)
+
+-- Available in (3) (4)
+user_editor_debug_bindings = user_editor_debug_bindings or { }
+local default_user_editor_debug_bindings = {
+    toggleDebugModeSettings = "F1";
+    pausePhysics = "F2";
+    board = "f";
+    weaponPrimary = "left";
+    weaponSecondary = "right";
+    weaponSwitchUp = {"e", "up"};
+    weaponSwitchDown = {"q", "down"};
+}
+process_user_table("user_editor_debug_bindings", user_editor_debug_bindings, default_user_editor_debug_bindings)
+process_bindings(user_editor_debug_bindings, game_manager_receive_button, editor_debug_binds)
+
+
+--------------------
+-- SAVING TO DISK --
+--------------------
 
 function save_user_cfg(filename)
-    filename = filename or "user_cfg.lua"
-    local f = io.open(filename,"w")
+    filename = filename or 'user_cfg.lua'
+    local f = io.open(filename, 'w')
     f:write([[
 print('Reading user_cfg.lua')
 
@@ -347,21 +359,19 @@ print('Reading user_cfg.lua')
         f:write("}\n\n")
     end
 
-    -- use proposed rather than committed settings, to avoid writing out the autoUpdate header
+    -- Use proposed rather than committed settings, to avoid writing out the autoUpdate header.
     write_table("user_cfg", user_cfg.proposed, user_cfg_default, user_cfg_doc)
     write_table("user_system_bindings", user_system_bindings, default_user_system_bindings, {})
-    if editor_core_binds then
-        write_table("user_editor_core_bindings", user_editor_core_bindings, default_user_editor_core_bindings, {})
-        write_table("user_editor_core_move_bindings", user_editor_core_move_bindings, default_user_editor_core_move_bindings, {})
-        write_table("user_editor_edit_bindings", user_editor_edit_bindings, default_user_editor_edit_bindings, {})
-        write_table("user_editor_debug_bindings", user_editor_debug_bindings, default_user_editor_debug_bindings, {})
-        write_table("user_editor_debug_ghost_bindings", user_editor_debug_ghost_bindings, default_user_editor_debug_ghost_bindings, {})
-    end
+
     write_table("user_playing_bindings", user_playing_bindings, default_user_playing_bindings, {})
     write_table("user_drive_bindings", user_drive_bindings, default_user_drive_bindings, {})
     write_table("user_foot_bindings", user_foot_bindings, default_user_foot_bindings, {})
 
+    write_table("user_editor_bindings", user_editor_bindings, default_user_editor_bindings, {})
+    write_table("user_editor_edit_bindings", user_editor_edit_bindings, default_user_editor_edit_bindings, {})
+    write_table("user_editor_cam_bindings", user_editor_cam_bindings, default_user_editor_cam_bindings, {})
+    write_table("user_editor_object_bindings", user_editor_object_bindings, default_user_editor_object_bindings, {})
+    write_table("user_editor_debug_bindings", user_editor_debug_bindings, default_user_editor_debug_bindings, {})
+
     f:close()
 end
-
-

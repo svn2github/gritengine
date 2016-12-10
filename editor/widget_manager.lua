@@ -16,7 +16,6 @@ local arrow_bounds = vec(1, 8, 1)
 
 widget_manager = {
     clipboard = {},
-    selectedObjs = {},
     widget = nil,
     dragComponent = nil,  -- nil if we're not currently dragging, otherwise the axis / plane
     mode = "translate",  -- 'global', 'rotate'
@@ -41,7 +40,9 @@ local function isect_line_plane(line_a, line_b, plane_pos, plane_normal)
 end
 
 function widget_manager:updateWidget()
-    if #self.selectedObjs == 0 then
+    local editor = game_manager.currentMode
+
+    if editor.map:selectionEmpty() then
         if self.widget ~= nil then
             self.widget = safe_destroy(self.widget)
         end
@@ -51,19 +52,18 @@ function widget_manager:updateWidget()
         return
     end
 
-    local editor = game_manager.currentMode
-
     -- Compute average position.
+    local selected = editor.map:allSelected()
     self.widgetPos = vec(0, 0, 0)
-    for i, obj_name in ipairs(self.selectedObjs) do
+    for i, obj_name in ipairs(selected) do
         local obj = editor.map:getCurrentObject(obj_name)
         self.widgetPos = self.widgetPos + obj[2]
     end
-    self.widgetPos = self.widgetPos / #self.selectedObjs
+    self.widgetPos = self.widgetPos / #selected
     
     self.widgetOrt = Q_ID
     if self.spaceMode == "local" then
-        local obj = editor.map:getCurrentObject(self.selectedObjs[#self.selectedObjs])
+        local obj = editor.map:getCurrentObject(selected[#selected])
         self.widgetOrt = obj[3].rot or Q_ID
     end
 
@@ -74,10 +74,10 @@ function widget_manager:updateWidget()
         self.widget:updatePivot(self.widgetPos, self.widgetOrt)
     end
 
-    if #self.selectedObjs > 1 then
+    if #selected > 1 then
         self.setEditorToolbar("Selected: multiple")
     else
-        self.setEditorToolbar("Selected: " .. self.selectedObjs[1])
+        self.setEditorToolbar("Selected: " .. selected[1])
     end
 
 end
@@ -102,23 +102,9 @@ function widget_manager:setEditorToolbar(str)
     end
 end
 
-function widget_manager:selectAll()
-    self:unselectAll()
-    for target_obj, _ in editor.map.iterCurrentObjects() do
-        self.selectedObjs[#self.selectedObjs + 1] = name
-        editor.map:setSelected(target_obj, true)
-    end
-    self:updateWidget()
-end
-
 function widget_manager:unselectAll()
     local editor = game_manager.currentMode
-
-    for i, obj in ipairs(self.selectedObjs) do
-        editor.map:setSelected(obj, false)
-    end
-    self.selectedObjs = {}
-    
+    editor.map:unselectAll()
     self:updateWidget()
 end
 
@@ -166,24 +152,15 @@ function widget_manager:select(multi)
                 -- Do nothing.
                 return
             end
-            local index = find(self.selectedObjs, target_obj)
-            if index ~= nil then
-                -- Already selected, unselect it.
-                table.remove(self.selectedObjs, index)
-                editor.map:setSelected(target_obj, false)
-            else
-                -- Add it.
-                self.selectedObjs[#self.selectedObjs+1] = target_obj
-                editor.map:setSelected(target_obj, true)
-            end
-
+            -- Toggle selected status.
+            editor.map:setSelected(target_obj, not editor.map:isSelected(target_obj))
         else
-            self:unselectAll()
+            editor.map:unselectAll()
             if target_obj == nil then
                 -- Leave with nothing selected.
+                self:updateWidget()
                 return
             end
-            self.selectedObjs = { target_obj }
             editor.map:setSelected(target_obj, true)
         end
 
@@ -208,19 +185,16 @@ function widget_manager:stopDragging()
     self.dragComponent = nil
 end
 
-function widget_manager:deleteSelection()
+function widget_manager:deleteSelected()
     local editor = game_manager.currentMode
-    for i, obj in ipairs(self.selectedObjs) do
-        editor.map:setSelected(obj, false)
-    end
-    editor.map:delete(self.selectedObjs)
-    self.selectedObjs = {}
+    editor.map:delete(table.clone(editor.map:allSelected()))
+    self:updateWidget()
 end
 
-function widget_manager:copySelectionToClipboard()
+function widget_manager:copySelectedToClipboard()
     local editor = game_manager.currentMode
     self.clipboard = {}
-    for _, obj_name in ipairs(self.selectedObjs) do
+    for _, obj_name in ipairs(editor.map:allSelected()) do
         self.clipboard[obj_name] = editor.map:getCurrentObject(obj_name)
     end
 end
@@ -235,7 +209,7 @@ function widget_manager:uniqueName(orig_name)
         base = orig_name
         counter = 1
     else
-        counter = counter + 1
+        counter = tonumber(counter) + 1
     end
     while true do
         local new_name = ("%s_%d"):format(base, counter)
@@ -248,24 +222,26 @@ end
 
 function widget_manager:paste()
     local editor = game_manager.currentMode
-    self:unselectAll()
+    local new_selection = {}
     for orig_name, obj_decl in pairs(self.clipboard) do
         local name = self:uniqueName(orig_name)
         local class_name, pos, data = obj_decl[1], obj_decl[2], obj_decl[3]
+        -- Putting objects directly on top of other objects is not a good idea.
         pos = pos + vec(1, 1, 0)
         editor.map:add(name, class_name, pos, data)
-        self.selectedObjs[#self.selectedObjs + 1] = name
+        new_selection[#new_selection + 1] = name
     end
     editor.map:applyChange()
-    for _, name in pairs(self.selectedObjs) do
+    editor.map:unselectAll()
+    for _, name in ipairs(new_selection) do
         editor.map:setSelected(name, true)
     end
     self:updateWidget()
 end
 
-function widget_manager:duplicateSelection()
+function widget_manager:duplicateSelected()
     local saved_clipboard = self.clipboard
-    self:copySelectionToClipboard()
+    self:copySelectedToClipboard()
     self:paste()
     self.clipboard = saved_clipboard
 end
@@ -453,7 +429,7 @@ function widget_manager:frameCallback(elapsed_secs)
         end
 
         local editor = game_manager.currentMode
-        for i, obj in ipairs(self.selectedObjs) do
+        for i, obj in ipairs(editor.map:allSelected()) do
             editor.map:proposePosition(obj, editor.map:getPosition(obj) + translation)
         end
 
@@ -481,7 +457,7 @@ function widget_manager:frameCallback(elapsed_secs)
         local editor = game_manager.currentMode
 
         self.widget:updatePivot(self.widgetPos, transform * self.widgetOrt)
-        for i, obj in ipairs(self.selectedObjs) do
+        for i, obj in ipairs(editor.map:allSelected()) do
 
             local origin
             if self.pivotPoint == 'individual origins' then

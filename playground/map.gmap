@@ -7,8 +7,8 @@ return {
         description = "Insert description here",
     },
     editor = {
-        cam_pos = vec(358.208130, -288.598846, 79.696594),
-        cam_quat = quat(0.8576328, -0.2307648, 0.1194128, -0.4437953),
+        cam_pos = vec(367.832367, -243.155182, 57.808571),
+        cam_quat = quat(0.9528264, -0.118343, 0.03444902, -0.2773627),
     },
     env_cubes = {
         dawn = "/system/env_cube_dawn.envcube.tiff",
@@ -39,6 +39,13 @@ return {
             vec(428.627228, -300.718231, 48.865337),
             {
               rot = quat(-0.2756374, 0, 0, 0.9612617),
+            }
+        },
+        ["Unnamed:/vehicles/Bonanza:833"] = {
+            `/vehicles/Bonanza`,
+            vec(383.118164, -218.322174, 49.596478),
+            {
+              rot = quat(0.4539905, 0, 0, 0.8910065),
             }
         },
         ["Waterfall"] = {

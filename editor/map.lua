@@ -1,24 +1,33 @@
--- EditorMap abstracts the collection of objects in the map.  It is responsible for loading / saving
--- them and performing operations (e.g. adding / changing objects).  It also handles the undo
--- history.  It maintains the state of all the objects in the engine (that are used to visualise the
--- map).  The state of those objects should match the state in map.currentState.objects, up to user
--- interaction effects like selection / hiding of objects.
---
--- A map modification with GUI feedback must follow this protocol:
---
--- 1) Call proposeValue(name, v) any number of times to update the GUI with the new value of the
--- object.  This does not have any lasting change, as it does not update currentState.
---
--- 2) Either call cancelChange() to return to the original state, or applyChange() to make the
--- change permanent.  This updates the undo history.
---
--- A similar protocol is used for adding objects.  Changes to multiple objects can be proposed /
--- applied, and can be cancelled / undone / redone atomically.
+--[[
+EditorMap abstracts the collection of objects in the map.  It is responsible for:
+
+* managing the visual representation of the map
+* loading / saving
+* modifying the position / rotation of groups of entities with visual feedback
+* adding / deleting groups of objects
+* undo / redo
+* managing the "selection"
+
+It maintains the state of all the objects in the engine (that are used to visualise the map).
+The state of those objects should match the state in map.currentState.objects, up to user
+interaction effects like selection / hiding of objects.
+
+A map modification with GUI feedback must follow this protocol:
+
+1) Call proposeValue(name, v) any number of times to update the GUI with the new value of the
+object.  This does not have any lasting change, as it does not update currentState.
+
+2) Either call cancelChange() to return to the original state, or applyChange() to make the
+change permanent.  This updates the undo history.
+
+A similar protocol is used for adding objects.  Changes to multiple objects can be proposed /
+applied, and can be cancelled / undone / redone atomically.
+]]
 
 
------------------
--- CAUTION!!! ---
--- --------------
+----------------
+-- CAUTION!!! --
+----------------
 
 -- When changing this code, do not modify any tables under 'currentState' or 'proposed' without
 -- cloning them first (to ensure that the pointers are unique).  This is because these tables are
@@ -60,6 +69,9 @@ function EditorMap.new()
         undoLevels = {},  -- 
         redoLevels = {},
         filename = nil,
+
+        -- The last item in the array is the active object.
+        selected = {}
     }
     make_instance(self, EditorMap)
     self:applyEnvironment()
@@ -69,7 +81,9 @@ end
 function EditorMap:populateOne(name, object)
     local body = table.clone(object[3] or {})
     body.name = name
-    return object_add(object[1], object[2], body)
+    local obj_actual = object_add(object[1], object[2], body)
+    self:updateObjectSelectedVisualisation(name, obj_actual)
+    return obj_actual
 end
 
 function EditorMap:depopulateOne(name)
@@ -100,8 +114,21 @@ function EditorMap:reset()
     -- No need to populateMap, there are no objects.
     self.undoLevels = {}
     self.redoLevels = {}
+    self.selected = {}
     self.filename = nil
     self:applyEnvironment()
+end
+
+-- Ensure all names in self.selected actually exist.
+-- It is necessary to do this after objects are deleted, and you don't know which ones they were.
+function EditorMap:pruneSelected()
+    local new_set = {}
+    for _, name in ipairs(self.selected) do
+        if self.currentState.objects[name] ~= nil then
+            new_set[#new_set + 1] = name
+        end
+    end
+    self.selected = new_set
 end
 
 function EditorMap:undo()
@@ -114,6 +141,7 @@ function EditorMap:undo()
     table.insert(self.redoLevels, 1, self.currentState)
     self.currentState = table.remove(self.undoLevels, 1)
     self:populateMap()
+    self:pruneSelected()
 end
 
 function EditorMap:redo()
@@ -126,6 +154,7 @@ function EditorMap:redo()
     table.insert(self.undoLevels, 1, self.currentState)
     self.currentState = table.remove(self.redoLevels, 1)
     self:populateMap()
+    self:pruneSelected()
 end
 
 function EditorMap:setEditorCamPosOrientation(pos, orientation)
@@ -219,16 +248,6 @@ function EditorMap:pushUndoLevel(tab)
     self.redoLevels = {}
 end
 
--- Updates currentState to clone a path, so that we can modify it.  The path must lead to a table.
--- Returns the new deep table.
-function EditorMap:clonePath(tab, path)
-    for _, field in ipairs(path) do
-        tab[field] = table.clone(tab[field])
-        tab = tab[field]
-    end
-    return tab
-end
-
 -- Toggle the visual representation of an object being selected (does not do anything beyond
 -- changing the appearance of the object).
 function EditorMap:setSelected(name, v)
@@ -237,16 +256,28 @@ function EditorMap:setSelected(name, v)
         error(('No such object: "%s"'):format(name))
     end
 
-    -- Now update the visual representation.
-    local obj_actual = object_get(name)
-    local inst = obj_actual.instance
-    if inst == nil then
-        -- It's not streamed in right now, so we're done.
+    local index = find(self.selected, name)
+    if (index ~= nil) == v then
         return
     end
-    if inst.gfx ~= nil then
-        inst.gfx.wireframe = v
+    if v then
+        table.insert(self.selected, name)
+    else
+        table.remove(self.selected, index)
     end
+
+    -- Now update the visual representation.
+    self:updateObjectSelectedVisualisation(name, object_get(name))
+end
+
+function EditorMap:isSelected(name)
+    local index = find(self.selected, name)
+    return index ~= nil
+end
+
+
+function EditorMap:selectionEmpty()
+    return #self.selected == 0
 end
 
 
@@ -276,7 +307,36 @@ function EditorMap:iterCurrentObjects()
 end
 
 
--- Internal function to make the object match the current / proposed state of the map.
+-- Does not take a copy, so do not change the selection while iterating over it.
+function EditorMap:allSelected()
+    return self.selected
+end
+
+
+function EditorMap:unselectAll()
+    local old_set = self.selected
+    self.selected = {}
+    for _, name in ipairs(old_set) do
+        self:updateObjectSelectedVisualisation(name, object_get(name))
+    end
+end
+
+
+-- Internal function to update the effect that makes objects appear selected.  This has to be done
+-- even for just-spawned objects.
+function EditorMap:updateObjectSelectedVisualisation(name, obj_actual)
+    local inst = obj_actual.instance
+    if inst == nil then
+        -- It's not streamed in right now, so we're done.
+        return
+    end
+    if inst.gfx ~= nil then
+        inst.gfx.wireframe = self:isSelected(name)
+    end
+end
+
+-- Internal function to make the object match the current / proposed state of the map.  This need
+-- not be called for brand new objects.
 function EditorMap:updateObjectVisualisation(name, obj)
     local obj_actual = object_get(name)
     if obj == nil then
@@ -307,6 +367,8 @@ function EditorMap:updateObjectVisualisation(name, obj)
         inst.audio.position = pos
         inst.audio.orientation = rot or Q_ID
     end
+
+    self:updateObjectSelectedVisualisation(name, obj_actual)
 end
 
 
@@ -390,6 +452,7 @@ function EditorMap:delete(names)
         self.currentState.objects[name] = nil
         self:depopulateOne(name)
     end 
+    self:pruneSelected()
 end
 
 
