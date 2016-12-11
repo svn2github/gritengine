@@ -388,12 +388,9 @@ ColClass = extends (BaseClass) {
                 )
                 body.owner = persistent;
                 instance.body = body
-                if persistent.floating then
-                    instance.body:deactivate()
-                end
                 instance.camAttachPos = persistent.spawnPos + rot * persistent.camAttachPos
                 -- this causes an alloc so do them here where the code is cold
-                instance.body.updateCallback = function (p,q)
+                body.updateCallback = function (p,q)
                     instance.camAttachPos = p + q * persistent.camAttachPos
                     instance.gfx.localPosition = p
                     instance.gfx.localOrientation = q
@@ -511,7 +508,6 @@ ColClass = extends (BaseClass) {
             local tot_triangles, tot_batches = BaseClass.getStatistics(persistent)
             
             local instance = persistent.instance
-            local body = instance.body
 
             if instance.pbats then
                 for proc_bat_name, pbat in pairs(instance.pbats) do
@@ -532,14 +528,6 @@ ColClass = extends (BaseClass) {
             local rb = persistent.instance.body
             return #rb.linearVelocity
         end;
-        flip = function (persistent)
-            if not persistent.activated then error("Not activated: "..persistent.name) end
-            local rb = persistent.instance.body
-            if rb.mass == 0 then return end
-            rb.worldOrientation = quat(V_NORTH, rb.worldOrientation * V_FORWARDS * vector3(1,1,0)) * quat(0,0,1,0);
-            rb.worldPosition = rb.worldPosition + vector3(0,0,1)
-            rb:activate() 
-        end;
         toggleProceduralBatches = function (persistent)
             if not persistent.activated then error("Not activated: "..persistent.name) end
             local pbats = persistent.instance.pbats
@@ -549,23 +537,7 @@ ColClass = extends (BaseClass) {
                 pbat.enabled = v
             end
         end;
-        realign = function (persistent)
-            if not persistent.activated then error("Not activated: "..persistent.name) end
-            local rb = persistent.instance.body
-            rb.worldOrientation = quat(V_NORTH, rb.worldOrientation * V_FORWARDS * vector3(1,1,0))
-            rb.worldPosition = rb.worldPosition + vector3(0,0,3);
-            rb.angularVelocity = V_ZERO
-            rb.linearVelocity = V_ZERO
-            rb:activate() 
-        end;
         special=function(persistent)
-            if not persistent.activated then error("Not activated: "..persistent.name) end
-            local rb = persistent.instance.body
-            rb.worldOrientation = quat(V_NORTH, rb.worldOrientation * V_FORWARDS * vector3(1,1,0));
-            rb.worldPosition = rb.worldPosition - vector3(0,0,3);
-            rb.angularVelocity = V_ZERO
-            rb.linearVelocity = V_ZERO
-            rb:activate() 
         end;
         beingFired=function(persistent)
         end;

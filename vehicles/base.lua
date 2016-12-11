@@ -625,11 +625,6 @@ function Vehicle.setRight (self, v)
 end
         
 
-function Vehicle.realign (self)
-    ColClass.realign(self)
-    self.instance.broken = false
-end
-
 function Vehicle.setMu (self, mu_front_side, mu_front_drive, mu_side, mu_drive)
     if not self.activated then error("Not activated: "..self.name) end
     for _, w in pairs(self.instance.wheels) do

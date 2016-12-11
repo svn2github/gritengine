@@ -613,11 +613,6 @@ function Plane.warp (persistent, pos,orientation)
     rb.angularVelocity = V_ZERO
 end
 
-function Plane.realign (persistent)
-    ColClass.realign(persistent)
-    persistent.instance.broken = false
-end
-
 function Plane.reset (persistent)
     if not persistent.activated then error("Not activated: "..persistent.name) end
     persistent.pos = persistent.instance.body.worldPosition

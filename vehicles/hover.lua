@@ -267,10 +267,6 @@ function Hover.setSpecialLeft (persistent, v)
     persistent.instance.strafeLeft = v
 end
 
-function Hover.realign (persistent) -- what's this for?
-        ColClass.realign(persistent)
-end
-
 function Hover.reset (persistent) -- what's this for?
         if not persistent.activated then error("Not activated: "..persistent.name) end
         local was_driving = player_ctrl.vehicle == persistent

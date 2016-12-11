@@ -89,9 +89,6 @@ ActiveObjectShell = extends (ColClass) {
     setHandbrake = function (persistent, v)
         print(persistent.name..":  handbrake right set to "..tostring(v))
     end;
-    realign = function (persistent)
-        print(persistent.name..":  realign pressed")
-    end;
     setSpecialUp = function (persistent, v)
         print(persistent.name..":  special up set to "..tostring(v))
     end;
