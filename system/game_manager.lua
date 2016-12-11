@@ -77,6 +77,7 @@ game_manager = {
             
             self.currentMode:destroy();
             self.currentMode = nil
+
             -- TODO(dcunnin): Reset all settings etc to base values.
             -- Reset gfx_option, core_option, physics_option, audio_option
             -- Push config from user_cfg
@@ -85,6 +86,8 @@ game_manager = {
             -- env_saturation_mask
             -- global_exposure
             -- visibility / existence of sky bodies
+            env_saturation_mask = 1
+
             object_all_del()
             reset_binds()
             -- A lot of objects should now be unreachable, a good time to garbage collect.

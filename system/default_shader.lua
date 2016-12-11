@@ -22,6 +22,8 @@ shader `Default` {
 
     emissiveMap = uniform_texture_2d(1, 1, 1);
     emissiveMask = uniform_float(0, 0, 0);
+    emissiveVertex = static_float(0);  -- Boolean
+    emissiveAlphaVertex = static_float(0);  -- Boolean
 
     vertexCode = [[
         out.position = transform_to_world(vert.position.xyz);
@@ -35,7 +37,7 @@ shader `Default` {
         var diff_texel = sample(mat.diffuseMap, uv);
         if (mat.premultipliedAlpha > 0) diff_texel = pma_decode(diff_texel);
         out.diffuse = gamma_decode(diff_texel.rgb) * mat.diffuseMask;
-        if (mat.diffuseVertex > 0) out.diffuse = out.diffuse * vert.colour.xyz;
+        if (mat.diffuseVertex > 0) out.diffuse = out.diffuse * gamma_decode(vert.colour.xyz);
         out.alpha = diff_texel.a * mat.alphaMask;
         if (mat.alphaVertex > 0) out.alpha = out.alpha * vert.colour.w;
         if (out.alpha <= mat.alphaRejectThreshold) discard;
@@ -50,7 +52,10 @@ shader `Default` {
     additionalCode = [[
         var uv = vert.coord0.xy * mat.textureScale + global.time * mat.textureAnimation;
         var c = sample(mat.emissiveMap, uv);
-        out.colour = gamma_decode(c.rgb) * mat.emissiveMask;
+        var mask = mat.emissiveMask * c.w;
+        if (mat.emissiveVertex > 0) mask = mask * gamma_decode(vert.colour.xyz);
+        if (mat.emissiveAlphaVertex > 0) mask = mask * vert.colour.w;
+        out.colour = gamma_decode(c.rgb) * mask;
     ]],
 }
 

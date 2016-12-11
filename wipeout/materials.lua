@@ -28,6 +28,7 @@ material `UnderSide` {
 
 material `PadBase` {
     diffuseMap = `PadBase.dds`,
+    castShadows = false,
 }
 
 
@@ -38,30 +39,54 @@ material `Barrier` {
 
     diffuseMap = `Barrier.dds`,
     emissiveMap = `Barrier.dds`,
-    emissiveMask = vec(1, 1, 1),
-    alphaRejectThreshold = 0.4,
+    emissiveMask = vec(0.5, 0.5, 0.5),
+    alphaRejectThreshold = 0.0,
     additionalLighting = true,
 }
 
 material `NeonRed` {
-    diffuseMap = `NeonRed.dds`,
-    emissiveMap = `NeonRed.dds`,
-    emissiveMask = vec(1, 1, 1),
+    sceneBlend = "ALPHA",
+    backfaces = true,
+    castShadows = false,
     additionalLighting = true,
+
+    diffuseMap = `NeonRed.dds`,
+    diffuseVertex = 1,
+    alphaVertex = 1,
+    alphaMask = 1,
+
+    emissiveMap = `NeonRed.dds`,
+    emissiveMask = 10 * vec(1, 1, 1),
+    emissiveVertex = 1,
+    emissiveAlphaVertex = 1,
 }
 
 material `NeonGreen` {
-    diffuseMap = `NeonGreen.dds`,
-    emissiveMap = `NeonGreen.dds`,
-    emissiveMask = vec(1, 1, 1),
+    sceneBlend = "ALPHA",
+    backfaces = true,
+    castShadows = false,
     additionalLighting = true,
+
+    diffuseMap = `NeonGreen.dds`,
+    diffuseVertex = 1,
+    alphaVertex = 1,
+    alphaMask = 1,
+
+    emissiveMap = `NeonGreen.dds`,
+    emissiveMask = 10 * vec(1, 1, 1),
+    emissiveVertex = 1,
+    emissiveAlphaVertex = 1,
 }
 
 material `Glass` {
+    --diffuseMask = vec(10, 10, 10) * 100,
+    specularMask = 0,
     sceneBlend = "ALPHA",
     diffuseMap = `Glass.dds`,
+    castShadows = false,
 }
 
 sky_material `Sky` {
     emissiveMap = `FunkyStarField.dds`,
+    emissiveMask = vec(4, 4, 4),
 }

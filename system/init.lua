@@ -3,6 +3,16 @@
 --lua5.2 it's so amazingly compatible
 math.mod = math.fmod
 
+-- Allow Python-style string formatting with % operator.
+getmetatable("").__mod = function(str, n)
+    if type(n) == 'table' then
+        return str:format(unpack(n))
+    else
+        return str:format(n)
+    end
+end
+
+
 -- Disable them as we boot the engine.
 core_option("FOREGROUND_WARNINGS", false)
 

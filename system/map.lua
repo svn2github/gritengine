@@ -34,10 +34,10 @@ function map_build_empty()
         -- Set all to nil for no environmental lighting.
         -- Set all but one to nil for no env cycle.
         env_cubes = {
-            dark = nil,
-            dawn = nil,
-            dusk = nil,
-            noon = nil,
+            dawn = `env_cube_dawn.envcube.tiff`,
+            noon = `env_cube_noon.envcube.tiff`,
+            dusk = `env_cube_dusk.envcube.tiff`,
+            dark = `env_cube_dark.envcube.tiff`,
         },
 
         environment = {

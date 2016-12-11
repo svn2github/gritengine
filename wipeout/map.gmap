@@ -10,12 +10,6 @@ return {
         cam_pos = vec(478.110413, -2011.133667, 77.745369),
         cam_quat = quat(0.8160228, -0.1087357, 0.07498375, -0.5627263),
     },
-    env_cubes = {
-        dawn = nil,
-        noon = nil,
-        dusk = nil,
-        dark = nil,
-    },
     environment = {
         time = 0,
         clock_rate = 0,
