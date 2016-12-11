@@ -7,21 +7,26 @@ return {
         description = "Insert description here",
     },
     editor = {
-        cam_pos = vec(478.110413, -2011.133667, 77.745369),
-        cam_quat = quat(0.8160228, -0.1087357, 0.07498375, -0.5627263),
+        cam_pos = vec(546.273376, -2284.492432, 120.828552),
+        cam_quat = quat(-0.9294961, 0.3612744, 0.02691071, -0.06923658),
+    },
+    env_cubes = {
+        dawn = nil,
+        noon = nil,
+        dusk = nil,
+        dark = "/wipeout/wipeout.envcube.tiff",
     },
     environment = {
         time = 0,
         clock_rate = 0,
         env_cycle_file = `env_cycle.lua`,
     },
-    env_cubes = {
-        dark = `wipeout.envcube.tiff`,
-        dawn = nil,
-        dusk = nil,
-        noon = nil,
-    },
     objects = {
+        ["Unnamed:/detached/comet:12144"] = {
+            `/detached/comet`,
+            vec(547.573303, -2252.513428, 97.077606),
+            {}
+        },
         ["unnamed_0"] = {
             `barrier01`,
             vec(455.558014, -2127.729980, 24.751200),
