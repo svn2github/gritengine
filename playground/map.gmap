@@ -19,7 +19,7 @@ return {
     environment = {
         time = 44595.25434,
         clock_rate = 30,
-        env_cycle_file = nil,
+        env_cycle_file = `/system/env_cycle.lua`,
     },
     objects = {
         ["Road2"] = {
