@@ -144,11 +144,10 @@ function include_map(mapfile)
     env_cube_noon = map.env_cubes.noon
     env_cube_dusk = map.env_cubes.dusk
     env_cube_dark = map.env_cubes.dark
-    env_recompute()
-    
-    env.secondsSinceMidnight = map.environment.time
     env.clockRate = map.environment.clock_rate
-    include(map.environment.env_cycle_file or `/system/env_cycle.lua`)
+    env.secondsSinceMidnight = map.environment.time
+    env_cycle = include(map.environment.env_cycle_file or `/system/env_cycle.lua`)
+    env_recompute()
 end
 
 local function quoted_or_nil(v)
@@ -189,7 +188,7 @@ function map_write_to_file(map, filename)
     file:write(('        time = %s,\n'):format(map.environment.time))
     file:write(('        clock_rate = %s,\n'):format(map.environment.clock_rate))
     if map.environment.env_cycle_file then
-        file:write(('        env_cycle_file = %q,\n'):format(map.environment.env_cycle_file))
+        file:write(('        env_cycle_file = `%s`,\n'):format(get_relative_path(filename, map.environment.env_cycle_file)))
     else
         file:write('        env_cycle_file = nil,\n')
     end
