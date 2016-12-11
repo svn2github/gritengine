@@ -53,11 +53,11 @@ class `Money` (ColClass) {
 }
 
 class `BrickWall` (ProcPileClass) {
-    spawnObjects = function(persistent, spawn)
-        local brick_class = persistent.brickClass
-        local x_min = persistent.xMin
-        local x_max = persistent.xMax
-        local height = persistent.height
+    spawnObjects = function(self, spawn)
+        local brick_class = self.brickClass
+        local x_min = self.xMin
+        local x_max = self.xMax
+        local height = self.height
         for z=0,height-1 do
             local x_min_, x_max_ = x_min, x_max
             if z % 2 == 1 then

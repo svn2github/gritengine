@@ -575,14 +575,14 @@ local FpsPlayerClass = extends (ColClass) {
 		main.audioCentrePos = main.camPos
     end;
 	
-    controlBegin = function (persistent)
-        persistent.instance.gfx.enabled = false
+    controlBegin = function (self)
+        self.instance.gfx.enabled = false
 		return true
     end;
 	
-    controlAbandon = function(persistent)
-        persistent.instance.gfx.enabled = true
-		persistent.instance.needsFrameCallbacks = false
+    controlAbandon = function(self)
+        self.instance.gfx.enabled = true
+		self.instance.needsFrameCallbacks = false
     end;
 }
 

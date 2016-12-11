@@ -10,10 +10,10 @@ class `speedpad` (BaseClass) {castShadows=true,renderingDistance=500}
 class `weaponpad` (BaseClass) {castShadows=true,renderingDistance=500}
 
 local SpinningClass = extends (ColClass) {
-    activate = function (persistent,instance,class)
-        ColClass.activate(persistent,instance,class)
-        instance.spinSpeed = persistent.spinSpeed or 10
-        instance.spinAxis = persistent.spinAxis or V_UP
+    activate = function (self,instance,class)
+        ColClass.activate(self,instance,class)
+        instance.spinSpeed = self.spinSpeed or 10
+        instance.spinAxis = self.spinAxis or V_UP
         instance.body.angularVelocity = math.rad(instance.spinSpeed)*instance.spinAxis
     end
 }

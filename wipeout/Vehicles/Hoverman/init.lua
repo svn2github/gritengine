@@ -18,26 +18,26 @@ WipeoutCar = extends(ColClass)
 
     hoverHeight = 1;
 
-    setPid = function(persistent, P,I,D,min,max)
-        local instance = persistent.instance
-        for i, jet in ipairs(persistent.jetsHover) do
+    setPid = function(self, P,I,D,min,max)
+        local instance = self.instance
+        for i, jet in ipairs(self.jetsHover) do
             instance.jetsHoverPids[i] = pid_ctrl.new(vector3(0,0,0),P,I,D,min,max)
         end
     end;
 
-    activate = function(persistent, instance)
-        if ColClass.activate(persistent, instance) then
+    activate = function(self, instance)
+        if ColClass.activate(self, instance) then
             return true
         end
-        persistent.needsStepCallbacks = true;
+        self.needsStepCallbacks = true;
 
         instance.canDrive = true;
 
-        local global_pid = persistent.pid
+        local global_pid = self.pid
         local P,I,D,min,max = global_pid.p, global_pid.i, global_pid.d, global_pid.min, global_pid.max
         
         instance.jetsHoverPids = {}
-        for i, jet in ipairs(persistent.jetsHover) do 
+        for i, jet in ipairs(self.jetsHover) do 
             if jet.pid then
                 P,I,D,min,max = jet.pid.p, jet.pid.i, jet.pid.d, jet.pid.min, jet.pid.max
             end
@@ -46,15 +46,15 @@ WipeoutCar = extends(ColClass)
         end
     end;
     
-    deactivate = function(persistent, instance)
-        persistent.needsStepCallbacks = false;
-        return ColClass.deactivate(persistent)
+    deactivate = function(self, instance)
+        self.needsStepCallbacks = false;
+        return ColClass.deactivate(self)
     end;
 
-    stepCallback = function(persistent, instance)
-        if not persistent.activated then error("Not activated: "..persistent.name) end
+    stepCallback = function(self, instance)
+        if not self.activated then error("Not activated: "..self.name) end
         
-        local instance = persistent.instance
+        local instance = self.instance
         local body = instance.body
         local mass, inertia = body.mass, body.inertia
         local wp = body.worldPosition
@@ -65,9 +65,9 @@ WipeoutCar = extends(ColClass)
         do --hovering
             body:force(vector3(0,0,-(gravity_z*mass)),wp) --negate gravity for the whole vehicle
             
-            local hover_height = persistent.hoverHeight
+            local hover_height = self.hoverHeight
 
-            local jets = persistent.jetsHover
+            local jets = self.jetsHover
             local jets_count = #jets
             local mass_per_jet = mass/jets_count
 
@@ -121,34 +121,34 @@ WipeoutCar = extends(ColClass)
         end
     end;
 
-    setPush = function(persistent, v)
-        if not persistent.activated then error("Not activated: "..persistent.name) end
-        persistent.instance.forward = v
+    setPush = function(self, v)
+        if not self.activated then error("Not activated: "..self.name) end
+        self.instance.forward = v
     end;
 
-    setPull = function(persistent, v)
-        if not persistent.activated then error("Not activated: "..persistent.name) end
-        persistent.instance.backward = v
+    setPull = function(self, v)
+        if not self.activated then error("Not activated: "..self.name) end
+        self.instance.backward = v
     end;
 
-    setShouldSteerLeft = function(persistent, v)
-        if not persistent.activated then error("Not activated: "..persistent.name) end
-        persistent.instance.steerLeft = v
+    setShouldSteerLeft = function(self, v)
+        if not self.activated then error("Not activated: "..self.name) end
+        self.instance.steerLeft = v
     end;
 
-    setShouldSteerRight = function(persistent, v)
-        if not persistent.activated then error("Not activated: "..persistent.name) end
-        persistent.instance.steerRight = v
+    setShouldSteerRight = function(self, v)
+        if not self.activated then error("Not activated: "..self.name) end
+        self.instance.steerRight = v
     end;
 
-    setHandbrake = function(persistent, v)
-        if not persistent.activated then error("Not activated: "..persistent.name) end
-        persistent.instance.handbrake = v
+    setHandbrake = function(self, v)
+        if not self.activated then error("Not activated: "..self.name) end
+        self.instance.handbrake = v
     end;
 
-    setBoost = function(persistent, v) --should use weapon
-        if not persistent.activated then error("Not activated: "..persistent.name) end
-        persistent.instance.boost = v
+    setBoost = function(self, v) --should use weapon
+        if not self.activated then error("Not activated: "..self.name) end
+        self.instance.boost = v
     end;
 
     setSpecialLeft = do_nothing;

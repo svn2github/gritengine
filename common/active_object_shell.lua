@@ -3,19 +3,19 @@ ActiveObjectShell = extends (ColClass) {
     renderingDistance = 50;
     additionalState = "DefaultClassState";
 
-    init = function (persistent)
-        ColClass.init(persistent)
-        print("Creating "..persistent.name.." of class "..persistent.className.." with additionalState="..persistent.additionalState)
+    init = function (self)
+        ColClass.init(self)
+        print("Creating "..self.name.." of class "..self.className.." with additionalState="..self.additionalState)
     end;
 
-    activate = function (persistent, instance)
+    activate = function (self, instance)
         -- initialise the super class state (basic physics)
-        if ColClass.activate (persistent, instance) then
+        if ColClass.activate (self, instance) then
                 -- if superclass returns true, skipping activation (this can happen if player is too close to spawn point)
                 return true
         end
 
-        print("Activating "..persistent.name)
+        print("Activating "..self.name)
 
         -- initialise any state for streamed in object here (this state does not persist when streamed out)
         instance.timeSinceActivation = 0
@@ -24,14 +24,14 @@ ActiveObjectShell = extends (ColClass) {
         instance.canDrive = true
 
         -- request that stepCallback be called every physics tick
-        persistent.needsStepCallbacks = true
+        self.needsStepCallbacks = true
 
     end;
 
-    stepCallback = function (persistent, elapsed)
+    stepCallback = function (self, elapsed)
 
         -- This following line means the stepCallback can only be called on an activated object
-        local instance = persistent.instance
+        local instance = self.instance
 
         -- this was initialised by ColClass.activate, cache it in a local var for performance
         local body = instance.body
@@ -58,63 +58,63 @@ ActiveObjectShell = extends (ColClass) {
 
     end;
 
-    deactivate = function (persistent)
-        local instance = persistent.instance
-        print("Deactivating "..persistent.name)
+    deactivate = function (self)
+        local instance = self.instance
+        print("Deactivating "..self.name)
 
         -- request that stepCallback be called every physics tick
-        persistent.needsStepCallbacks = false
+        self.needsStepCallbacks = false
 
         -- clean up any local state here
         -- (only things like additional physics objects, graphics objects, callbacks with env system, etc)
 
         -- ColClass cleans up everything that ColClass.activate added
-        return ColClass.deactivate (persistent)
+        return ColClass.deactivate (self)
 
     end;
 
     -- these are needed if you set instance.canDrive = true
-    setPush = function (persistent, v)
-        print(persistent.name..":  push set to "..tostring(v))
+    setPush = function (self, v)
+        print(self.name..":  push set to "..tostring(v))
     end;
-    setPull = function (persistent, v)
-        print(persistent.name..":  pull set to "..tostring(v))
+    setPull = function (self, v)
+        print(self.name..":  pull set to "..tostring(v))
     end;
-    setShouldSteerLeft = function (persistent, v)
-        print(persistent.name..":  steer left set to "..tostring(v))
+    setShouldSteerLeft = function (self, v)
+        print(self.name..":  steer left set to "..tostring(v))
     end;
-    setShouldSteerRight = function (persistent, v)
-        print(persistent.name..":  steer right set to "..tostring(v))
+    setShouldSteerRight = function (self, v)
+        print(self.name..":  steer right set to "..tostring(v))
     end;
-    setHandbrake = function (persistent, v)
-        print(persistent.name..":  handbrake right set to "..tostring(v))
+    setHandbrake = function (self, v)
+        print(self.name..":  handbrake right set to "..tostring(v))
     end;
-    setSpecialUp = function (persistent, v)
-        print(persistent.name..":  special up set to "..tostring(v))
+    setSpecialUp = function (self, v)
+        print(self.name..":  special up set to "..tostring(v))
     end;
-    setSpecialDown = function (persistent, v)
-        print(persistent.name..":  special down set to "..tostring(v))
+    setSpecialDown = function (self, v)
+        print(self.name..":  special down set to "..tostring(v))
     end;
-    setSpecialLeft = function (persistent, v)
-        print(persistent.name..":  special left set to "..tostring(v))
+    setSpecialLeft = function (self, v)
+        print(self.name..":  special left set to "..tostring(v))
     end;
-    setSpecialRight = function (persistent, v)
-        print(persistent.name..":  special right set to "..tostring(v))
+    setSpecialRight = function (self, v)
+        print(self.name..":  special right set to "..tostring(v))
     end;
-    setAltUp = function (persistent, v)
-        print(persistent.name..":  alt up set to "..tostring(v))
+    setAltUp = function (self, v)
+        print(self.name..":  alt up set to "..tostring(v))
     end;
-    setAltDown = function (persistent, v)
-        print(persistent.name..":  alt down set to "..tostring(v))
+    setAltDown = function (self, v)
+        print(self.name..":  alt down set to "..tostring(v))
     end;
-    setAltLeft = function (persistent, v)
-        print(persistent.name..":  alt left set to "..tostring(v))
+    setAltLeft = function (self, v)
+        print(self.name..":  alt left set to "..tostring(v))
     end;
-    setAltRight = function (persistent, v)
-        print(persistent.name..":  alt right set to "..tostring(v))
+    setAltRight = function (self, v)
+        print(self.name..":  alt right set to "..tostring(v))
     end;
-    special = function (persistent)
-        print(persistent.name..":  special pressed")
+    special = function (self)
+        print(self.name..":  special pressed")
     end;
 
 }

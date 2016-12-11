@@ -5,47 +5,47 @@ ClockHandsClass = {
     timeOffset = 0; -- for clocks that are not accurately 'set'
     renderingDistance = 400;
 
-    init = function (persistent)
-        persistent:addDiskResource(persistent.secondHandMesh)
-        persistent:addDiskResource(persistent.minuteHandMesh)
-        persistent:addDiskResource(persistent.hourHandMesh)
+    init = function (self)
+        self:addDiskResource(self.secondHandMesh)
+        self:addDiskResource(self.minuteHandMesh)
+        self:addDiskResource(self.hourHandMesh)
     end;
             
-    activate = function (persistent,instance)
+    activate = function (self,instance)
 
         instance.gfx = gfx_body_make()
-        instance.gfx.localPosition = persistent.spawnPos
-        instance.gfx.localOrientation = persistent.rot or quat(1,0,0,0)
+        instance.gfx.localPosition = self.spawnPos
+        instance.gfx.localOrientation = self.rot or quat(1,0,0,0)
         
-        local class_name = persistent.class.name
-        instance.secondHand = instance.gfx:makeChild(persistent.secondHandMesh)
-        instance.minuteHand = instance.gfx:makeChild(persistent.minuteHandMesh)
-        instance.hourHand   = instance.gfx:makeChild(persistent.hourHandMesh)
+        local class_name = self.class.name
+        instance.secondHand = instance.gfx:makeChild(self.secondHandMesh)
+        instance.minuteHand = instance.gfx:makeChild(self.minuteHandMesh)
+        instance.hourHand   = instance.gfx:makeChild(self.hourHandMesh)
 
-        instance.secondHand.castShadows = persistent.castShadows == true
-        instance.minuteHand.castShadows = persistent.castShadows == true
-        instance.hourHand.castShadows = persistent.castShadows == true        
+        instance.secondHand.castShadows = self.castShadows == true
+        instance.minuteHand.castShadows = self.castShadows == true
+        instance.hourHand.castShadows = self.castShadows == true        
         
-        instance.secondHand.localScale = persistent.secondHandScale
-        instance.minuteHand.localScale = persistent.minuteHandScale
-        instance.hourHand.localScale = persistent.hourHandScale
+        instance.secondHand.localScale = self.secondHandScale
+        instance.minuteHand.localScale = self.minuteHandScale
+        instance.hourHand.localScale = self.hourHandScale
         
-        instance.envCallback = function () persistent:updateHands() end
+        instance.envCallback = function () self:updateHands() end
         env:addClockCallback(instance.envCallback)
     end;
     
-    deactivate = function (persistent)
-        env:removeClockCallback(persistent.instance.envCallback)
+    deactivate = function (self)
+        env:removeClockCallback(self.instance.envCallback)
     end;
     
     -- rotates the hands according to current time
     -- hands point to Z by default and face Y
 
-    updateHands = function (persistent)
+    updateHands = function (self)
     
-        local inst = persistent.instance
+        local inst = self.instance
         
-        local current = math.mod(env.secondsSinceMidnight+persistent.timeOffset, 60*60*12)
+        local current = math.mod(env.secondsSinceMidnight+self.timeOffset, 60*60*12)
         
         local secAngle = 360*(math.mod(current,60)/60)
         inst.secondHand.localOrientation = quat(secAngle,V_BACKWARDS)

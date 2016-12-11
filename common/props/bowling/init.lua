@@ -16,14 +16,14 @@ material `Ball` {
 
 -- TODO: This should be cleaned up, I think there is no need for extends() in this case.
 class `Deck` (extends(ProcPileClass) {
-    spawnObjects = function(persistent, spawn)
-        local rows = persistent.rows
-        local space = persistent.space
+    spawnObjects = function(self, spawn)
+        local rows = self.rows
+        local space = self.space
         local spacex = space
         local spacey = space * .8645
         for y=1,rows do
                 for x=-y+1,y,2 do
-                        spawn(persistent.pinClass, vector3(x*spacex/2, (y-1)*spacey, class_get(persistent.pinClass).placementZOffset), {})
+                        spawn(self.pinClass, vector3(x*spacex/2, (y-1)*spacey, class_get(self.pinClass).placementZOffset), {})
                 end
         end
     end;

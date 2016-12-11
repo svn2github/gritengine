@@ -3,33 +3,33 @@
 SoundEmitterClass = {
         renderingDistance=50;
 		type = "SoundEmitterClass";
-        init = function(persistent)
-                persistent:addDiskResource(persistent.audioFile or persistent.className..".wav")
+        init = function(self)
+                self:addDiskResource(self.audioFile or self.className..".wav")
         end;
-        activate = function (persistent, instance)
-                instance.audio = audio_body_make(persistent.audioFile or persistent.className..".wav")
+        activate = function (self, instance)
+                instance.audio = audio_body_make(self.audioFile or self.className..".wav")
                 instance.audio.looping = true
-                instance.audio.position = persistent.spawnPos
-                if persistent.pitch then
-                    instance.audio.pitch = persistent.pitch
+                instance.audio.position = self.spawnPos
+                if self.pitch then
+                    instance.audio.pitch = self.pitch
                 end
-                if persistent.orientation then
-                    instance.audio.orientation = persistent.orientation
-                    instance.audio.separation = persistent.separation or 1
+                if self.orientation then
+                    instance.audio.orientation = self.orientation
+                    instance.audio.separation = self.separation or 1
                 end
-                if persistent.volume then
-                    instance.audio.volume = persistent.volume
+                if self.volume then
+                    instance.audio.volume = self.volume
                 end
-                if persistent.referenceDistance then
-                    instance.audio.referenceDistance = persistent.referenceDistance
+                if self.referenceDistance then
+                    instance.audio.referenceDistance = self.referenceDistance
                 end
-                if persistent.rollOff then
-                    instance.audio.rollOff = persistent.rollOff
+                if self.rollOff then
+                    instance.audio.rollOff = self.rollOff
                 end
                 instance.audio:play()
         end;
-        deactivate = function (persistent)
-                local instance = persistent.instance
+        deactivate = function (self)
+                local instance = self.instance
                 if instance.audio ~= nil then
                     instance.audio:stop()
                     instance.audio:destroy()

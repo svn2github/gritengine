@@ -26,8 +26,8 @@ material `JengaBrick` {
 }
 
 class `JengaStack` (extends(ProcPileClass) {
-    spawnObjects = function(persistent, spawn)
-        for level=0,persistent.height do
+    spawnObjects = function(self, spawn)
+        for level=0,self.height do
             for b=-1,1 do
                 local pos = vector3(0, b * 0.3, (.5+level)*.24)
                 local rot = level%2==0 and Q_FORWARDS or Q_RIGHT

@@ -64,41 +64,41 @@ Plane = extends (ColClass) {
     brakePlot = { [-10] = 100; [0] = 100; [10] = 2500; [20] = 2500; [40] = 2500; };
 }
 
-function Plane.init(persistent)
-    ColClass.init(persistent)
+function Plane.init(self)
+    ColClass.init(self)
 end
 
-function Plane.activate (persistent,instance)
-    if ColClass.activate(persistent,instance) then
+function Plane.activate (self,instance)
+    if ColClass.activate(self,instance) then
         return true
     end
 
-    persistent.needsFrameCallbacks = true
-    persistent.needsStepCallbacks = true
+    self.needsFrameCallbacks = true
+    self.needsStepCallbacks = true
 
     instance.push = 0
     instance.parked = true
     instance.canDrive = true
-    instance.boomLengthSelected = (persistent.boomLengthMax + persistent.boomLengthMin)/2
+    instance.boomLengthSelected = (self.boomLengthMax + self.boomLengthMin)/2
 
     -- 0 means retracted, 1 means down
     instance.gearState = 0.999
     instance.desiredGearState = 1
     local f = function (k,v) return instance.gfx:getBoneId(k), v end
-    instance.gearDoors = tabmap(persistent.gearDoors or {}, f)
-    instance.gearStruts = tabmap(persistent.gearStruts or {}, f) 
-    instance.gearStrutNames = tabmap(persistent.gearStruts or {}, function (k,v) return instance.gfx:getBoneId(k), k end)
+    instance.gearDoors = tabmap(self.gearDoors or {}, f)
+    instance.gearStruts = tabmap(self.gearStruts or {}, f) 
+    instance.gearStrutNames = tabmap(self.gearStruts or {}, function (k,v) return instance.gfx:getBoneId(k), k end)
 
     instance.altHackTimer=0
 
     instance.numWheels = 0
-    if persistent.bonedWheelInfo then
-            for k, info in pairs(persistent.bonedWheelInfo) do
+    if self.bonedWheelInfo then
+            for k, info in pairs(self.bonedWheelInfo) do
                     instance.numWheels = instance.numWheels + 1
             end
     end
-    if persistent.meshWheelInfo then
-            for k, info in pairs(persistent.meshWheelInfo) do
+    if self.meshWheelInfo then
+            for k, info in pairs(self.meshWheelInfo) do
                     instance.numWheels = instance.numWheels + 1
             end
     end
@@ -111,11 +111,11 @@ function Plane.activate (persistent,instance)
 
     instance.maxThrust={}
     instance.currentThrust={}
-    instance.stepThrust=persistent.stepThrust
-    instance.maxNegativeThrust = persistent.maxNegativeThrust
+    instance.stepThrust=self.stepThrust
+    instance.maxNegativeThrust = self.maxNegativeThrust
 
     --Engine defs go here.
-    for i,tp in ipairs(persistent.thrustPlots) do
+    for i,tp in ipairs(self.thrustPlots) do
         instance.maxThrust[i]=Plot(tp)
         instance.currentThrust[i] = 0.0
     end
@@ -134,14 +134,14 @@ function Plane.activate (persistent,instance)
     instance.smokeTimer=0
     
     --[[
-    instance.lightSystem = sm:createParticleSystem(persistent.name..":LightParticleSystem")
+    instance.lightSystem = sm:createParticleSystem(self.name..":LightParticleSystem")
     instance.gfx:attachObject(instance.lightSystem)
     instance.lightSystem.materialName = "common/particles/Light"
     instance.lightSystem:update(0)
     --]]
 
     --Surface defs here.
-    for i, info in ipairs(persistent.surfaceInfo) do
+    for i, info in ipairs(self.surfaceInfo) do
         instance.liftCurves[i]=Plot(info.lift)
         instance.dragCurves[i]=Plot(info.drag)
         instance.pressureCenters[i]=info.cpr
@@ -174,7 +174,7 @@ function Plane.activate (persistent,instance)
     instance.cyclicyTarget=0
     instance.cyclicStep=0.1
 
-    for i, info in ipairs(persistent.rotorInfo) do
+    for i, info in ipairs(self.rotorInfo) do
         instance.rotorCurves[i]=Plot(info.lift)
         instance.rotorPressure[i]=info.cpr
         instance.rotorAction[i]=info.act
@@ -199,17 +199,17 @@ function Plane.activate (persistent,instance)
     instance.pitch, instance.pitchUp, instance.pitchDown=0,0,0
     instance.roll, instance.rollLeft, instance.rollRight=0,0,0
 
-    instance.brakeCurve = Plot (persistent.brakePlot)
+    instance.brakeCurve = Plot (self.brakePlot)
 
     instance.wheels = {}
     instance.drivenWheels = {}
     instance.handbrakeWheels = {}
 
-    if persistent.bonedWheelInfo ~= nil then
-        for name, info in pairs(persistent.bonedWheelInfo) do
+    if self.bonedWheelInfo ~= nil then
+        for name, info in pairs(self.bonedWheelInfo) do
                     local wmass = (info.massShare or 1) * mpw
                     if info.mu ~= nil then info.driveMu = info.mu ; info.sideMu = info.mu end
-                    instance.wheels[name] = WheelAssembly.newBoned(name, persistent, wmass, info)
+                    instance.wheels[name] = WheelAssembly.newBoned(name, self, wmass, info)
                     instance.wheels[name].steerFactor = info.steer or 0
                     instance.wheels[name].drive = false
 
@@ -224,9 +224,9 @@ function Plane.activate (persistent,instance)
                     end
             end
 
-            if persistent.propellors ~= nil then
+            if self.propellors ~= nil then
                 instance.propellorBones = {}
-                for k,v in ipairs(persistent.propellors) do
+                for k,v in ipairs(self.propellors) do
                     instance.propellorBones[k] = instance.gfx:getBoneId(v)
                     instance.propPos = 0
                 end
@@ -236,9 +236,9 @@ function Plane.activate (persistent,instance)
 
 end
 
-function Plane.stepCallback(persistent, elapsed)
+function Plane.stepCallback(self, elapsed)
 
-    local instance = persistent.instance 
+    local instance = self.instance 
 
     local body = instance.body
     local velocity = body.linearVelocity
@@ -251,7 +251,7 @@ function Plane.stepCallback(persistent, elapsed)
     if instance.canDrive and instance.parked == false and instance.propellorBones ~= nil then
         for k,v in ipairs(instance.propellorBones) do
             local bone = instance.propellorBones[k]
-            instance.propPos = math.mod(instance.propPos + elapsed * (persistent.instance.currentThrust[k] + 400),360)
+            instance.propPos = math.mod(instance.propPos + elapsed * (self.instance.currentThrust[k] + 400),360)
             instance.gfx:setBoneLocalOrientation(bone, quat(instance.propPos,V_FORWARDS))
         end
     end
@@ -261,10 +261,10 @@ function Plane.stepCallback(persistent, elapsed)
     for i,tp in ipairs(instance.currentThrust) do
 
         if instance.pushing then
-            instance.currentThrust[i] = instance.currentThrust[i] + persistent.stepThrust
+            instance.currentThrust[i] = instance.currentThrust[i] + self.stepThrust
         end
         if instance.pulling then
-            instance.currentThrust[i] = instance.currentThrust[i] - persistent.stepThrust
+            instance.currentThrust[i] = instance.currentThrust[i] - self.stepThrust
         else
             if instance.currentThrust[i] < 0 then
                 instance.currentThrust[i] = 0
@@ -277,14 +277,14 @@ function Plane.stepCallback(persistent, elapsed)
             instance.currentThrust[i] = max_thrust
         end
 
-        if instance.currentThrust[i] < persistent.maxNegativeThrust then
-            instance.currentThrust[i] = persistent.maxNegativeThrust
+        if instance.currentThrust[i] < self.maxNegativeThrust then
+            instance.currentThrust[i] = self.maxNegativeThrust
         end
 
         --print("Process__thrust", i, instance.currentThrust[i])
         thrust = body.worldOrientation * vector3(0, instance.currentThrust[i], 0)
         --print("Engine",i,thrust,body.worldPosition)
-        body:force(thrust, body.worldPosition + body.worldOrientation*persistent.thrustPos[i])
+        body:force(thrust, body.worldPosition + body.worldOrientation*self.thrustPos[i])
 
     end
 
@@ -372,7 +372,7 @@ function Plane.stepCallback(persistent, elapsed)
             --print("Rotor",instance.cyclicx,instance.cyclicy)
         end
         if instance.rotorControl[s] == "torque" then
-            aoa=.5-instance.steer/(2*persistent.steerMax)
+            aoa=.5-instance.steer/(2*self.steerMax)
             if aoa<0 then aoa=0 end
             if aoa>1 then aoa=1 end
             lift = instance.rotorCurves[s][aoa]
@@ -391,9 +391,9 @@ function Plane.stepCallback(persistent, elapsed)
     end
 
     --Mark with smoke
-    local arg = persistent.smokeSystemArg
+    local arg = self.smokeSystemArg
     if instance.trailingSmoke then
-        pos = body:localToWorld(persistent.trailSmokePos)
+        pos = body:localToWorld(self.trailSmokePos)
         local vel = random_vector3_box(vector3(-0.2,-0.2,0),vector3(0.2,0.2,0.6))
         local sz = 0.5+math.random()
         emit_textured_smoke(pos, vel, sz, sz, vector3(1,1,1))
@@ -406,13 +406,13 @@ function Plane.stepCallback(persistent, elapsed)
     local change = steerTarget - instance.steer
     if math.abs(change) > 0.001 then
         local rate
-        local fastness = clamp(mph/persistent.steerFastSpeed, 0, 1)
+        local fastness = clamp(mph/self.steerFastSpeed, 0, 1)
         if between(0,steerTarget,instance.steer) and math.abs(instance.steer) > 0.001 then
-            rate = (1-fastness)*persistent.unsteerRate + (fastness)*persistent.unsteerRateFast
+            rate = (1-fastness)*self.unsteerRate + (fastness)*self.unsteerRateFast
         else
-            rate = (1-fastness)*persistent.steerRate + (fastness)*persistent.steerRateFast
+            rate = (1-fastness)*self.steerRate + (fastness)*self.steerRateFast
         end
-        local max = (1-fastness)*persistent.steerMax + (fastness)*persistent.steerMaxFast
+        local max = (1-fastness)*self.steerMax + (fastness)*self.steerMaxFast
         change = clamp(change,-rate, rate)
         instance.steer = instance.steer + change
         instance.steer = clamp(instance.steer, -max, max)
@@ -425,12 +425,12 @@ function Plane.stepCallback(persistent, elapsed)
         wheel.locked = instance.parked
     end
 
-    local tcstep = persistent.wheelSpinTractionControlRate * elapsed
+    local tcstep = self.wheelSpinTractionControlRate * elapsed
     instance.tractionControl = instance.tractionControl + tcstep
 
     instance.tractionControl = clamp(instance.tractionControl,
-                                 persistent.wheelSpinTractionControlMin,
-                                 persistent.wheelSpinTractionControlMax)
+                                 self.wheelSpinTractionControlMin,
+                                 self.wheelSpinTractionControlMax)
 
     for _, wheel in ipairs(instance.handbrakeWheels) do
         if instance.handbrake then
@@ -451,20 +451,20 @@ function Plane.stepCallback(persistent, elapsed)
 
 end
 
-function Plane.deactivate (persistent)
-    local instance = persistent.instance
+function Plane.deactivate (self)
+    local instance = self.instance
     for k,v in pairs(instance.wheels or {}) do safe_destroy(v) end
     --safe_destroy(instance.lightSystem)
-    persistent.needsFrameCallbacks = false
-    persistent.needsStepCallbacks = false
+    self.needsFrameCallbacks = false
+    self.needsStepCallbacks = false
     instance.wheels = {}
     instance.drivenWheels = {}
     instance.handbrakeWheels = {}
-    return ColClass.deactivate(persistent)
+    return ColClass.deactivate(self)
 end
 
-function Plane.frameCallback (persistent, time)
-    local instance = persistent.instance
+function Plane.frameCallback (self, time)
+    local instance = self.instance
     if instance.gfx == nil then return end
     --local body = instance.body
     --Light System
@@ -488,7 +488,7 @@ function Plane.frameCallback (persistent, time)
     local diff = instance.desiredGearState - instance.gearState
     if diff ~= 0 then
         local body = instance.body
-        local class = persistent.class
+        local class = self.class
         local period = instance.gearCycle or 4
         diff = clamp(diff, -time/period, time/period)
         instance.gearState = instance.gearState + diff
@@ -515,125 +515,125 @@ function Plane.frameCallback (persistent, time)
 end
 
 
-function Plane.getSpeed(persistent)
-    if not persistent.activated then error("Not activated: "..persistent.name) end
-    --local rb = persistent.instance.body
-    return #persistent.instance.body.linearVelocity
+function Plane.getSpeed(self)
+    if not self.activated then error("Not activated: "..self.name) end
+    --local rb = self.instance.body
+    return #self.instance.body.linearVelocity
 end
 
-function Plane.setHandbrake (persistent, v)
-    if not persistent.activated then error("Not activated: "..persistent.name) end
-    persistent.instance.handbrake = v
+function Plane.setHandbrake (self, v)
+    if not self.activated then error("Not activated: "..self.name) end
+    self.instance.handbrake = v
 end
 
-function Plane.setBackwards(persistent, v)
-    if not persistent.activated then error("Not activated: "..persistent.name) end
+function Plane.setBackwards(self, v)
+    if not self.activated then error("Not activated: "..self.name) end
 
-    persistent.instance.parked = false
-    persistent.instance.pulling = v
+    self.instance.parked = false
+    self.instance.pulling = v
 
     if v then
-        persistent.instance.collectiveTarget=0
+        self.instance.collectiveTarget=0
     else
-        persistent.instance.collectiveTarget=0.5
+        self.instance.collectiveTarget=0.5
     end
 end
 
-function Plane.setForwards(persistent, v)
-    if not persistent.activated then error("Not activated: "..persistent.name) end
+function Plane.setForwards(self, v)
+    if not self.activated then error("Not activated: "..self.name) end
 
-    --print("Pushing", persistent.instance.body.worldPosition)
+    --print("Pushing", self.instance.body.worldPosition)
 
-    persistent.instance.parked = false
-    persistent.instance.pushing = v
+    self.instance.parked = false
+    self.instance.pushing = v
 
     if v then
-        persistent.instance.collectiveTarget=1.0
+        self.instance.collectiveTarget=1.0
     else
-        persistent.instance.collectiveTarget=0.5
+        self.instance.collectiveTarget=0.5
     end
 end
 
-function Plane.setLeft(persistent, v)
-    if not persistent.activated then error("Not activated: "..persistent.name) end
-    persistent.instance.shouldSteerLeft = v and -persistent.steerMax or 0
+function Plane.setLeft(self, v)
+    if not self.activated then error("Not activated: "..self.name) end
+    self.instance.shouldSteerLeft = v and -self.steerMax or 0
 end
 
-function Plane.setRight (persistent, v)
-    if not persistent.activated then error("Not activated: "..persistent.name) end
-    persistent.instance.shouldSteerRight = v and persistent.steerMax or 0
+function Plane.setRight (self, v)
+    if not self.activated then error("Not activated: "..self.name) end
+    self.instance.shouldSteerRight = v and self.steerMax or 0
 end
 
-function Plane.setAltLeft(persistent, v)
-    if not persistent.activated then error("Not activated: "..persistent.name) end
-    persistent.instance.rollLeft=v and 0.05 or 0
+function Plane.setAltLeft(self, v)
+    if not self.activated then error("Not activated: "..self.name) end
+    self.instance.rollLeft=v and 0.05 or 0
 
-    if v then persistent.instance.cyclicxTarget=1.0
-    else persistent.instance.cyclicxTarget=0 end
+    if v then self.instance.cyclicxTarget=1.0
+    else self.instance.cyclicxTarget=0 end
 end
 
-function Plane.setAltRight (persistent, v)
-    if not persistent.activated then error("Not activated: "..persistent.name) end
-    persistent.instance.rollRight=v and 0.05 or 0
+function Plane.setAltRight (self, v)
+    if not self.activated then error("Not activated: "..self.name) end
+    self.instance.rollRight=v and 0.05 or 0
 
-    if v then persistent.instance.cyclicxTarget=-1.0
-    else persistent.instance.cyclicxTarget=0 end
+    if v then self.instance.cyclicxTarget=-1.0
+    else self.instance.cyclicxTarget=0 end
 end
 
-function Plane.setAltDown(persistent, v)
-    if not persistent.activated then error("Not activated: "..persistent.name) end
-    persistent.instance.pitchUp=v and 0.05 or 0
+function Plane.setAltDown(self, v)
+    if not self.activated then error("Not activated: "..self.name) end
+    self.instance.pitchUp=v and 0.05 or 0
 
-    if v then persistent.instance.cyclicyTarget=1.0
-    else persistent.instance.cyclicyTarget=0 end
+    if v then self.instance.cyclicyTarget=1.0
+    else self.instance.cyclicyTarget=0 end
 end
 
-function Plane.setAltUp (persistent, v)
-    if not persistent.activated then error("Not activated: "..persistent.name) end
-    persistent.instance.pitchDown=v and 0.05 or 0
+function Plane.setAltUp (self, v)
+    if not self.activated then error("Not activated: "..self.name) end
+    self.instance.pitchDown=v and 0.05 or 0
 
-    if v then persistent.instance.cyclicyTarget=-1.0
-    else persistent.instance.cyclicyTarget=0 end
+    if v then self.instance.cyclicyTarget=-1.0
+    else self.instance.cyclicyTarget=0 end
 end
 
-function Plane.special (persistent)
-    if not persistent.activated then error("Not activated: "..persistent.name) end
-    persistent.instance.desiredGearState = 1-persistent.instance.desiredGearState
+function Plane.special (self)
+    if not self.activated then error("Not activated: "..self.name) end
+    self.instance.desiredGearState = 1-self.instance.desiredGearState
 end
 
-function Plane.warp (persistent, pos,orientation)
+function Plane.warp (self, pos,orientation)
     pos = pos or player_ctrl:pickPos()+vector3(0,0,2)
     orientation = orientation or player_ctrl.camDir
-    persistent:activate()
-    if not persistent.activated then error("Tried to activate but still not activated: "..persistent.name) end
-    local rb = persistent.instance.body
+    self:activate()
+    if not self.activated then error("Tried to activate but still not activated: "..self.name) end
+    local rb = self.instance.body
     rb.worldPosition = pos
     rb.worldOrientation = orientation
     rb.linearVelocity = V_ZERO
     rb.angularVelocity = V_ZERO
 end
 
-function Plane.reset (persistent)
-    if not persistent.activated then error("Not activated: "..persistent.name) end
-    persistent.pos = persistent.instance.body.worldPosition
-    persistent.rot = persistent.instance.body.worldOrientation
-    persistent:deactivate()
-    persistent.skipNextActivation = false
-    persistent:activate()
-    player_ctrl:drive(persistent)
+function Plane.reset (self)
+    if not self.activated then error("Not activated: "..self.name) end
+    self.pos = self.instance.body.worldPosition
+    self.rot = self.instance.body.worldOrientation
+    self:deactivate()
+    self.skipNextActivation = false
+    self:activate()
+    player_ctrl:drive(self)
 end
 
-function Plane.beingFired (persistent)
-    if not persistent.activated then error("Not activated: "..persistent.name) end
-    persistent.instance.gearState = 0.0001
-    persistent.instance.desiredGearState = 0
+function Plane.beingFired (self)
+    if not self.activated then error("Not activated: "..self.name) end
+    self.instance.gearState = 0.0001
+    self.instance.desiredGearState = 0
 end
 
-function Plane.onExplode (persistent)
-        --if player_ctrl.controlObj == persistent then
+function Plane.onExplode (self)
+        --if player_ctrl.controlObj == self then
         --        player_ctrl:abandonControlObj()
         --end
-        local instance = persistent.instance
+        local instance = self.instance
         instance.gfx:setAllMaterials("/common/mat/Burnt")
         instance.canDrive = false     
         instance.pushing = false
@@ -648,22 +648,22 @@ function Plane.onExplode (persistent)
             instance.currentThrust[i] = 0
         end        
 
-        ColClass.onExplode(persistent)
+        ColClass.onExplode(self)
 end
 
 Plane.controlZoomIn = regular_chase_cam_zoom_in
 Plane.controlZoomOut = regular_chase_cam_zoom_out
 Plane.controlUpdate = regular_chase_cam_update
 
-function Plane.controlBegin (persistent)
-    if not persistent.activated then return end
-    if persistent.instance.canDrive then
+function Plane.controlBegin (self)
+    if not self.activated then return end
+    if self.instance.canDrive then
         return true
     end
 end
-function Plane.controlAbandon (persistent)
-    if not persistent.activated then return end
-    local instance = persistent.instance
+function Plane.controlAbandon (self)
+    if not self.activated then return end
+    local instance = self.instance
     local body = instance.body
     instance.parked = dot(body.linearVelocity, body.worldOrientation * V_FORWARDS) < 0.5
 

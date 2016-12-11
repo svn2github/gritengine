@@ -364,8 +364,8 @@ AnimMgr =
 
 -- CustomAnimatedClass = double_extends (AnimMgr, ColClass)
 -- {
-	-- init = function (persistent)
-		-- ColClass.init(persistent)
+	-- init = function (self)
+		-- ColClass.init(self)
 	-- end;
 	
     -- activate = function(self, instance)

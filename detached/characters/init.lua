@@ -595,10 +595,10 @@ DetachedCharacterClass = extends (ColClass) {
     controlZoomOut = regular_chase_cam_zoom_out;
     controlUpdate = regular_chase_cam_update;
 
-    controlBegin = function (persistent)
+    controlBegin = function (self)
         return true
     end;
-    controlAbandon = function(persistent)
+    controlAbandon = function(self)
     end;
 
 }

@@ -10,16 +10,16 @@ MoveSpinClass = extends (ColClass) {
     moveBothWaysLength = 5; -- the length object should travel before changing to opposite moving velocity
 }
 
-function MoveSpinClass.activate(persistent, instance)
-    ColClass.activate(persistent, instance)
+function MoveSpinClass.activate(self, instance)
+    ColClass.activate(self, instance)
     
-    instance.body.angularVelocity = math.rad(persistent.spinSpeed) * persistent.spinAxis
+    instance.body.angularVelocity = math.rad(self.spinSpeed) * self.spinAxis
     
-    instance.body.linearVelocity = persistent.moveSpeed * persistent.moveAxis
-    if persistent.moveBothWays and persistent.moveBothWaysLength ~= 0 then
-        persistent.needsStepCallbacks = true
+    instance.body.linearVelocity = self.moveSpeed * self.moveAxis
+    if self.moveBothWays and self.moveBothWaysLength ~= 0 then
+        self.needsStepCallbacks = true
         instance.startPos = instance.body.worldPosition
-        instance.moveAxis = persistent.moveAxis
+        instance.moveAxis = self.moveAxis
     end
 
     if instance.body.mass ~= 0 then -- converting to static object if not already
@@ -27,17 +27,17 @@ function MoveSpinClass.activate(persistent, instance)
     end
 end
 
-function MoveSpinClass.deactivate(persistent)
-    persistent.needsStepCallbacks = false
-    ColClass.deactivate(persistent)
+function MoveSpinClass.deactivate(self)
+    self.needsStepCallbacks = false
+    ColClass.deactivate(self)
 end
 
-function MoveSpinClass.stepCallback(persistent, elapsed)
-    local instance = persistent.instance
+function MoveSpinClass.stepCallback(self, elapsed)
+    local instance = self.instance
     local body = instance.body
-    if #(instance.startPos - body.worldPosition) > persistent.moveBothWaysLength then
+    if #(instance.startPos - body.worldPosition) > self.moveBothWaysLength then
         instance.startPos = instance.body.worldPosition
         instance.moveAxis = -instance.moveAxis
-        body.linearVelocity = persistent.moveSpeed * instance.moveAxis
+        body.linearVelocity = self.moveSpeed * instance.moveAxis
     end
 end

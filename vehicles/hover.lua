@@ -40,24 +40,24 @@ Hover = extends (ColClass) {
 --        exhaustSmokeVents = { };  -- TODO use rocket smoke
 }
 
-function Hover.init (persistent)
-        ColClass.init(persistent)
+function Hover.init (self)
+        ColClass.init(self)
 end
 
-function Hover.destroy (persistent)
-        ColClass.destroy(persistent)
+function Hover.destroy (self)
+        ColClass.destroy(self)
 end
 
-function Hover.activate (persistent,instance)
-        if ColClass.activate(persistent,instance) then
+function Hover.activate (self,instance)
+        if ColClass.activate(self,instance) then
                 return true
         end
-        persistent.needsStepCallbacks = true
+        self.needsStepCallbacks = true
 
         local body = instance.body
 
         instance.canDrive = true
-        instance.health = persistent.health
+        instance.health = self.health
         
         instance.parked = true
         instance.handbrake = false
@@ -70,7 +70,7 @@ function Hover.activate (persistent,instance)
         
         
         instance.jetsHover = {}
-        for i,engine in pairs(persistent.jetsHover) do
+        for i,engine in pairs(self.jetsHover) do
             if engine then
                 instance.jetsHover[i] = {}
 
@@ -94,7 +94,7 @@ function Hover.activate (persistent,instance)
         
 --[[    --TODO: remake for rocket smoke
         instance.lastExhaust = {}
-        for i,_ in ipairs(persistent.exhaustSmokeVents) do
+        for i,_ in ipairs(self.exhaustSmokeVents) do
                 instance.lastExhaust[i] = 0;
         end
 --]]
@@ -108,25 +108,25 @@ function Hover.activate (persistent,instance)
         end
 end
 
-function Hover.process_force(persistent, name)
-            local instance = persistent.instance
+function Hover.process_force(self, name)
+            local instance = self.instance
             local body = instance.body
             if instance[name] then
                 --print("name: "..name)
-                if persistent.jetsControl[name] then
-                    --print("persistent[name]: "..dump(persistent.jetsControl[name]))
-                    for i, force in pairs(persistent.jetsControl[name]) do
-                        if force and persistent.jetsInfo[i] then
+                if self.jetsControl[name] then
+                    --print("self[name]: "..dump(self.jetsControl[name]))
+                    for i, force in pairs(self.jetsControl[name]) do
+                        if force and self.jetsInfo[i] then
                             --print("force: "..force)
-                            body:force(body.worldOrientation * force, body:localToWorld(persistent.jetsInfo[i].pos))
+                            body:force(body.worldOrientation * force, body:localToWorld(self.jetsInfo[i].pos))
                         end
                     end
                 end
             end
 end
 
-function Hover.stepCallback (persistent, elapsed)
-        local instance = persistent.instance
+function Hover.stepCallback (self, elapsed)
+        local instance = self.instance
         local body = instance.body
         
         if instance.parked then 
@@ -138,7 +138,7 @@ function Hover.stepCallback (persistent, elapsed)
         end
         
         if not instance.handbrake then
-            for i,engine in pairs(persistent.jetsHover) do -- process hovering engines
+            for i,engine in pairs(self.jetsHover) do -- process hovering engines
                 if engine then
                     local enginePos = body:localToWorld(engine.pos)
                     local hover_line = 1 --0.5 -- what height we target for hovering
@@ -155,16 +155,16 @@ function Hover.stepCallback (persistent, elapsed)
         
             -- process responce to input controls
         
-            persistent:process_force("forwards")
-            persistent:process_force("backwards")
-            persistent:process_force("steerLeft")
-            persistent:process_force("steerRight")
-            persistent:process_force("strafeLeft")
-            persistent:process_force("strafeRight")
+            self:process_force("forwards")
+            self:process_force("backwards")
+            self:process_force("steerLeft")
+            self:process_force("steerRight")
+            self:process_force("strafeLeft")
+            self:process_force("strafeRight")
         end
         
         -- smoke stuff
-        local h = persistent.instance.health / persistent.health
+        local h = self.instance.health / self.health
         if h > 0 then
             local h_smoke_threshold = 0.6
             local h_fire_threshold = 0.25
@@ -177,9 +177,9 @@ function Hover.stepCallback (persistent, elapsed)
                 instance.upsideDownTimer = instance.upsideDownTimer + elapsed
                 if instance.upsideDownTimer > upside_down_time_allowed then
                     -- set the car to 25% health if not already less than that
-                    local twenty_five_percent = h_fire_threshold * persistent.health
+                    local twenty_five_percent = h_fire_threshold * self.health
                     if instance.health > twenty_five_percent then
-                        persistent:receiveDamage(instance.health - twenty_five_percent + 1)
+                        self:receiveDamage(instance.health - twenty_five_percent + 1)
                     end
                 end
             else
@@ -189,11 +189,11 @@ function Hover.stepCallback (persistent, elapsed)
             if h < h_smoke_threshold then
                 if h < h_fire_threshold then
                     local rate = 0.20 / 5 -- lose 20% of total health every 4 seconds
-                    persistent:receiveDamage(elapsed * rate * persistent.health)
+                    self:receiveDamage(elapsed * rate * self.health)
                 end
                 
                 local engine_smoke_fire_level = 1 - h / h_smoke_threshold
-                for _,v in pairs(persistent.engineSmokeVents) do
+                for _,v in pairs(self.engineSmokeVents) do
                     local world_v = body:localToWorld(v)
                     if h < h_fire_threshold then
                         for i=1,10 do    
@@ -207,92 +207,92 @@ function Hover.stepCallback (persistent, elapsed)
         end
 end
 
-function Hover.setFade (persistent,fade)
-        ColClass.setFade(persistent,fade)
+function Hover.setFade (self,fade)
+        ColClass.setFade(self,fade)
 end
 
-function Hover.beingFired (persistent) -- when this happens?
-        if not persistent.activated then error("Not activated: "..persistent.name) end
+function Hover.beingFired (self) -- when this happens?
+        if not self.activated then error("Not activated: "..self.name) end
 end
 
-function Hover.deactivate (persistent)
-        local instance = persistent.instance
-        persistent.needsStepCallbacks = false
-        return ColClass.deactivate(persistent, instance)
+function Hover.deactivate (self)
+        local instance = self.instance
+        self.needsStepCallbacks = false
+        return ColClass.deactivate(self, instance)
 end
 
-function Hover.getSpeed (persistent)
-        if not persistent.activated then error("Not activated: "..persistent.name) end
-        local rb = persistent.instance.body
+function Hover.getSpeed (self)
+        if not self.activated then error("Not activated: "..self.name) end
+        local rb = self.instance.body
         return #rb.linearVelocity
 end
 
-function Hover.abandon (persistent)
-    if not persistent.activated then return end
-    persistent.instance.parked = true -- TODO: if traveled fast leave floating but disable all other engines
+function Hover.abandon (self)
+    if not self.activated then return end
+    self.instance.parked = true -- TODO: if traveled fast leave floating but disable all other engines
 end
 
-function Hover.setHandbrake (persistent, v)
-    if not persistent.activated then error("Not activated: "..persistent.name) end
-    persistent.instance.handbrake = v
+function Hover.setHandbrake (self, v)
+    if not self.activated then error("Not activated: "..self.name) end
+    self.instance.handbrake = v
 end
 
-function Hover.setPull (persistent, v)
-    if not persistent.activated then error("Not activated: "..persistent.name) end
-    persistent.instance.backwards = v
+function Hover.setPull (self, v)
+    if not self.activated then error("Not activated: "..self.name) end
+    self.instance.backwards = v
 end
 
-function Hover.setPush (persistent, v)
-    if not persistent.activated then error("Not activated: "..persistent.name) end
-    persistent.instance.forwards = v
+function Hover.setPush (self, v)
+    if not self.activated then error("Not activated: "..self.name) end
+    self.instance.forwards = v
 end
 
-function Hover.setShouldSteerLeft (persistent, v)
-    if not persistent.activated then error("Not activated: "..persistent.name) end
-    persistent.instance.steerLeft = v
+function Hover.setShouldSteerLeft (self, v)
+    if not self.activated then error("Not activated: "..self.name) end
+    self.instance.steerLeft = v
 end
 
-function Hover.setShouldSteerRight (persistent, v)
-    if not persistent.activated then error("Not activated: "..persistent.name) end
-    persistent.instance.steerRight = v
+function Hover.setShouldSteerRight (self, v)
+    if not self.activated then error("Not activated: "..self.name) end
+    self.instance.steerRight = v
 end
 
-function Hover.setSpecialRight (persistent, v)
-    if not persistent.activated then error("Not activated: "..persistent.name) end
-    persistent.instance.strafeRight = v
+function Hover.setSpecialRight (self, v)
+    if not self.activated then error("Not activated: "..self.name) end
+    self.instance.strafeRight = v
 end
 
-function Hover.setSpecialLeft (persistent, v)
-    if not persistent.activated then error("Not activated: "..persistent.name) end
-    persistent.instance.strafeLeft = v
+function Hover.setSpecialLeft (self, v)
+    if not self.activated then error("Not activated: "..self.name) end
+    self.instance.strafeLeft = v
 end
 
-function Hover.reset (persistent) -- what's this for?
-        if not persistent.activated then error("Not activated: "..persistent.name) end
-        local was_driving = player_ctrl.vehicle == persistent
-        persistent.spawnPos = persistent.instance.body.worldPosition
-        persistent.rot = persistent.instance.body.worldOrientation
-        persistent:deactivate()
-        persistent.skipNextActivation = false
-        persistent:activate()
+function Hover.reset (self) -- what's this for?
+        if not self.activated then error("Not activated: "..self.name) end
+        local was_driving = player_ctrl.vehicle == self
+        self.spawnPos = self.instance.body.worldPosition
+        self.rot = self.instance.body.worldOrientation
+        self:deactivate()
+        self.skipNextActivation = false
+        self:activate()
         if was_driving then
-                player_ctrl:drive(persistent)
+                player_ctrl:drive(self)
         end
 end
 
-function Hover.reload(persistent) -- what's this for?
-        ColClass.reload(persistent)
+function Hover.reload(self) -- what's this for?
+        ColClass.reload(self)
 end
 
-function Hover.receiveDamage (persistent, damage)
-        ColClass.receiveDamage(persistent, damage)
+function Hover.receiveDamage (self, damage)
+        ColClass.receiveDamage(self, damage)
         -- car-specific damage stuff
         -- e.g. knocking off bumpers / doors
 end
 
-function Hover.onExplode (persistent)
-        local instance = persistent.instance
-        if player_ctrl.vehicle == persistent then
+function Hover.onExplode (self)
+        local instance = self.instance
+        if player_ctrl.vehicle == self then
                 player_ctrl:abandonVehicle()
         end
         
@@ -301,5 +301,5 @@ function Hover.onExplode (persistent)
         instance.forwards = false
         instance.backwards = false
         instance.gfx:setAllMaterials("/common/mat/Burnt")
-        ColClass.onExplode(persistent)
+        ColClass.onExplode(self)
 end

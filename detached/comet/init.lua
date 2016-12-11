@@ -84,15 +84,15 @@ FlyingCar = extends (ColClass) {
     steerAccel = 1; -- degrees/s/s
     steerDrag = 0.1; -- degrees per second of rotation speed lost as a factor of steer speed
 
-    activate = function (persistent, instance)
+    activate = function (self, instance)
         -- initialise the super class state (basic physics)
-        if ColClass.activate (persistent, instance) then
+        if ColClass.activate (self, instance) then
             return true
         end
-        persistent.needsStepCallbacks = true;
+        self.needsStepCallbacks = true;
 
         instance.canDrive = true;
-        instance.boomLengthSelected = (persistent.boomLengthMax + persistent.boomLengthMin)/2
+        instance.boomLengthSelected = (self.boomLengthMax + self.boomLengthMin)/2
 
         instance.wantHeight = instance.body.worldPosition.z
         instance.wantBearing = 0
@@ -113,16 +113,16 @@ FlyingCar = extends (ColClass) {
         instance.lastBearing = math.deg(math.atan2(dir.x, dir.y))
     end;
 
-    deactivate = function (persistent)
-        local instance = persistent.instance
-        persistent.needsStepCallbacks = false;
+    deactivate = function (self)
+        local instance = self.instance
+        self.needsStepCallbacks = false;
 
-        return ColClass.deactivate (persistent)
+        return ColClass.deactivate (self)
     end;
 
-    stepCallback = function (persistent, elapsed)
+    stepCallback = function (self, elapsed)
 
-        local instance = persistent.instance
+        local instance = self.instance
         local body = instance.body
         local mass, inertia = body.mass, body.inertia
         local wp = body.worldPosition
@@ -131,14 +131,14 @@ FlyingCar = extends (ColClass) {
         local local_vel = inv(body.worldOrientation) * body.linearVelocity
 
         local vert_input = (instance.higher and 1 or 0) + (instance.lower and -1 or 0)
-        local pitch = (instance.higher and persistent.climbPitch or 0) + (instance.lower and persistent.fallPitch or 0)
+        local pitch = (instance.higher and self.climbPitch or 0) + (instance.lower and self.fallPitch or 0)
         local steer_input = (instance.steerRight and 1 or 0) + (instance.steerLeft and -1 or 0)
         local roll_input = steer_input + (instance.strafeRight and 0.2 or 0) + (instance.strafeLeft and -0.2 or 0)
 
         if instance.actualRoll < roll_input then
-            instance.actualRoll = math.min(instance.actualRoll+persistent.rollRate*elapsed, roll_input)
+            instance.actualRoll = math.min(instance.actualRoll+self.rollRate*elapsed, roll_input)
         else
-            instance.actualRoll = math.max(instance.actualRoll-persistent.rollRate*elapsed, roll_input)
+            instance.actualRoll = math.max(instance.actualRoll-self.rollRate*elapsed, roll_input)
         end
 
         local roll = instance.actualRoll * 7
@@ -146,11 +146,11 @@ FlyingCar = extends (ColClass) {
         do -- steering
             local z_spin = math.deg(-body.angularVelocity.z)
             if steer_input == 0 then    
-                body:torque(vector3(0, 0, persistent.steerDrag*inertia.z*z_spin))
+                body:torque(vector3(0, 0, self.steerDrag*inertia.z*z_spin))
             else
-                local steer = persistent.steerSpeed * steer_input
+                local steer = self.steerSpeed * steer_input
                 local spin_dev = z_spin - steer
-                body:torque(vector3(0, 0, persistent.steerAccel * inertia.z * spin_dev))
+                body:torque(vector3(0, 0, self.steerAccel * inertia.z * spin_dev))
             end
 
         end
@@ -158,19 +158,19 @@ FlyingCar = extends (ColClass) {
 
         do -- forward velocity control
             if instance.forward and not instance.backward then
-                local want_speed = persistent.forwardsMaxSpeed
+                local want_speed = self.forwardsMaxSpeed
                 if local_vel.y < 0.1 * want_speed then
-                    body:force(body.worldOrientation * vector3(0, persistent.forwardsAccelJerk * mass, 0), wp)
+                    body:force(body.worldOrientation * vector3(0, self.forwardsAccelJerk * mass, 0), wp)
                 elseif local_vel.y < want_speed then
-                    body:force(body.worldOrientation * vector3(0, persistent.forwardsAccel * mass, 0), wp)
+                    body:force(body.worldOrientation * vector3(0, self.forwardsAccel * mass, 0), wp)
                 end
             elseif instance.backward and not instance.forward then
-                local want_speed = persistent.backwardsMaxSpeed
+                local want_speed = self.backwardsMaxSpeed
                 if local_vel.y > want_speed then
-                    body:force(body.worldOrientation * vector3(0, persistent.backwardsAccel * mass, 0), wp)
+                    body:force(body.worldOrientation * vector3(0, self.backwardsAccel * mass, 0), wp)
                 end
             else
-                local f = body.worldOrientation * vector3(0, persistent.longitudinalDrag * mass * local_vel.y, 0)
+                local f = body.worldOrientation * vector3(0, self.longitudinalDrag * mass * local_vel.y, 0)
                 body:force(f, wp)
             end
         end
@@ -214,7 +214,7 @@ FlyingCar = extends (ColClass) {
 
                 local want_speed = 15 -- m/s
                 if local_vel.z < want_speed then
-                    body:force((gravity_z+persistent.climbAccel) * mass * V_UP, wp)
+                    body:force((gravity_z+self.climbAccel) * mass * V_UP, wp)
                 end
 
                 instance.lastHeightDev = 0
@@ -226,7 +226,7 @@ FlyingCar = extends (ColClass) {
                 local want_speed = -15
                 if local_vel.z > want_speed then
                     -- let gravity do the work
-                    body:force((gravity_z+persistent.fallAccel) * mass * V_UP, wp)
+                    body:force((gravity_z+self.fallAccel) * mass * V_UP, wp)
                 else
                     -- counteract gravity a bit
                     body:force(gravity_z * mass * V_UP, wp)
@@ -238,8 +238,8 @@ FlyingCar = extends (ColClass) {
 
             else
 
-                local want_height = instance.wantHeight + math.sin(instance.totalTime/persistent.wobblePeriod *2* math.pi) * persistent.wobbleAmplitude
-                instance.totalTime = math.mod(instance.totalTime + elapsed, persistent.wobblePeriod)
+                local want_height = instance.wantHeight + math.sin(instance.totalTime/self.wobblePeriod *2* math.pi) * self.wobbleAmplitude
+                instance.totalTime = math.mod(instance.totalTime + elapsed, self.wobblePeriod)
 
                 local height_dev = wp.z - want_height
                 local height_dev_change = (height_dev - instance.lastHeightDev) / elapsed
@@ -253,54 +253,54 @@ FlyingCar = extends (ColClass) {
                 A = clamp(A, -20, 20)
                 body:force(vector3(0, 0, mass * A), wp)
 
-                instance.wantHeight = wp.z - clamp(wp.z - instance.wantHeight, -persistent.floatingHeightDeviationAllowed, persistent.floatingHeightDeviationAllowed)
+                instance.wantHeight = wp.z - clamp(wp.z - instance.wantHeight, -self.floatingHeightDeviationAllowed, self.floatingHeightDeviationAllowed)
             end
         end
     end;
 
-    setForwards = function (persistent, v)
-        if not persistent.activated then error("Not activated: "..persistent.name) end
-        persistent.instance.forward = v
+    setForwards = function (self, v)
+        if not self.activated then error("Not activated: "..self.name) end
+        self.instance.forward = v
     end;
 
-    setBackwards = function (persistent, v)
-        if not persistent.activated then error("Not activated: "..persistent.name) end
-        persistent.instance.backward = v
+    setBackwards = function (self, v)
+        if not self.activated then error("Not activated: "..self.name) end
+        self.instance.backward = v
     end;
 
-    setLeft = function (persistent, v)
-        if not persistent.activated then error("Not activated: "..persistent.name) end
-        persistent.instance.steerLeft = v
+    setLeft = function (self, v)
+        if not self.activated then error("Not activated: "..self.name) end
+        self.instance.steerLeft = v
     end;
 
-    setRight = function (persistent, v)
-        if not persistent.activated then error("Not activated: "..persistent.name) end
-        persistent.instance.steerRight = v
+    setRight = function (self, v)
+        if not self.activated then error("Not activated: "..self.name) end
+        self.instance.steerRight = v
     end;
 
-    setHandbrake = function (persistent, v)
-        if not persistent.activated then error("Not activated: "..persistent.name) end
-        persistent.instance.higher = v
+    setHandbrake = function (self, v)
+        if not self.activated then error("Not activated: "..self.name) end
+        self.instance.higher = v
     end;
 
-    setSpecialUp = function (persistent, v)
-        if not persistent.activated then error("Not activated: "..persistent.name) end
-        persistent.instance.higher = v
+    setSpecialUp = function (self, v)
+        if not self.activated then error("Not activated: "..self.name) end
+        self.instance.higher = v
     end;
 
-    setSpecialDown = function (persistent, v)
-        if not persistent.activated then error("Not activated: "..persistent.name) end
-        persistent.instance.lower = v
+    setSpecialDown = function (self, v)
+        if not self.activated then error("Not activated: "..self.name) end
+        self.instance.lower = v
     end;
 
-    setSpecialLeft = function (persistent, v)
-        if not persistent.activated then error("Not activated: "..persistent.name) end
-        persistent.instance.strafeLeft = v
+    setSpecialLeft = function (self, v)
+        if not self.activated then error("Not activated: "..self.name) end
+        self.instance.strafeLeft = v
     end;
 
-    setSpecialRight = function (persistent, v)
-        if not persistent.activated then error("Not activated: "..persistent.name) end
-        persistent.instance.strafeRight = v
+    setSpecialRight = function (self, v)
+        if not self.activated then error("Not activated: "..self.name) end
+        self.instance.strafeRight = v
     end;
 
     setSpecial = do_nothing;
@@ -313,13 +313,13 @@ FlyingCar = extends (ColClass) {
     controlZoomOut = regular_chase_cam_zoom_out;
     controlUpdate = regular_chase_cam_update;
 
-    controlBegin = function (persistent)
-        if not persistent.activated then return end
-        if persistent.instance.canDrive then
+    controlBegin = function (self)
+        if not self.activated then return end
+        if self.instance.canDrive then
             return true
         end
     end;
-    controlAbandon = function(persistent)
+    controlAbandon = function(self)
     end;
 
 
