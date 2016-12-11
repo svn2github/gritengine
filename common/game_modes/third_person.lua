@@ -60,8 +60,6 @@ function ThirdPersonGameMode:playerRespawn()
     self.playerCamPitch = 0;  -- Without vehicle pitch offset
     self.lastMouseMoveTime = seconds()
 
-    env.secondsSinceMidnight = 12 * 60 * 60
-
     self:mouseMove(vec(0, 0))
     self:stepCallback(0)
     self:frameCallback(0)
