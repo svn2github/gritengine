@@ -118,13 +118,17 @@ end
 function ThirdPersonGameMode:abandonControlObj()
     -- Disable binds before settings vehicle to nil, ensures steering, acceleration etc is reset
     local veh = self.vehicle
+
+    -- Disable the binds first so that no more vehicle control events are processed (and fail
+    -- because self.vehicle is nil).
+    playing_vehicle_binds.enabled = false
+
     self.vehicle = nil
     self.protagonist:exitVehicle(veh.instance.body:localToWorld(veh.driverExitPos), veh.instance.body.worldOrientation * veh.driverExitQuat)
     veh:controlAbandon()
     
     main.controlObj = nil
     
-    playing_vehicle_binds.enabled = false
     playing_actor_binds.enabled = true
 
     -- When on foot there is no vehicle pitch.
