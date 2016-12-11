@@ -680,6 +680,11 @@ function Editor:receiveButton(button, state)
                 self:duplicateSelected()
             end
 
+        elseif button == "unselectAll" then
+            if state == '+' then
+                self:unselectAll()
+            end
+
         elseif button == "board" then
             if state == '+' then
                 self:toggleBoard()
