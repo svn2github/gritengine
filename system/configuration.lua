@@ -210,7 +210,7 @@ local default_user_drive_bindings = {
     driveSpecialLeft = "q";
     driveSpecialRight = "e";
     driveSpecialUp = "PageUp";
-    driveSpecialDown = "PageDown";
+    driveSpecialDown = {"PageDown", 'c'};
     driveAltUp = "Up";
     driveAltDown = "Down";
     driveAltLeft = "Left";
@@ -220,7 +220,7 @@ local default_user_drive_bindings = {
     driveLights = "l";
     driveZoomIn = {"up","S+v"};
     driveZoomOut = {"down","v"};
-    driveCamera = "c";
+    driveCamera = "x";
     driveSpecialToggle = "BackSpace";
 }
 process_user_table("user_drive_bindings", user_drive_bindings, default_user_drive_bindings)
