@@ -18,12 +18,13 @@ class `sponza_71` (ColClass) { castShadows = false; renderingDistance = 100 }
 class `sponza_257` (ColClass) { castShadows = false; renderingDistance = 100 }
 
 material `leaf` {
-    diffuseMask = vec(0.558, 0.558, 0.558),
+    --diffuseMask = vec(0.558, 0.558, 0.558),
 	diffuseMap = `textures/sponza_thorn.dds`,
 	normalMap = `textures/sponza_thorn_n.tga`,
 	glossMap = `textures/sponza_thorn_s.tga`,
-    sceneBlend = "ALPHA",
+    alphaRejectThreshold = 0.5,
     backfaces = true,
+    castShadows = false,
     premultipliedAlpha = 1,
 }
 
@@ -38,8 +39,9 @@ material `Material__57` {
     diffuseMask = vec(0.558, 0.558, 0.558),
 	diffuseMap = `textures/vase_plant.dds`,
 	glossMap = `textures/vase_plant_s.tga`,
-    sceneBlend = "ALPHA",
+    alphaRejectThreshold = 0.5,
     backfaces = true,
+    castShadows = false,
     premultipliedAlpha = 1,
 }
 
@@ -152,7 +154,7 @@ material `chain` {
     diffuseMask = vec(0.558, 0.558, 0.558),
 	diffuseMap = `textures/chain_texture.dds`,
 	normalMap = `textures/chain_texture_n.tga`,
-    sceneBlend = "ALPHA",
+    alphaRejectThreshold = 0.5,
     backfaces = true,
     premultipliedAlpha = 1,
 }
