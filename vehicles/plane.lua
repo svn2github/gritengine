@@ -4,6 +4,9 @@ Plane = extends (ColClass) {
     boomLengthMin = 3;
     boomLengthMax = 15;
 
+    driverExitPos = vector3(-1.45, -0.24, 0.49);
+    driverExitQuat = Q_ID;
+
     castShadows = true;
     renderingDistance = 200;
 

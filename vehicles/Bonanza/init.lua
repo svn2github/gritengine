@@ -10,6 +10,7 @@ class `.` (Plane) {
     colMesh=`chassis.gcol`,
     placementZOffset=0.68,
 
+    driverExitPos = vector3(-1, 1, 0);
 
     --CM Arm relative to origin. In meters. (Will be multiplied by weight to derrive torque.)
     --cmArm = vec(0, -2.0, -0.5),
