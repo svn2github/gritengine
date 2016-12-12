@@ -829,6 +829,7 @@ function make_active_table(tab, verification, commit)
     tab.proposed = proposed
     tab.spec = verification
     tab.commit = commit
+
     tab.abort = function(self)
         for k, v in pairs(tab.committed) do
             if k ~= 'autoUpdate' then
@@ -836,7 +837,11 @@ function make_active_table(tab, verification, commit)
             end
         end
         tab.autoUpdate = true
-    end;
+    end
+
+    tab.reset = function(self)
+        self.commit(self.committed, self.proposed, true)
+    end
 
     setmetatable(tab, {
         __index = function (self, k)

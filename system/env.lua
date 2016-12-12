@@ -284,5 +284,3 @@ function env_reset()
     env.moonPhase = 160;  -- Between sun and earth when moonPhase + season == 180 (mod 360).
     env.autoUpdate = true
 end
-
-env_reset()

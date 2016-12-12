@@ -319,6 +319,15 @@ include `navigation_system.lua`
 
 include `weapon_effect_manager.lua`
 
+function reset_everything()
+    configuration_reset()
+    env_reset()
+    reset_binds()
+end
+
+reset_everything()
+
+
 include `/common/init.lua` 
 include `/vehicles/init.lua`
 

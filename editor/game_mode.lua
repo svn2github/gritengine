@@ -835,14 +835,9 @@ function Editor:destroy()
     self:saveEditorConfig()
     -- self:saveEditorInterface()
     
-    gfx_option("RENDER_SKY", true)
-    
     editor_interface.map_editor_page:destroy()
     editor_interface:destroy()
-    env.clockRate = 30
     navigation_reset()
-    
-    gfx_option("BLOOM_THRESHOLD", 1)
 end
 
 game_manager:register(Editor)

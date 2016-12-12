@@ -70,7 +70,7 @@ local user_cfg_spec = {
     vehicleCameraTrack = { "one of", false, true };
 }
             
-local function commit(committed, proposed)
+local function commit(committed, proposed, force)
 
     gfx_option("AUTOUPDATE",false)
     physics_option("AUTOUPDATE",false)
@@ -78,7 +78,7 @@ local function commit(committed, proposed)
     audio_option("AUTOUPDATE",false)
 
     for k, v in pairs(proposed) do
-        if committed[k] ~= v then
+        if force or committed[k] ~= v then
             committed[k] = v
     
             if k == "res" then
@@ -140,6 +140,14 @@ end
 make_active_table(user_cfg, user_cfg_spec,  commit)
 
 user_cfg.autoUpdate = true
+
+function configuration_reset()
+    physics_option_reset()
+    core_option_reset()
+    gfx_option_reset()
+    audio_option_reset()
+    user_cfg:reset()
+end
 
 
 --------------

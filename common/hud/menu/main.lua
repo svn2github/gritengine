@@ -369,6 +369,6 @@ function menu_show(name, ...)
         return
     end
     local inner_menu = menu_pages[name](...)
-    menu_active = hud_object `/common/hud/Stretcher` { child=inner_menu, zOrder=14 }
+    menu_active = hud_object `/common/hud/Stretcher` { child=inner_menu, zOrder=13 }
     menu_binds.modal = true
 end

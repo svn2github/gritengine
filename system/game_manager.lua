@@ -45,7 +45,6 @@ function reset_binds()
     editor_object_binds.enabled = false
     editor_debug_binds.enabled = false
 end
-reset_binds()
 
 game_manager = {
     gameModes = { };
@@ -83,10 +82,9 @@ game_manager = {
             -- Push config from user_cfg
             -- Reset common/hud stuff (e.g. crosshairs)
             -- visibility / existence of sky bodies
-            env_reset()
 
             object_all_del()
-            reset_binds()
+            reset_everything()
             -- A lot of objects should now be unreachable, a good time to garbage collect.
             gc()
             menu_show('main')
