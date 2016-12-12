@@ -6,15 +6,6 @@
     *   attach rpg to R_Hand euler(172,172,90)
 ]]
 
-function point_tex(name)
-    local T = {
-        image = name,
-        filterMax = "POINT",
-        filterMip = "LINEAR",
-    }
-    return T
-end
-
 local function actor_cast (pos, ray, radius, height, body)
         --return physics_sweep_sphere(radius, pos, ray, true, 0, body)
         return physics_sweep_cylinder(radius, height, quat(1,0,0,0), pos, ray, true, 0, body)
@@ -52,47 +43,76 @@ end
 
 
 -- extend ColClass so we have a physics representation that can receive rays, etc
-DetachedCharacterClass = extends (ColClass) {
+DetachedCharacterClass = extends (BaseClass) {
 
-    renderingDistance = 80.0;
+    renderingDistance = 80.0,
 
-    castShadows = true;
+    castShadows = true,
 
-    controllable = "ACTOR";
-    boomLengthMin = 3;
-    boomLengthMax = 15;
+    controllable = "ACTOR",
+    boomLengthMin = 3,
+    boomLengthMax = 15,
 
-    height = 1.8;
-    crouchHeight = 1;
-    radius = 0.3;
-    terminalVelocity = 50;
-    camHeight = 1.4;
-    stepHeight = 0.3;
-    jumpVelocity = 6;
-    jumpsAllowed = 2;
-    pushForce = 1000;
-    runPushForce = 1000;
+    height = 1.8,
+    crouchHeight = 1,
+    radius = 0.3,
+    terminalVelocity = 50,
+    camHeight = 1.4,
+    stepHeight = 0.3,
+    jumpVelocity = 6,
+    jumpsAllowed = 2,
+    pushForce = 1000,
+    runPushForce = 1000,
     
-    walkSpeedFactor = 1;
-    runSpeedFactor = 1;
-    crouchSpeedFactor = 1;
+    walkSpeedFactor = 1,
+    runSpeedFactor = 1,
+    crouchSpeedFactor = 1,
 
-    walkStrideLength = 1.6;
-    runStrideLength = 1.866666;
-    crouchStrideLength = 1;
+    walkStrideLength = 1.6,
+    runStrideLength = 1.866666,
+    crouchStrideLength = 1,
 
-    maxGradient = 60;
+    maxGradient = 60,
 
-    maxRideSpeed = 15; 
-    maxRideSpeedCrouched = 30; 
+    maxRideSpeed = 15, 
+    maxRideSpeedCrouched = 30, 
 
-    jumpRepeatSpeed = 1; --abs(vel.z) under which a second jump is allowed (apex of last jump)
+    jumpRepeatSpeed = 1, --abs(vel.z) under which a second jump is allowed (apex of last jump)
     
-    mass = 80; 
+    mass = 80, 
     
+
+    init = function (self)
+        local class_name = self.className
+        local colMesh = self.colMesh or class_name..".gcol"
+        self:addDiskResource(colMesh)
+        BaseClass.init(self)
+    end,
+
+    makeBody = function(self, pos, ort)
+        local instance = self.instance
+        local colMesh = self.colMesh or self.className .. ".gcol"
+        local body = physics_body_make(colMesh, pos, ort)
+        body.owner = self;
+        body.ghost = true
+        body.updateCallback = function (pos, ort)
+            instance.gfx.localPosition = pos
+            instance.gfx.localOrientation = ort
+            self.pos = pos
+            instance.camAttachPos = pos + vec(0, 0, self.camHeight - self.originAboveFeet)
+        end
+        return body
+    end,
+
+    destroyBody = function(self)
+        local instance = self.instance
+        instance.body = safe_destroy(instance.body)
+    end,
 
     activate = function(self, instance)
-        ColClass.activate(self, instance)
+        if BaseClass.activate(self,instance) then
+            return true
+        end
 
         instance.weapons = { }
         instance.weapons[1] = instance.gfx:makeChild(`/detached/weapons/rocket_launcher/rocket_launcher.mesh`)
@@ -123,33 +143,24 @@ DetachedCharacterClass = extends (ColClass) {
         instance.timeSinceLastJump = nil -- nil unless the jump key has been pressed and the jump animation is playing, returns to nil after play
         instance.timeSinceLastLand = nil
         
-        instance.controlState = vector3(0,0,0) -- still/move, walk/run, stand/crouch
+        instance.controlState = vec(0, 0, 0) -- still/move, walk/run, stand/crouch
         instance.stridePos = 0 -- between 0 and 1, where 0.25 is left foot extended, and 0.75 is right foot extended
         instance.fallingPos = 0
         instance.crouchIdlePos = math.random()
-        instance.crouchIdleRate = 1/(instance.gfx:getAnimationLength("crouch")*(math.random(1)*0.2+0.9))
+        instance.crouchIdleRate = 1 / (instance.gfx:getAnimationLength("crouch") * (math.random(1)*0.2+0.9))
         instance.idlePos = math.random()
-        instance.idleRate = 1/(instance.gfx:getAnimationLength("idle")*(math.random(1)*0.2+0.9))
+        instance.idleRate = 1 / (instance.gfx:getAnimationLength("idle") * (math.random(1)*0.2+0.9))
         
         instance.walkSpeed = self.walkSpeedFactor * self.walkStrideLength / instance.gfx:getAnimationLength("walk")
         instance.runSpeed = self.runSpeedFactor * self.runStrideLength / instance.gfx:getAnimationLength("run")
         instance.crouchSpeed = self.crouchSpeedFactor * self.crouchStrideLength / instance.gfx:getAnimationLength("crouch_walk")
 
         self:updateMovementState()
-        local body = instance.body
-        
 
-        body.ghost = true
+        instance.body = self:makeBody(self.spawnPos, self.rot or quat(1, 0, 0, 0))
 
-        local old_update_callback = body.updateCallback
-        body.updateCallback = function (p,q)
-            old_update_callback(p,q)
-            instance.camAttachPos = p + vector3(0, 0, self.camHeight - self.originAboveFeet)
-        end
-        -- This is initialized in the superclass but with old_update_callback to reinitialize it
-        -- here to the right value.
-        instance.camAttachPos = self.spawnPos + vector3(0, 0, self.camHeight - self.originAboveFeet)
-    end;
+        instance.camAttachPos = self.spawnPos + vec(0, 0, self.camHeight - self.originAboveFeet)
+    end,
 
     deactivate = function (self)
         local instance = self.instance
@@ -157,15 +168,26 @@ DetachedCharacterClass = extends (ColClass) {
         for k, v in ipairs(instance.weapons or {}) do
             safe_destroy(v)
         end
-        ColClass.deactivate(self)
-    end;
+
+        if instance.body then
+            if instance.body.mass > 0 and #(self.spawnPos - main.streamerCentre) < self.renderingDistance then
+                -- avoid it respawning directly in front of the camera
+                self.skipNextActivation = true
+            end
+        end
+
+        self:destroyBody()
+                        
+        BaseClass.deactivate(self, instance)
+    end,
 
     setFade = function (self, v)
         local instance = self.instance
         for k, b in ipairs(instance.weapons or {}) do
             b.fade = v
         end
-    end;
+        BaseClass.setFade(self, v)
+    end,
 
     stepCallback = function (self, elapsed)
 
@@ -331,7 +353,7 @@ DetachedCharacterClass = extends (ColClass) {
             local retries, new_walk_vect, collision_body, collision_normal, collision_pos = cast_cylinder_with_deflection(body, radius, walk_cyl_height, walk_cyl_centre, cast_vect)
 
             -- push objects along
-            if collision_body~=nil and collision_body ~= ground then
+            if collision_body ~= nil and collision_body ~= ground then
                 local push_force = instance.runState and self.runPushForce or self.pushForce
                 local magnitude = math.min(self.pushForce, collision_body.mass * 15) * -collision_normal
                 collision_body:force(magnitude, collision_pos)
@@ -515,7 +537,7 @@ DetachedCharacterClass = extends (ColClass) {
         body.worldOrientation = quat(instance.bearing, V_DOWN)
 
         
-    end;
+    end,
 
     updateMovementState = function (self)
         local ins = self.instance
@@ -523,7 +545,7 @@ DetachedCharacterClass = extends (ColClass) {
         if ins.moving then
             ins.keyboardMove = (vector3(ins.strafeRightState - ins.strafeLeftState, ins.pushState - ins.pullState, 0))
         end
-    end;
+    end,
 
     enterVehicle = function(self)
         self.driving = true
@@ -532,53 +554,65 @@ DetachedCharacterClass = extends (ColClass) {
             b.enabled = false
         end
         self.needsStepCallbacks = false
-    end;
+        self:destroyBody()
+    end,
 
-    exitVehicle = function(self, pos, quat)
+    exitVehicle = function(self, pos, ort)
         self.driving = false
         self.instance.gfx.enabled = true
         for k, b in ipairs(self.instance.weapons or {}) do
             b.enabled = true
         end
         self.needsStepCallbacks = true
-        self.instance.body.worldPosition = pos
-        self.instance.bearing = yaw_angle(quat)
-        self.instance.bearingAim = self.instance.bearing
-    end;
+        
+        self.instance.body = self:makeBody(pos, ort)
 
-    updateDriven = function(self, pos, quat)
-        self.instance.body.worldPosition = pos
-        self.instance.body.worldOrientation = quat
-    end;
+        self.instance.bearing = yaw_angle(ort)
+        self.instance.bearingAim = self.instance.bearing
+    end,
+
+    updateDriven = function(self, pos, ort)
+        local instance = self.instance
+        instance.gfx.localPosition = pos
+        instance.gfx.localOrientation = ort
+        self.pos = pos
+        instance.camAttachPos = pos + vec(0, 0, self.camHeight - self.originAboveFeet)
+    end,
     
     getSpeed = function(self)
         return self.instance.speed
-    end;
+    end,
 
     setForwards=function(self, v)
         self.instance.pushState = v and 1 or 0
         self:updateMovementState()
-    end;
+    end,
+
     setBackwards=function(self, v)
         self.instance.pullState = v and 1 or 0
         self:updateMovementState()
-    end;
+    end,
+
     setLeft=function(self, v)
         self.instance.strafeLeftState = v and 1 or 0
         self:updateMovementState()
-    end;
+    end,
+
     setRight=function(self, v)
         self.instance.strafeRightState = v and 1 or 0
         self:updateMovementState()
-    end;
+    end,
+
     setRun=function(self, v)
         self.instance.runState = v
-    end;
+    end,
+
     setCrouch=function(self, v)
         if v then
             self.instance.crouchState = not self.instance.crouchState
         end
-    end;
+    end,
+
     setJump=function(self, v)
         if self.instance.crouchState then
             self.instance.crouchState = false
@@ -589,21 +623,32 @@ DetachedCharacterClass = extends (ColClass) {
         if v then
             self.instance.jumpHappened = true
         end
-    end;
+    end,
 
-    controlZoomIn = regular_chase_cam_zoom_in;
-    controlZoomOut = regular_chase_cam_zoom_out;
-    controlUpdate = regular_chase_cam_update;
+    controlZoomIn = regular_chase_cam_zoom_in,
+    controlZoomOut = regular_chase_cam_zoom_out,
+    controlUpdate = regular_chase_cam_update,
 
     controlBegin = function (self)
         return true
-    end;
-    controlAbandon = function(self)
-    end;
+    end,
 
+    controlAbandon = function(self)
+    end,
+
+    special = function(self)
+    end,
+
+    beingFired = function(self)
+    end,
+
+    receiveBlast = function (self, impulse, wpos, damage_impulse)
+    end,
+
+    ignite = function(self, pname, pos, mat, fertile_life)
+    end,
 }
 
 include `robot_heavy/init.lua`
 include `robot_med/init.lua`
 include `robot_scout/init.lua`
-

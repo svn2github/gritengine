@@ -1,6 +1,15 @@
 -- Code (c) David Cunningham 2013, Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 -- Art (c) Vincent Mayeur 2013, Licenced under Creative Commons License BY-NC-SA: http://creativecommons.org/licenses/by-nc-sa/3.0/
 
+local function point_tex(name)
+    local T = {
+        image = name,
+        filterMax = "POINT",
+        filterMip = "LINEAR",
+    }
+    return T
+end
+
 material `robot_med` { 
     additionalLighting = true,
 	shadowBias = 0.1,
