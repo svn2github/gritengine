@@ -2,27 +2,6 @@
 
 include `sky.lua`
 
-env_cycle = include `env_cycle.lua`
-
-
-env_saturation_mask = 1
-
-env_cube_dawn_time = 6*60*60
-env_cube_noon_time = 12*60*60
-env_cube_dusk_time = 18*60*60
-env_cube_dark_time = 24*60*60
-    
---TODO: this cubemap info should be also taken from map env overrides, maybe?
-env_cube_dawn = `env_cube_dawn.envcube.tiff`
-env_cube_noon = `env_cube_noon.envcube.tiff`
-env_cube_dusk = `env_cube_dusk.envcube.tiff`
-env_cube_dark = `env_cube_dark.envcube.tiff`
-
-gfx_env_cube(0, env_cube_noon)
-gfx_env_cube(1, env_cube_noon)
-gfx_global_exposure(1)
-gfx_option("BLOOM_ITERATIONS",1)
-gfx_colour_grade(`standard.lut.png`)
 
 function env_recompute()
 
@@ -149,70 +128,8 @@ function env_recompute()
 
 end
 
-local function maybe_commit (self)
-    if not self.c.autoUpdate then return end
-
-    local reset_sun_pos = false
-
-    for k,v in pairs(self.p) do
-        if self.c[k] ~= v then
-            self.c[k] = v
-            reset_sun_pos = true
-        end
-    end
-
-    if reset_sun_pos then
-        env_recompute()
-    end
-end
-
-local function change (self, k, v)
-    if k == "autoUpdate" then
-        ensure_one_of(v,{false,true})
-        self.c[k] = v
-    elseif k == "secondsSinceMidnight" then
-        ensure_number(v)
-        self.p[k] = v
-    elseif k == "latitude" then
-        ensure_range(v,-90,90)
-        self.p[k] = v
-    elseif k == "season" then
-        ensure_range(v,0,360)
-        self.p[k] = v
-    elseif k == "earthTilt" then
-        ensure_range(v,-90,90)
-        self.p[k] = v
-    elseif k == "clockRate" then
-        ensure_range(v,-50000,50000)
-        self.p[k] = v
-    elseif k == "clockTicking" then
-        ensure_one_of(v,{false,true})
-        self.p[k] = v
-    elseif k == "moonPhase" then
-        ensure_range(v,0,360)
-        self.p[k] = v
-    else
-        error("Unrecognised env setting: "..tostring(k))
-    end
-
-    maybe_commit(self)
-end
-
-
---[[
-function save_env_cycle(filename)
-    filename = filename or "saved_env_cycle.lua"
-    local f = io.open(filename,"w")
-    if f==nil then error("Could not open file",1) end
-    f:write("env_cycle = ")
-    f:write(dump(env_cycle,false))
-    f:close()
-    print("Wrote env cycle to \""..filename.."\"")
-end
-]]
 
 if not env then
-
     env = {
         -- current values
         c = {
@@ -221,32 +138,15 @@ if not env then
 
         -- proposed values
         p = {
-            latitude = 41; 
-            secondsSinceMidnight = 12*60*60; --midday
-            season = 180; -- summer, stored as angle in degrees
-            earthTilt = 23.44;
-            clockRate = 30;
-            clockTicking = true;
-            moonPhase = 160; -- between sun and earth when moonPhase + season == 180 (mod 360)
         };
         
         tickCallbacks = CallbackReg.new();
     }
-
 else
-
     setmetatable(env,nil)
     main.frameCallbacks:removeByName("Environment")
-
-    sky_ent = safe_destroy(sky_ent)
-    moon_ent = safe_destroy(moon_ent)
-    clouds_ent = safe_destroy(clouds_ent)
-
 end
 
-sky_ent = gfx_sky_body_make(`SkyCube.mesh`, 180)
-moon_ent = gfx_sky_body_make(`SkyMoon.mesh`, 120)
-clouds_ent = gfx_sky_body_make(`SkyClouds.mesh`, 60)
 
 function env:shutdown()
     safe_destroy(sky_ent)
@@ -254,9 +154,66 @@ function env:shutdown()
     safe_destroy(clouds_ent)
 end
 
+
+setmetatable(env, {
+    __index = function (self, k)
+        local v = self.c[k]
+        if v == nil then
+            error('No such setting: "%s"' % k, 2)
+        end
+        return v
+    end,
+
+    __newindex = function (self, k, v)
+        if k == "autoUpdate" then
+            ensure_one_of(v,{false,true})
+            self.c[k] = v
+        elseif k == "secondsSinceMidnight" then
+            ensure_number(v)
+            self.p[k] = v
+        elseif k == "latitude" then
+            ensure_range(v,-90,90)
+            self.p[k] = v
+        elseif k == "season" then
+            ensure_range(v,0,360)
+            self.p[k] = v
+        elseif k == "earthTilt" then
+            ensure_range(v,-90,90)
+            self.p[k] = v
+        elseif k == "clockRate" then
+            ensure_range(v,-50000,50000)
+            self.p[k] = v
+        elseif k == "clockTicking" then
+            ensure_one_of(v,{false,true})
+            self.p[k] = v
+        elseif k == "moonPhase" then
+            ensure_range(v,0,360)
+            self.p[k] = v
+        else
+            error("Unrecognised env setting: "..tostring(k))
+        end
+
+        if not self.c.autoUpdate then return end
+
+        local reset = false
+
+        for k,v in pairs(self.p) do
+            if self.c[k] ~= v then
+                self.c[k] = v
+                reset = true
+            end
+        end
+
+        if reset then
+            env_recompute()
+        end
+    end
+})
+
+
 local last_time = seconds()
 
-local function frameCallback()
+main.frameCallbacks:insert("Environment", function()
     local clock_rate = env.clockRate
 
     local curr_time = seconds()
@@ -264,27 +221,68 @@ local function frameCallback()
     last_time = curr_time
     
     if env.clockTicking then
-
         env.secondsSinceMidnight = math.mod(env.secondsSinceMidnight + elapsed * env.clockRate, 24*60*60)
-
         env.tickCallbacks:execute(env.secondsSinceMidnight)
-
     end
+end)
+
+
+-- Declaring them in global scope.  They are initialised by env_reset().
+env_cycle = nil
+env_saturation_mask = nil
+env_cube_dawn_time = nil
+env_cube_noon_time = nil
+env_cube_dusk_time = nil
+env_cube_dark_time = nil
+env_cube_dawn = nil
+env_cube_noon = nil
+env_cube_dusk = nil
+env_cube_dark = nil
+
+sky_ent = nil
+moon_ent = nil
+clouds_ent = nil
+
+function env_reset()
+    env_cycle = include `env_cycle.lua`
+
+    env_saturation_mask = 1
+
+    env_cube_dawn_time = 6*60*60
+    env_cube_noon_time = 12*60*60
+    env_cube_dusk_time = 18*60*60
+    env_cube_dark_time = 24*60*60
+        
+    -- Overidden by gmap files.
+    env_cube_dawn = nil
+    env_cube_noon = nil
+    env_cube_dusk = nil
+    env_cube_dark = nil
+
+    gfx_env_cube(0, env_cube_noon)
+    gfx_env_cube(1, env_cube_noon)
+    gfx_global_exposure(1)
+    gfx_option("BLOOM_ITERATIONS",1)
+    gfx_colour_grade(`standard.lut.png`)
+
+    safe_destroy(sky_ent)
+    sky_ent = gfx_sky_body_make(`SkyCube.mesh`, 180)
+
+    safe_destroy(moon_ent)
+    moon_ent = gfx_sky_body_make(`SkyMoon.mesh`, 120)
+
+    safe_destroy(clouds_ent)
+    clouds_ent = gfx_sky_body_make(`SkyClouds.mesh`, 60)
+
+    env.autoUpdate = false
+    env.latitude = 41; 
+    env.secondsSinceMidnight = 12*60*60;  -- Midday.
+    env.season = 180;  -- Summer, stored as angle in degrees.
+    env.earthTilt = 23.44;
+    env.clockRate = 30;
+    env.clockTicking = false;
+    env.moonPhase = 160;  -- Between sun and earth when moonPhase + season == 180 (mod 360).
+    env.autoUpdate = true
 end
 
-main.frameCallbacks:insert("Environment", frameCallback)
-
-setmetatable(env, {
-    __index = function (self, k)
-        local v = self.c[k] ;
-        if v == nil then
-            error("No such setting: \""..k.."\"",2)
-        end
-        return v
-    end,
-    __newindex = function (self, k, v) change(self,k,v) end
-})
-
-env.autoUpdate = true
-
-env_recompute()
+env_reset()

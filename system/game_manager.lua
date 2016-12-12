@@ -81,12 +81,9 @@ game_manager = {
             -- TODO(dcunnin): Reset all settings etc to base values.
             -- Reset gfx_option, core_option, physics_option, audio_option
             -- Push config from user_cfg
-            -- Reset environment
             -- Reset common/hud stuff (e.g. crosshairs)
-            -- env_saturation_mask
-            -- global_exposure
             -- visibility / existence of sky bodies
-            env_saturation_mask = 1
+            env_reset()
 
             object_all_del()
             reset_binds()
