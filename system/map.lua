@@ -44,6 +44,11 @@ function map_build_empty()
             clock_rate = 0,  -- Rate of passage of time.
             time = 43200,  -- Seconds past midnight.
             env_cycle_file = nil,  -- Or a filename to use that file.
+            sky = {
+                sky = { `SkyCube.mesh`, 180 },
+                moon = { `SkyMoon.mesh`, 120 },
+                clouds = { `SkyClouds.mesh`, 60 },
+            },
         },
 
         -- The objects in the map.
@@ -147,6 +152,9 @@ function include_map(mapfile)
     env.clockRate = map.environment.clock_rate
     env.secondsSinceMidnight = map.environment.time
     env_cycle = include(map.environment.env_cycle_file or `/system/env_cycle.lua`)
+    for name, def in pairs(map.environment.sky) do
+        env_sky[name] = gfx_sky_body_make(def[1], def[2])
+    end
     env_recompute()
 end
 
@@ -192,6 +200,11 @@ function map_write_to_file(map, filename)
     else
         file:write('        env_cycle_file = nil,\n')
     end
+    file:write('        sky = {\n')
+    for name, body in pairs(env_sky) do
+        file:write('            %s = { %s, %d },\n' % {name, body.meshName, body.zOrder})
+    end
+    file:write('        },\n')
     file:write('    },\n')
     file:write('    objects = {\n')
 

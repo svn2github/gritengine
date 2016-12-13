@@ -20,6 +20,11 @@ return {
         time = 44595.25434,
         clock_rate = 30,
         env_cycle_file = `/system/env_cycle.lua`,
+        sky = {
+            sky = { `/system/SkyCube.mesh`, 180 },
+            moon = { `/system/SkyMoon.mesh`, 120 },
+            clouds = { `/system/SkyClouds.mesh`, 60 },
+        },
     },
     objects = {
         ["Road2"] = {

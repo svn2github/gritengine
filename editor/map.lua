@@ -199,6 +199,7 @@ end
 
 
 function EditorMap:applyEnvironment()
+    env_reset()
     env.secondsSinceMidnight = self.currentState.environment.time
     -- Not this, we want to control time manually in the editor.
     -- env.clockRate = self.currentState.environment.clock_rate
@@ -206,6 +207,9 @@ function EditorMap:applyEnvironment()
     if self.currentState.environment.env_cycle_file ~= nil then
         env_cycle = include(self.currentState.environment.env_cycle_file)
     end
+    for name, def in pairs(self.currentState.environment.sky) do
+        env_sky[name] = gfx_sky_body_make(def[1], def[2])
+    end 
     self:applyEnvCube()
     env_recompute()
 end

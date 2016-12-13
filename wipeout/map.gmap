@@ -20,6 +20,9 @@ return {
         time = 0,
         clock_rate = 0,
         env_cycle_file = `env_cycle.lua`,
+        sky = {
+            wipeoutSky = {`SkyBox.mesh`, 255},
+        },
     },
     objects = {
         ["Unnamed:/detached/comet:12144"] = {

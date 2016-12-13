@@ -319,16 +319,18 @@ include `navigation_system.lua`
 
 include `weapon_effect_manager.lua`
 
+include `/common/init.lua` 
+
 function reset_everything()
     configuration_reset()
     env_reset()
+    common_hud_reset()
     reset_binds()
 end
 
 reset_everything()
 
 
-include `/common/init.lua` 
 include `/vehicles/init.lua`
 
 -- Should probably move to common at this point...

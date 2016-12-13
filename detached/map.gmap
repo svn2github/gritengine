@@ -19,6 +19,11 @@ return {
     environment = {
         time = 44822.441130,
         clock_rate = 30.000000,
+        sky = {
+            sky = { `/system/SkyCube.mesh`, 180 },
+            moon = { `/system/SkyMoon.mesh`, 120 },
+            clouds = { `/system/SkyClouds.mesh`, 60 },
+        },
     },
     objects = {
         ["unnamed_0"] = {

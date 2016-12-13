@@ -172,8 +172,6 @@ function GameMode:destroy()
 	playing_binds:unbind("right")
 	playing_binds:unbind("left")
 	
-	gfx_option("RENDER_SKY", true)
-	
 	navigation_debug_option("enabled", false)	
 	navigation_reset()
 end

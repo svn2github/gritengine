@@ -19,6 +19,8 @@ return {
     environment = {
         time = 45381.399030,
         clock_rate = 30.000000,
+        sky = {
+        },
     },
     objects = {
         ["unnamed_0"] = {

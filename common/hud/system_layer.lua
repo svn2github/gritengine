@@ -105,32 +105,3 @@ hud_class `SystemLayer` {
         self.consoleButton.position = vec(0, psize.y/2 - self.consoleButton.bounds.y / 2 - 8)
     end;
 }
-
-local selected_pane = nil
-local console_enabled = true
-local last_enabled = false
-if system_layer ~= nil then
-    selected_pane = system_layer.selectedPane
-    console_enabled = system_layer.consoleEnabled
-    last_enabled = system_layer.enabled
-    safe_destroy(system_layer)
-end
-system_layer = hud_object `SystemLayer` {
-    console = console;
-    consoleEnabled = console_enabled;
-    selectedPane = selected_pane;
-    buttonDescs = {
-        {
-            name = "Env Cycle Editor";
-            panel = env_cycle_editor;
-            onChange = function (self, to)
-                self.panel:setClosestToTime(env.secondsSinceMidnight/60/60)
-            end;
-        },
-        {
-            name = "Music Player";
-            panel = music_player;
-        },
-    };
-}
-system_layer:setEnabled(last_enabled)

@@ -16,18 +16,7 @@ function GameMode:init()
     self.vehicle = nil
     -- object `/vehicles/Hoverman` (487, -2011, 47) {name = "test_wipeoutcar", rot=quat(-0.4019256, 0.004209109, 0.009588621, -0.9156125)}
 
-    self.sky = gfx_sky_body_make(`SkyBox.mesh`, 255)
-    moon_ent.enabled = false
-    clouds_ent.enabled = false
-    sky_ent.enabled = false
-
     self:playerRespawn()
-end
-
-function GameMode:destroy()
-    self.sky:destroy()
-
-    ThirdPersonGameMode.destroy(self)
 end
 
 game_manager:register(GameMode)

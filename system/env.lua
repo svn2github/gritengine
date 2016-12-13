@@ -34,6 +34,9 @@ function env_recompute()
     local sun_direction =   (space_orientation * quat(env.season,V_NORTH)) * V_UP
     local moon_direction =  (space_orientation * quat(env.moonPhase,V_NORTH) * quat(env.season,V_NORTH)) * V_UP
 
+    local sky_ent = env_sky['sky']
+    local moon_ent = env_sky['moon']
+
     -- procedural from time
     if sky_ent ~= nil then
         sky_ent.orientation = space_orientation
@@ -148,13 +151,6 @@ else
 end
 
 
-function env:shutdown()
-    safe_destroy(sky_ent)
-    safe_destroy(moon_ent)
-    safe_destroy(clouds_ent)
-end
-
-
 setmetatable(env, {
     __index = function (self, k)
         local v = self.c[k]
@@ -228,20 +224,18 @@ end)
 
 
 -- Declaring them in global scope.  They are initialised by env_reset().
-env_cycle = nil
-env_saturation_mask = nil
-env_cube_dawn_time = nil
-env_cube_noon_time = nil
-env_cube_dusk_time = nil
-env_cube_dark_time = nil
-env_cube_dawn = nil
-env_cube_noon = nil
-env_cube_dusk = nil
-env_cube_dark = nil
+env_cycle = env_cycle or nil
+env_saturation_mask = env_saturation_mask or nil
+env_cube_dawn_time = env_cube_dawn_time or nil
+env_cube_noon_time = env_cube_noon_time or nil
+env_cube_dusk_time = env_cube_dusk_time or nil
+env_cube_dark_time = env_cube_dark_time or nil
+env_cube_dawn = env_cube_dawn or nil
+env_cube_noon = env_cube_noon or nil
+env_cube_dusk = env_cube_dusk or nil
+env_cube_dark = env_cube_dark or nil
 
-sky_ent = nil
-moon_ent = nil
-clouds_ent = nil
+env_sky = env_sky or nil
 
 function env_reset()
     env_cycle = include `env_cycle.lua`
@@ -265,14 +259,12 @@ function env_reset()
     gfx_option("BLOOM_ITERATIONS",1)
     gfx_colour_grade(`standard.lut.png`)
 
-    safe_destroy(sky_ent)
-    sky_ent = gfx_sky_body_make(`SkyCube.mesh`, 180)
-
-    safe_destroy(moon_ent)
-    moon_ent = gfx_sky_body_make(`SkyMoon.mesh`, 120)
-
-    safe_destroy(clouds_ent)
-    clouds_ent = gfx_sky_body_make(`SkyClouds.mesh`, 60)
+    if env_sky then
+        for name, body in pairs(env_sky) do
+            body:destroy()
+        end
+    end
+    env_sky = {}
 
     env.autoUpdate = false
     env.latitude = 41; 
