@@ -1,3 +1,13 @@
+--[[
+browser_icon2
+
+content_browser_floating_object
+create_floating(offset, mclass)
+
+ContentBrowser
+
+-]]
+
 
 hud_class `browser_icon2` {
     alpha = 0;
@@ -118,65 +128,13 @@ hud_class `browser_icon2` {
     end;
 }
 
-hud_class `dynamic_res_cb` {
-    size = vec(0, 0);
-    alpha = 1;
-    icons_size = vec2(80, 80);
-    
-    init = function (self)
-        self.needsParentResizedCallbacks = false;
-
-    end;
-    
-    parentResizedCallback = function (self, psize)
-        self:parentresizecb(psize)
-    end;
-
-    parentresizecb = function (self, psize)
-        self.size = psize    
-    end;
-}
-
-local function char_count(str, char) 
-    if not str then
-        return 0
-    end
-
-    local count = 0 
-    local byte_char = string.byte(char)
-    for i = 1, #str do
-        if string.byte(str, i) == byte_char then
-            count = count + 1 
-        end 
-    end 
-    return count
-end
-
+-- Return all the classes defined in the given dir.
 local function get_class_dir(dir)
-    local alc = class_all()
-    local cnms = {}
     local classes = {}
-
-    if dir == "/" or dir == "" then
-        for i = 1, #alc do
-            if char_count(alc[i].name:sub(2), "/") == 0 then
-                classes[#classes+1] = alc[i].name:sub(2)
-            end
-        end
-        return classes
-    else
-        for i = 1, #alc do
-            if char_count(alc[i].name:sub(2), "/") == 0 then
-                table.remove(alc, i)
-            end
-        end        
-    end
-    
-    for i = 1, #alc do
-        cnms[i] = string.gsub(alc[i].name, dir, ""):sub(2)
-        
-        if char_count(cnms[i], "/") == 0 and cnms[i] ~= "" then
-            classes[#classes+1] = cnms[i]
+    for i, cls in ipairs(class_all()) do
+        local class_dir, class_name = cls.name:match('^(.*)/([^/]*)$')
+        if class_dir == dir then
+            classes[#classes + 1] = class_name
         end
     end
     return classes
