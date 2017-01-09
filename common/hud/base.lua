@@ -34,6 +34,7 @@ hud_class `Stretcher` {
             self.child:updateChildrenSize()
         end
     end;    
+    -- Override this to specify a different rectangle within the parent.
     calcRect = function (self, psize)
         return 0, 0, psize.x, psize.y
     end;
