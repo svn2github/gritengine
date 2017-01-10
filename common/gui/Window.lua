@@ -7,7 +7,7 @@
 --  http://www.opensource.org/licenses/mit-license.php
 ------------------------------------------------------------------------------
 
-hud_class `window_title_bar`(extends(_gui.class)
+hud_class `window_title_bar` (extends(_gui.class)
 {
 	alpha = _current_theme.colours.window.titlebar_background_alpha;
 	size = vec(256, 24);
