@@ -13,8 +13,8 @@ sq_border_mask = make(vec(3,3), 1, {
 
 sq_border_mask.fX:save("SquareBorderWhite.png");
 
-(sq_border_mask.fX .. 0):save("SquareFilledBlackBorder.png");
-(sq_border_mask.eX .. 1):save("SquareFilledWhiteBorder.png");
+(sq_border_mask.fX .. 0).xF:save("SquareFilledBlackBorder.png");
+(sq_border_mask.eX .. 1).xF:save("SquareFilledWhiteBorder.png");
 
 
 border_mask2 = make(vec(3,3), 1, {

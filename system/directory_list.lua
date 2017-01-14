@@ -6,6 +6,8 @@
 -- Windows
 if os.getenv("OS") ~= nil then
 	function get_dir_list(directory)
+        assert(directory:sub(1, 1) == '/', 'Must begin with a /, got "%s"' % directory)
+        directory = directory:sub(2)
 	    local i, folders, popen = 0, {}, io.popen
 		-- get folders
 		for filename in popen('dir "'..directory..'" /b /ad'):lines() do
@@ -29,6 +31,8 @@ if os.getenv("OS") ~= nil then
 -- Linux
 else
 	function get_dir_list(directory)
+        assert(directory:sub(1, 1) == '/', 'Must begin with a /, got "%s"' % directory)
+        directory = directory:sub(2)
 		local mtmpname = os.tmpname()
 		os.execute("ls -p "..directory .. " >"..mtmpname)
 		local fg = io.open(mtmpname,"r")

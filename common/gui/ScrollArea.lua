@@ -7,262 +7,335 @@
 --  http://www.opensource.org/licenses/mit-license.php
 ------------------------------------------------------------------------------
 
+--[[ Scrollbar for placing at the side of a window over some large content.
+
+A rectangle with a smaller rectangle inside it.  Can be dragged by mouse or
+changed out-of-band.  Calls scrollCallback to notify changes.
+]]
 hud_class `ScrollBar`
 {
-	alpha = 1;
-	size = vec(10, 10);
-	zOrder = 0;
-	dragging = false;
-	draggingPos = vec2(0, 0);
-	cornered = false;
-	--texture = `/common/hud/CornerTextures/Filled04.png`;
-	texture=nil;
-	baseColour = _current_theme.colours.scroll_bar.base;
-	dragColour = _current_theme.colours.scroll_bar.pressed;
-	
-	init = function (self)
-		self.needsInputCallbacks = true
-		self.needsParentResizedCallbacks = false
-		
-		if self.type == "x" then
-			self.mouseMove = self.mouseMoveTypeX
-			self.updateSize = self.updateSizeX
-		else
-			self.mouseMove = self.mouseMoveTypeY
-			self.updateSize = self.updateSizeY
-		end
-		
-	end;
-	
-	destroy = function (self)
-		self.needsFrameCallbacks = false
-		self.needsInputCallbacks = false
-		
-		self:destroy()
-	end;
+    size = vec(10, 10),
+    texture = `/common/hud/CornerTextures/SquareFilledWhiteBorder.png`,
+    cornered = true,
+    initialContentSize = 100,
+    initialContentOffset = 0,
 
-	mouseMoveTypeX = function(self)
-		local gt = nonzero(self.parent.size.x/2 -self.size.x/2)
-		self.position = vec(math.clamp(mouse_pos_abs.x - self.draggingPos.x, -gt, gt), self.position.y)
+    -- Horizontal (x) or vertical (y).
+    type = 'y',
 
-		self.parent.content_pos = vec(self.position.x / gt, self.parent.content_pos.y)
-	end;
+    themeColours = _current_theme.colours.scroll_bar,
+    
+    init = function (self)
+        self.needsInputCallbacks = true
+        self.needsParentResizedCallbacks = false
 
-	mouseMoveTypeY = function(self)
-		local gt = nonzero(self.parent.size.y/2 -self.size.y/2)
-		self.position = vec2(self.position.x, math.clamp(mouse_pos_abs.y - self.draggingPos.y, -gt, gt))
+        -- When dragging, this records the mouse position at the time of click.
+        self.inside = false
+        self.barRelative = nil
+        self.clickedMousePos = nil
+        self.clickedContentOffset = nil
+        self.contentSize = self.initialContentSize
+        self.contentOffset = self.initialContentOffset
 
-		self.parent.content_pos = vec(self.parent.content_pos.x, self.position.y / gt)
-	end;
-	
+        -- The part that moves.
+        self.bar = hud_object `/common/hud/Rect` {
+            parent = self,
+            size = self.size - vec(2, 2),
+        }
+
+        self:update()
+    end,
+    
+    destroy = function (self)
+    end,
+
+    -- Set the scrollbar to a specific position (content offset).
+    setOffset = function(self, offset)
+        self.contentOffset = offset
+        self:update()
+    end,
+
+    -- Move the scrollbar by the given amount.
+    scrollBy = function(self, change)
+        self.contentOffset = self.contentOffset + change
+        self:update()
+    end,
+
+    -- Updates the colour of the bar and background according to mouse position / drag status.
+    updateColour = function(self)
+
+        if self.inside then
+            self.colour = self.themeColours.backgroundHover
+            self.bar.colour = self.themeColours.barHover
+            if math.abs(self.barRelative) <= 1 then
+                self.bar.colour = self.themeColours.barHoverBar
+            end
+        else
+            self.colour = self.themeColours.background
+            self.bar.colour = self.themeColours.bar
+        end
+
+        if self.clickedMousePos ~= nil then
+            -- dragging
+            self.bar.colour = self.themeColours.pressed
+        end
+    end,
+
+    -- Updates the size and position of the bar so that it represents the window as a proportion of
+    -- the content.  The bar is inactive if window_size >= contentSize.  Otherwise, the bar
+    -- represents the window as it moves up and down relative to the content.  content_offset is the
+    -- amount of scroll, i.e. it must be between 0 and (content - window_size).  It is ignored if
+    -- window_size >= contentSize.
+    update = function (self)
+        local t = self.type
+        local window_size = self.size[t]
+
+        if window_size == 0 or window_size >= self.contentSize then
+            self.bar.position = vec(0, 0)
+            self.bar.size = self.size - vec(2, 2)
+            self.contentOffset = 0
+            self:scrollCallback(self.contentOffset)
+            self:updateColour()
+            return
+        end
+
+        -- Otherwise we've already returned.
+        assert(self.contentSize > 0)
+
+        -- Correct under-scroll.
+        if self.contentOffset < 0 then
+            self.contentOffset = 0
+        end
+
+        -- Correct over-scroll.  This can happen if the content or window size changes when we're
+        -- scrolled to the bottom.
+        if self.contentOffset > self.contentSize - window_size then
+            self.contentOffset = self.contentSize - window_size
+        end
+
+        -- In pixels.
+        local bar_size = window_size / self.contentSize * window_size
+
+        -- Otherwise we've already returned.
+        assert(bar_size < window_size)
+
+        local bar_offset = self.contentOffset / self.contentSize * window_size 
+        local bar_pos = bar_offset + bar_size / 2 - window_size / 2
+
+        if self.type == 'x' then
+            self.bar.size = vec(bar_size, self.size.y) - vec(2, 2)
+            self.bar.position = vec(bar_pos, 0)
+        else
+            self.bar.size = vec(self.size.x, bar_size) - vec(2, 2)
+            self.bar.position = vec(0, -bar_pos)
+        end
+
+        self:scrollCallback(self.contentOffset)
+        self:updateColour()
+    end,
+
+    updateChildrenSize = function (self)
+        self:update()
+    end,
+
     mouseMoveCallback = function (self, local_pos, screen_pos, inside)
+        local t = self.type
         self.inside = inside
+        self.mouseLocalPos = local_pos
+        if inside then
+            -- If between -1 and 1 then inside the bar.
+            self.barRelative = (local_pos[t] - self.bar.position[t]) / (self.bar.size[t] / 2)
+        else
+            self.barRelative = nil
+        end
 
-		if self.dragging == true then
-			self:mouseMove()
-			self.parent:updatecontent()
-		end
-    end;
-	
+        if self.clickedMousePos == nil then
+            -- Not dragging.
+            self:updateColour()
+            return
+        end
+
+        local bar_change = self.mouseLocalPos[t] - self.clickedMousePos[t]
+
+        local content_change = bar_change / self.size[t] * self.contentSize
+
+        if t == 'x' then
+            self.contentOffset = self.clickedContentOffset + content_change
+        else
+            self.contentOffset = self.clickedContentOffset - content_change
+        end
+        self:update()
+    end,
+
+    scrollCallback = function (self, new_offset)
+    end,
+    
     buttonCallback = function (self, ev)
         if ev == "+left" and self.inside then
-			self.dragging = true
-			self.draggingPos = mouse_pos_abs - self.position
-			self.colour = self.dragColour
-		elseif ev == "-left" then
-			self.dragging = false
-			self.draggingPos = vec2(0, 0)
-			self.colour = self.baseColour
-			
-			self.parent:updateContentInfo()
+            local t = self.type
+            if self.barRelative < -1 then
+                if t == 'x' then
+                    self.contentOffset = self.contentOffset - self.size.x
+                else
+                    self.contentOffset = self.contentOffset + self.size.y
+                end
+                self:update()
+            elseif self.barRelative > 1 then
+                if t == 'x' then
+                    self.contentOffset = self.contentOffset + self.size.x
+                else
+                    self.contentOffset = self.contentOffset - self.size.y
+                end
+                self:update()
+            else
+                -- Clicked in the bar, start dragging.
+                self.clickedMousePos = self.mouseLocalPos
+                self.clickedContentOffset = self.contentOffset
+            end
+        elseif ev == "-left" then
+            -- End dragging.
+            -- If we weren't dragging, then these are no-ops.
+            self.clickedMousePos = nil
+            self.clickedContentOffset = nil
         end
-    end;
-	
-	updateSizeX = function(self)
-		if self.parent.content ~= nil and not self.parent.content.destroyed then
-			if self.parent.content.size.x ~= 0 and self.parent.size.x ~= 0 then
-				if self.parent.size.x < self.parent.content.size.x then
-					self.size = vec(math.min(self.parent.size.x / (self.parent.content.size.x / self.parent.size.x), self.parent.size.x), self.size.y)
-				else
-					self.size = vec(self.parent.size.x, self.size.y)
-				end
-			end
-			local gt = self.parent.size.y/2 -self.size.y/2
-			self.position = vec(math.clamp((self.parent.size.x/2-self.size.x/2)*self.parent.content_pos.x, -gt/2, gt/2), -self.parent.size.y/2+self.size.y/2)
-		end
-	end;
-	
-	updateSizeY = function(self)
-		if self.parent.content ~= nil and not self.parent.content.destroyed then
-			if self.parent.content.size.y ~= 0 and self.parent.size.y ~= 0 then
-				if self.parent.size.y < self.parent.content.size.y then
-					self.size = vec(self.size.x, math.min(self.parent.size.y / (self.parent.content.size.y / self.parent.size.y), self.parent.size.y))
-				else
-					self.size = vec(self.size.x, self.parent.size.y)
-				end
-			end
-			local gt = self.parent.size.y/2 -self.size.y/2
-			self.position = vec(self.parent.size.x/2-self.size.x/2, math.clamp(((self.parent.size.y/2-self.size.y/2)*self.parent.content_pos.y), -gt, gt))
-		end
-	end;
+        self:updateColour()
+    end,
 }
 
-hud_class `ScrollArea` (extends(_gui.class)
-{
-	size = vec(0, 0);
-	alpha = 1;
 
-	colour = _current_theme.colours.file_explorer.background;
-	
-	expand = true;
-	
-	content_pos = vec(-1, 1);
-	
-	mode_x = false;
-	mode_y = false;
-	
-	x_bar = true;
-	y_bar = true;
-	
+hud_class `ScrollArea` {
+    size = vec(200, 100),
+    scrollBarWidth = 12,
+
+    colour = _current_theme.colours.file_explorer.background,
+    
+    -- Whether or not to allow scrolling.  At least one of these must be true.
+    scrollX = true,
+    scrollY = true,
+
+    -- Override this to specify the content object.
+    content = nil,
+
+    -- When the content is too small to require scrolling, show the bars anyway.
+    alwaysShowBars = true,
+    
     init = function (self)
-		_gui.class.init(self)
-		self.needsParentResizedCallbacks = true;
-		self.needsInputCallbacks = true;
+        assert(self.scrollX or self.scrollY)
 
-		self.content = create_rect({
-			alpha = 0.3, parent = self,
-			colour = vec(1, 0, 0),
-			size = vec(650, 600),
-			zOrder = 1
-		})
-		
-		self.ref_pos = vec(0, 0)
-		
-		self.scrollbar_x = hud_object `ScrollBar` { parent = self, type = "x", zOrder = 3 }
-		self.scrollbar_x.enabled = self.x_bar
-		self.scrollbar_y = hud_object `ScrollBar` { parent = self, type = "y", zOrder = 3 }
-		self.scrollbar_y.enabled = self.y_bar
-    end;
-	
-	parentResizedCallback = function (self, psize)
-		_gui.class.parentResizedCallback(self, psize)
+        self.needsInputCallbacks = true
 
-		local a, b = self:showOrHideBars()
-		
-		if not a and not b then self:reset() return end
-		
-		if self.ref_size == nil then
-			self.ref_size = self.size
-			
-			self:updatecontent()
+        self.content.parent = self
+        self.content.zOrder = 1
 
-			self.ref_pos = self.content.position
-		else
-			-- TODO: when scroll bar reaches the end, the page becomes scrolling the content from top to bottom
-			-- but it needs to go back to the normal scroll mode, but when resising the window the scroll bar reaches the end but go back
-			-- a little bit, when it needs to stay close to the bottom so the check can work properly and reset only when needed
-			-- if -self.scrollbar_y.position.y+self.scrollbar_y.size.y/2 >= self.size.y/2 then
-				-- self.mode_y = true
-			-- else
-				--self.mode_y = false
-			-- end
+        -- Number of pixels the content is scrolled by (left and up).
+        self.offset = vec(0, 0)
+        
+        self.barX = hud_object `ScrollBar` {
+            parent = self,
+            type = "x",
+            zOrder = 3,
+            size = vec(self.size.x, self.scrollBarWidth),
+            scrollCallback = function(scroll_self, new_offset)
+                self:updateOffset(vec(new_offset, self.offset.y))
+            end,
+        }
+        self.barY = hud_object `ScrollBar` {
+            parent = self,
+            type = "y",
+            zOrder = 3,
+            size = vec(self.scrollBarWidth, self.size.y),
+            scrollCallback = function(scroll_self, new_offset)
+                self:updateOffset(vec(self.offset.x, new_offset))
+            end,
+        }
 
-			-- if self.scrollbar_x.position.x+self.scrollbar_x.size.x/2 >= self.size.x/2 then
-				-- self.mode_x = true
-				-- self.content_pos = vec(1, self.content_pos.y)
-			-- else
-				--self.mode_x = false
-			-- end
-			
-			local np = self.size - self.ref_size
-			
-			if self.y_bar then
-				-- if self.mode_y then
-					-- self.content.position = vec(self.content.position.x, self.ref_pos.y - np.y/2)
-				-- else
-					self.content.position = vec(self.content.position.x, self.ref_pos.y + np.y/2)
-				-- end
-			end
-			
-			if self.x_bar then
-				-- if self.mode_x then
-					-- self.content.position = vec(self.ref_pos.x + np.x/2, self.content.position.y)
-				-- else
-					self.content.position = vec(self.ref_pos.x - np.x/2, self.content.position.y)
-				-- end			
-			end
-			self.content_pos = vec(self.content.position.x / nonzero(-self.content.size.x/2 + self.size.x/2),
-			self.content.position.y / nonzero(-self.content.size.y/2 + self.size.y/2))
-		end
-		self.scrollbar_x:updateSize()
-		self.scrollbar_y:updateSize()
-	end;
+        self:updateChildrenSize()
+    end,
 
-	mouseMoveCallback = function (self, local_pos, screen_pos, inside)
-	end;
+    -- Called when our size is updated externally.
+    updateChildrenSize = function (self)
+        self:update()
+    end,
+
+    -- Called when our size, content size, or any of our settings are changed.
+    update = function (self)
+        local sz = self.size
+
+        local csz = self.content.size
+
+        local using_x, using_y = false, false
+        if self.alwaysShowBars then
+            using_x = self.scrollX
+            using_y = self.scrollY
+        else
+            if self.scrollX and csz.x > sz.x then
+                using_x = true
+            end 
+            if self.scrollY and csz.y > sz.y then
+                using_y = true
+            end 
+            if self.scrollX and using_y and csz.x > sz.x - self.scrollBarWidth then
+                -- Activation of y scrollbar makes less width available.
+                using_x = true
+            end
+            if self.scrollY and using_x and csz.y > sz.y - self.scrollBarWidth then
+                -- Activation of x scrollbar makes less height available.
+                using_y = true
+            end
+        end
+        local window_width, window_height = sz.x, sz.y
+        local x_bar_offset_x, y_bar_offset_y = 0, 0
+        if using_x then
+            window_height = window_height - self.scrollBarWidth
+            y_bar_offset_y = self.scrollBarWidth / 2
+        end
+        if using_y then
+            window_width = window_width - self.scrollBarWidth
+            x_bar_offset_x = -self.scrollBarWidth / 2
+        end
+        self.windowSize = vec(window_width, window_height)
+
+        self.barX.enabled = using_x
+        self.barX.size = vec(window_width, self.scrollBarWidth)
+        self.barX.position = vec(x_bar_offset_x, -window_height / 2)
+        self.barX.contentSize = csz.x
+
+        self.barY.enabled = using_y
+        self.barY.size = vec(self.scrollBarWidth, window_height)
+        self.barY.position = vec(window_width / 2, y_bar_offset_y)
+        self.barY.contentSize = csz.y
+
+        self.barX:update()  -- Updates for new size as well as contentSize.
+        self.barY:update()  -- Updates for new size as well as contentSize.
+        
+    end,
+
+    updateOffset = function (self, new_offset)
+        self.offset = new_offset
+        self.content.position = -new_offset + (self.content.size - self.size) / 2 
+        -- Flip vertical dimension, since fully scrolled up means the content is at its lowest
+        -- point.
+        self.content.position = self.content.position * vec(1, -1)
+        self:scrollCallback(self.offset)
+    end,
+
+    setOffset = function (self, new_offset)
+        self.barX:setOffset(new_offset.x)
+        self.barY:setOffset(new_offset.y)
+    end,
+    
+    mouseMoveCallback = function (self, local_pos, screen_pos, inside)
+        -- Do nothing.
+    end,
 
     buttonCallback = function (self, ev)
-		if ev == "+up" then
-			
-		elseif ev == "+down" then
-			
-		end
-    end;
-	
-	showOrHideBars = function(self, obj)
-		if self.x_bar and self.content.size.x > self.size.x then
-			self.scrollbar_x.enabled = true
-		else
-			self.scrollbar_x.enabled = false
-		end		
+        if ev == "+up" then
+            self.barY:scrollBy(-30)
+        elseif ev == "+down" then
+            self.barY:scrollBy(30)
+        end
+    end,
 
-		if self.y_bar and self.content.size.y > self.size.y then
-			self.scrollbar_y.enabled = true
-		else
-			self.scrollbar_y.enabled = false
-		end
-		return self.scrollbar_x.enabled, self.scrollbar_y.enabled
-	end;	
-	
-	setContent = function(self, obj)
-		safe_destroy(self.content)
-		if obj ~= nil and not obj.destroyed then
-			self.content = obj
-			obj.parent = self
-			
-			self:parentResizedCallback(self.parent.size)
-			-- obj.clipOnParent = true
-		end
-	end;
-
-	updateContentInfo = function(self)
-		self.ref_size = self.size
-		self.ref_pos = self.content.position
-	end;
-	
-	
-	reset = function(self)
-		self:updateContentInfo()
-		self.content_pos = vec(-1, 1)
-		self:updatecontent()
-		
-		self.scrollbar_x:updateSize()
-		self.scrollbar_y:updateSize()
-		self.scrollbar_x:mouseMove()
-		self.scrollbar_y:mouseMove()
-		self:showOrHideBars()
-	end;	
-	
-	updatecontent = function(self)
-		self.content.position = vec((-self.size.x/2 + self.content.size.x/2) * -self.content_pos.x,
-			(self.size.y/2-self.content.size.y/2) * self.content_pos.y)
-	end;
-})
-
-function gui.scrollarea(tab)
-	return hud_object `ScrollArea` (tab)
-end
-
--- safe_destroy(xplorer)
-
--- xplorer = hud_object `/common/gui/ScrollArea` {parent = editor_interface.map_editor_page.windows.object_properties;}
+    scrollCallback = function (self)
+    end,
+}

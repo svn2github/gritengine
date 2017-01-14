@@ -471,11 +471,12 @@ editor_themes['dark'] =
 		};
 		scroll_bar = 
 		{
-			background = V_ID * 0.2;
-			base = V_ID;
-			pressed = vec(1, 0.8, 0.5);
-			hover = vec(1, 0.8, 0.5);
-			alpha = 1;
+			background = vec(0.2, 0.2, 0.2),
+			backgroundHover = vec(0.15, 0.15, 0.15),
+			bar = vec(0.7, 0.7, 0.7),
+			barHover = vec(0.9, 0.9, 0.9),
+			barHoverBar = vec(1, 1, 1),
+			pressed = vec(1, 0.8, 0.5),
 		};
 		editbox = 
 		{

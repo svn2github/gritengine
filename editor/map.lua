@@ -497,8 +497,7 @@ function EditorMap:initProposed(name, obj)
     if find(self.proposed.names, name) ~= nil then
         -- Already in it, nothing to do.
     else
-        local obj_decl = self:getCurrentObject(name)
-        self.proposed.names[#self.proposed.names] = name
+        self.proposed.names[#self.proposed.names + 1] = name
         if obj == nil then
             -- Avoid aliasing the object or body, so we can modify it without
             -- those changes appearing in currentState.

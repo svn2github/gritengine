@@ -346,25 +346,6 @@ function mouse_inside_any_menu()
     return false
 end
 
-function extra_inside_hud()
-    return false
-end
-
-function inside_hud()
-    -- [dcunnin] If the intention of this is to detect whether the cursor is over a window,
-    -- there must be a better way.
-    --
-    -- All these cross-cutting dependencies on other aspects of GUI layout have to go...
-    if mouse_pos_abs.x > 40 and mouse_pos_abs.y > 20 then
-        if (console.enabled and mouse_pos_abs.y < gfx_window_size().y - console_frame.size.y) or not console.enabled and mouse_pos_abs.y < gfx_window_size().y - 52 then
-            if not mouse_inside_any_window() and not mouse_inside_any_menu() and not extra_inside_hud() and addobjectelement == nil then
-                return true
-            end
-        end
-    end
-    return false
-end
-
 function Editor:generateEnvCube(pos)
     self.map:generateEnvCube(pos)
 end
@@ -702,7 +683,7 @@ function Editor:receiveButton(button, state)
 
         elseif button == "mouseCapture" then
             if state == '+' then
-                if inside_hud() then
+                if hud_ray(mouse_pos_abs) == nil then
                     self:setMouseCapture(true)
                 end
             elseif state == '-' then

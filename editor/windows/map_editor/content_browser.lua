@@ -1,34 +1,28 @@
---[[
-browser_icon2
-
-content_browser_floating_object
-create_floating(offset, mclass)
-
-ContentBrowser
-
--]]
+local icon_size = vec(64, 80)
 
 
-hud_class `browser_icon2` {
-    alpha = 0;
-    size = vec(80, 80);
-    colour=vec(1, 0, 0);
-    zOrder = 0;
-    hoverColour = _current_theme.colours.browser_icon.hover;
-    clickColour = _current_theme.colours.browser_icon.click;
-    defaultColour = _current_theme.colours.browser_icon.default;
-    selectedColour = _current_theme.colours.browser_icon.selected;
-    textHoverColour = _current_theme.colours.browser_icon.text_hover;
-    textClickColour = _current_theme.colours.browser_icon.text_click;
-    textSelectedColour = _current_theme.colours.browser_icon.text_selected;
-    textDefaultColour = _current_theme.colours.browser_icon.text_default;
+-- Display of the file / directory icon.
+-- Handles mouse interaction with icon but defers to callbacks for actual behavior.
+-- startDragging()
+-- doubleClick()
+hud_class `BrowserIcon` {
+
+    zOrder = 0,
+
+    hoverColour = _current_theme.colours.browser_icon.hover,
+    clickColour = _current_theme.colours.browser_icon.click,
+    defaultColour = _current_theme.colours.browser_icon.default,
+    textHoverColour = _current_theme.colours.browser_icon.text_hover,
+    textClickColour = _current_theme.colours.browser_icon.text_click,
+    textDefaultColour = _current_theme.colours.browser_icon.text_default,
     
-    name = "Default";
+    name = "Default",
+    draggable = false,
     
     init = function (self)
         self.needsInputCallbacks = true;
         self.icon = create_rect({ texture=self.icon_texture, size=vec2(64, 64), parent=self, position=vec(0, 8)})
-        self.text = hud_text_add(`/common/fonts/Verdana12`)
+        self.text = hud_text_add(`/common/fonts/TinyFont`)
         self.text.text = self.name
         if self.text.size.x >= self.size.x then
             -- print("long name: "..self.name)
@@ -37,102 +31,76 @@ hud_class `browser_icon2` {
         end
         self.text.position = vec2(0, -self.icon.size.y/2+5)
         self.text.parent = self
-        self.text.colour = self.textDefaultColour
-    end;
+        self:updateColour()
+
+        self.lastClick = 0
+    end,
     
     destroy = function (self)
-        self.needsFrameCallbacks = false
-        self.needsParentResizedCallbacks = false
         safe_destroy(_context_menu)
-        self:destroy()
-    end;
-    
-    mouseMoveCallback = function (self, local_pos, screen_pos, inside)
-        self.inside = inside
-        self.lp = local_pos
-        if self.dragging ~= true and self.parent.parent.selected ~= self then
-            if inside then
+    end,
+
+    updateColour = function (self)
+        if self.mouseDown and not self.dragging then
+            self.colour = self.clickColour
+            self.text.colour = self.textDefaultColour
+            self.alpha = 1
+        else
+            if self.inside then
                 self.colour = self.hoverColour
+                self.text.colour = self.textHoverColour
                 self.alpha = 0.5
             else
-                self.colour=self.defaultColour
+                self.colour = self.defaultColour
+                self.text.colour = self.textDefaultColour
                 self.alpha = 0
             end
         end
-        self:mouseMoveCB(local_pos, screen_pos, inside)
-    end;
+    end,
+    
+    mouseMoveCallback = function (self, local_pos, screen_pos, inside)
+        self.inside = inside
+        self:updateColour()
+        if self.mouseDown and not self.dragging and  #(screen_pos - self.draggingPos) > 30 then
+            self.dragging = true
+            self:startDragging()
+        end
+    end,
 
     buttonCallback = function (self, ev)
-        if ev == "+right" and self.inside then
-            self.rightDragging = true
-        elseif ev == "-right" then
-            if self.inside and self.rightDragging then
-                self:rightPressedCallback()
-            end
-            self.rightDragging = false
-        end
-        
         if ev == "+left" and self.inside then
-            self.dragging = true
-            self.draggingPos = self.lp
-            self.colour = self.clickColour
-            self.alpha = 1
+            self.mouseDown = self.draggable
+            self.draggingPos = mouse_pos_abs
+            self:updateColour()
             if self.lastClick ~= nil and seconds() - self.lastClick <= 1 then
+                self.lastClick = nil
+                -- Can destroy the icon.
                 self:doubleClick()
                 return
             end
             self.lastClick = seconds()
+
         elseif ev == "-left" then
-            if self.dragging and not self.greyed then
-                if self.inside then
-                    if self.parent.parent.selected ~= self then
-                        self.colour=self.hoverColour
-                    end
-                
-                    if self.parent.parent.selected ~= self and self.parent.parent.selected ~= nil and self.parent.parent.selected.destroyed ~= true then
-                        self.parent.parent.selected.colour = self.parent.parent.selected.defaultColour
-                        self.parent.parent.selected.alpha = 0
-                    end
-                    self.parent.parent.selected = self
-                    self.colour = self.selectedColour
-
-                    self:pressedCallback()
-                else
-                    self.colour=self.defaultColour
-                    self.alpha = 0
-                end
-            end
             self.dragging = false
+            self.mouseDown = false
+            self:updateColour()
         end
-        self:bCallback(ev)
-    end;
-
-    bCallback = function (self, ev)
-
-    end;
+    end,
     
-    pressedCallback = function (self)
+    startDragging = function(self)
 
-    end;
-    
-    rightPressedCallback = function (self)
-
-    end;    
+    end,
     
     doubleClick = function(self)
 
-    end;
-    
-    mouseMoveCB = function (self, local_pos, screen_pos, inside)
-
-    end;
+    end,
 }
 
 -- Return all the classes defined in the given dir.
 local function get_class_dir(dir)
     local classes = {}
     for i, cls in ipairs(class_all()) do
-        local class_dir, class_name = cls.name:match('^(.*)/([^/]*)$')
+        local class_dir, class_name = cls.name:match('^(.*/)([^/]*)$')
         if class_dir == dir then
             classes[#classes + 1] = class_name
         end
@@ -140,52 +108,66 @@ local function get_class_dir(dir)
     return classes
 end
 
-local function insidew()
-    if mouse_pos_abs.x > 40 and mouse_pos_abs.y > 20 then
-        if (console.enabled and mouse_pos_abs.y < gfx_window_size().y - console_frame.size.y) or not console.enabled and mouse_pos_abs.y < gfx_window_size().y - 52 then
-            if not mouse_inside_any_window() and not mouse_inside_any_menu() then
-                return true
-            end
-        end
-    end
-    return false
+-- Is the mouse pointer over the game world (as opposed to blocked by a HUD object)
+-- avoid_obj is excluded from the test, useful for drag icons.
+local function mouse_over_game_world(avoid_obj)
+    local old_enabled = avoid_obj.enabled
+    avoid_obj.enabled = false
+    local r = hud_ray(mouse_pos_abs) == nil
+    avoid_obj.enabled = old_enabled
+    return r
 end
 
-hud_class `content_browser_floating_object` {
-    alpha = 1;
-    size = vec(64, 64);
-    texture = `/common/gui/icons/files/object.png`;
-    id = 0;
-    obclass = "";
-    positioning = false;
-    obj = nil;
-    zOffset = 0;
+hud_class `FloatingObject` {
+
+    size = vec(64, 64),
+    texture = `/common/gui/icons/files/object.png`,
+    zOrder = 7,
+    id = 0,
+    obclass = "",
+    positionOffset = vec(0, 0),
     
     init = function (self)
         self.needsInputCallbacks = true
         local cl = class_get(self.obclass)
         self.zOffset = cl.placementZOffset or 0
-    end;
+
+        -- Will store the name of the object, after we have created it and while we continue to
+        -- propose positions.
+        self.newObjectName = nil
+
+        -- Are we currently proposing positions on the map?
+        self.positioning = false,
+
+        self:updatePos()
+    end,
+
     destroy = function (self)
-        self.needsFrameCallbacks = false
-        
-        self:destroy()
-    end;
+    end,
+
+    updatePos = function(self)
+        self.position = mouse_pos_abs + self.positionOffset
+    end,
+
     mouseMoveCallback = function (self, local_pos, screen_pos, inside)
         self.inside = inside
-        self.position = vec2(mouse_pos_abs.x -gfx_window_size().x/2-self.draggingPos.x, mouse_pos_abs.y - gfx_window_size().y/2 -self.draggingPos.y)
-        if insidew() then
-            self.positioning = true
+        self:updatePos()
+
+        local editor = game_manager.currentMode
+
+        if mouse_over_game_world(self) then
             local cast_ray = 1000 * gfx_screen_to_world(main.camPos, main.camQuat, mouse_pos_abs)
-            local dist
             
             local body = nil
-            if self.obj ~= nil then
-                body = game_manager.currentMode.map:getPhysicalRepresentation(self.obj)
+            if self.newObjectName ~= nil then
+                body = editor.map:getPhysicalRepresentation(self.newObjectName)
                 -- Might still be nil if the object has no physical representation or is streamed
                 -- out.
             end
+
+            local dist
             if body ~= nil then
+                -- Avoid the object colliding with itself.
                 dist = physics_cast(main.camPos, cast_ray, true, 0, body)
             else
                 dist = physics_cast(main.camPos, cast_ray, true, 0)
@@ -193,77 +175,60 @@ hud_class `content_browser_floating_object` {
             
             local pos = (main.camPos + cast_ray * (dist or 0.02)) + vec(0, 0, (self.zOffset or 0))
             
-            if self.obj == nil then
-                self.alpha = 0
+            if self.newObjectName == nil then
                 local name = ('Unnamed:%s:%d'):format(self.obclass, math.random(0, 50000))
-                game_manager.currentMode.map:add(name, self.obclass, pos)
-                self.obj = name
-                -- self.obj = object_add(self.obclass, pos, { name = name })
-                -- self.obj:activate()
+                editor.map:add(name, self.obclass, pos)
+                self.newObjectName = name
+                self.alpha = 0
             else
-                game_manager.currentMode.map:proposePosition(self.obj, pos)
+                editor.map:proposePosition(self.newObjectName, pos)
             end
         else
-            self.alpha = 1
-            game_manager.currentMode.map:cancelChange()
-            self.obj = nil
+            if self.newObjectName then
+                editor.map:cancelChange()
+                self.newObjectName = nil
+                self.alpha = 1
+            end
         end
-    end;
+    end,
+
     buttonCallback = function (self, ev)
         if ev == "+left" and self.inside then
-            --
+            -- The object only exists while the mouse is held down, so we should never get this.
+
         elseif ev == "-left" then
-            if not insidew() and self.positioning then
-                game_manager.currentMode.map:cancelChange()
-                self.obj = nil
-            end
-            if self.obj ~= nil then
+            self:droppedCallback()
+            if self.newObjectName ~= nil then
                 game_manager.currentMode.map:applyChange()
-                self.obj = nil
-                -- current_map:registerObject(self.obj)
+                self.newObjectName = nil
             end
-            -- if insidew() then
-                -- local cast_ray = 1000 * gfx_screen_to_world(main.camPos, main.camQuat, mouse_pos_abs)
-                -- local dist = physics_cast(main.camPos, cast_ray, true, 0)
-
-                -- local cl = class_get(self.obclass)
-
-                -- local pos = (main.camPos + cast_ray * (dist or 0.02)) + (cl.placementZOffset or 0)
-                
-                -- object (self.obclass) (pos) { }
-            -- end
-            safe_destroy(self)
-            addobjectelement = nil
+            self:droppedCallback()
+            self:destroy()
         end
-    end;
-    
+    end,
+
+    -- Useful for notifying whoever made us that we're dead now.
+    droppedCallback = function (self)
+    end,
 }
 
-addobjectelement = nil
-local function create_floating(offset, mclass)
-    if addobjectelement == nil then
-        addobjectelement = hud_object `content_browser_floating_object` {
-            parent = hud_centre,
-            draggingPos = offset,
-            obclass = mclass,
-            position = vec2(mouse_pos_abs.x-offset.x, mouse_pos_abs.y -offset.y)
-        }
-    end
-end
+hud_class `ContentBrowser` (extends(WindowClass) {
 
-hud_class `ContentBrowser` (extends(WindowClass)
-{
-    btn_size = vec(100, 25);
-    currentdir = "/";
+    title = "Class Browser",
+
+    -- Must always begin and end with a '/'.
+    currentDir = '/',
+    size = vec2(560, 320),
+    min_size = vec2(470, 235),
+    alpha = 1,
     
     init = function (self)
         WindowClass.init(self)
+
+        -- Filled in while we're dragging an object icon across windows / the scene.
+        self.dragIcon = nil
         
-        -- self.close_btn.pressedCallback = function (self)
-            -- safe_destroy(self.parent.parent.parent)
-        -- end;
-        
-        self.dir_tree = gui.object({
+        self.dirTree = gui.object({
             colour = vec(0.2, 0.2, 0.2);
             alpha = 1;
             parent = self;
@@ -274,62 +239,39 @@ hud_class `ContentBrowser` (extends(WindowClass)
             expand_offset = vec(0, -35-10);
         })
 
-        self.dir_tree.enabled = false
+        self.dirTree.enabled = false
 
-        self.scrollarea = hud_object `/common/gui/ScrollArea` {
-            parent = self;
-            expand_x = true;
-            expand_y = true;
-            expand_offset = vec(-120, -40);
-            align = vec(-1, 1);
-            offset = vec(115, -35);
-            x_bar = false;
-        }
+        local content_browser = self
         
-        self.file_explorer = hud_object `/common/gui/file_list` {
-            position = vec2(0, 0);
-            parent = self;
+        self.fileExplorer = hud_object `/common/gui/IconFlow` {
             size = vec2(self.size.x-20, self.size.y-120);
             alpha = 0;
-            zOrder = 1;
+            zOrder = 1,
+            icons_size = icon_size,
         }
-        self.scrollarea:setContent(self.file_explorer)
-        
-        self.file_explorer.addItem = function(self, m_name, icon, pc, dpc, ccb)
-            if icon == nil then icon = `/common/gui/icons/foldericon.png` end
-            self.items[#self.items+1] = hud_object `browser_icon2` {
-                icon_texture = icon;
-                position = vec2(0, 0);
-                parent = self;
-                colour = vec(0.5, 0.5, 0.5);
-                size = vec2(self.icons_size.x, self.icons_size.y);
-                name = m_name;
-            }
-                
-            if pc ~= nil then
-                self.items[#self.items].pressedCallback = pc
-            end
-            
-            if dpc ~= nil then
-                self.items[#self.items].doubleClick = dpc
-            end
+        self.scrollArea = hud_object `/common/gui/ScrollArea` {
+            scrollX = false,
+            content = self.fileExplorer,
+            scrollCallback = function (self)
+                -- Hide icons that spill out.
+                content_browser.fileExplorer:reset()
+            end,
+        }
+        self.scrollAreaStretcher = hud_object `/common/hud/Stretcher` {
+            child = self.scrollArea,
+            parent = self,
+            calcRect = function(self, psize)
+                return 115 - psize.x/2, 5 - psize.y/2, psize.x/2 - 5, psize.y/2 - 35
+            end,
+        }
 
-            if ccb ~= nil then
-                self.items[#self.items].clickCallback = ccb
-            end
-            
-            self:reorganize()
-            return self.items[#self.items]
-        end;
-
-        self.updir_btn = gui.imagebutton({
+        self.upButton = gui.imagebutton({
             pressedCallback = function(self)
-                if self.parent.currentdir == "/" or self.parent.currentdir == "" then return end
-                self.parent.currentdir = self.parent.currentdir:reverse():sub(self.parent.currentdir:reverse():find("/", 2)+1):reverse()
-                
-                if self.parent.currentdir == "" then self.parent.currentdir = "/" end
-                self.parent.dir_edbox:setValue(self.parent.currentdir)
-                self.parent:update_file_explorer(self.parent.currentdir)
+                if content_browser.currentDir == '/' then return end
+                -- Strip off last dir.
+                content_browser.currentDir = content_browser.currentDir:match('(.*/)[^/]*/')
+                content_browser.editBox:setValue(content_browser.currentDir)
+                content_browser:updateFileExplorer()
             end;
             icon_texture = _gui_textures.arrow_up;
             position = vec2(0, 0);
@@ -343,117 +285,81 @@ hud_class `ContentBrowser` (extends(WindowClass)
             align = vec(1, 1)        
         })
 
-        self.dir_edbox = hud_object `/common/gui/window_editbox` {
+        self.editBox = hud_object `/common/gui/window_editbox` {
             parent = self;
-            value = self.currentdir;
-            alignment = "LEFT";
+            value = self.currentDir;
+            alignment = 'LEFT';
             size = vec(50, 20);
             offset = vec(5, -8);
             align = vec(-1, 1);
             expand_x = true;
             expand_offset = vec(-45, 0);
-        }
-        self.dir_edbox.enterCallback = function(self)
-            self.parent:update_file_explorer(self.value)
-            self.parent.currentdir = self.value
-        end;
-        self:update_file_explorer()
-    end;
-    
-    destroy = function (self)
-        WindowClass.destroy(self)
-    end;
-    
-    buttonCallback = function(self, ev)
-        WindowClass.buttonCallback(self, ev)
-    end;
-    
-    mouseMoveCallback = function (self, local_pos, screen_pos, inside)
-        WindowClass.mouseMoveCallback(self, local_pos, screen_pos, inside)
-    end;
-    
-    update_file_explorer = function(self, m_dir)
-        self.file_explorer:clearAll()
-        m_dir = m_dir or ""
-        local m_files, m_folders = get_dir_list(m_dir:gsub("/", "", 1))
-        
-        m_files = get_class_dir(m_dir)
-
-        for i = 1, #m_folders do
-            local nit = nil
-            
-            nit = self.file_explorer:addItem(m_folders[i], `/common/gui/icons/foldericon.png`)
-            nit.doubleClick = function(self)
-                if string.sub(self.parent.parent.parent.currentdir, -1) ~= "/" then
-                    self.parent.parent.parent.currentdir = self.parent.parent.parent.currentdir.."/"..self.name
-                else
-                    self.parent.parent.parent.currentdir = self.parent.parent.parent.currentdir..self.name
+            enterCallback = function(self)
+                if self.value.sub(-1) ~= '/' then
+                    self:setValue(self.value .. '/')
                 end
-                self.parent.parent.parent.dir_edbox:setValue(self.parent.parent.parent.currentdir)
-                self.parent.parent.parent:update_file_explorer(self.parent.parent.parent.currentdir)
-            end    
-        end
-
-        for i = 1, #m_files do
-                local nit = nil
-                nit = self.file_explorer:addItem(m_files[i], `/common/gui/icons/files/object.png`)
-                nit.pressedCallback = function (self)
-                    -- self. adding = true
-                    -- create_floating(self.lp, self.parent.parent.parent.currentdir.."/"..self.name)
-                end;
-                nit.doubleClick = function(self)
-
-                end;
-                
-                nit.rightPressedCallback = function (self)
-                    cb_show_object_menu(self)
-                end;
-                
-                nit.bCallback = function (self, ev)
-                    if (ev == "+right" or ev == "+left") and not _context_menu.destroyed and not is_inside_menu(_context_menu) then
-                        safe_destroy(_context_menu)
-                    end
-                end;
-                
-                nit.mouseMoveCB = function (self, local_pos, screen_pos, inside)
-                    if self.dragging and #(local_pos - self.draggingPos) > 15 then
-                        self.adding = true
-                        create_floating(self.lp, self.parent.parent.parent.currentdir.."/"..self.name)
-                    end
-                end;
-        end
-        if self.scrollarea ~= nil then
-            self.scrollarea:reset()
-        end
-        if self.file_explorer ~= nil then
-            self.file_explorer:reset()
-        end
+                content_browser.currentDir = self.value
+                content_browser:updateFileExplorer()
+            end,
+        }
+        self:updateFileExplorer()
     end;
-})
 
-local function cb_show_object_menu(selection)
-    show_context_menu(
-    {
-        {
-            callback = function()
-                new_object_ed_page(selection.name, editor_interface.map_editor_page.windows.content_browser, true)
-            end;
-            name = "Edit Object";
-            endPressedCallback = function (self)
-                self.parent:destroy()
-            end;
-        },
-        {
-            callback = function()
-                print("TODO")
-            end;
-            name = "Add in viewport";
-            endPressedCallback = function (self)
-                self.parent:destroy()
-            end;
-        },
-    })
-end
+    
+    -- Changes the active dir.
+    updateFileExplorer = function(self)
+        local cb = self,
+
+        self.fileExplorer:clearAll()
+        local m_files, m_folders = get_dir_list(self.currentDir)
+        
+        m_files = get_class_dir(self.currentDir)
+
+        local function add_icon(folder, name)
+            self.fileExplorer:addIcon(
+                hud_object `BrowserIcon` {
+                    icon_texture = folder and  `/common/gui/icons/foldericon.png` or `/common/gui/icons/files/object.png`,
+                    size = icon_size,
+                    name = name,
+                    draggable = not folder,
+                    doubleClick = function(self)
+                        if folder then
+                            cb.currentDir = cb.currentDir .. self.name .. '/'
+                            cb.editBox:setValue(cb.currentDir)
+                            cb:updateFileExplorer()
+                        end
+                    end,
+                    startDragging = function (self)
+                        -- Only called if self.draggable == true
+                        if self.dragIcon == nil then
+                            self.dragIcon = hud_object `FloatingObject` {
+                                positionOffset = self.icon.derivedPosition - self.draggingPos,
+                                obclass = cb.currentDir .. self.name,
+                                droppedCallback = function (self)
+                                    if not cb.destroyed then
+                                        cb.dragIcon = nil
+                                    end
+                                end,
+                            }
+                        end
+                    end
+                }
+            )
+        end
+
+        for _, name in ipairs(m_folders) do
+            add_icon(true, name)
+        end
+
+        for _, name in ipairs(m_files) do
+            add_icon(false, name)
+        end
+
+        self.scrollArea:setOffset(vec(0, 0))
+        self.scrollArea:update()
+        self.fileExplorer:reset()
+    end,
+})
 
 local content_browserx = nil
 
@@ -463,16 +369,10 @@ function create_content_browser()
     end
     
     content_browserx = hud_object `ContentBrowser` {
-        title = "Class Browser";
-        parent = hud_centre;
-        position = vec(230, -200);
-        resizeable = true;
-        size = vec2(560, 320);
-        min_size = vec2(470, 235);
-        colour = _current_theme.colours.window.background;
-        alpha = 1;    
+        parent = hud_centre,
+        position = vec(200, -200),
     }
-    _windows[#_windows+1] = content_browserx
+    _windows[#_windows + 1] = content_browserx
     set_active_window(content_browserx)
     return content_browserx
 end

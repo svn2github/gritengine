@@ -48,7 +48,7 @@ function break_line(str, maxchar)
 	return str:gsub('(\\s)', '\n')
 end
 
-hud_class `browser_icon` {
+hud_class `BrowserIcon` {
 	alpha = 0;
 	size = vec(64, 64);
 	colour = vec(1, 0, 0);
@@ -68,7 +68,12 @@ hud_class `browser_icon` {
 	
 	init = function (self)
 		self.needsInputCallbacks = true
-		self.icon = create_rect({ texture = self.icon_texture, size = vec2(42, 42), parent = self, position = vec(0, 8) })
+		self.icon = create_rect({
+            texture = self.icon_texture,
+            size = vec2(42, 42),
+            parent = self,
+            position = vec(0, 8),
+        })
 		self.text = hud_text_add(`/common/fonts/TinyFont`)
 		self.text.text = self.name
 		if self.text.size.x >= self.size.x then
@@ -91,7 +96,8 @@ hud_class `browser_icon` {
 	
 	mouseMoveCallback = function (self, local_pos, screen_pos, inside)
 		self.inside = inside
-		if not self.dragging and self.parent.parent.selected ~= self then
+        local icon_flow = self.parent
+		if not self.dragging and icon_flow.selected ~= self then
 			if inside then
 				self.colour = self.hoverColour
 				self.alpha = 0.5
@@ -116,16 +122,18 @@ hud_class `browser_icon` {
         elseif ev == "-left" then
             if self.dragging and not self.greyed then
 				if self.inside then
-					if self.parent.parent.selected ~= self then
+                    -- Not sure if this is actually the icon_flow or the thing under it...
+                    local icon_flow = self.parent
+					if icon_flow.selected ~= self then
 						self.colour = self.hoverColour
 						self.text.colour = self.textHoverColour
 					end
 				
-					if self.parent.parent.selected ~= self and self.parent.parent.selected ~= nil and self.parent.parent.selected.destroyed ~= true then
-						self.parent.parent.selected.colour = self.parent.parent.selected.defaultColour
-						self.parent.parent.selected.alpha = 0
+					if icon_flow.selected ~= self and icon_flow.selected ~= nil and icon_flow.selected.destroyed ~= true then
+						icon_flow.selected.colour = icon_flow.selected.defaultColour
+						icon_flow.selected.alpha = 0
 					end
-					self.parent.parent.selected = self
+					icon_flow.selected = self
 					self.colour = self.selectedColour
 					self.text.colour = self.textSelectedColour
 
@@ -149,72 +157,87 @@ hud_class `browser_icon` {
 	end;
 }
 
-hud_class `file_list` (extends(_gui.class)
+hud_class `IconFlow` (extends(_gui.class)
 {
 	size = vec(0, 0);
 	alpha = 1;
 	icons_size = vec2(64, 64);
     icons_spacing = 4;
-	selected = {};
 	colour = _current_theme.colours.file_explorer.background;
 	
     init = function (self)
 		_gui.class.init(self)
 		self.needsParentResizedCallbacks = true
-		self.needsInputCallbacks = true
 		self.items = {}
+        self.selected = nil
     end;
 	
 	parentResizedCallback = function (self, psize)
 		self.size = vec(psize.x, self.size.y)
+        -- y component is now overwritten.
 		self:reorganize()
 	end;
 
+	addIcon = function(self, new_icon)
+        self.items[#self.items+1] = new_icon
+        new_icon.parent = self
+		self:reorganize()
+	end;
+	
 	addItem = function(self, m_name, icon, pc, dpc)
-		if icon == nil then icon = `/common/gui/icons/foldericon.png`end
-		self.items[#self.items+1] = hud_object `browser_icon` {
+        assert(icon ~= nil)
+		local new_icon = hud_object `BrowserIcon` {
 			icon_texture = icon;
 			position = vec2(0, 0);
 			parent = self;
 			colour = vec(0.5, 0.5, 0.5);
-			size = vec2(self.icons_size.x, self.icons_size.y);
+			size = self.icons_size,
 			name = m_name;
 		}
-		
 		if pc ~= nil then
-			self.items[#self.items].pressedCallback = pc
+			new_icon.pressedCallback = pc
 		end
 		if dpc ~= nil then
-			self.items[#self.items].doubleClick = dpc
+			new_icon.doubleClick = dpc
 		end
-		
-		self:reorganize()
-		return self.items[#self.items]
+
+        self:addIcon(new_icon)
+
+		return new_icon
 	end;
 	
+    -- Set position of items to flow them into the available width.  Set height accordingly.
 	reorganize = function(self)
-		local colums = math.floor(self.size.x / (#self.icons_size.x + self.icons_spacing))
+		local columns = math.floor(self.size.x / (self.icons_size.x + self.icons_spacing))
 		local icol, linepos, li = 1, 0, 1
 
 		
 		for i = 1, #self.items do
-			self.items[i].position = vec2(-self.size.x/2 + ((li-1) * (self.icons_size.x )) + (li*self.icons_spacing) + self.icons_size.x/2, self.size.y/2 - self.icons_size.y/2 -linepos*(self.icons_size.y+self.icons_spacing))
-			if(icol < colums) then
-				li = li+1
-				icol=icol+1
+			self.items[i].position = vec(
+                -self.size.x/2 + ((li-1) * (self.icons_size.x )) + (li*self.icons_spacing) + self.icons_size.x/2,
+                self.size.y/2 - self.icons_size.y/2 - linepos*(self.icons_size.y+self.icons_spacing)
+            )
+			if icol < columns then
+				li = li + 1
+				icol = icol + 1
 			else
-				linepos=linepos+1
-				icol=1
+				linepos = linepos+1
+				icol = 1
 				li = 1
 			end
 		end
 		
-		self.iconarea = vec2(colums*(self.icons_size.x+self.icons_spacing), math.ceil(#self.items/colums)*(self.icons_size.y+self.icons_spacing))
+        local height = self.size.y
+        if columns > 0 then
+            height = math.ceil(#self.items/columns)*(self.icons_size.y+self.icons_spacing)
+        end
+		self.iconarea = vec2(columns*(self.icons_size.x+self.icons_spacing), height)
 		
 		self.size = vec(self.size.x, self.iconarea.y)
 		
 		self:updateItems()
 	end;
+
 	clearAll = function(self)
 		for i = 1, #self.items do
 			safe_destroy(self.items[i])
@@ -224,10 +247,9 @@ hud_class `file_list` (extends(_gui.class)
 	
 	reset = function(self)
 		self:reorganize()
-		self:updateItems()
-
 	end;	
 
+    -- Enable only the items which fit fully within our bounds.
 	updateItems = function(self)
 		for i = 1, #self.items do
 			--if (self.items[i].position.y + self.position.y + self.items[i].size.y/2 < -self.parent.size.y/2 or self.items[i].position.y + self.position.y - self.items[i].size.y > self.parent.size.y/2) then
@@ -239,15 +261,6 @@ hud_class `file_list` (extends(_gui.class)
 			end
 		end	
 	end;
-	
-	mouseMoveCallback = function (self, local_pos, screen_pos, inside)
-		if self.parent.scrollbar_y.dragging then
-			self:updateItems()
-		end
-	end;
-
-    buttonCallback = function (self, ev)
-    end;
 })
 
 hud_class `FileDialog` (extends(WindowClass)
@@ -259,7 +272,7 @@ hud_class `FileDialog` (extends(WindowClass)
 	init = function (self)
 		WindowClass.init(self)
 		
-		self.currentdir = "/";
+		self.currentDir = "/";
 
 		self.ok_button = gui.button({
 			caption = "OK";
@@ -299,7 +312,7 @@ hud_class `FileDialog` (extends(WindowClass)
 			zOrder = 4;
 		})	
 		self.selectbox.onSelect = function()
-			self:update_file_explorer(self.currentdir)
+			self:update_file_explorer(self.currentDir)
 		end;
 		
 		self.file_edbox = hud_object `window_editbox` {
@@ -318,34 +331,38 @@ hud_class `FileDialog` (extends(WindowClass)
 		}
 		self.file_edbox:setEditing(true)
 		
-		self.scrollarea = hud_object `/common/gui/ScrollArea` {
-			parent = self;
-			expand_x = true;
-			expand_y = true;
-			expand_offset = vec(-120, -120);
-			align = vec(-1, 1);
-			offset = vec(115, -40);
-			x_bar = false;
+        local file_dialog = self
+
+		self.file_explorer = hud_object `IconFlow` {
+			position = vec2(0, 0),
+			parent = self,
+			size = vec2(self.size.x-20, self.size.y-120),
+			alpha = 0,
+			zOrder = 1,
 		}
-		
-		self.file_explorer = hud_object `file_list` {
-			position = vec2(0, 0);
-			parent = self;
-			size = vec2(self.size.x-20, self.size.y-120);
-			alpha = 0;
-			zOrder = 1;
-		}
-		--self.file_explorer.enabled = false
-		self.scrollarea:setContent(self.file_explorer)
+
+        self.scrollArea = hud_object `ScrollArea` {
+            scrollX = false,
+            content = self.file_explorer,
+            scrollCallback = function (self)
+                file_dialog.file_explorer:reset()
+            end,
+        }
+        self.scrollAreaStretcher = hud_object `/common/hud/Stretcher` {
+            child = self.scrollArea,
+            parent = self,
+            calcRect = function(self, psize)
+                return 115 - psize.x/2, 80 - psize.y/2, psize.x/2 - 5, psize.y/2 - 40
+            end,
+        }
 		
 		self.updir_btn = gui.imagebutton({
-			pressedCallback = function()
-				if self.currentdir == "/" or self.currentdir == "" then return end
-				self.currentdir = self.currentdir:reverse():sub(self.currentdir:reverse():find("/", 2)+1):reverse()
-				
-				if self.currentdir == "" then self.currentdir = "/" end
-				self.dir_edbox:setValue(self.currentdir)
-				self:update_file_explorer(self.currentdir)
+			pressedCallback = function(self)
+                if file_dialog.currentDir == '/' then return end
+                -- Strip off last dir.
+                file_dialog.currentDir = file_dialog.currentDir:match('(.*/)[^/]*/')
+                file_dialog.editBox:setValue(file_dialog.currentDir)
+                file_dialog:updateFileExplorer()
 			end;
 			icon_texture = _gui_textures.arrow_up;
 			parent = self;
@@ -387,7 +404,7 @@ hud_class `FileDialog` (extends(WindowClass)
 
 		self.dir_edbox = hud_object `window_editbox` {
 			parent = self;
-			value = self.currentdir;
+			value = self.currentDir;
 			alignment = "LEFT";
 			size = vec(50, 20);
 			offset = vec(50, -8);
@@ -396,43 +413,36 @@ hud_class `FileDialog` (extends(WindowClass)
 			expand_offset = vec(-120, 0);
 		}
 		self.dir_edbox.enterCallback = function(self)
-			self.parent:update_file_explorer(self.value)
-			self.parent.currentdir = self.value
+            if self.value.sub(-1) ~= '/' then
+                self:setValue(self.value .. '/')
+            end
+            file_dialog.currentDir = self.value
+			file_dialog:update_file_explorer(self.value)
 		end;
+		
 		self:update_file_explorer()
 	end;
 	
-	destroy = function (self)
-		WindowClass.destroy(self)
-	end;
-	
-	buttonCallback = function(self, ev)
-		WindowClass.buttonCallback(self, ev)
-	end;
-	
-    mouseMoveCallback = function (self, local_pos, screen_pos, inside)
-		WindowClass.mouseMoveCallback(self, local_pos, screen_pos, inside)
-	end;
-	
+    -- Changes the active dir.
 	update_file_explorer = function(self, m_dir)
 		self.file_explorer:clearAll()
 		self.file_explorer.selected = nil
-		m_dir = m_dir or ""
-		local m_files, m_folders = get_dir_list(m_dir:gsub("/", "", 1))
+		m_dir = m_dir or '/'
+		local m_files, m_folders = get_dir_list(m_dir)
+
+        local file_dialog = self
 
 		for i = 1, #m_folders do
-			local nit = nil
-			
-			nit = self.file_explorer:addItem(m_folders[i], `/common/gui/icons/foldericon.png`)
+			local nit = self.file_explorer:addItem(m_folders[i], `/common/gui/icons/foldericon.png`)
 			nit.type = "folder"
 			nit.doubleClick = function(self)
-				if string.sub(self.parent.parent.parent.currentdir, -1) ~= "/" then
-					self.parent.parent.parent.currentdir = self.parent.parent.parent.currentdir.."/"..self.name
+				if file_dialog.currentDir:sub(-1) ~= "/" then
+					file_dialog.currentDir = file_dialog.currentDir .. "/" .. self.name
 				else
-					self.parent.parent.parent.currentdir = self.parent.parent.parent.currentdir..self.name
+					file_dialog.currentDir = file_dialog.currentDir .. self.name
 				end
-				self.parent.parent.parent.dir_edbox:setValue(self.parent.parent.parent.currentdir)
-				self.parent.parent.parent:update_file_explorer(self.parent.parent.parent.currentdir)
+				file_dialog.dir_edbox:setValue(file_dialog.currentDir)
+				file_dialog:update_file_explorer(file_dialog.currentDir)
 			end	
 		end
 		--local selext = self.selectbox.selected.name:sub(-5):gsub([[\)]], "", 1)	
@@ -446,25 +456,23 @@ hud_class `FileDialog` (extends(WindowClass)
 				
 				nit.type = "file"
 				nit.pressedCallback = function (self)
-					self.parent.parent.parent.file_edbox:setValue(self.name)
+					file_dialog.file_edbox:setValue(self.name)
 				end;
 				
 				nit.doubleClick = function(self)
-					self.parent.parent.parent:handleCallback()
+					file_dialog:handleCallback()
 				end;
 			end
 		end
-		if self.scrollarea ~= nil then
-			self.scrollarea:reset()
-		end
-		if self.file_explorer ~= nil then
-			self.file_explorer:reset()
-		end
+
+        self.scrollArea:setOffset(vec(0, 0))
+        self.scrollArea:update()
+        self.file_explorer:reset()
 	end;
 
 	handleCallback = function(self)
 		if self.file_edbox.value ~= "" then
-			local cd = self.currentdir
+			local cd = self.currentDir
 			-- remove the slash if it is the first character
 			if cd:sub(1, 1) == "/" then
 				cd = cd:sub(2)

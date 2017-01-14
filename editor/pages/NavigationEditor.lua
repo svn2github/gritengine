@@ -73,19 +73,9 @@ local navigation_editor = {
         self.menubar.enabled = true
         self.statusbar.enabled = true
         game_manager.currentMode.selectionEnabled = false
-        
-        extra_inside_hud = function()
-            if mouse_pos_abs.x > gfx_window_size().x - self.propertiesToolpanel.size.x then
-                return true
-            end
-            return false
-        end;
     end;
     
     unselect = function(self)
-        -- temp hack
-        addobjectelement = nil
-        
         self.propertiesToolpanel.enabled = false
         self.windows.tools.enabled = false
         self.windows.debug.enabled = false
@@ -93,8 +83,6 @@ local navigation_editor = {
         self.statusbar.enabled = false
         game_manager.currentMode.selectionEnabled = true
         -- playing_binds:unbind("left")
-        
-        extra_inside_hud = function() return false end;
     end;
     
     init = function(self)

@@ -18,7 +18,7 @@ hud_class `EditorInterface` `/common/gui/windownotebook` {
     end,
     buttonCallback = function (self, event)
         if event == '+left' then
-            if inside_hud() then
+            if hud_ray(mouse_pos_abs) == nil then
                 game_manager.currentMode:leftMouseClick()
             end
         elseif event == '-left' then

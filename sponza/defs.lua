@@ -1,5 +1,7 @@
-for i=0,382 do
-    class (`sponza` .. string.format("_%02d",i)) (ColClass) { castShadows=true, renderingDistance = 400 }
+for i = 0, 382 do
+    if i ~= 2 then
+        class (`sponza` .. string.format("_%02d",i)) (ColClass) { castShadows=true, renderingDistance = 400 }
+    end
 end
 
 class `sponza_03` (ColClass) { castShadows = false; renderingDistance = 100 }
