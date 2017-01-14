@@ -552,7 +552,7 @@ local map_editor_page = {
             self.windows.settings:destroy()
         end
         
-        self.windows.settings = hud_object `/editor/windows/map_editor/Settings` {
+        self.windows.settings = hud_object `Settings` {
             title = "Editor Settings";
             parent = hud_centre;
             position = vec2(editor_interface_cfg.settings.position[1], editor_interface_cfg.settings.position[2]);

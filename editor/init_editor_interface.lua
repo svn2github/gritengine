@@ -1,13 +1,7 @@
-include `pages/ObjectEditor.lua`
-include `pages/MapEditor.lua`
-include `pages/NavigationEditor.lua`
-include `windows/debug_mode/settings.lua`
-include `windows/map_editor/settings.lua`
-include `windows/map_editor/content_browser.lua`
-include `windows/map_editor/map_properties.lua`
-include `windows/navigation_editor/tools.lua`
-include `windows/navigation_editor/debug.lua`
-
+include `object_editor/init.lua`
+include `map_editor/init.lua`
+include `navigation_editor/init.lua`
+include `debug_mode/init.lua`
 
 hud_class `EditorInterface` `/common/gui/windownotebook` {
     init = function(self)

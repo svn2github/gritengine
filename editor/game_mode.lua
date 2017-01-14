@@ -308,7 +308,7 @@ function Editor:createDebugModeSettingsWindow()
         self.debugModeSettingsWindow:destroy()
     end
 
-    self.debugModeSettingsWindow = hud_object `windows/debug_mode/Settings` {
+    self.debugModeSettingsWindow = hud_object `debug_mode/Settings` {
         title = "Debug Mode Settings";
         parent = hud_centre;
         position = vec(0, 0);
@@ -359,7 +359,7 @@ function Editor:newMap()
     navigation_reset()
     
     -- no fog and a smooth background colour
-    env_cycle = include `edenv.lua`
+    env_cycle = include `editor_env_cycle.lua`
     env_recompute()
     
     widget_manager:unselectAll()
