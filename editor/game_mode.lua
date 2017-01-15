@@ -157,8 +157,8 @@ function Editor:frameCallback(elapsed_secs)
 
         main.camQuat = quat(self.camYaw, V_DOWN) * quat(self.camPitch, V_EAST)
 
-        --player_ctrl.speedoPos = instance.camAttachPos
-        --player_ctrl.speedoSpeed = #obj_vel
+        main.speedoPos = instance.camAttachPos
+        main.speedoSpeed = #obj_vel
 
         local ray_skip = 0.4
         local ray_dir = main.camQuat * V_BACKWARDS
