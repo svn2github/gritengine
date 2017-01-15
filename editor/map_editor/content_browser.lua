@@ -124,12 +124,12 @@ hud_class `FloatingObject` {
     texture = `/common/gui/icons/files/object.png`,
     zOrder = 7,
     id = 0,
-    obclass = "",
+    objectClass = "",
     positionOffset = vec(0, 0),
     
     init = function (self)
         self.needsInputCallbacks = true
-        local cl = class_get(self.obclass)
+        local cl = class_get(self.objectClass)
         self.zOffset = cl.placementZOffset or 0
 
         -- Will store the name of the object, after we have created it and while we continue to
@@ -176,8 +176,8 @@ hud_class `FloatingObject` {
             local pos = (main.camPos + cast_ray * (dist or 0.02)) + vec(0, 0, (self.zOffset or 0))
             
             if self.newObjectName == nil then
-                local name = ('Unnamed:%s:%d'):format(self.obclass, math.random(0, 50000))
-                editor.map:add(name, self.obclass, pos)
+                local name = ('Unnamed:%s:%d'):format(self.objectClass, math.random(0, 50000))
+                editor.map:add(name, self.objectClass, pos)
                 self.newObjectName = name
                 self.alpha = 0
             else
@@ -331,10 +331,10 @@ hud_class `ContentBrowser` (extends(WindowClass) {
                     end,
                     startDragging = function (self)
                         -- Only called if self.draggable == true
-                        if self.dragIcon == nil then
-                            self.dragIcon = hud_object `FloatingObject` {
+                        if cb.dragIcon == nil then
+                            cb.dragIcon = hud_object `FloatingObject` {
                                 positionOffset = self.icon.derivedPosition - self.draggingPos,
-                                obclass = cb.currentDir .. self.name,
+                                objectClass = cb.currentDir .. self.name,
                                 droppedCallback = function (self)
                                     if not cb.destroyed then
                                         cb.dragIcon = nil
