@@ -324,15 +324,20 @@ hud_class `ScrollArea` {
         self.barY:setOffset(new_offset.y)
     end,
     
-    mouseMoveCallback = function (self, local_pos, screen_pos, inside)
+    mouseMoveCallback = function (self, local_pos, screen_pos, inside, inside_children)
         -- Do nothing.
+        self.inside = inside_children
     end,
 
     buttonCallback = function (self, ev)
         if ev == "+up" then
-            self.barY:scrollBy(-30)
+            if self.inside then
+                self.barY:scrollBy(-30)
+            end
         elseif ev == "+down" then
-            self.barY:scrollBy(30)
+            if self.inside then
+                self.barY:scrollBy(30)
+            end
         end
     end,
 
