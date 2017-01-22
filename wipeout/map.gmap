@@ -7,8 +7,8 @@ return {
         description = "Insert description here",
     },
     editor = {
-        cam_pos = vec(546.273376, -2284.492432, 120.828552),
-        cam_quat = quat(-0.9294961, 0.3612744, 0.02691071, -0.06923658),
+        cam_pos = vec(808.393860, -2128.540771, 93.969528),
+        cam_quat = quat(0.04655997, -0.001470683, 0.03153683, -0.9984165),
     },
     env_cubes = {
         dawn = nil,
@@ -21,13 +21,116 @@ return {
         clock_rate = 0,
         env_cycle_file = `env_cycle.lua`,
         sky = {
-            wipeoutSky = {`SkyBox.mesh`, 255},
+            wipeoutSky = { `SkyBox.mesh`, 255 },
         },
     },
     objects = {
         ["Unnamed:/detached/comet:12144"] = {
             `/detached/comet`,
             vec(547.573303, -2252.513428, 97.077606),
+            {}
+        },
+        ["Unnamed:/wipeout/ChevronLight:11448"] = {
+            `ChevronLight`,
+            vec(558.572510, -2371.804199, 89.462166),
+            {
+              rot = quat(0.04577407, 0.8734211, 0.4759023, 0.09250607),
+            }
+        },
+        ["Unnamed:/wipeout/ChevronLight:11914"] = {
+            `ChevronLight`,
+            vec(747.644104, -2253.605957, 78.609558),
+            {
+              rot = quat(-0.01818405, 0.5444523, 0.8383833, 0.01883013),
+            }
+        },
+        ["Unnamed:/wipeout/ChevronLight:11914_1"] = {
+            `ChevronLight`,
+            vec(794.080200, -2226.222656, 76.435196),
+            {
+              rot = quat(0.05205965, 0.5531119, 0.8276132, -0.08008514),
+            }
+        },
+        ["Unnamed:/wipeout/ChevronLight:14214"] = {
+            `ChevronLight`,
+            vec(576.889038, -2247.784424, 80.770195),
+            {
+              rot = quat(-0.02864758, 0.8897606, -0.1734408, -0.4212172),
+            }
+        },
+        ["Unnamed:/wipeout/ChevronLight:17623"] = {
+            `ChevronLight`,
+            vec(354.465485, -2099.881592, 34.134270),
+            {
+              rot = quat(0.01867073, -0.7006692, -0.713006, -0.01834768),
+            }
+        },
+        ["Unnamed:/wipeout/ChevronLight:17623_1"] = {
+            `ChevronLight`,
+            vec(402.104065, -2098.360107, 39.824257),
+            {
+              rot = quat(-0.01818405, 0.7190934, 0.6944203, 0.01883013),
+            }
+        },
+        ["Unnamed:/wipeout/ChevronLight:18239"] = {
+            `ChevronLight`,
+            vec(291.595917, -2290.641113, 58.587387),
+            {
+              rot = quat(0.007472859, -0.5101969, 0.8582457, 0.05529775),
+            }
+        },
+        ["Unnamed:/wipeout/ChevronLight:31444"] = {
+            `ChevronLight`,
+            vec(615.466187, -1970.238159, 67.291359),
+            {
+              rot = quat(-0.1035534, 0.7865661, -0.6035534, -0.07945933),
+            }
+        },
+        ["Unnamed:/wipeout/ChevronLight:3487"] = {
+            `ChevronLight`,
+            vec(494.590210, -2299.323730, 69.150436),
+            {
+              rot = quat(0.06705423, 0.9589202, 0.274966, 0.01922745),
+            }
+        },
+        ["Unnamed:/wipeout/ChevronLight:42546"] = {
+            `ChevronLight`,
+            vec(964.024292, -2233.955566, 64.347664),
+            {
+              rot = quat(0.1517168, 0.8765104, 0.4242779, 0.1694116),
+            }
+        },
+        ["Unnamed:/wipeout/ChevronLight:42934"] = {
+            `ChevronLight`,
+            vec(634.257568, -1942.803467, 43.451466),
+            {
+              rot = quat(-0.03510308, 0.8383213, 0.5428903, 0.03543432),
+            }
+        },
+        ["Unnamed:/wipeout/ChevronLight:42934_1"] = {
+            `ChevronLight`,
+            vec(664.902527, -1958.201538, 41.081814),
+            {
+              rot = quat(-0.04097267, 0.9232174, 0.3810276, 0.02844395),
+            }
+        },
+        ["Unnamed:/wipeout/ChevronLight:48532"] = {
+            `ChevronLight`,
+            vec(722.933594, -2264.519287, 78.836121),
+            {
+              rot = quat(0.007276956, 0.5519159, 0.8338541, -0.004816512),
+            }
+        },
+        ["Unnamed:/wipeout/DummyVehicle2:18760"] = {
+            `DummyVehicle2`,
+            vec(362.839783, -2100.718018, 5.637066),
+            {
+              rot = quat(0.7193398, 0, 0, -0.6946584),
+            }
+        },
+        ["Unnamed:/wipeout/DummyVehicle2:25670"] = {
+            `DummyVehicle2`,
+            vec(614.598816, -2190.734375, 86.108955),
             {}
         },
         ["unnamed_0"] = {

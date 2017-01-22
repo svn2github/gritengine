@@ -1,7 +1,7 @@
 BaseGameMode = BaseGameMode or {
     name = 'Unnamed',
     description = 'No description',
-    previewImgae = `/common/hud/LoadingScreen/GritLogo.png`,
+    previewImage = `/common/hud/LoadingScreen/GritLogo.png`,
     map = `/editor/default_map/defaultmap.gmap`,
     spawnPos = vec(0, 0, 0),
     spawnRot = Q_ID,
@@ -10,10 +10,6 @@ BaseGameMode = BaseGameMode or {
 -- Define them outside of the object to allow re-reading the file to hot-swap out functions.
 
 function BaseGameMode:init()
-    loading_screen:setMapName(self.name)
-    loading_screen:setStatus('Background loading resources...')
-
-    include_map(self.map)
 
     playing_binds.enabled = true
     playing_binds.mouseCapture = true
@@ -24,8 +20,21 @@ function BaseGameMode:init()
     self.camPitch = 0
     self.lastMouseMoveTime = seconds()
 
+    -- Integer in range [0, 3]
+    -- Actual boom length is a function of this.
+    -- Zoom operations inc / dec the notch by 1.
+    self.boomNotch = 0
+
     main.camPos = self.spawnPos
     main.camQuat = self.spawnRot
+
+    self:loadMap()
+end
+
+function BaseGameMode:loadMap()
+    loading_screen:setMapName(self.name)
+    loading_screen:setStatus('Background loading resources...')
+    include_map(self.map)
 end
 
 function BaseGameMode:loadAtLocation()
@@ -64,6 +73,21 @@ function BaseGameMode:setPause(v)
     main.physicsEnabled = not v
 end
 
+function BaseGameMode:boomIn()
+    self.boomNotch = math.max(self.boomNotch - 1, 0)
+end
+
+function BaseGameMode:boomOut()
+    self.boomNotch = math.min(self.boomNotch + 1, 3)
+end
+
+function BaseGameMode:boomLength(boom_min, boom_max)
+    -- Somewhere between the min and max, according to notch.
+    -- Do it in logarithmic space as this is more natural given perspective correction.
+    return math.exp(lerp(math.log(boom_min), math.log(boom_max), self.boomNotch / 3))
+end
+
+-- Manages the camera / audio orientation and updates some useful variables.
 function BaseGameMode:mouseMove(rel)
     local sens = user_cfg.mouseSensitivity
     

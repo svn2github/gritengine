@@ -90,3 +90,19 @@ sky_material `Sky` {
     emissiveMap = `FunkyStarField.dds`,
     emissiveMask = vec(4, 4, 4),
 }
+
+physical_material `Barrier` {
+    interactionGroup = SmoothSoftGroup,
+    roadTyreFriction = 0.8,
+    offRoadTyreFriction = 0.6,
+    tyreSmoke = hot_tyre_smoke,
+    flammable = 0.25,
+}
+
+physical_material `Track` {
+    interactionGroup = SmoothSoftGroup,
+    roadTyreFriction = 0.8,
+    offRoadTyreFriction = 0.6,
+    tyreSmoke = hot_tyre_smoke,
+    flammable = 0.25,
+}

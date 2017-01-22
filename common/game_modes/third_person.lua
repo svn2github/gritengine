@@ -162,9 +162,13 @@ function ThirdPersonGameMode:receiveButton(button, state)
     elseif button == 'walkCrouch' then
         prot:setCrouch(pressed)
     elseif button == 'walkZoomIn' then
-        prot:controlZoomIn() 
+        if pressed then
+            self:boomIn() 
+        end
     elseif button == 'walkZoomOut' then
-        prot:controlZoomOut() 
+        if pressed then
+            self:boomOut() 
+        end
     elseif button == 'walkCamera' then
         -- toggle between regular_chase_cam_update, top_down_cam_update, top_angled_cam_update
 
@@ -177,9 +181,13 @@ function ThirdPersonGameMode:receiveButton(button, state)
     elseif button == 'driveRight' then
         cobj:setRight(pressed)
     elseif button == 'driveZoomIn' then
-        cobj:controlZoomIn() 
+        if pressed then
+            self:boomIn() 
+        end
     elseif button == 'driveZoomOut' then
-        cobj:controlZoomOut() 
+        if pressed then
+            self:boomOut() 
+        end
     elseif button == 'driveCamera' then
         -- toggle between regular_chase_cam_update, top_down_cam_update, top_angled_cam_update
 
@@ -278,10 +286,15 @@ function ThirdPersonGameMode:frameCallback(elapsed_secs)
             self.protagonist:updateDriven(instance.camAttachPos, Q_ID)
         end
 
-        local ray_skip = 0.4
+        -- TODO(dcunnin): If reducing this to 0 worked then remove it.
+        local ray_skip = 0
         local ray_dir = main.camQuat * V_BACKWARDS
         local ray_start = instance.camAttachPos + ray_skip * ray_dir
-        local ray_len = instance.boomLengthSelected - ray_skip
+        if obj.boomLengthMin == nil or obj.boomLengthMax == nil then
+            error('Controlling %s of class %s, needed boomLengthMin and boomLengthMax, got: %s, %s'
+                  % {obj, obj.className, obj.boomLengthMin, obj.boomLengthMax})
+        end
+        local ray_len = self:boomLength(obj.boomLengthMin, obj.boomLengthMax) - ray_skip
         local ray_hit_len = cam_box_ray(ray_start, main.camQuat, ray_len, ray_dir, body)
         boom_length = math.max(obj.boomLengthMin, ray_hit_len)
     end

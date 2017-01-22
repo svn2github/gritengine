@@ -10,7 +10,7 @@
 -- The editor is a special kind of game mode.  This is the root of the editor state.  Ultimately,
 -- everything is initialized and managed from here.
 
-Editor = Editor or {
+Editor = extends_keep_existing(Editor, BaseGameMode) {
     name = 'Map Editor',
 
     debugMode = false,
@@ -35,8 +35,8 @@ Editor = Editor or {
 
     -- holds editor camera position and rotation to get back when stop playing
     camera = {
-        pos = {};
-        rot = {};        
+        pos = {},
+        rot = {},
     };
 
     directory = "editor";
@@ -156,14 +156,20 @@ function Editor:frameCallback(elapsed_secs)
         end
 
         main.camQuat = quat(self.camYaw, V_DOWN) * quat(self.camPitch, V_EAST)
+        main.camQuat = body.worldOrientation * quat(self.camPitch, vec(1, 0, 0))
 
         main.speedoPos = instance.camAttachPos
-        main.speedoSpeed = #obj_vel
+        main.speedoSpeed = obj:getSpeed()
 
-        local ray_skip = 0.4
+        -- TODO(dcunnin): If reducing this to 0 worked then remove it.
+        local ray_skip = 0
         local ray_dir = main.camQuat * V_BACKWARDS
         local ray_start = instance.camAttachPos + ray_skip * ray_dir
-        local ray_len = instance.boomLengthSelected - ray_skip
+        if obj.boomLengthMin == nil or obj.boomLengthMax == nil then
+            error('Controlling %s of class %s, needed boomLengthMin and boomLengthMax, got: %s, %s'
+                  % {obj, obj.className, obj.boomLengthMin, obj.boomLengthMax})
+        end
+        local ray_len = self:boomLength(obj.boomLengthMin, obj.boomLengthMax) - ray_skip
         local ray_hit_len = cam_box_ray(ray_start, main.camQuat, ray_len, ray_dir, body)
         local boom_length = math.max(obj.boomLengthMin, ray_hit_len)
         main.camPos = instance.camAttachPos + main.camQuat * vector3(0, -boom_length, 0)
@@ -206,6 +212,9 @@ function Editor:frameCallback(elapsed_secs)
         -- splendid, now let's move
         cam_pos = cam_pos + d
         main.camPos = cam_pos
+
+        main.speedoPos = main.camPos
+        main.speedoSpeed = #d / elapsed_secs
     end
 
     main.streamerCentre = main.camPos
@@ -526,6 +535,7 @@ function Editor:paste()
 end
 
 function Editor:init()
+    BaseGameMode.init(self)
     navigation_reset()
 
     self.map = EditorMap.new()
@@ -538,7 +548,14 @@ function Editor:init()
     -- Avoid distracting text while we load the HUD.
     ticker:clear()
 
+    main.speedoPos = main.camPos
+    main.speedoSpeed = 0
+    safe_destroy(self.speedo)
+    self.speedo = hud_object `/common/hud/Speedo` { parent = hud_top_right }
+    self.speedo.position = vec(-64, -128 - self.speedo.size.y/2)
+
     gfx_option("WIREFRAME_SOLID", true) -- i don't know why but when selecting a object it just shows wireframe, so TEMPORARY?
+
     -- fix glow in the arrows
     gfx_option("BLOOM_THRESHOLD", 3)
 
@@ -553,6 +570,7 @@ function Editor:init()
     make_editor_interface()
 
     playing_binds.enabled = true
+    playing_binds.mouseCapture = false
     editor_binds.enabled = true
     editor_edit_binds.enabled = true
     editor_object_binds.enabled = true
@@ -575,21 +593,12 @@ function Editor:init()
     env.clockRate = 0
 end
 
-function Editor:setPause(v)
-    -- Do nothing, pause controlled elsewhere.
+function Editor:loadMap()
+    -- Override BaseGameMode's behavior since we load maps differently in the editor.
 end
 
-function Editor:mouseMove(rel)
-    local sens = user_cfg.mouseSensitivity
-
-    local rel2 = sens * rel * vec(1, user_cfg.mouseInvert and -1 or 1)
-
-    self.camYaw = (self.camYaw + rel2.x) % 360
-    self.camPitch = clamp(self.camPitch + rel2.y, -90, 90)
-
-    main.camQuat = quat(self.camYaw, V_DOWN) * quat(self.camPitch, V_EAST)
-    main.audioCentreQuat = main.camQuat
-    self.lastMouseMoveTime = seconds()
+function Editor:setPause(v)
+    -- Do nothing, pause controlled elsewhere.
 end
 
 function Editor:receiveButton(button, state)
@@ -752,9 +761,13 @@ function Editor:receiveButton(button, state)
             elseif button == 'walkCrouch' then
                 cobj:setCrouch(pressed)
             elseif button == 'walkZoomIn' then
-                cobj:controlZoomIn()
+                if pressed then
+                    self:boomIn()
+                end
             elseif button == 'walkZoomOut' then
-                cobj:controlZoomOut()
+                if pressed then
+                    self:boomOut()
+                end
             elseif button == 'walkCamera' then
                 -- toggle between regular_chase_cam_update, top_down_cam_update, top_angled_cam_update
 
@@ -767,9 +780,13 @@ function Editor:receiveButton(button, state)
             elseif button == 'driveRight' then
                 cobj:setRight(pressed)
             elseif button == 'driveZoomIn' then
-                cobj:controlZoomIn()
+                if pressed then
+                    self:boomIn()
+                end
             elseif button == 'driveZoomOut' then
-                cobj:controlZoomOut()
+                if pressed then
+                    self:boomOut()
+                end
             elseif button == 'driveCamera' then
                 -- toggle between regular_chase_cam_update, top_down_cam_update, top_angled_cam_update
 
@@ -816,9 +833,12 @@ function Editor:destroy()
     self:saveEditorConfig()
     -- self:saveEditorInterface()
     
+    safe_destroy(self.speedo)
+
     editor_interface.map_editor_page:destroy()
     editor_interface:destroy()
     navigation_reset()
+    BaseGameMode.destroy(self)
 end
 
 game_manager:register(Editor)

@@ -47,9 +47,8 @@ hud_class `.` {
     end;
     frameCallback = function (self, elapsed)
 
-        -- sun_direction is the direction of the rays of light, so invert to point towards the sun
-        --
-		local sun_pos = main.camPos + (gfx_sun_falloff_distance() * gfx_sun_direction() * -1)	
+        -- gfx_sun_direction points towards the sun
+		local sun_pos = main.camPos + (gfx_sun_falloff_distance() * gfx_sun_direction())
 
         local screen_pos = gfx_world_to_screen(main.camPos, main.camQuat, sun_pos) - vec(gfx_window_size().x/2, gfx_window_size().y/2, 0)
 

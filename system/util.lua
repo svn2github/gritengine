@@ -336,6 +336,7 @@ function table.keys(tab, limit)
 end
 
 function table.dump(tab, n, d, ind_level, colour)
+    assert(tab ~= nil)
     d = d or 0
     ind_level = ind_level or 0
     if colour == nil then colour = true end

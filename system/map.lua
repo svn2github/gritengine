@@ -196,13 +196,13 @@ function map_write_to_file(map, filename)
     file:write(('        time = %s,\n'):format(map.environment.time))
     file:write(('        clock_rate = %s,\n'):format(map.environment.clock_rate))
     if map.environment.env_cycle_file then
-        file:write(('        env_cycle_file = `%s`,\n'):format(get_relative_path(filename, map.environment.env_cycle_file)))
+        file:write('        env_cycle_file = `%s`,\n' % get_relative_path(filename, map.environment.env_cycle_file))
     else
         file:write('        env_cycle_file = nil,\n')
     end
     file:write('        sky = {\n')
     for name, body in pairs(env_sky) do
-        file:write('            %s = { %s, %d },\n' % {name, body.meshName, body.zOrder})
+        file:write('            %s = { `%s`, %d },\n' % {name, get_relative_path(filename, body.meshName), body.zOrder})
     end
     file:write('        },\n')
     file:write('    },\n')
@@ -210,7 +210,7 @@ function map_write_to_file(map, filename)
 
     -- A canonical order is important for diffs and version control merges.
     for name, object in spairs(map.objects or {}) do
-        local class_name, obj_pos, body = object[1], object[2], object[3]
+        local class_name, obj_pos, body = object[1], object[2], object[3] or {}
         file:write(('        ["%s"] = {\n'):format(name))
         file:write(('            `%s`,\n'):format(get_relative_path(filename, class_name)))
         file:write(('            vec(%f, %f, %f),\n'):format(unpack(obj_pos)))

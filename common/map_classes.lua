@@ -264,16 +264,7 @@ BaseClass = {
 -- self must be at least of type ColClass
 -- 
 
-function regular_chase_cam_zoom_in(self)
-    local instance = self.instance
-    instance.boomLengthSelected = clamp(instance.boomLengthSelected*0.83, self.boomLengthMin, self.boomLengthMax)
-end
-
-function regular_chase_cam_zoom_out(self)
-    local instance = self.instance
-    instance.boomLengthSelected = clamp(instance.boomLengthSelected*1.2, self.boomLengthMin, self.boomLengthMax)
-end
-
+-- TODO(dcunnin): This function is out of date.  Is it obsolete?  Can we remove it?
 function regular_chase_cam_update(self)
 
     local instance = self.instance
@@ -313,12 +304,9 @@ function regular_chase_cam_update(self)
     player_ctrl.camFocus = instance.camAttachPos
     local boom_length = math.max(self.boomLengthMin, cam_box_ray(player_ctrl.camFocus, player_ctrl.camDir, instance.boomLengthSelected, player_ctrl.camDir*V_BACKWARDS, body))
     player_ctrl.camPos = player_ctrl.camFocus + player_ctrl.camDir * vector3(0, -boom_length, 0)
-
-    --player_ctrl.speedoPos = instance.camAttachPos
-    --player_ctrl.speedoSpeed = #vehicle_vel
-
 end
 
+-- TODO(dcunnin): This function is out of date.  Is it obsolete?  Can we remove it?
 function top_down_cam_update(self)
     --this is a pure top down camera, always facing down
     local instance = self.instance
@@ -341,6 +329,7 @@ function top_down_cam_update(self)
     player_ctrl.camDir = vehicle_dir*Q_DOWN
 end
 
+-- TODO(dcunnin): This function is out of date.  Is it obsolete?  Can we remove it?
 function top_angled_cam_update(self)
     --this is a locked pitch angle camera pretty much similar to regular_chase_cam
     player_ctrl.camPitch = -45

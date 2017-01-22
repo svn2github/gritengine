@@ -19,3 +19,34 @@ local SpinningClass = extends (ColClass) {
 }
 
 class `wo_tunnel` (SpinningClass) {castShadows=true,renderingDistance=500}
+
+local col = vec(.2, .4, .4)
+
+material `ChevronLight` {
+    diffuseMask = col,
+    emissiveMask = 3 * col,
+    additionalLighting = true,
+}
+
+local light = function(x, y, z)
+    return {
+        emissiveMaterials = `ChevronLight`,
+        pos = vec(x, y, z),
+        aim = quat(90, V_RIGHT),
+        range = 50,
+        diff = col,
+        spec = col,
+        coronaColour = col,
+        coronaSize = 4,
+        iangle = 40,
+        oangle = 75,
+        ciangle = 50,
+        coangle = 90,
+    }
+end
+
+class `ChevronLight` (ColClass) {
+    renderingDistance = 200,
+    placementZOffset = 0,
+    lights = { light(0, 2, 0), light(0, -0.5, 0), light(0, -3, 0) },
+}

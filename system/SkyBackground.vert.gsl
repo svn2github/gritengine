@@ -6,7 +6,7 @@ var fov_x = aspect * global.fovY;
 out.position = transform_to_world(vert.position.xyz);
 
 
-var sunlight_dir_ss_ = mul(global.viewProj, Float4(-global.sunDirection,1));
+var sunlight_dir_ss_ = mul(global.viewProj, Float4(global.sunDirection,1));
 
 // for interpolators
 var uv = vert.coord0.xy;
@@ -16,6 +16,6 @@ var pos_ws = transform_to_world(vert.position.xyz);
 var sunlight_dir_ss = sunlight_dir_ss_.xyz/sunlight_dir_ss_.w;
 var fov = Float2(fov_x, global.fovY);
 var sun_pos_ss_polar = Float2(
-    mod(atan2(-global.sunDirection.x, -global.sunDirection.y)/PI/2 + 1, 1.0) * 360,
-    tan(-global.sunDirection.z / length(global.sunDirection.xy)) / PI * 180
+    mod(atan2(global.sunDirection.x, global.sunDirection.y)/PI/2 + 1, 1.0) * 360,
+    tan(global.sunDirection.z / length(global.sunDirection.xy)) / PI * 180
 );

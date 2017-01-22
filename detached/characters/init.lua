@@ -121,7 +121,6 @@ DetachedCharacterClass = extends (BaseClass) {
 
         self.needsStepCallbacks = true
 
-        instance.boomLengthSelected = (self.boomLengthMax + self.boomLengthMin)/2
 
         instance.isActor = true;
         instance.pushState = 0
@@ -624,10 +623,6 @@ DetachedCharacterClass = extends (BaseClass) {
             self.instance.jumpHappened = true
         end
     end,
-
-    controlZoomIn = regular_chase_cam_zoom_in,
-    controlZoomOut = regular_chase_cam_zoom_out,
-    controlUpdate = regular_chase_cam_update,
 
     controlBegin = function (self)
         return true

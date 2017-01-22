@@ -225,8 +225,6 @@ function Vehicle.activate (self, instance)
     instance.lightsOverride = self.lightsOverride or false
     if self.canDrive == false then instance.canDrive = false else instance.canDrive = true end
 
-    instance.boomLengthSelected = (self.boomLengthMax + self.boomLengthMin)/2
-
     instance.numWheels = 0
     if self.bonedWheelInfo then
         for k, info in pairs(self.bonedWheelInfo) do
@@ -714,11 +712,6 @@ function Vehicle.getStatistics (self)
 
     return tot_triangles, tot_batches
 end
-
-Vehicle.controlZoomIn = regular_chase_cam_zoom_in
-Vehicle.controlZoomOut = regular_chase_cam_zoom_out
-Vehicle.controlUpdate = regular_chase_cam_update
-
 
 function Vehicle.controlBegin (self)
 end

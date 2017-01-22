@@ -25,15 +25,47 @@ function env_recompute()
         gfx_env_cube_cross_fade(invlerp(env_cube_dusk_time, env_cube_dark_time, secs))
     end
     
-    -- account for the fact that the sun is on the other side of the planet in summer
-    -- in degrees
-    local sun_adjusted_time = math.mod(secs / 60 / 60 / 24 * 360 + env.season, 360)
-    local space_orientation = quat(env.latitude,V_EAST)*
-                              quat(sun_adjusted_time,V_SOUTH)*
-                              quat(env.earthTilt,V_WEST)
-    local sun_direction =   (space_orientation * quat(env.season,V_NORTH)) * V_UP
-    local moon_direction =  (space_orientation * quat(env.moonPhase,V_NORTH) * quat(env.season,V_NORTH)) * V_UP
+    -- We need to manage the:
+    -- * Orientation of space around the player (to position the sky map), which defaults to Y being
+    -- the normal of the ecliptic plane in the north(ish) direction, and Z being away from the
+    -- sun in winter.
+    -- * Orientation of the Moon around the player.  The moon by default is in the Z direction.
+    -- Therefore by default there is a full moon.
+    -- * Direction vectors of the sun and moon in world space, for lighting purposes.
 
+    --[[
+                                 Y
+            ---                  ^
+          /XXXXX\                |
+         |X Sun X|              (E) -> Z
+          \XXXXX/
+            ---
+
+        Z is towards the sun.
+        Y is the normal of the orbital plane.
+        The X axis is therefore out of the screen.
+
+        At midnight during winter at latitude 0, you would be standing on the far side of the earth
+        somewhere in the -Z and -Y direction.
+    --]]
+
+    -- First rotate space by X to account for the tilt of the earth.  Now Y points to the true north
+    -- pole.  X is the same (i.e. east).  Z points slightly away from where it used to.
+    -- Then rotate by Y to account for time.  Now Y still points north and Z points up into the sky
+    -- at the point around the earth where we are at this time.
+    -- X has changed but is still east because we have moved around the earth.
+    -- Now account for latitude by rotating by X.
+
+    -- sun_adjusted_time includes season because the Earth rotates about its axis relative to the
+    -- stars once every 23 hours 56 minutes.  I.e. because of the rotation of the earth around the
+    -- sun, the period between when the sun is at its highest point in the sky is slightly longer
+    -- than the actual rotation of the earth.  The sun appears to "chase" the earth relative to the
+    -- starfield background.
+    local sun_adjusted_time = math.mod(secs / 60 / 60 / 24 * 360 - env.season + 360, 360)
+    local space_orientation = quat(env.latitude, V_EAST) *
+                              quat(sun_adjusted_time, V_SOUTH) *
+                              quat(env.earthTilt, V_EAST)
+    local moon_orientation = space_orientation * quat(env.moonPhase, V_SOUTH)
     local sky_ent = env_sky['sky']
     local moon_ent = env_sky['moon']
 
@@ -42,9 +74,13 @@ function env_recompute()
         sky_ent.orientation = space_orientation
     end
     if moon_ent ~= nil then 
-        moon_ent.orientation = space_orientation * quat(env.moonPhase,V_NORTH)
+        moon_ent.orientation = moon_orientation
     end
     
+    -- Account for the apparent movement of the Sun around the Earth due to seasons.
+    local sun_direction =   (space_orientation * quat(env.season, V_SOUTH)) * V_DOWN
+    local moon_direction =  moon_orientation * V_DOWN
+
     local next_env, current_env, slider
     do 
         local found = false
@@ -69,9 +105,9 @@ function env_recompute()
     -- sunlight_direction is the parameter to the lighting equation that is used to light the scene
     local sunlight_direction
     if current_env.lightSource == "MOON" then
-        gfx_sunlight_direction(norm(moon_direction))
+        gfx_sunlight_direction(-norm(moon_direction))
     elseif current_env.lightSource == "SUN" then
-        gfx_sunlight_direction(norm(sun_direction))
+        gfx_sunlight_direction(-norm(sun_direction))
     end
 
     -- interpolated from env_cycle
@@ -269,10 +305,10 @@ function env_reset()
     env.autoUpdate = false
     env.latitude = 41; 
     env.secondsSinceMidnight = 12*60*60;  -- Midday.
-    env.season = 180;  -- Summer, stored as angle in degrees.
-    env.earthTilt = 23.44;
+    env.season = 0;  -- Winter, stored as angle in degrees.
+    env.earthTilt = -23.44;
     env.clockRate = 30;
     env.clockTicking = false;
-    env.moonPhase = 160;  -- Between sun and earth when moonPhase + season == 180 (mod 360).
+    env.moonPhase = 200;  -- Between sun and earth when moonPhase == 0.
     env.autoUpdate = true
 end

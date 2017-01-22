@@ -82,7 +82,6 @@ function Plane.activate (self,instance)
     instance.push = 0
     instance.parked = true
     instance.canDrive = true
-    instance.boomLengthSelected = (self.boomLengthMax + self.boomLengthMin)/2
 
     -- 0 means retracted, 1 means down
     instance.gearState = 0.999
@@ -653,10 +652,6 @@ function Plane.onExplode (self)
 
         ColClass.onExplode(self)
 end
-
-Plane.controlZoomIn = regular_chase_cam_zoom_in
-Plane.controlZoomOut = regular_chase_cam_zoom_out
-Plane.controlUpdate = regular_chase_cam_update
 
 function Plane.controlBegin (self)
     if not self.activated then return end

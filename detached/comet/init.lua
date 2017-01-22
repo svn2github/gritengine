@@ -56,8 +56,8 @@ FlyingCar = extends (ColClass) {
     fovScale = true;
 
     controllable = "VEHICLE";
-    boomLengthMin = 3;
-    boomLengthMax = 15;
+    boomLengthMin = 4;
+    boomLengthMax = 20;
     driverExitPos = vector3(-1.45, -0.24, 0.49);
     driverExitQuat = Q_ID;
 
@@ -92,7 +92,6 @@ FlyingCar = extends (ColClass) {
         self.needsStepCallbacks = true;
 
         instance.canDrive = true;
-        instance.boomLengthSelected = (self.boomLengthMax + self.boomLengthMin)/2
 
         instance.wantHeight = instance.body.worldPosition.z
         instance.wantBearing = 0
@@ -308,10 +307,6 @@ FlyingCar = extends (ColClass) {
     setAltDown = do_nothing;
     setAltLeft = do_nothing;
     setAltRight = do_nothing;
-
-    controlZoomIn = regular_chase_cam_zoom_in;
-    controlZoomOut = regular_chase_cam_zoom_out;
-    controlUpdate = regular_chase_cam_update;
 
     controlBegin = function (self)
         if not self.activated then return end

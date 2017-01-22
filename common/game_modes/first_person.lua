@@ -76,7 +76,6 @@ local FpsPlayerClass = extends (ColClass) {
 
 		self.needsStepCallbacks = true
 		self.needsFrameCallbacks = true
-        instance.boomLengthSelected = (self.boomLengthMax + self.boomLengthMin)/2
 
         instance.isActor = true;
         instance.pushState = 0
@@ -560,10 +559,15 @@ local FpsPlayerClass = extends (ColClass) {
 
 		main.camQuat = quat(game_manager.currentMode.camYaw, V_DOWN) * quat(game_manager.currentMode.camPitch, V_EAST)
 
-		local ray_skip = 0.4
+        -- TODO(dcunnin): If reducing this to 0 worked then remove it.
+        local ray_skip = 0
 		local ray_dir = main.camQuat * V_BACKWARDS
 		local ray_start = instance.camAttachPos + ray_skip * ray_dir
-		local ray_len = instance.boomLengthSelected - ray_skip
+        if obj.boomLengthMin == nil or obj.boomLengthMax == nil then
+            error('Controlling %s of class %s, needed boomLengthMin and boomLengthMax, got: %s, %s'
+                  % {obj, obj.className, obj.boomLengthMin, obj.boomLengthMax})
+        end
+        local ray_len = game_manager.currentMode:boomLength(obj.boomLengthMin, obj.boomLengthMax) - ray_skip
 		local ray_hit_len = cam_box_ray(ray_start, main.camQuat, ray_len, ray_dir, body)
 		local boom_length = math.max(obj.boomLengthMin, ray_hit_len)
 		if not self.firstPersonCamera then
@@ -696,9 +700,13 @@ function FirstPersonGameMode:receiveButton(button, state)
     elseif button == 'walkCrouch' then
         prot:setCrouch(pressed)
     elseif button == 'walkZoomIn' then
-        self:toggleCamera()
+        if pressed then
+            self:boomIn() 
+        end
     elseif button == 'walkZoomOut' then
-        self:toggleCamera()
+        if pressed then
+            self:boomOut() 
+        end
     elseif button == 'walkCamera' then
         self:toggleCamera()
     elseif button == 'driveForwards' then    
@@ -710,9 +718,13 @@ function FirstPersonGameMode:receiveButton(button, state)
     elseif button == 'driveRight' then
         cobj:setRight(pressed)
     elseif button == 'driveZoomIn' then
-        cobj:controlZoomIn() 
+        if pressed then
+            self:boomIn() 
+        end
     elseif button == 'driveZoomOut' then
-        cobj:controlZoomOut() 
+        if pressed then
+            self:boomOut() 
+        end
     elseif button == 'driveCamera' then
         -- toggle between regular_chase_cam_update, top_down_cam_update, top_angled_cam_update
     elseif button == 'driveSpecialUp' then
