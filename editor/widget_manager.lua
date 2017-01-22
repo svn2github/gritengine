@@ -64,7 +64,7 @@ function widget_manager:updateWidget()
     self.widgetOrt = Q_ID
     if self.spaceMode == "local" then
         local obj = editor.map:getCurrentObject(selected[#selected])
-        self.widgetOrt = obj[3].rot or Q_ID
+        self.widgetOrt = (obj[3] or {}).rot or Q_ID
     end
 
     if self.widget == nil then
@@ -425,7 +425,7 @@ function widget_manager:frameCallback(elapsed_secs)
         self.widget:updatePivot(self.widgetPos + translation, self.widgetOrt)
 
         if input_filter_pressed("Ctrl") then
-            translation = math.floor(translation / gridSize) * gridSize
+            translation = math.floor(translation / self.gridSize) * self.gridSize
         end
 
         local editor = game_manager.currentMode
