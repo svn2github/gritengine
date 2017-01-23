@@ -7,8 +7,8 @@ return {
         description = "Insert description here",
     },
     editor = {
-        cam_pos = vec(808.393860, -2128.540771, 93.969528),
-        cam_quat = quat(0.04655997, -0.001470683, 0.03153683, -0.9984165),
+        cam_pos = vec(567.816467, -2188.967041, 64.617088),
+        cam_quat = quat(-0.009416705, 0.0003912509, 0.04151094, -0.9990937),
     },
     env_cubes = {
         dawn = nil,
@@ -53,9 +53,9 @@ return {
         },
         ["Unnamed:/wipeout/ChevronLight:14214"] = {
             `ChevronLight`,
-            vec(576.889038, -2247.784424, 80.770195),
+            vec(576.889038, -2247.784424, 78.605515),
             {
-              rot = quat(-0.02864758, 0.8897606, -0.1734408, -0.4212172),
+              rot = quat(-0.0539691, 0.8177275, -0.1673013, -0.5481055),
             }
         },
         ["Unnamed:/wipeout/ChevronLight:17623"] = {
@@ -127,11 +127,6 @@ return {
             {
               rot = quat(0.7193398, 0, 0, -0.6946584),
             }
-        },
-        ["Unnamed:/wipeout/DummyVehicle2:25670"] = {
-            `DummyVehicle2`,
-            vec(614.598816, -2190.734375, 86.108955),
-            {}
         },
         ["unnamed_0"] = {
             `barrier01`,

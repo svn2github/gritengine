@@ -1,5 +1,10 @@
 material `DummyVehicle` {
-    diffuseMap = `DummyVehicle.png`,
+    diffuseMap = {
+        -- Filename on disk.
+        image = `DummyVehicle.png`,
+        modeU = "CLAMP",
+        modeV = "CLAMP",
+    },
 }
 
 class `DummyVehicle2` (ColClass) {
@@ -14,10 +19,15 @@ class `DummyVehicle2` (ColClass) {
     cameraTrack = true;
 
     hoverHeight = 1,
-    steerMax = 60,  -- degrees/sec
-    speedMax = 30,  -- metres/sec
+    steerMax = 80,  -- degrees/sec
+    speedMax = 100,  -- metres/sec
     acceleration = 10,
     initialVelocity = vec(0, 0, 0),
+
+	frontLeftJet = vec(-0.2, 4, 0),
+	frontRightJet = vec(0.2, 4, 0),
+	rearLeftJet = vec(-2, 2, 0),
+	rearRightJet = vec(2, 2, 0),
 
     activate = function(self, instance)
         if ColClass.activate(self, instance) then
@@ -29,10 +39,10 @@ class `DummyVehicle2` (ColClass) {
         instance.shouldSteerLeft, instance.shouldSteerRight = 0, 0
         instance.onGround = false
         instance.pos = self.pos
-        instance.orientation = self.rot or Q_ID
+        instance.displayOrientation = self.rot or Q_ID
+        instance.groundOrientation = instance.displayOrientation
         instance.velocity = self.initialVelocity
         instance.body.ghost = true
-        --instance.body.updateCallback = nil
     end,
 
     deactivate = function(self, instance)
@@ -44,10 +54,11 @@ class `DummyVehicle2` (ColClass) {
     stepCallback = function(self, elapsed_secs)
         local instance = self.instance
         local pos = instance.pos
-        local ort = instance.orientation
+        local ort = instance.groundOrientation
         local vel = instance.velocity
-        local gravity = vec(physics_option('GRAVITY_X'), physics_option('GRAVITY_Y'), physics_option('GRAVITY_Z'))
+        local gravity = physics_get_gravity()
         local vehicle_up = ort * vec(0, 0, 1)
+
         local ray = self.hoverHeight * -2 * vehicle_up
         local dist, ground, ground_normal, ground_mat = physics_cast(pos, ray, true, 0)
         instance.onGround = dist ~= nil
@@ -69,7 +80,7 @@ class `DummyVehicle2` (ColClass) {
                 end
             end)
         end
-        if instance.onGround and not (instance.special and vehicle_up.z < 0) then
+        if instance.onGround and not (instance.handbrake and vehicle_up.z < 0) then
             pos = hit_pos + self.hoverHeight * ground_normal
             ort = quat(vehicle_up, ground_normal) * ort
             local local_vel = inv(ort) * vel
@@ -82,28 +93,29 @@ class `DummyVehicle2` (ColClass) {
             local vel_lat = local_vel.x
             vel_lat = vel_lat * 0.5 ^ elapsed_secs
             vel = ort * vec(vel_lat, vel_fwd, 0)
+
         else
             -- Projectile motion
             vel = vel + gravity * elapsed_secs
-            local speed = #vel
-            if speed > self.speedMax then
-                vel = vel * self.speedMax / speed
-            end
+            ort = quat(ort * V_FORWARDS, vel) * ort
         end
+
+        local speed = #vel
+        if speed > self.speedMax then
+            vel = vel * self.speedMax / speed
+        end
+
         local angular_velocity = (instance.shouldSteerLeft + instance.shouldSteerRight) * elapsed_secs
-        ort = quat(angular_velocity, ort * vec(0, 0, -1)) * ort
-        instance.orientation = ort
+        ort = norm(quat(angular_velocity, ort * vec(0, 0, -1)) * ort)
+        instance.groundOrientation = ort
+        instance.displayOrientation = norm(slerp(ort, instance.displayOrientation, 0.001 ^ elapsed_secs))
         instance.velocity = vel
         pos = pos + vel * elapsed_secs
         instance.pos = pos
         instance.body.linearVelocity = vel
         instance.body.worldPosition = pos
-        instance.body.worldOrientation = ort
+        instance.body.worldOrientation = instance.displayOrientation
         instance.body:force(-gravity, pos)
-        -- instance.gfx.localPosition = pos
-        -- instance.gfx.localOrientation = ort
-        -- instance.camAttachPos = pos + ort * self.camAttachPos
-        -- self.pos = pos
     end,
 
     controlBegin = function(self)
@@ -155,12 +167,6 @@ class `DummyVehicle2` (ColClass) {
         if self.exploded then return end
         if not self.activated then error("Not activated: "..self.name) end
         self.instance.handbrake = v
-    end,
-
-    setSpecial = function(self, v)
-        if self.exploded then return end
-        if not self.activated then error("Not activated: "..self.name) end
-        self.instance.special = v
     end,
 }
 

@@ -13,25 +13,9 @@
 Editor = extends_keep_existing(Editor, BaseGameMode) {
     name = 'Map Editor',
 
-    debugMode = false,
-    noClip = false,
-    fast = false,
-    mouseCapture = false,
-    speedSlow = 3,
-    speedFast = 100,
-    forwards = 0,
-    backwards = 0,
-    left = 0,
-    right = 0,
-    ascend = 0,
-    descend = 0,
-    camYaw = 0,
-    camPitch = 0,
-    lastMouseMoveTime = 0,
 
     selectionEnabled = true;
     
-    controlObj = nil,
 
     -- holds editor camera position and rotation to get back when stop playing
     camera = {
@@ -537,6 +521,24 @@ end
 function Editor:init()
     BaseGameMode.init(self)
     navigation_reset()
+
+
+    self.debugMode = false
+    self.noClip = false
+    self.fast = false
+    self.mouseCapture = false
+    self.speedSlow = 3
+    self.speedFast = 100
+    self.forwards = 0
+    self.backwards = 0
+    self.left = 0
+    self.right = 0
+    self.ascend = 0
+    self.descend = 0
+    self.camYaw = 0
+    self.camPitch = 0
+    self.lastMouseMoveTime = 0
+    self.controlObj = nil
 
     self.map = EditorMap.new()
     main.camPos, main.camQuat = self.map:getEditorCamPosOrientation()
