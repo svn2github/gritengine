@@ -1,4 +1,3 @@
-include `assets/init.lua`
 include `map.lua`
 
 -- Loads all editor configuration.  You can delete files in config/ and fall back to the default

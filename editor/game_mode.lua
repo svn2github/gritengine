@@ -257,6 +257,7 @@ function Editor:setDebugMode(v)
     clock.enabled = v
     compass.enabled = v
     stats.enabled = v
+    self.speedo.enabled = not v
     editor_edit_binds.enabled = not v
     editor_object_binds.enabled = not v
     editor_debug_binds.enabled = v
@@ -317,26 +318,6 @@ end
 
 function Editor:toggleDebugMode()
     self:setDebugMode(not self.debugMode)
-end
-
-function is_inside_menu(menu)
-    if menu.enabled and mouse_pos_abs.x > menu.derivedPosition.x - menu.size.x/2 and
-    mouse_pos_abs.x < menu.derivedPosition.x + menu.size.x/2 and
-    mouse_pos_abs.y > menu.derivedPosition.y - menu.size.y/2
-    then
-        return true
-    end
-    return false
-end
-
--- return true if the mouse cursor is inside any active menu
-function mouse_inside_any_menu()
-    for i = 1, #_menus do
-        if _menus[i] ~= nil and not _menus[i].destroyed then
-            if is_inside_menu(_menus[i]) then return true end
-        end
-    end
-    return false
 end
 
 function Editor:generateEnvCube(pos)
@@ -422,11 +403,6 @@ function Editor:saveEditorInterface()
         opened   = (editor_interface.map_editor_page.windows.content_browser == nil and false or true) or not editor_interface.map_editor_page.windows.content_browser.destroyed;
         position = { editor_interface.map_editor_page.windows.content_browser.position.x, editor_interface.map_editor_page.windows.content_browser.position.y };
         size     = { editor_interface.map_editor_page.windows.content_browser.size.x, editor_interface.map_editor_page.windows.content_browser.size.y };
-      };
-      event_editor      =   {
-        opened   = editor_interface.map_editor_page.windows.event_editor.enabled;
-        position = { editor_interface.map_editor_page.windows.event_editor.position.x, editor_interface.map_editor_page.windows.event_editor.position.y };
-        size     = { editor_interface.map_editor_page.windows.event_editor.size.x, editor_interface.map_editor_page.windows.event_editor.size.y };
       };
       level_properties  =   {
         opened   = editor_interface.map_editor_page.windows.level_properties.enabled;
@@ -555,15 +531,13 @@ function Editor:init()
     safe_destroy(self.speedo)
     self.speedo = hud_object `/common/hud/Speedo` { parent = hud_top_right }
     self.speedo.position = vec(-64, -128 - self.speedo.size.y/2)
+    self.speedo.enabled = false
 
     gfx_option("WIREFRAME_SOLID", true) -- i don't know why but when selecting a object it just shows wireframe, so TEMPORARY?
 
     -- fix glow in the arrows
     gfx_option("BLOOM_THRESHOLD", 3)
 
-    -- [dcunnin] Ideally we would declare things earlier and only instantiate them at this
-    -- point.  However all the code is mixed up right now.
-    
     self.debug_mode_text = hud_text_add(`/common/fonts/Verdana12`)
     self.debug_mode_text.parent = hud_bottom_left
     self.debug_mode_text.text = "Mouse left: Use Weapon\nMouse Scroll: Change Weapon\nF: Controll Object\nTab: Console\nF1: Open debug mode menu (TODO)\nF5: Return Editor"

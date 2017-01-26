@@ -8,11 +8,6 @@ editor_interface_cfg = {
     position = { 0, 0 };
     size     = { 640, 400 };
   };
-  event_editor      =   {
-    opened   = false;
-    position = { 0, 0 };
-    size     = { 540, 400 };
-  };
   level_properties  =   {
     opened   = false;
     position = { 0, 0 };

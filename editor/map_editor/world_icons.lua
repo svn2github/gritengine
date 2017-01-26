@@ -2,7 +2,7 @@
 unload_icons = false
 
 particle `LampIcon` {
-    map = `icons/map_editor/lamp_icon.png`;
+    map = `icons/lamp_icon.png`;
     frames = { 0,0, 128, 128, }; frame = 0;
     behaviour = function(particle, elapsed)
         if unload_icons then
@@ -25,7 +25,7 @@ function emit_lamp_icon (pos, colour, size)
 end 
 
 particle `SoundIcon` {
-    map = `icons/map_editor/sound_icon.png`;
+    map = `icons/sound_icon.png`;
     frames = { 0,0, 128, 128, }; frame = 0;
     behaviour = function(particle, elapsed)
         particle.position = particle.p.pos

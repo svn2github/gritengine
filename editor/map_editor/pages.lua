@@ -96,7 +96,6 @@ local map_editor_page = {
 
         self.windows.content_browser.enabled = false
         --safe_destroy(self.windows.content_browser)
-        self.windows.event_editor.enabled = false
         self.windows.level_properties.enabled = false
         self.windows.material_editor.enabled = false
         self.windows.object_properties.enabled = false
@@ -244,12 +243,6 @@ local map_editor_page = {
                     -- icon = map_editor_icons.content_browser;
                 -- },
                 
-                -- {
-                    -- callback = function() open_window(self.windows.event_editor) end;
-                    -- name = "Event Editor";
-                    -- tip = "Open Event Editor window";
-                    -- icon = map_editor_icons.event_editor;
-                -- },
                 -- {
                     -- callback = function() open_window(self.windows.object_properties) end;
                     -- name = "Object Properties";
@@ -433,31 +426,16 @@ local map_editor_page = {
         end), "Set what to rotate around")
 
         self.toolbar:addSeparator()
-        self.toolbar:addTool("Toggle Postprocessing", map_editor_icons.view_mode,(
-            function(self)
-                gfx_option("POST_PROCESSING", not gfx_option("POST_PROCESSING"))
+        self.toolbar:addTool("Ghost", map_editor_icons.toggle_ghost, (
+            function (self)
+                game_manager.currentMode.noClip = not game_manager.currentMode.noClip
             end
-        ), "Toggle Postprocessing")
-        self.toolbar:addTool("Solid mode", map_editor_icons.solid, (function(self) gfx_option("WIREFRAME", false) gfx_option("RENDER_SKY", true) end), "View Mode: Solid")
-        self.toolbar:addTool("Wireframe mode", map_editor_icons.wireframe, (function(self) gfx_option("WIREFRAME_SOLID", false) gfx_option("WIREFRAME", true) gfx_option("RENDER_SKY", false) end), "View Mode: Wireframe")
-        self.toolbar:addTool("Solid Wireframe Mode", map_editor_icons.solid_wireframe, (function(self) gfx_option("WIREFRAME_SOLID", true) gfx_option("WIREFRAME", true) gfx_option("RENDER_SKY", true) end), "View Mode: Solid Wireframe")
-        self.toolbar:addSeparator()
-        -- self.toolbar:addTool("Object properties", `../icons/properties.png`, (function() open_window(self.windows.object_properties) end), "")
-        -- self.toolbar:addTool("Content Browser", `../icons/content_browser.png`, (function() open_window(self.windows.content_browser) end), "")
-        -- self.toolbar:addTool("Event Editor", `../icons/event_editor.png`, (function() open_window(self.windows.event_editor) end), "")
-        -- self.toolbar:addTool("Material Editor", `../icons/material_editor.png`, (function() open_window(self.windows.material_editor) end), "")
-        -- self.toolbar:addTool("Level Configuration", `../icons/level_config.png`, (function() open_window(self.windows.level_properties) end), "")
-        -- self.toolbar:addSeparator()
+        ), "Toggle Ghosting")
         self.toolbar:addTool("Show collision", map_editor_icons.show_collision, (
             function()
                 physics_option("DEBUG_WIREFRAME", not physics_option("DEBUG_WIREFRAME"))
             end
         ), "Show Collision")
-        self.toolbar:addTool("Toggle Physics", map_editor_icons.toggle_physics, (
-            function (self)
-                main.physicsEnabled = not main.physicsEnabled
-            end
-        ), "Toggle Physics")
         self.toolbar:addSeparator()
         self.toolbar:addTool("Editor Settings", map_editor_icons.config, (function() open_window(self.windows.settings) end), "Editor Settings")
 
@@ -511,7 +489,6 @@ local map_editor_page = {
             end
         end, "Content Browser")
 
-        self.mlefttoolbar:addTool("Event Editor", map_editor_icons.event_editor, function(self) open_window(editor_interface.map_editor_page.windows.event_editor) end, "Event Editor")
         self.mlefttoolbar:addTool("Map Config", map_editor_icons.world_properties, function(self) open_window(editor_interface.map_editor_page.windows.level_properties) end, "Map Config")
         self.mlefttoolbar:addSeparator()
         
@@ -540,7 +517,6 @@ local map_editor_page = {
         
         self.windows.content_browser = create_content_browser()
         
-        self.windows.event_editor = gui.window('Event Editor', vec2(editor_interface_cfg.event_editor.position[1], editor_interface_cfg.event_editor.position[2]), true, vec2(editor_interface_cfg.event_editor.size[1], editor_interface_cfg.event_editor.size[2]), vec2(350, 200), vec2(800, 600))
         self.windows.level_properties = gui.window('Map Properties', vec2(editor_interface_cfg.level_properties.position[1], editor_interface_cfg.level_properties.position[2]), true, vec2(editor_interface_cfg.level_properties.size[1], editor_interface_cfg.level_properties.size[2]), vec2(380, 225), vec2(800, 600))
         self.windows.material_editor = gui.window('Material Editor', vec2(editor_interface_cfg.material_editor.position[1], editor_interface_cfg.material_editor.position[2]), true, vec2(editor_interface_cfg.material_editor.size[1], editor_interface_cfg.material_editor.size[2]), vec2(350, 200), vec2(800, 600))
         self.windows.object_properties = gui.window('Properties', vec2(editor_interface_cfg.object_properties.position[1], editor_interface_cfg.object_properties.position[2]), true, vec2(editor_interface_cfg.object_properties.size[1], editor_interface_cfg.object_properties.size[2]), vec2(350, 200), vec2(800, 600))
@@ -564,7 +540,6 @@ local map_editor_page = {
         }
         _windows[#_windows+1] = self.windows.settings
 
-        self.windows.event_editor.enabled = editor_interface_cfg.event_editor.opened
         self.windows.level_properties.enabled = editor_interface_cfg.level_properties.opened
         self.windows.material_editor.enabled = editor_interface_cfg.material_editor.opened
         self.windows.object_properties.enabled = editor_interface_cfg.object_properties.opened
@@ -632,7 +607,6 @@ local map_editor_page = {
         safe_destroy(self.menus.helpMenu)
         
         safe_destroy(self.windows.content_browser)
-        safe_destroy(self.windows.event_editor)
         safe_destroy(self.windows.level_properties)
         safe_destroy(self.windows.material_editor)
         safe_destroy(self.windows.object_properties)
