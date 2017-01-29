@@ -7,6 +7,81 @@
 --  http://www.opensource.org/licenses/mit-license.php
 ------------------------------------------------------------------------------
 
+function open_map_dialog()
+    gui.open_file_dialog({
+        title = "Open Map";
+        parent = hud_centre;
+        position = vec(0, 0);
+        resizeable = true;
+        size = vec2(560, 390);
+        min_size = vec2(470, 290);
+        colour = _current_theme.colours.window.background;
+        alpha = 1;
+        choices = { "Grit Map (*.gmap)", "Lua Script (*.lua)" };
+        callback = function(self, str)
+            str = '/' .. str
+            if resource_exists(str) then
+                local status, msg = pcall(game_manager.currentMode.openMap, game_manager.currentMode, str)
+                if status then
+                    notify("Loaded!", vec(0, 0.5, 1), V_ID)
+                    -- error 'wat'
+                    return true
+                else
+                    error_handler(msg)
+                    notify("Error: Could not open map file!", vec(1, 0, 0), V_ID)
+                end
+            else
+                notify("Error: Map file not found!", vec(1, 0, 0), V_ID)
+            end
+            return false
+        end;    
+    })
+end
+
+function save_map_dialog()
+    gui.save_file_dialog({
+        title = "Save Map";
+        parent = hud_centre;
+        position = vec(0, 0);
+        resizeable = true;
+        size = vec2(560, 390);
+        min_size = vec2(470, 290);
+        colour = _current_theme.colours.window.background;
+        alpha = 1;
+        choices = { "Grit Map (*.gmap)", "Lua Script (*.lua)" };
+        callback = function(self, str)
+            str = '/' .. str
+            if resource_exists(str) then
+                local save_overwrite = function (boolean)
+                    if boolean then
+                        local status, msg = pcall(game_manager.currentMode.saveCurrentMapAs, game_manager.currentMode, str)
+                        if status then
+                            notify("Saved!", vec(0, 1, 0), V_ID)
+                            self:destroy()
+                        else
+                            error_handler(msg)
+                            notify("Error!", vec(1, 0, 0), V_ID)
+                        end
+                    end
+                end;
+                create_dialog("SAVE", "Would you like to overwrite "..str.."?", "yesnocancel", save_overwrite)
+                return false
+            else
+                local status, msg = pcall(game_manager.currentMode.saveCurrentMapAs, game_manager.currentMode, str)
+                if status then
+                    notify("Saved!", vec(0, 1, 0), V_ID)
+                    return true
+                else
+                    error_handler(msg)
+                    notify("Error!", vec(1, 0, 0), V_ID)
+                    return false
+                end
+            end
+        end;    
+    })
+end
+
+
 -- The editor is a special kind of game mode.  This is the root of the editor state.  Ultimately,
 -- everything is initialized and managed from here.
 
@@ -321,7 +396,7 @@ function Editor:toggleDebugMode()
 end
 
 function Editor:generateEnvCube(pos)
-    self.map:generateEnvCube(pos)
+    self.mapFile:generateEnvCube(pos)
 end
 
 function Editor:newMap()
@@ -338,7 +413,7 @@ function Editor:newMap()
     
     widget_manager:unselectAll()
     
-    self.map:reset()
+    self.mapFile:reset()
     -- if update_map_properties ~= nil then
         -- update_map_properties()
     -- end
@@ -359,8 +434,8 @@ function Editor:openMap(map_file)
     
     navigation_reset()
     
-    self.map:open(map_file)
-    main.camPos, main.camQuat = self.map:getEditorCamPosOrientation()
+    self.mapFile:open(map_file)
+    main.camPos, main.camQuat = self.mapFile:getEditorCamPosOrientation()
     self.camPitch = quatPitch(main.camQuat)
     self.camYaw = cam_yaw_angle()
 
@@ -373,9 +448,9 @@ end
 
 -- save current map, if have a "file_name" specified
 function Editor:saveCurrentMap()
-    if self.map.filename then
-        self.map:setEditorCamPosOrientation(main.camPos, main.camQuat)
-        self.map:save()
+    if self.mapFile.filename then
+        self.mapFile:setEditorCamPosOrientation(main.camPos, main.camQuat)
+        self.mapFile:save()
     else
         self:saveCurrentMapAs()
     end
@@ -386,8 +461,8 @@ function Editor:saveCurrentMapAs(name)
         save_map_dialog()
         return false
     else
-        self.map:setEditorCamPosOrientation(main.camPos, main.camQuat)
-        return self.map:saveAs(name)
+        self.mapFile:setEditorCamPosOrientation(main.camPos, main.camQuat)
+        return self.mapFile:saveAs(name)
     end
 end
 
@@ -472,12 +547,12 @@ function Editor:saveEditorConfig()
 end
 
 function Editor:undo()
-    self.map:undo()
+    self.mapFile:undo()
     widget_manager:updateWidget()
 end
 
 function Editor:redo()
-    self.map:redo()
+    self.mapFile:redo()
     widget_manager:updateWidget()
 end
 
@@ -516,8 +591,9 @@ function Editor:init()
     self.lastMouseMoveTime = 0
     self.controlObj = nil
 
-    self.map = EditorMap.new()
-    main.camPos, main.camQuat = self.map:getEditorCamPosOrientation()
+    -- Do not use self.map because the BaseGameMode already defines it as a string.
+    self.mapFile = EditorMap.new()
+    main.camPos, main.camQuat = self.mapFile:getEditorCamPosOrientation()
     self.camPitch = quatPitch(main.camQuat)
     self.camYaw = cam_yaw_angle()
 
@@ -535,8 +611,9 @@ function Editor:init()
 
     gfx_option("WIREFRAME_SOLID", true) -- i don't know why but when selecting a object it just shows wireframe, so TEMPORARY?
 
-    -- fix glow in the arrows
-    gfx_option("BLOOM_THRESHOLD", 3)
+    -- Turn bloom off as it can be distracting.
+    gfx_option("BLOOM_THRESHOLD", 0)
+    gfx_option("BLOOM_ITERATIONS", 0)
 
     self.debug_mode_text = hud_text_add(`/common/fonts/Verdana12`)
     self.debug_mode_text.parent = hud_bottom_left

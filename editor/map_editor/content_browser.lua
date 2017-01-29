@@ -160,7 +160,7 @@ hud_class `FloatingObject` {
             
             local body = nil
             if self.newObjectName ~= nil then
-                body = editor.map:getPhysicalRepresentation(self.newObjectName)
+                body = editor.mapFile:getPhysicalRepresentation(self.newObjectName)
                 -- Might still be nil if the object has no physical representation or is streamed
                 -- out.
             end
@@ -177,15 +177,15 @@ hud_class `FloatingObject` {
             
             if self.newObjectName == nil then
                 local name = ('Unnamed:%s:%d'):format(self.objectClass, math.random(0, 50000))
-                editor.map:add(name, self.objectClass, pos)
+                editor.mapFile:add(name, self.objectClass, pos)
                 self.newObjectName = name
                 self.alpha = 0
             else
-                editor.map:proposePosition(self.newObjectName, pos)
+                editor.mapFile:proposePosition(self.newObjectName, pos)
             end
         else
             if self.newObjectName then
-                editor.map:cancelChange()
+                editor.mapFile:cancelChange()
                 self.newObjectName = nil
                 self.alpha = 1
             end

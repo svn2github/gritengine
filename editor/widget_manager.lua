@@ -42,7 +42,7 @@ end
 function widget_manager:updateWidget()
     local editor = game_manager.currentMode
 
-    if editor.map:selectionEmpty() then
+    if editor.mapFile:selectionEmpty() then
         if self.widget ~= nil then
             self.widget = safe_destroy(self.widget)
         end
@@ -53,17 +53,17 @@ function widget_manager:updateWidget()
     end
 
     -- Compute average position.
-    local selected = editor.map:allSelected()
+    local selected = editor.mapFile:allSelected()
     self.widgetPos = vec(0, 0, 0)
     for i, obj_name in ipairs(selected) do
-        local obj = editor.map:getCurrentObject(obj_name)
+        local obj = editor.mapFile:getCurrentObject(obj_name)
         self.widgetPos = self.widgetPos + obj[2]
     end
     self.widgetPos = self.widgetPos / #selected
     
     self.widgetOrt = Q_ID
     if self.spaceMode == "local" then
-        local obj = editor.map:getCurrentObject(selected[#selected])
+        local obj = editor.mapFile:getCurrentObject(selected[#selected])
         self.widgetOrt = (obj[3] or {}).rot or Q_ID
     end
 
@@ -104,7 +104,7 @@ end
 
 function widget_manager:unselectAll()
     local editor = game_manager.currentMode
-    editor.map:unselectAll()
+    editor.mapFile:unselectAll()
     self:updateWidget()
 end
 
@@ -153,15 +153,15 @@ function widget_manager:select(multi)
                 return
             end
             -- Toggle selected status.
-            editor.map:setSelected(target_obj, not editor.map:isSelected(target_obj))
+            editor.mapFile:setSelected(target_obj, not editor.mapFile:isSelected(target_obj))
         else
-            editor.map:unselectAll()
+            editor.mapFile:unselectAll()
             if target_obj == nil then
                 -- Leave with nothing selected.
                 self:updateWidget()
                 return
             end
-            editor.map:setSelected(target_obj, true)
+            editor.mapFile:setSelected(target_obj, true)
         end
 
         self:updateWidget()
@@ -180,28 +180,28 @@ function widget_manager:stopDragging()
         return
     end
     local editor = game_manager.currentMode
-    editor.map:applyChange()
+    editor.mapFile:applyChange()
     self:updateWidget()
     self.dragComponent = nil
 end
 
 function widget_manager:deleteSelected()
     local editor = game_manager.currentMode
-    editor.map:delete(table.clone(editor.map:allSelected()))
+    editor.mapFile:delete(table.clone(editor.mapFile:allSelected()))
     self:updateWidget()
 end
 
 function widget_manager:copySelectedToClipboard()
     local editor = game_manager.currentMode
     self.clipboard = {}
-    for _, obj_name in ipairs(editor.map:allSelected()) do
-        self.clipboard[obj_name] = editor.map:getCurrentObject(obj_name)
+    for _, obj_name in ipairs(editor.mapFile:allSelected()) do
+        self.clipboard[obj_name] = editor.mapFile:getCurrentObject(obj_name)
     end
 end
 
 function widget_manager:uniqueName(orig_name)
     local editor = game_manager.currentMode
-    if editor.map:getCurrentObject(orig_name) == nil then
+    if editor.mapFile:getCurrentObject(orig_name) == nil then
         return orig_name
     end
     local base, counter = orig_name:match('(.*)_([0-9]+)')
@@ -213,7 +213,7 @@ function widget_manager:uniqueName(orig_name)
     end
     while true do
         local new_name = ("%s_%d"):format(base, counter)
-        if editor.map:getCurrentObject(new_name) == nil then
+        if editor.mapFile:getCurrentObject(new_name) == nil then
             return new_name
         end
         counter = counter + 1
@@ -228,13 +228,13 @@ function widget_manager:paste()
         local class_name, pos, data = obj_decl[1], obj_decl[2], obj_decl[3]
         -- Putting objects directly on top of other objects is not a good idea.
         pos = pos + vec(1, 1, 0)
-        editor.map:add(name, class_name, pos, data)
+        editor.mapFile:add(name, class_name, pos, data)
         new_selection[#new_selection + 1] = name
     end
-    editor.map:applyChange()
-    editor.map:unselectAll()
+    editor.mapFile:applyChange()
+    editor.mapFile:unselectAll()
     for _, name in ipairs(new_selection) do
-        editor.map:setSelected(name, true)
+        editor.mapFile:setSelected(name, true)
     end
     self:updateWidget()
 end
@@ -429,8 +429,8 @@ function widget_manager:frameCallback(elapsed_secs)
         end
 
         local editor = game_manager.currentMode
-        for i, obj in ipairs(editor.map:allSelected()) do
-            editor.map:proposePosition(obj, editor.map:getPosition(obj) + translation)
+        for i, obj in ipairs(editor.mapFile:allSelected()) do
+            editor.mapFile:proposePosition(obj, editor.mapFile:getPosition(obj) + translation)
         end
 
     elseif self.mode == "rotate" then
@@ -457,22 +457,22 @@ function widget_manager:frameCallback(elapsed_secs)
         local editor = game_manager.currentMode
 
         self.widget:updatePivot(self.widgetPos, transform * self.widgetOrt)
-        for i, obj in ipairs(editor.map:allSelected()) do
+        for i, obj in ipairs(editor.mapFile:allSelected()) do
 
             local origin
             if self.pivotPoint == 'individual origins' then
-                origin = editor.map:getPosition(obj)
+                origin = editor.mapFile:getPosition(obj)
             elseif self.pivotPoint == 'active object' then
-                origin = editor.map:getPosition(self.selectedObjs[#self.selectedObjs])
+                origin = editor.mapFile:getPosition(self.selectedObjs[#self.selectedObjs])
             elseif self.pivotPoint == 'centre point' then
                 origin = self.widgetPos
             else
                 error('Unrecognised pivotPoint: ' .. self.pivotPoint)
             end
 
-            editor.map:proposeOrientation(obj, transform * editor.map:getOrientation(obj))
-            local new_pos = transform * (editor.map:getPosition(obj) - origin) + origin
-            editor.map:proposePosition(obj, new_pos)
+            editor.mapFile:proposeOrientation(obj, transform * editor.mapFile:getOrientation(obj))
+            local new_pos = transform * (editor.mapFile:getPosition(obj) - origin) + origin
+            editor.mapFile:proposePosition(obj, new_pos)
         end
 
     end

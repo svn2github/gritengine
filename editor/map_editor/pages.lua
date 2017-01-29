@@ -1,77 +1,3 @@
-function open_map_dialog()
-    gui.open_file_dialog({
-        title = "Open Map";
-        parent = hud_centre;
-        position = vec(0, 0);
-        resizeable = true;
-        size = vec2(560, 390);
-        min_size = vec2(470, 290);
-        colour = _current_theme.colours.window.background;
-        alpha = 1;
-        choices = { "Grit Map (*.gmap)", "Lua Script (*.lua)" };
-        callback = function(self, str)
-            str = '/' .. str
-            if resource_exists(str) then
-                local status, msg = pcall(game_manager.currentMode.openMap, game_manager.currentMode, str)
-                if status then
-                    notify("Loaded!", vec(0, 0.5, 1), V_ID)
-                    -- error 'wat'
-                    return true
-                else
-                    error_handler(msg)
-                    notify("Error: Could not open map file!", vec(1, 0, 0), V_ID)
-                end
-            else
-                notify("Error: Map file not found!", vec(1, 0, 0), V_ID)
-            end
-            return false
-        end;    
-    })
-end
-
-function save_map_dialog()
-    gui.save_file_dialog({
-        title = "Save Map";
-        parent = hud_centre;
-        position = vec(0, 0);
-        resizeable = true;
-        size = vec2(560, 390);
-        min_size = vec2(470, 290);
-        colour = _current_theme.colours.window.background;
-        alpha = 1;
-        choices = { "Grit Map (*.gmap)", "Lua Script (*.lua)" };
-        callback = function(self, str)
-            str = '/' .. str
-            if resource_exists(str) then
-                local save_overwrite = function (boolean)
-                    if boolean then
-                        local status, msg = pcall(game_manager.currentMode.saveCurrentMapAs, game_manager.currentMode, str)
-                        if status then
-                            notify("Saved!", vec(0, 1, 0), V_ID)
-                            self:destroy()
-                        else
-                            error_handler(msg)
-                            notify("Error!", vec(1, 0, 0), V_ID)
-                        end
-                    end
-                end;
-                create_dialog("SAVE", "Would you like to overwrite "..str.."?", "yesnocancel", save_overwrite)
-                return false
-            else
-                local status, msg = pcall(game_manager.currentMode.saveCurrentMapAs, game_manager.currentMode, str)
-                if status then
-                    notify("Saved!", vec(0, 1, 0), V_ID)
-                    return true
-                else
-                    error_handler(msg)
-                    notify("Error!", vec(1, 0, 0), V_ID)
-                    return false
-                end
-            end
-        end;    
-    })
-end
-
 local map_editor_page = {
     windows = {};
     
@@ -431,6 +357,15 @@ local map_editor_page = {
                 game_manager.currentMode.noClip = not game_manager.currentMode.noClip
             end
         ), "Toggle Ghosting")
+        self.toolbar:addTool("Bloom", map_editor_icons.bloom0, (
+            function (self)
+                local curr = gfx_option("BLOOM_ITERATIONS")
+                local new = curr + 1
+                if new == 3 then new = 0 end
+                self.texture = map_editor_icons['bloom' .. new]
+                gfx_option("BLOOM_ITERATIONS", new)
+            end
+        ), "Toggle Bloom")
         self.toolbar:addTool("Show collision", map_editor_icons.show_collision, (
             function()
                 physics_option("DEBUG_WIREFRAME", not physics_option("DEBUG_WIREFRAME"))

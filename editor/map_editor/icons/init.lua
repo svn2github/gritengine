@@ -1,4 +1,7 @@
 map_editor_icons = {
+    bloom0 = `bloom0.png`,
+    bloom1 = `bloom1.png`,
+    bloom2 = `bloom2.png`,
     config = `config.png`,
     content_browser = `content_browser.png`,
     controller = `controller.png`,
