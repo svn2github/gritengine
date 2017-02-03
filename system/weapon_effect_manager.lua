@@ -136,6 +136,10 @@ function directed_ray(p, q)
     return d * 8000, b, n, m
 end
 
+function cam_ray()
+    return directed_ray(main.camPos, main.camQuat)
+end
+
 function pick_pos(p, q, bias)
     p = p or main.camPos
     q = q or main.camQuat

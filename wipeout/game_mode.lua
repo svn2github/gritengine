@@ -12,11 +12,12 @@ class `DummyVehicle2` (ColClass) {
     gfxMesh = `DummyVehicle.mesh`,
     colMesh = `DummyVehicle.gcol`,
     controllable = 'VEHICLE', 
-    boomLengthMin = 5;
-    boomLengthMax = 30;
-    driverExitPos = vector3(-1.45, -0.24, 0.49);
-    driverExitQuat = Q_ID;
-    cameraTrack = true;
+    boomLengthMin = 5,
+    boomLengthMax = 30,
+    driverExitPos = vector3(-1.45, -0.24, 0.49),
+    driverExitQuat = Q_ID,
+    cameraTrack = true,
+    camAttachPos = vec(0,0, 3),
 
     hoverHeight = 1,
     steerMax = 80,  -- degrees/sec
@@ -24,10 +25,10 @@ class `DummyVehicle2` (ColClass) {
     acceleration = 10,
     initialVelocity = vec(0, 0, 0),
 
-	frontLeftJet = vec(-0.2, 4, 0),
-	frontRightJet = vec(0.2, 4, 0),
-	rearLeftJet = vec(-2, 2, 0),
-	rearRightJet = vec(2, 2, 0),
+	frontLeftJet = vec(-1, 4, 0),
+	frontRightJet = vec(1, 4, 0),
+	rearLeftJet = vec(-2, -2, 0),
+	rearRightJet = vec(2, -2, 0),
 
     activate = function(self, instance)
         if ColClass.activate(self, instance) then
@@ -50,39 +51,78 @@ class `DummyVehicle2` (ColClass) {
         
         return ColClass.deactivate(self, instance)
     end,
+
+    doRay = function(self, rayFrom, ray)
+        local dist, ground, ground_normal, ground_mat = physics_cast(pos, ray, true, 0)
+    end,
     
     stepCallback = function(self, elapsed_secs)
         local instance = self.instance
+        local body = instance.body
         local pos = instance.pos
+        --local pos = body.worldPosition
         local ort = instance.groundOrientation
+        --local ort = body.worldOrientation
         local vel = instance.velocity
         local gravity = physics_get_gravity()
         local vehicle_up = ort * vec(0, 0, 1)
 
         local ray = self.hoverHeight * -2 * vehicle_up
-        local dist, ground, ground_normal, ground_mat = physics_cast(pos, ray, true, 0)
-        instance.onGround = dist ~= nil
+        local distFL, groundFL, ground_normalFL, ground_matFL = physics_cast(body:localToWorld(self.frontLeftJet), ray, true, 0, body)
+        local distFR, groundFR, ground_normalFR, ground_matFR = physics_cast(body:localToWorld(self.frontRightJet), ray, true, 0, body)
+        local distRL, groundRL, ground_normalRL, ground_matRL = physics_cast(body:localToWorld(self.rearLeftJet), ray, true, 0, body)
+        local distRR, groundRR, ground_normalRR, ground_matRR = physics_cast(body:localToWorld(self.rearRightJet), ray, true, 0, body)
+        local total_hits = 0
+        local hit_dist = self.hoverHeight * 10
+        local hit_normal = vec3(0, 0, 0)
+        local active_surface = `Track`
+        if distFL ~= nil and ground_matFL == active_surface then
+            total_hits = total_hits + 1
+            hit_dist = math.min(hit_dist, distFL)
+            hit_normal = hit_normal + ground_normalFL
+            emit_debug_marker(body:localToWorld(self.frontLeftJet) + ray * distFL, vec(0, 1, 0), 1/100, 0.4)
+        end
+        if distFR ~= nil and ground_matFR == active_surface then
+            total_hits = total_hits + 1
+            hit_dist = math.min(hit_dist, distFR)
+            hit_normal = hit_normal + ground_normalFR
+            emit_debug_marker(body:localToWorld(self.frontRightJet) + ray * distFR, vec(0, 1, 0), 1/100, 0.4)
+        end
+        if distRL ~= nil and ground_matRL == active_surface then
+            total_hits = total_hits + 1
+            hit_dist = math.min(hit_dist, distRL)
+            hit_normal = hit_normal + ground_normalRL
+            emit_debug_marker(body:localToWorld(self.rearLeftJet) + ray * distRL, vec(0, 1, 0), 1/100, 0.4)
+        end
+        if distRR ~= nil and ground_matRR == active_surface then
+            total_hits = total_hits + 1
+            hit_dist = math.min(hit_dist, distRR)
+            hit_normal = hit_normal + ground_normalRR
+            emit_debug_marker(body:localToWorld(self.rearRightJet) + ray * distRR, vec(0, 1, 0), 1/100, 0.4)
+        end
+        instance.onGround = total_hits >= 3
         local hit_pos
         if instance.onGround then
-            hit_pos = pos + dist * ray
+            hit_normal = norm(hit_normal)
+            hit_pos = pos + hit_dist * ray
         else
+            --[[
             local max_penetration = -1
             -- Maybe we're inverted, try to hook on to the nearest surface in any direction.
             physics_test(self.hoverHeight, pos, false, function (body, sz, local_pos, world_pos, normal, penetration, mat)
                 if body == instance.body then return end
                 if penetration > max_penetration then
                     max_penetration = penetration
-                    ground = body
                     instance.onGround = true
                     hit_pos = world_pos
-                    ground_normal = normal
-                    ground_mat = mat
+                    hit_normal = normal
                 end
             end)
+            ]]
         end
         if instance.onGround and not (instance.handbrake and vehicle_up.z < 0) then
-            pos = hit_pos + self.hoverHeight * ground_normal
-            ort = quat(vehicle_up, ground_normal) * ort
+            pos = hit_pos + self.hoverHeight * hit_normal
+            ort = quat(vehicle_up, hit_normal) * ort
             local local_vel = inv(ort) * vel
             local vel_fwd = local_vel.y
             vel_fwd = vel_fwd + instance.push * self.acceleration * elapsed_secs
@@ -112,11 +152,52 @@ class `DummyVehicle2` (ColClass) {
         instance.velocity = vel
         pos = pos + vel * elapsed_secs
         instance.pos = pos
-        instance.body.linearVelocity = vel
-        instance.body.worldPosition = pos
-        instance.body.worldOrientation = instance.displayOrientation
-        instance.body:force(-gravity, pos)
+        body.linearVelocity = vel
+        body.worldPosition = pos
+        body.worldOrientation = instance.displayOrientation
+        body:force(-gravity, pos)
     end,
+
+--[[
+
+Logical position / orientation is computed via taking an existing position / orientation, shooting
+rays, and incorporating movement due to ship's engine.  Intention is that ship moves forward, and
+stays close to the road.  This mechanism alone cannot resolve collisions with other ships / parts of
+the road that are not hover-active such as the barriers or obstacles.
+
+Logical position / orientation can change harshly due to bumps in the road.
+
+If the road has a steep ramp or a wall, intersections / oscillating behavior are likely.
+
+We should not be still and colliding.  Collisions should cause stillness.
+
+Option 1:
+
+PID loops.  Instead of setting body worldPosition / worldOrientation directly from logical model,
+compute forces and torques intended to guide body towards logical model.  These forces and torques
+should add cleanly to collision resolution forces.  Graphics is derived from body position (smoothed
+if necessary).  Input to logical model is previous frame's body position / orientation.
+
+Challenges: Forces / torques last for more than just the current step.  It is harder to keep the
+ship in the right place, especially during high speed tight loops.  We may only have 1 or 2 frames
+to keep it right or go tunneling straight through the wall.
+
+
+Option 2:
+
+Graphics is simply a smoothed version of logical model.
+
+Physics position / orientation updated from logical model every step, unless a collision occurred in
+the previous step, in which case the logical mdoel may well still be intersecting.  They then
+deviate due to forces applied for collision resolution.  The physics body is permitted to collide
+and upon collision the hovercraft engine is disengaged and control returns to the physics body for a
+time.  Then, the logical model is allowed to take control again.
+
+
+In both cases, we cannot collide with the floor when doing tight loops.  The behavior during even
+the slightest collision is catastrophic.
+
+--]]
 
     controlBegin = function(self)
     end,

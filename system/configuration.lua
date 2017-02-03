@@ -310,6 +310,7 @@ user_editor_debug_bindings = user_editor_debug_bindings or { }
 local default_user_editor_debug_bindings = {
     toggleDebugModeSettings = "F1";
     pausePhysics = "F2";
+    singleStepPhysics = "F3";
     board = "f";
     weaponPrimary = "left";
     weaponSecondary = "right";

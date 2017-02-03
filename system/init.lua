@@ -109,23 +109,25 @@ mouse_pos_rel = V_ZERO
 mouse_pos_abs = V_ZERO
 
 
--- also called by F11
 function physics_step (elapsed_secs)
+    local _, initial_allocs = get_alloc_stats()
+
+    object_do_step_callbacks(elapsed_secs)
+    game_manager:stepUpdate(elapsed_secs)
+    physics_update()
+    gfx_particle_pump(elapsed_secs)
+
+    local _, final_allocs = get_alloc_stats()
+    main.physicsAllocs = final_allocs - initial_allocs
+end
+
+function physics_maybe_step (elapsed_secs)
     if main.physicsEnabled then
-        local _, initial_allocs = get_alloc_stats()
-
-        object_do_step_callbacks(elapsed_secs)
-        game_manager:stepUpdate(elapsed_secs)
-        physics_update()
-        gfx_particle_pump(elapsed_secs)
-
-        local _, final_allocs = get_alloc_stats()
-        main.physicsAllocs = final_allocs - initial_allocs
+        physics_step(elapsed_secs)
     end
     do_events(elapsed_secs)
 end
 
--- also called by F11
 function physics_frame_step (step_size, elapsed_secs)
     local elapsed_secs = main.physicsLeftOver + elapsed_secs * main.physicsSpeed
     local iterations = 0
@@ -136,7 +138,7 @@ function physics_frame_step (step_size, elapsed_secs)
             break
         end
         elapsed_secs = elapsed_secs - step_size
-        physics_step(step_size)
+        physics_maybe_step(step_size)
         iterations = iterations + 1
     end
 
@@ -195,7 +197,7 @@ function main:run (...)
         local step_size = physics_option("STEP_SIZE")
         if main.physicsOneToOne then
             main.physicsLeftOver = 0
-            physics_step(step_size)
+            physics_maybe_step(step_size)
         else
             physics_frame_step(step_size, elapsed_secs)
             -- NAVIGATION

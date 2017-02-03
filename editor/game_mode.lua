@@ -791,6 +791,10 @@ function Editor:receiveButton(button, state)
             if state == '+' then
                 main.physicsEnabled = not main.physicsEnabled
             end
+        elseif button == "singleStepPhysics" then
+            if state == '+' then
+                physics_step(physics_option("STEP_SIZE"))
+            end
         else
             local pressed = state ~= '-'
             if state == '=' then return end
