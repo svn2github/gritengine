@@ -7,7 +7,110 @@ material `DummyVehicle` {
     },
 }
 
-class `DummyVehicle2` (ColClass) {
+
+--[[
+
+The logical model derives a position for the ship relative to the track.  This uses a point on the
+track, a direction, and a distance to compute the position and orientation of the ship.  The
+distance is fixed, the computation of the point and normal depend on where the vehicle is and what
+the track looks like under the vehicle.  There are two logical models currently proposed:
+
+The one-ray logical model shoots one ray from the center of the ship in the ship's -Z axis to find a
+point on the track, then uses the normal of the surface that point.  The ship will intersect the
+track in places where the track is more concave than the ship is convex for the given hover
+distance.
+
+The four-ray logical model shoots a ray from each corner of the ship (modelled as an arbitrary
+4-sided convex shape) in the ship's -Z axis.  The four positions and normals are averaged.  This
+model will intersect the track if there is a lump between where the rays hit.  There is a question
+as to what should happen if only 3 of the rays hit the track.
+
+Both n-ray logical models suffer from discontinuities in ground normal due to the curvature of the
+track.  The four-ray logical model has more discontinuities (a four-wheeled car going over a speed
+bump can have 4 bumps) but they should be lesser in magnitude because of the averaging.
+
+When the craft is not parallel with the track, small changes in craft position (e.g. thrust or
+rotation) will result in large changes in distance to the ground.  The one-ray logical model always
+has the ship perpendicular to the ground normal.  If the ship is not moved by the player, subsequent
+rays will be in-line with the previous ray.  The 4-ray logical model does not have this property.
+Therefore, it can oscillate because after orientating the ship, the rays will not necessarily hit
+where they hit before and can get a different normal.
+
+The convex-cast logical model does a convex cast in the ship's -Z direction.  Any collisions are
+disregarded except with the track.  The returned normals are that of the triangles hit.  They will
+have to be averaged or some other technique used.  This can lead to oscillation.
+
+My conclusion is that the only reliable method is the one-ray logical model, even with the challenge
+of having to deal with the inevitable track intersections.
+
+
+Resolving collisions with barriers, other ships, etc.:
+
+The logical model must have push back from a collision engine of some sort.  Collisions with the
+track must be prevented by putting the physics body in a different place to the logical model, or
+just ignored.
+
+The PID approach tries to continuously pull the physical body towards the logical model.  Collisions
+with the track are likely because PID is too soft to keep the ship a fixed distance from the track.
+Sometimes the logical model intersects the track anyway, so the PID loops will pull the ship against
+the track.  At high speeds, more collisions are likely.  Collisions with the track can be allowed,
+at least at low speed.
+
+The direct update approach sets the physics body position and orientation to the logical model and
+then allows collisions and other forces to influence the position further.  Unfortunately, this
+results in oscillation due to discontinuities in where the logical model believes the ship should be
+(e.g. discontinuities in track normal).  Collisions with the track must therefore be disabled.
+
+The ghost approach is to disable collisions entirely and implement the collision detection manually.
+Sweep the hull forwards and see what it intersects.  Collisions with the track are ignored.
+
+2) Other ships.
+
+Need to register only one collision per pair and share momentum.  Collisions with barrier must take
+precedence.  Resolving collisions properly requires a solver :(
+
+3) The barrier
+
+Ship must not cross the barrier.  Update position and orientation appropriately (we probably want to
+slide along the barrier).  There should be a friction penalty for hitting the barrier.
+
+4) Some other static obstacle?
+
+Can behave just like the barrier as a default.  We may also want to disable ships for greater
+penalties (electric shock, etc), depending on the obstacle.  Can even destroy ships.
+
+5) Dynamic obstacles?
+
+Not strictly necessary but would be nice to demonstrate the dynamics engine.  We can apply forces to
+represent collisions with these, much like the actor can push a car.
+
+
+Collision resolution:
+
+Resolve collisions between ships first, transfer momentum.  Then, resolve constraints with immovable
+objects.  This will result in momentum being 'lost' but over time hopefully it works out.
+
+]]
+
+--[[
+
+One-ray logical model updates logical position and orientation.  Ship rotation and thrust directly
+control logical position and orientation.
+
+At low speeds, a PID loop is used to pull ship towards logical position and orientation.  There may
+need to be a cap on how much the orientation can deviate in a single frame.
+
+At high speeds, collision with the track is disabled.  This avoids some collisions and may be enough
+to keep using the PID loop.
+
+At very high speeds, when the PID loop is too squishy, the physical position / orientation is updated
+directly every frame, allowed to collide, then set back into the logical model again.
+
+A final option is to disable collision detection entirely and use convex hull casts.
+
+]]
+
+class `TestShip` (ColClass) {
 
     gfxMesh = `DummyVehicle.mesh`,
     colMesh = `DummyVehicle.gcol`,
@@ -145,6 +248,8 @@ class `DummyVehicle2` (ColClass) {
             vel = vel * self.speedMax / speed
         end
 
+        -- Collision detection goes here.
+
         local angular_velocity = (instance.shouldSteerLeft + instance.shouldSteerRight) * elapsed_secs
         ort = norm(quat(angular_velocity, ort * vec(0, 0, -1)) * ort)
         instance.groundOrientation = ort
@@ -157,47 +262,6 @@ class `DummyVehicle2` (ColClass) {
         body.worldOrientation = instance.displayOrientation
         body:force(-gravity, pos)
     end,
-
---[[
-
-Logical position / orientation is computed via taking an existing position / orientation, shooting
-rays, and incorporating movement due to ship's engine.  Intention is that ship moves forward, and
-stays close to the road.  This mechanism alone cannot resolve collisions with other ships / parts of
-the road that are not hover-active such as the barriers or obstacles.
-
-Logical position / orientation can change harshly due to bumps in the road.
-
-If the road has a steep ramp or a wall, intersections / oscillating behavior are likely.
-
-We should not be still and colliding.  Collisions should cause stillness.
-
-Option 1:
-
-PID loops.  Instead of setting body worldPosition / worldOrientation directly from logical model,
-compute forces and torques intended to guide body towards logical model.  These forces and torques
-should add cleanly to collision resolution forces.  Graphics is derived from body position (smoothed
-if necessary).  Input to logical model is previous frame's body position / orientation.
-
-Challenges: Forces / torques last for more than just the current step.  It is harder to keep the
-ship in the right place, especially during high speed tight loops.  We may only have 1 or 2 frames
-to keep it right or go tunneling straight through the wall.
-
-
-Option 2:
-
-Graphics is simply a smoothed version of logical model.
-
-Physics position / orientation updated from logical model every step, unless a collision occurred in
-the previous step, in which case the logical mdoel may well still be intersecting.  They then
-deviate due to forces applied for collision resolution.  The physics body is permitted to collide
-and upon collision the hovercraft engine is disengaged and control returns to the physics body for a
-time.  Then, the logical model is allowed to take control again.
-
-
-In both cases, we cannot collide with the floor when doing tight loops.  The behavior during even
-the slightest collision is catastrophic.
-
---]]
 
     controlBegin = function(self)
     end,

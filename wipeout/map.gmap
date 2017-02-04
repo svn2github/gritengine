@@ -121,8 +121,8 @@ return {
               rot = quat(0.007276956, 0.5519159, 0.8338541, -0.004816512),
             }
         },
-        ["Unnamed:/wipeout/DummyVehicle2:18760"] = {
-            `DummyVehicle2`,
+        ["TestShip"] = {
+            `TestShip`,
             vec(362.839783, -2100.718018, 5.637066),
             {
               rot = quat(0.7193398, 0, 0, -0.6946584),
