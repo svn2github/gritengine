@@ -103,6 +103,10 @@ function BaseGameMode:mouseMove(rel)
     self.lastMouseMoveTime = seconds()
 end
 
+function BaseGameMode:debugText(i, str)
+    print(i, str)
+end
+
 function BaseGameMode:receiveButton(button, state)
 end
 

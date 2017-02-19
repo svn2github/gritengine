@@ -112,10 +112,12 @@ mouse_pos_abs = V_ZERO
 function physics_step (elapsed_secs)
     local _, initial_allocs = get_alloc_stats()
 
+    -- Do this before step callbacks so that if they create debug particles with timeouts of
+    -- elapsed_secs, they don't immediately disappear.
+    gfx_particle_pump(elapsed_secs)
     object_do_step_callbacks(elapsed_secs)
     game_manager:stepUpdate(elapsed_secs)
     physics_update()
-    gfx_particle_pump(elapsed_secs)
 
     local _, final_allocs = get_alloc_stats()
     main.physicsAllocs = final_allocs - initial_allocs

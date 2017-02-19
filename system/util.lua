@@ -42,12 +42,15 @@ function euler (x, y, z)
 end
 
 function tensor (q)
-    if vec(q.x, q.y, q.z) ~= V_ZERO then
+    -- q.axis returns an error if the axis is degenerative
+    local axis = vec(q.x, q.y, q.z)
+    local axis_len = #axis
+    if axis_len > 0 then
         local angle = q.angle
         if angle > 180 then
             angle = angle - 360
         end
-        return angle * q.axis
+        return angle * axis / axis_len
     end
     return vec(0, 0, 0)
 end

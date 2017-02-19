@@ -123,6 +123,10 @@ game_manager = {
     setPause = function (self, v)
         self.currentMode:setPause(v)
     end;
+
+    debugText = function (self, i, str, ...)
+        self.currentMode:debugText(i, str % {...})
+    end,
 }
 
 playing_binds.mouseMoveCallback = function (rel)

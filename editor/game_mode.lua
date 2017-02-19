@@ -116,8 +116,10 @@ function Editor:toggleBoard(mobj)
 
         self.controlObj:controlAbandon()
         -- When on foot there is no vehicle pitch.
-        local v_pitch = pitch((self.controlObj.instance.body.worldOrientation * V_FORWARDS).z)
-        self.camPitch = self.camPitch + v_pitch
+        local v_yaw, v_pitch = yaw_pitch(self.controlObj.instance.body.worldOrientation * quat(self.camPitch, vec(1, 0, 0)) * V_FORWARDS)
+        self.camYaw = v_yaw
+        self.camPitch = v_pitch
+        self:mouseMove(vec(0, 0))
 
         self.controlObj = nil
 
@@ -190,45 +192,22 @@ function Editor:frameCallback(elapsed_secs)
         local obj_vel = body.linearVelocity
         local obj_vel_xy_speed = #(obj_vel * vector3(1,1,0))
 
-        -- modify the self.camPitch and self.camYaw to track the direction the obj is travelling
-        if false and user_cfg.vehicleCameraTrack and obj.cameraTrack and seconds() - game_manager.currentMode.lastMouseMoveTime > 1  and obj_vel_xy_speed > 5 then
-
-            self.camPitch = lerp(self.camPitch, obj_pitch, elapsed_secs * 2)
-
-            -- test avoids degenerative case where x and y are both 0 
-            -- if we are looking straight down at the car then the yaw doesn't really matter
-            -- you can't see where you are going anyway
-            if math.abs(self.camPitch) < 60 then
-                local ideal_yaw = yaw(obj_vel.x, obj_vel.y)
-                local current_yaw = self.camYaw
-                if math.abs(ideal_yaw - current_yaw) > 180 then
-                    if ideal_yaw < current_yaw then
-                        ideal_yaw = ideal_yaw + 360
-                    else
-                        current_yaw = current_yaw + 360
-                    end
-                end
-                local new_yaw = lerp(self.camYaw, ideal_yaw, elapsed_secs * 2) % 360
-
-                self.camYaw = new_yaw
-            end
+        if self.cameraVehicleLock then
+            main.camQuat = body.worldOrientation * quat(self.camPitch, vec(1, 0, 0))
+        else
+            main.camQuat = quat(self.camYaw, V_DOWN) * quat(self.camPitch, V_EAST)
         end
-
-        main.camQuat = quat(self.camYaw, V_DOWN) * quat(self.camPitch, V_EAST)
-        main.camQuat = body.worldOrientation * quat(self.camPitch, vec(1, 0, 0))
 
         main.speedoPos = instance.camAttachPos
         main.speedoSpeed = obj:getSpeed()
 
-        -- TODO(dcunnin): If reducing this to 0 worked then remove it.
-        local ray_skip = 0
         local ray_dir = main.camQuat * V_BACKWARDS
-        local ray_start = instance.camAttachPos + ray_skip * ray_dir
+        local ray_start = instance.camAttachPos
         if obj.boomLengthMin == nil or obj.boomLengthMax == nil then
             error('Controlling %s of class %s, needed boomLengthMin and boomLengthMax, got: %s, %s'
                   % {obj, obj.className, obj.boomLengthMin, obj.boomLengthMax})
         end
-        local ray_len = self:boomLength(obj.boomLengthMin, obj.boomLengthMax) - ray_skip
+        local ray_len = self:boomLength(obj.boomLengthMin, obj.boomLengthMax)
         local ray_hit_len = cam_box_ray(ray_start, main.camQuat, ray_len, ray_dir, body)
         local boom_length = math.max(obj.boomLengthMin, ray_hit_len)
         main.camPos = instance.camAttachPos + main.camQuat * vector3(0, -boom_length, 0)
@@ -331,8 +310,11 @@ function Editor:setDebugMode(v)
     self:setMouseCapture(v)
     clock.enabled = v
     compass.enabled = v
+    for i = 1, 4 do
+        self.debug_label[i].enabled = v
+    end
     stats.enabled = v
-    self.speedo.enabled = not v
+    self.speedo.enabled = v
     editor_edit_binds.enabled = not v
     editor_object_binds.enabled = not v
     editor_debug_binds.enabled = v
@@ -590,6 +572,7 @@ function Editor:init()
     self.camPitch = 0
     self.lastMouseMoveTime = 0
     self.controlObj = nil
+    self.cameraVehicleLock = true
 
     -- Do not use self.map because the BaseGameMode already defines it as a string.
     self.mapFile = EditorMap.new()
@@ -617,9 +600,22 @@ function Editor:init()
 
     self.debug_mode_text = hud_text_add(`/common/fonts/Verdana12`)
     self.debug_mode_text.parent = hud_bottom_left
-    self.debug_mode_text.text = "Mouse left: Use Weapon\nMouse Scroll: Change Weapon\nF: Controll Object\nTab: Console\nF1: Open debug mode menu (TODO)\nF5: Return Editor"
+    self.debug_mode_text.text = "Mouse left: Use Weapon\nMouse Scroll: Change Weapon\nF: Control Object\nTab: Console\nF1: Open debug mode menu (TODO)\nF5: Return Editor"
     self.debug_mode_text.position = vec(self.debug_mode_text.size.x/2+10, self.debug_mode_text.size.y)
     
+    self.debug_label = {}
+    for i = 1, 4 do
+        self.debug_label[i] = hud_object `/common/hud/Label` {
+            parent = hud_top_right,
+            size = vec(128, 32),
+            position = vec(-64, -128 - 32 - 32 * i),
+            alignment = 'LEFT',
+            colour = vec(0, 0, 0),
+            font = `/common/fonts/misc.fixed`,
+            enabled = false,
+        }
+    end
+
     make_editor_interface()
 
     playing_binds.enabled = true
@@ -644,6 +640,10 @@ function Editor:init()
     self:setDebugMode(false)
     
     env.clockRate = 0
+end
+
+function Editor:debugText(i, str)
+    self.debug_label[i]:setValue(str)
 end
 
 function Editor:loadMap()

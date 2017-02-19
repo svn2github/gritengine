@@ -7,6 +7,7 @@ material `DummyVehicle` {
     },
 }
 
+local ACTIVE_SURFACE = `Track`
 
 --[[
 
@@ -97,14 +98,17 @@ objects.  This will result in momentum being 'lost' but over time hopefully it w
 One-ray logical model updates logical position and orientation.  Ship rotation and thrust directly
 control logical position and orientation.
 
-At low speeds, a PID loop is used to pull ship towards logical position and orientation.  There may
-need to be a cap on how much the orientation can deviate in a single frame.
+At low speeds, a PID loop is used to pull ship towards logical position and orientation.  Physical
+position / orientation then copied to logical model for next iteration.  Thrust sets physical
+velocity.  Hopefully PID loop dampens any oscillations.  Rotation may have to directly change
+orientation (no PID loop) if rotating is not snappy enough.
 
 At high speeds, collision with the track is disabled.  This avoids some collisions and may be enough
-to keep using the PID loop.
+to keep using the PID loop at higher speeds.
 
-At very high speeds, when the PID loop is too squishy, the physical position / orientation is updated
-directly every frame, allowed to collide, then set back into the logical model again.
+At very high speeds, when the PID loop is too squishy and we fly through the track, the physical
+position / orientation is updated directly every frame, allowed to collide, then set back into the
+logical model again.
 
 A final option is to disable collision detection entirely and use convex hull casts.
 
@@ -120,13 +124,19 @@ class `TestShip` (ColClass) {
     driverExitPos = vector3(-1.45, -0.24, 0.49),
     driverExitQuat = Q_ID,
     cameraTrack = true,
-    camAttachPos = vec(0,0, 3),
+    -- Can set this higher when we have a solution for not putting the camera in the track.
+    camAttachPos = vec(0,0, 1),
 
     hoverHeight = 1,
     steerMax = 80,  -- degrees/sec
     speedMax = 100,  -- metres/sec
     acceleration = 10,
     initialVelocity = vec(0, 0, 0),
+    invertedDrag = 1,  -- Multiple of speed to apply as deceleration
+    disconnectionDrag = 0.3,  -- Multiple of speed to apply as deceleration
+    resetSpeedMax = 3,  -- metres/sec
+    connectedBrakeDrag = 0.5,  -- Proportion of speed lost per second.
+    connectedLateralDrag = 0.5,  -- Proportion of speed lost per second.
 
 	frontLeftJet = vec(-1, 4, 0),
 	frontRightJet = vec(1, 4, 0),
@@ -142,11 +152,13 @@ class `TestShip` (ColClass) {
         instance.push = 0
         instance.shouldSteerLeft, instance.shouldSteerRight = 0, 0
         instance.onGround = false
-        instance.pos = self.pos
-        instance.displayOrientation = self.rot or Q_ID
-        instance.groundOrientation = instance.displayOrientation
         instance.velocity = self.initialVelocity
-        instance.body.ghost = true
+        instance.body.ghost = false
+        instance.body.angularDamping = 0.8
+        instance.body.linearDamping = 0
+        instance.lastPosDev = vec(0, 0, 0)
+        instance.lastVelDev = vec(0, 0, 0)
+        instance.lastTensorDev = vec(0, 0, 0)
     end,
 
     deactivate = function(self, instance)
@@ -158,109 +170,182 @@ class `TestShip` (ColClass) {
     doRay = function(self, rayFrom, ray)
         local dist, ground, ground_normal, ground_mat = physics_cast(pos, ray, true, 0)
     end,
-    
-    stepCallback = function(self, elapsed_secs)
+
+    -- initial_vel and velocity returned is in in local space, does not have z component.
+    logicalUpdate = function(self, initial_pos, initial_ort, initial_vel, elapsed_secs)
         local instance = self.instance
         local body = instance.body
-        local pos = instance.pos
-        --local pos = body.worldPosition
-        local ort = instance.groundOrientation
-        --local ort = body.worldOrientation
-        local vel = instance.velocity
         local gravity = physics_get_gravity()
-        local vehicle_up = ort * vec(0, 0, 1)
-
+        local vehicle_up = initial_ort * vec(0, 0, 1)
         local ray = self.hoverHeight * -2 * vehicle_up
-        local distFL, groundFL, ground_normalFL, ground_matFL = physics_cast(body:localToWorld(self.frontLeftJet), ray, true, 0, body)
-        local distFR, groundFR, ground_normalFR, ground_matFR = physics_cast(body:localToWorld(self.frontRightJet), ray, true, 0, body)
-        local distRL, groundRL, ground_normalRL, ground_matRL = physics_cast(body:localToWorld(self.rearLeftJet), ray, true, 0, body)
-        local distRR, groundRR, ground_normalRR, ground_matRR = physics_cast(body:localToWorld(self.rearRightJet), ray, true, 0, body)
-        local total_hits = 0
-        local hit_dist = self.hoverHeight * 10
-        local hit_normal = vec3(0, 0, 0)
-        local active_surface = `Track`
-        if distFL ~= nil and ground_matFL == active_surface then
-            total_hits = total_hits + 1
-            hit_dist = math.min(hit_dist, distFL)
-            hit_normal = hit_normal + ground_normalFL
-            emit_debug_marker(body:localToWorld(self.frontLeftJet) + ray * distFL, vec(0, 1, 0), 1/100, 0.4)
-        end
-        if distFR ~= nil and ground_matFR == active_surface then
-            total_hits = total_hits + 1
-            hit_dist = math.min(hit_dist, distFR)
-            hit_normal = hit_normal + ground_normalFR
-            emit_debug_marker(body:localToWorld(self.frontRightJet) + ray * distFR, vec(0, 1, 0), 1/100, 0.4)
-        end
-        if distRL ~= nil and ground_matRL == active_surface then
-            total_hits = total_hits + 1
-            hit_dist = math.min(hit_dist, distRL)
-            hit_normal = hit_normal + ground_normalRL
-            emit_debug_marker(body:localToWorld(self.rearLeftJet) + ray * distRL, vec(0, 1, 0), 1/100, 0.4)
-        end
-        if distRR ~= nil and ground_matRR == active_surface then
-            total_hits = total_hits + 1
-            hit_dist = math.min(hit_dist, distRR)
-            hit_normal = hit_normal + ground_normalRR
-            emit_debug_marker(body:localToWorld(self.rearRightJet) + ray * distRR, vec(0, 1, 0), 1/100, 0.4)
-        end
-        instance.onGround = total_hits >= 3
-        local hit_pos
-        if instance.onGround then
-            hit_normal = norm(hit_normal)
-            hit_pos = pos + hit_dist * ray
-        else
-            --[[
-            local max_penetration = -1
-            -- Maybe we're inverted, try to hook on to the nearest surface in any direction.
-            physics_test(self.hoverHeight, pos, false, function (body, sz, local_pos, world_pos, normal, penetration, mat)
-                if body == instance.body then return end
-                if penetration > max_penetration then
-                    max_penetration = penetration
-                    instance.onGround = true
-                    hit_pos = world_pos
-                    hit_normal = normal
-                end
-            end)
-            ]]
-        end
-        if instance.onGround and not (instance.handbrake and vehicle_up.z < 0) then
-            pos = hit_pos + self.hoverHeight * hit_normal
-            ort = quat(vehicle_up, hit_normal) * ort
-            local local_vel = inv(ort) * vel
-            local vel_fwd = local_vel.y
-            vel_fwd = vel_fwd + instance.push * self.acceleration * elapsed_secs
-            if instance.push == 0 then
-                -- Implicit brakes
-                vel_fwd = vel_fwd * 0.5 ^ elapsed_secs
-            end
-            local vel_lat = local_vel.x
-            vel_lat = vel_lat * 0.5 ^ elapsed_secs
-            vel = ort * vec(vel_lat, vel_fwd, 0)
+        local dist, ground, ground_normal, ground_mat = physics_sweep_sphere(0.001, initial_pos, ray, true, 0, body)
+        local pos = initial_pos
 
-        else
-            -- Projectile motion
-            vel = vel + gravity * elapsed_secs
-            ort = quat(ort * V_FORWARDS, vel) * ort
+        if dist == nil or ground_mat ~= ACTIVE_SURFACE or (instance.handbrake and vehicle_up.z < 10) then
+            return
         end
 
+        local ground_pos = initial_pos + dist * ray
+
+        -- Set position and orientation to track hover location.
+        pos = ground_pos + self.hoverHeight * ground_normal
+
+        -- Simulate friction
+        local vel_fwd = initial_vel.y
+        vel_fwd = vel_fwd + instance.push * self.acceleration * elapsed_secs
+        if instance.push == 0 then
+            -- Implicit brakes
+            vel_fwd = vel_fwd * self.connectedBrakeDrag ^ elapsed_secs
+        end
+        local vel_lat = initial_vel.x
+        vel_lat = vel_lat * self.connectedLateralDrag ^ elapsed_secs
+        local vel = vec(vel_lat, vel_fwd, 0)
+        
+        -- Cap speed.
         local speed = #vel
         if speed > self.speedMax then
             vel = vel * self.speedMax / speed
         end
 
-        -- Collision detection goes here.
+        return pos, ground_normal, vel
+    end,
+    
+    stepCallback = function(self, elapsed_secs)
 
-        local angular_velocity = (instance.shouldSteerLeft + instance.shouldSteerRight) * elapsed_secs
-        ort = norm(quat(angular_velocity, ort * vec(0, 0, -1)) * ort)
-        instance.groundOrientation = ort
-        instance.displayOrientation = norm(slerp(ort, instance.displayOrientation, 0.001 ^ elapsed_secs))
+        local instance = self.instance
+        local body = instance.body
+
+        local pos, ort, vel = self:logicalUpdate(
+            body.worldPosition, body.worldOrientation, instance.velocity, elapsed_secs)
+
+        -- Store for next iteration.
         instance.velocity = vel
-        pos = pos + vel * elapsed_secs
-        instance.pos = pos
-        body.linearVelocity = vel
-        body.worldPosition = pos
-        body.worldOrientation = instance.displayOrientation
-        body:force(-gravity, pos)
+
+        local on_ground = pos ~= nil
+        local upside_down = false
+
+        if not on_ground then
+
+            -- Projectile motion, surrender to physics engine.
+
+            local bvel = body.linearVelocity
+
+            instance.velocity = vec(0, 0, 0)
+            instance.lastPosDev = vec(0, 0, 0)
+            instance.lastVelDev = vec(0, 0, 0)
+
+            -- Maybe we're inverted, try to hook on to the nearest surface in any direction.
+            local max_penetration = -1
+            local pos
+            local function test_func(body, sz, local_pos, world_pos, normal, penetration, mat)
+                if body == instance.body then return end
+                if mat ~= ACTIVE_SURFACE then return end
+                if penetration > max_penetration then
+                    max_penetration = penetration
+                    on_ground = true
+                    upside_down = true
+                    ort = normal
+                    pos = world_pos
+                end
+            end
+            physics_test(self.hoverHeight * 2, body.worldPosition, false, test_func)
+            local slow_enough = #bvel < self.resetSpeedMax
+            local col = vec(1, 1, 1)
+            if slow_enough then
+                col = vec(1, 0, 0)
+            end
+            if on_ground then
+                -- Drag
+                body:force(body.mass * -self.invertedDrag * bvel, body:localToWorld(vec(0, -1, 0)))
+                emit_debug_marker(pos, col, elapsed_secs, 1)
+            else
+                -- Drag
+                body:force(body.mass * -self.disconnectionDrag * bvel, body:localToWorld(vec(0, -1, 0)))
+            end
+        else
+            emit_debug_marker(pos, vec(0, 0, 1), elapsed_secs, 1)
+            emit_debug_marker(pos - ort * self.hoverHeight, vec(0, 1, 1), elapsed_secs, 1)
+        end
+
+        if not on_ground then
+            instance.lastTensorDev = vec(0, 0, 0)
+            return
+        end
+
+        -- Smooth orientation.  Avoid bumpy track problem.
+        -- norm(slerp(ort, instance.displayOrientation, 0.001 ^ elapsed_secs)))
+        do
+            -- Use a PID loop to align body with logical orientation (ground normal).
+
+            local tensor_dev = cross(ort, body.worldOrientation * vec(0, 0, 1))
+
+            local tensor_dev_change = tensor_dev - instance.lastTensorDev
+            instance.lastTensorDev = tensor_dev
+
+            local P, D = -10, -100
+
+            local AA = P * tensor_dev + D * tensor_dev_change
+            game_manager:debugText(1, 'Normal: %d', #AA)
+            body:torque(body.inertia * AA)
+        end
+
+        if upside_down then
+            return
+        end
+
+        do
+            -- Use a PID loop to align body with logical position.
+            local pos_dev = body.worldPosition - pos
+            local pos_dev_change = (pos_dev - instance.lastPosDev) / elapsed_secs
+            instance.lastPosDev = pos_dev
+
+            local P, D = -100, -50
+
+            local A = P*pos_dev + D*pos_dev_change
+            -- When we clash with collisions, we're not going to win.  So avoid applying huge forces
+            -- that make the simulation unstable.
+            if #A > 100 then
+                A = norm(A) * 100
+            end
+            game_manager:debugText(2, 'Position: %d', #A)
+            body:force(body.mass * A, body.worldPosition)
+        end
+
+        do
+            -- Use a PID loop to align body with logical velocity.
+            local current_vel = (inv(body.worldOrientation) * body.linearVelocity) * vec(1, 1, 0)
+            local vel_dev = current_vel - vel
+            local vel_dev_change = (vel_dev - instance.lastVelDev) / elapsed_secs
+            instance.lastVelDev = vel_dev
+
+            local P, D = -200, 0
+
+            local A = body.worldOrientation * (P*vel_dev + D*vel_dev_change)
+            -- When we clash with collisions, we're not going to win.  So avoid applying huge forces
+            -- that make the simulation unstable.
+            if #A > 100 then
+                A = norm(A) * 100
+            end
+            game_manager:debugText(3, 'Velocity: %d', #A)
+            body:force(body.mass * A, body.worldPosition)
+        end
+
+        do
+            -- Apply steering directly, not with forces but by setting velocity.
+            local steering_ang_vel = -math.rad(instance.shouldSteerLeft + instance.shouldSteerRight)
+
+            -- Project angular velocity tensor to remove the "about ground normal" component.
+            -- Using the ground normal instead of the ship's normal avoids problems with when the
+            -- ship is at a degenerate angle to the track.
+            local current_steering_ang_vel = dot(body.angularVelocity, ort)
+            local steering_change_needed = steering_ang_vel - current_steering_ang_vel
+
+            local AA = ort * steering_change_needed
+            game_manager:debugText(4, 'Steering: %d', #AA)
+            body:torqueImpulse(body.inertia * AA)
+        end
+
+        body:force(-physics_get_gravity(), pos)
     end,
 
     controlBegin = function(self)
