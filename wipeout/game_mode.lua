@@ -159,6 +159,16 @@ class `TestShip` (ColClass) {
         instance.lastPosDev = vec(0, 0, 0)
         instance.lastVelDev = vec(0, 0, 0)
         instance.lastTensorDev = vec(0, 0, 0)
+        instance.body.collisionCallback = function (...) self:collisionCallback(...) end
+    end,
+
+    collisionCallback = function (self, life, impulse, other, m, mo, pen, pos, poso, norm)
+        if impulse <= 1000 then
+            return
+        end
+        printf('Collision, speed %d, impulse %d',
+               #self.instance.body.linearVelocity * 60 * 60 / METRES_PER_MILE,
+               impulse)
     end,
 
     deactivate = function(self, instance)
@@ -218,9 +228,6 @@ class `TestShip` (ColClass) {
         local pos, ort, vel = self:logicalUpdate(
             body.worldPosition, body.worldOrientation, instance.velocity, elapsed_secs)
 
-        -- Store for next iteration.
-        instance.velocity = vel
-
         local on_ground = pos ~= nil
         local upside_down = false
 
@@ -230,7 +237,10 @@ class `TestShip` (ColClass) {
 
             local bvel = body.linearVelocity
 
-            instance.velocity = vec(0, 0, 0)
+            instance.velocity = instance.velocity * self.connectedBrakeDrag ^ elapsed_secs
+            if #bvel < #instance.velocity then
+                instance.velocity = #bvel * norm(instance.velocity)
+            end
             instance.lastPosDev = vec(0, 0, 0)
             instance.lastVelDev = vec(0, 0, 0)
 
@@ -250,19 +260,22 @@ class `TestShip` (ColClass) {
             end
             physics_test(self.hoverHeight * 2, body.worldPosition, false, test_func)
             local slow_enough = #bvel < self.resetSpeedMax
-            local col = vec(1, 1, 1)
-            if slow_enough then
-                col = vec(1, 0, 0)
-            end
             if on_ground then
                 -- Drag
                 body:force(body.mass * -self.invertedDrag * bvel, body:localToWorld(vec(0, -1, 0)))
+                local col = vec(1, 0, 0)
+                if slow_enough then
+                    col = vec(1, 1, 1)
+                end
                 emit_debug_marker(pos, col, elapsed_secs, 1)
             else
                 -- Drag
                 body:force(body.mass * -self.disconnectionDrag * bvel, body:localToWorld(vec(0, -1, 0)))
             end
         else
+            -- Store for next iteration.
+            instance.velocity = vel
+
             emit_debug_marker(pos, vec(0, 0, 1), elapsed_secs, 1)
             emit_debug_marker(pos - ort * self.hoverHeight, vec(0, 1, 1), elapsed_secs, 1)
         end
@@ -277,15 +290,25 @@ class `TestShip` (ColClass) {
         do
             -- Use a PID loop to align body with logical orientation (ground normal).
 
-            local tensor_dev = cross(ort, body.worldOrientation * vec(0, 0, 1))
+            local up = body.worldOrientation * vec(0, 0, 1)
+            local tensor_dev = cross(ort, up)
+            if dot(ort, up) < 0 and #tensor_dev > 0.01 then
+                -- Avoid a problem where we don't have enough strength to flip the craft when
+                -- dot(ort, up) is approximately -1.
+                -- Artificially inflate the tensor to its max amount when we're upside down.
+                tensor_dev = norm(tensor_dev)
+            end
 
             local tensor_dev_change = tensor_dev - instance.lastTensorDev
             instance.lastTensorDev = tensor_dev
 
-            local P, D = -10, -100
+            local P, D = -15, -300
 
             local AA = P * tensor_dev + D * tensor_dev_change
             game_manager:debugText(1, 'Normal: %d', #AA)
+            if #AA > 100 then
+                printf('Normal: %d' % #AA)
+            end
             body:torque(body.inertia * AA)
         end
 
@@ -299,7 +322,7 @@ class `TestShip` (ColClass) {
             local pos_dev_change = (pos_dev - instance.lastPosDev) / elapsed_secs
             instance.lastPosDev = pos_dev
 
-            local P, D = -100, -50
+            local P, D = -300, -50
 
             local A = P*pos_dev + D*pos_dev_change
             -- When we clash with collisions, we're not going to win.  So avoid applying huge forces
@@ -340,9 +363,12 @@ class `TestShip` (ColClass) {
             local current_steering_ang_vel = dot(body.angularVelocity, ort)
             local steering_change_needed = steering_ang_vel - current_steering_ang_vel
 
-            local AA = ort * steering_change_needed
+            local AA = ort * steering_change_needed / elapsed_secs
+            if #AA > 20 then
+                AA = norm(AA) * 20
+            end
             game_manager:debugText(4, 'Steering: %d', #AA)
-            body:torqueImpulse(body.inertia * AA)
+            body:torque(body.inertia * AA)
         end
 
         body:force(-physics_get_gravity(), pos)
@@ -400,54 +426,6 @@ class `TestShip` (ColClass) {
     end,
 }
 
-
---[[
-class `DummyVehicle` (ColClass) {
-
-    ...
-
-    activate = function(self, instance)
-        if ColClass.activate(self, instance) then
-            return true
-        end
-        self.needsStepCallbacks = true
-        instance.boomLengthSelected = (self.boomLengthMax + self.boomLengthMin)/2
-        instance.push = 0
-        instance.shouldSteerLeft, instance.shouldSteerRight = 0, 0
-        instance.onGround = false
-    end,
-
-    deactivate = function(self, instance)
-        self.needsStepCallbacks = false
-        
-        return ColClass.deactivate(self, instance)
-    end,
-    
-    stepCallback = function(self, elapsed_secs)
-        local instance = self.instance
-        local body = instance.body
-        local mass, inertia = body.mass, body.inertia
-        local vehicle_up = body.worldOrientation * vec(0, 0, 1)
-        local dist, ground, ground_normal, ground_mat = physics_cast(body.worldPosition, self.hoverHeight * -2 * vehicle_up, true, 0, body)
-        instance.onGround = dist ~= nil
-        if dist then
-            dist = dist * self.hoverHeight * 2
-            local extension = dist - self.hoverHeight
-            body:force((-100 * mass * extension) * vehicle_up, body.worldPosition)
-            body:torque(cross(vehicle_up, ground_normal) * 20 * inertia)
-        end
-
-        if instance.onGround and self:getSpeed() <= self.speedMax then
-            body:force(body.worldOrientation * vec(0, 1000 * mass * instance.push, 0), body.worldPosition)
-        end
-        if math.abs(body.angularVelocity.z) < self.steerMax then
-            body:torque(body.worldOrientation * vec(0, 0, -0.1 * (instance.shouldSteerLeft + instance.shouldSteerRight)) * inertia)
-        end
-    end,
-
-    ...
-}
-]]
 
 local GameMode = extends_keep_existing (game_manager.gameModes['Wipeout'], ThirdPersonGameMode) {
     name = 'Wipeout',
