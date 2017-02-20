@@ -188,7 +188,10 @@ function pitch (z)
 end
 
 function yaw_pitch (v)
-        local yaw = math.deg(math.atan2(v.x,v.y))
+        if type(v) == 'quat' then
+            v = v * vec(0, 1, 0)
+        end
+        local yaw = math.deg(math.atan2(v.x, v.y))
         local pitch = math.deg(math.asin(v.z))
         return yaw, pitch
 end
