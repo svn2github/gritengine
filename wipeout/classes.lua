@@ -18,7 +18,7 @@ local SpinningClass = extends (ColClass) {
     end
 }
 
-class `wo_tunnel` (SpinningClass) {castShadows=true,renderingDistance=500}
+class `wo_tunnel` (SpinningClass) {castShadows=true,renderingDistance=800}
 
 local col = vec(1, .2, .1)
 
