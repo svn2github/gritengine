@@ -87,8 +87,8 @@ material `Glass` {
 }
 
 sky_material `Sky` {
-    emissiveMap = `FunkyStarField.dds`,
-    emissiveMask = vec(4, 4, 4),
+    emissiveMap = { image = `FunkyStarField.dds`, modeU = 'CLAMP', modeV = 'CLAMP', moveW = 'CLAMP' },
+    emissiveMask = vec(4, 0.6, 1) * 2,
 }
 
 physical_material `Barrier` {
