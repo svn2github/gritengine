@@ -11,6 +11,9 @@ getmetatable("").__mod = function(str, n)
         return str:format(n)
     end
 end
+function printf(str, ...)
+    print(str % {...})
+end
 
 
 -- Disable them as we boot the engine.
