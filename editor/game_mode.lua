@@ -116,7 +116,7 @@ function Editor:toggleBoard(mobj)
 
         self.controlObj:controlAbandon()
         -- When on foot there is no vehicle pitch.
-        local v_yaw, v_pitch = yaw_pitch(self.controlObj.instance.body.worldOrientation * quat(self.camPitch, vec(1, 0, 0)) * V_FORWARDS)
+        local v_yaw, v_pitch = yaw_pitch(main.camQuat)
         self.camYaw = v_yaw
         self.camPitch = v_pitch
         self:mouseMove(vec(0, 0))
