@@ -32,6 +32,9 @@ editor_object_binds = InputFilter(48, `editor_object_binds`)
 if editor_debug_binds ~= nil then editor_debug_binds:destroy() end
 editor_debug_binds = InputFilter(49, `editor_debug_binds`)
 
+if editor_debug_play_binds ~= nil then editor_debug_play_binds:destroy() end
+editor_debug_play_binds = InputFilter(50, `editor_debug_play_binds`)
+
 
 function reset_binds()
     playing_binds.enabled = false
@@ -44,6 +47,7 @@ function reset_binds()
     editor_cam_binds.enabled = false
     editor_object_binds.enabled = false
     editor_debug_binds.enabled = false
+    editor_debug_play_binds.enabled = false
 end
 
 game_manager = {

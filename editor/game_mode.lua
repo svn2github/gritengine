@@ -318,6 +318,7 @@ function Editor:setDebugMode(v)
     editor_edit_binds.enabled = not v
     editor_object_binds.enabled = not v
     editor_debug_binds.enabled = v
+    editor_debug_play_binds.enabled = v
 
     if editor_interface.map_editor_page ~= nil then
         if v then
@@ -624,6 +625,7 @@ function Editor:init()
     editor_edit_binds.enabled = true
     editor_object_binds.enabled = true
     editor_debug_binds.enabled = false
+    editor_debug_play_binds.enabled = false
 
     self.lastMouseMoveTime = seconds()
 
@@ -762,20 +764,16 @@ function Editor:receiveButton(button, state)
         elseif button == "selectModeRotate" then
             self:setWidgetMode("rotate")
         elseif button == "weaponPrimary" then
-            if not mouse_inside_any_window() then
-                if state == '+' then
-                    WeaponEffectManager:primaryEngage(main.camPos, main.camQuat)
-                elseif state == '-' then
-                    WeaponEffectManager:primaryDisengage()
-                end
+            if state == '+' then
+                WeaponEffectManager:primaryEngage(main.camPos, main.camQuat)
+            elseif state == '-' then
+                WeaponEffectManager:primaryDisengage()
             end
         elseif button == "weaponSecondary" then
-            if not mouse_inside_any_window() then
-                if state == '+' then
-                    WeaponEffectManager:secondaryEngage(main.camPos, main.camQuat)
-                elseif state == '-' then
-                    WeaponEffectManager:secondaryDisengage()
-                end
+            if state == '+' then
+                WeaponEffectManager:secondaryEngage(main.camPos, main.camQuat)
+            elseif state == '-' then
+                WeaponEffectManager:secondaryDisengage()
             end
         elseif button == "weaponSwitchUp" then
             if state == '+' then

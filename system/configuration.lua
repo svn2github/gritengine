@@ -257,8 +257,9 @@ process_bindings(user_foot_bindings, game_manager_receive_button, playing_actor_
 -- 2) Editing camera (i.e. moving around)
 -- 3) Debug (moving camera around)
 -- 4) Debug (controlling object)
+-- 5) Debug (including when no mouse capture)
 
--- Available in (1) (2) (3) (4)
+-- Available in (1) (2) (3) (4) (5)
 user_editor_bindings = user_editor_bindings or { }
 local default_user_editor_bindings = {
     debug = "F5";
@@ -305,20 +306,27 @@ local default_user_editor_object_bindings = {
 process_user_table("user_editor_object_bindings", user_editor_object_bindings, default_user_editor_object_bindings)
 process_bindings(user_editor_object_bindings, game_manager_receive_button, editor_object_binds)
 
--- Available in (3) (4)
+-- Available in (3) (4) (5)
 user_editor_debug_bindings = user_editor_debug_bindings or { }
 local default_user_editor_debug_bindings = {
     toggleDebugModeSettings = "F1";
     pausePhysics = "F2";
     singleStepPhysics = "F3";
+}
+process_user_table("user_editor_debug_bindings", user_editor_debug_bindings, default_user_editor_debug_bindings)
+process_bindings(user_editor_debug_bindings, game_manager_receive_button, editor_debug_binds)
+
+-- Available in (3) (4)
+user_editor_debug_play_bindings = user_editor_debug_play_bindings or { }
+local default_user_editor_debug_play_bindings = {
     board = "f";
     weaponPrimary = "left";
     weaponSecondary = "right";
     weaponSwitchUp = {"e", "up"};
     weaponSwitchDown = {"q", "down"};
 }
-process_user_table("user_editor_debug_bindings", user_editor_debug_bindings, default_user_editor_debug_bindings)
-process_bindings(user_editor_debug_bindings, game_manager_receive_button, editor_debug_binds)
+process_user_table("user_editor_debug_play_bindings", user_editor_debug_play_bindings, default_user_editor_debug_play_bindings)
+process_bindings(user_editor_debug_play_bindings, game_manager_receive_button, editor_debug_play_binds)
 
 
 --------------------
