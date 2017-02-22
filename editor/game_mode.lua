@@ -273,21 +273,6 @@ function Editor:setMouseCapture(v)
     editor_cam_binds.enabled = v
 end
 
-function Editor:toggleDebugModeSettings()
-    -- Only called when we are in debug mode
-    self:setMouseCapture(not self.mouseCapture)
-    if self.mouseCapture then
-        -- Various other nice GUI things
-        if self.debugModeSettingsWindow ~= nil and not self.debugModeSettingsWindow.destroyed then
-            self.debugModeSettingsWindow.enabled = false
-        end
-    else
-        if self.debugModeSettingsWindow ~= nil and not self.debugModeSettingsWindow.destroyed then
-            self.debugModeSettingsWindow.enabled = true
-        end
-    end
-end
-
 function Editor:setDebugMode(v)
     -- Detach any object we may be controlling
     
@@ -307,7 +292,6 @@ function Editor:setDebugMode(v)
     
     self.debugMode = v
     main.physicsEnabled = v
-    self:setMouseCapture(v)
     clock.enabled = v
     compass.enabled = v
     for i = 1, 4 do
@@ -318,7 +302,6 @@ function Editor:setDebugMode(v)
     editor_edit_binds.enabled = not v
     editor_object_binds.enabled = not v
     editor_debug_binds.enabled = v
-    editor_debug_play_binds.enabled = v
 
     if editor_interface.map_editor_page ~= nil then
         if v then
@@ -328,12 +311,18 @@ function Editor:setDebugMode(v)
         end
     end
     
-    if not v then
+    if v then
+        self:setInDebugModeSettings(false)
+        notify("Press F5 to return to the editor", vec(1, 0.5, 0), vec(1, 1, 1))
+    else
+        editor_debug_play_binds.enabled = false
         if self.controlObj ~= nil then
             self:toggleBoard()
         end
 
         for _, obj in ipairs(object_all()) do
+            -- TODO(dcunnin):  This does not reset persistent state.  Put code in map.lua to do
+            -- a full reset by destroying and recreating all objects.
             if obj.destroyed then 
                 -- Skip
             elseif obj.debugObject == true then
@@ -343,35 +332,10 @@ function Editor:setDebugMode(v)
                 obj.skipNextActivation = false
             end
         end
-        if self.debugModeSettingsWindow ~= nil and not self.debugModeSettingsWindow.destroyed then
-            self.debugModeSettingsWindow.enabled = false
-        end
-    else
-        notify("Press F5 to return to the editor", vec(1, 0.5, 0), vec(1, 1, 1))
-        if self.debugModeSettingsWindow == nil or self.debugModeSettingsWindow.destroyed then
-            self:createDebugModeSettingsWindow()
-            self.debugModeSettingsWindow.enabled = false
-        end
     end
 end
 
 function Editor:createDebugModeSettingsWindow()
-    if self.debugModeSettingsWindow ~= nil and not self.debugModeSettingsWindow.destroyed then
-        self.debugModeSettingsWindow:destroy()
-    end
-
-    self.debugModeSettingsWindow = hud_object `debug_mode/Settings` {
-        title = "Debug Mode Settings";
-        parent = hud_centre;
-        position = vec(0, 0);
-        resizeable = true;
-        size = vec(620, 500);
-        min_size = vec2(620, 500);
-        -- colour = _current_theme.colours.window.background;
-        alpha = 1;    
-    }
-
-    _windows[#_windows+1] = self.debugModeSettingsWindow
 end
 
 function Editor:toggleDebugMode()
@@ -558,6 +522,7 @@ function Editor:init()
 
 
     self.debugMode = false
+    self.inDebugModeSettings = false
     self.noClip = false
     self.fast = false
     self.mouseCapture = false
@@ -619,6 +584,19 @@ function Editor:init()
 
     make_editor_interface()
 
+    self.debugModeSettingsWindow = hud_object `debug_mode/Settings` {
+        title = "Debug Mode Settings",
+        parent = hud_centre,
+        position = vec(0, 0),
+        resizeable = true,
+        size = vec(620, 500),
+        min_size = vec2(620, 500),
+        -- colour = _current_theme.colours.window.background;
+        alpha = 1,
+        enabled = false,
+    }
+    _windows[#_windows+1] = self.debugModeSettingsWindow
+
     playing_binds.enabled = true
     playing_binds.mouseCapture = false
     editor_binds.enabled = true
@@ -646,6 +624,13 @@ end
 
 function Editor:debugText(i, str)
     self.debug_label[i]:setValue(str)
+end
+
+function Editor:setInDebugModeSettings(v)
+    self.inDebugModeSettings = v
+    self:setMouseCapture(not v)
+    self.debugModeSettingsWindow.enabled = v
+    editor_debug_play_binds.enabled = not v
 end
 
 function Editor:loadMap()
@@ -756,7 +741,7 @@ function Editor:receiveButton(button, state)
 
         elseif button == "toggleDebugModeSettings" then
             if state == '+' then
-                self:toggleDebugModeSettings()
+                self:setInDebugModeSettings(not self.inDebugModeSettings)
             end
 
         elseif button == "selectModeTranslate" then
@@ -887,6 +872,8 @@ function Editor:destroy()
     
     self:saveEditorConfig()
     -- self:saveEditorInterface()
+
+    self.debugModeSettingsWindow:destroy()
     
     safe_destroy(self.speedo)
 

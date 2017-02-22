@@ -1,10 +1,10 @@
-hud_class `Settings` (extends(WindowClass)
-{
+hud_class `Settings` `/common/gui/Window` {
+
     init = function (self)
         WindowClass.init(self)
         
         self.close_btn.pressedCallback = function (self)
-            game_manager.currentMode:toggleMouseCapture()
+            game_manager.currentMode:setInDebugModeSettings(false)
         end;
 
         self.content = gui.notebook(self)
@@ -605,4 +605,4 @@ hud_class `Settings` (extends(WindowClass)
     mouseMoveCallback = function (self, local_pos, screen_pos, inside)
         WindowClass.mouseMoveCallback(self, local_pos, screen_pos, inside)
     end;
-})
+}
