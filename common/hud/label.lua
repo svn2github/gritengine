@@ -10,37 +10,42 @@
 -- aligning to LEFT or RIGHT, 'padding' specifies the additional pixels before the end.
 hud_class `Label` {
 
-    textColour = vec(1, 1, 1);
-    greyColour = vec(0.5, 0.5, 0.5);
-    font = `/common/fonts/Verdana12`;
-    value = "No label";
-    alignment = "CENTRE";
-    padding = 4;
+    textColour = vec(1, 1, 1),
+    greyColour = vec(0.5, 0.5, 0.5),
+    font = `/common/fonts/Verdana12`,
+    value = "No label",
+    alignment = "CENTRE",
+    padding = 4,
 
     init = function (self)
+        self.needsResizedCallbacks = true
         self.text = hud_text_add(self.font)
         self.text.colour = self.textColour
         self.text.parent = self
         self.text.shadow = self.shadow
         self:setValue(self.value)
         if self.greyed == nil then self.greyed = false end
-    end;
+    end,
     
     setValue = function (self, value)
         self.value = value
         self.text.text = value
-        self:updateChildrenSize()
-    end;
+        self:update()
+    end,
 
     destroy = function (self)
-    end;
+    end,
+
+    resizedCallback = function (self)
+        self:update()
+    end,
 
     setGreyed = function (self, v)
         self.greyed = v
         self.text.colour = v and self.greyColour or self.textColour
-    end;
+    end,
     
-    updateChildrenSize = function (self)
+    update = function (self)
         if self.alignment == "CENTRE" then
             self.text.position = vec(0,0)
         elseif self.alignment == "LEFT" then
@@ -48,6 +53,6 @@ hud_class `Label` {
         elseif self.alignment == "RIGHT" then
             self.text.position = vec(self.size.x/2 - self.padding - self.text.size.x/2, 0)
         end
-    end;
+    end,
 
 }

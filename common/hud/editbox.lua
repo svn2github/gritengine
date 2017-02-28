@@ -57,6 +57,7 @@ EditBoxClass = {
 	
     init = function (self)
         self.needsInputCallbacks = true
+        self.needsResizedCallbacks = true
         self.text = hud_text_add(self.font)
         self.text.parent = self
 
@@ -98,7 +99,7 @@ EditBoxClass = {
 		else
 			self.text.text = self.before .. self.after
 		end
-        self:updateChildrenSize()
+        self:update()
         self.value = self.before .. self.after
     end;
     
@@ -288,7 +289,7 @@ EditBoxClass = {
         self.caret.enabled = state < 0.66
     end;
 
-    updateChildrenSize = function (self)
+    update = function (self)
 		local alignment_r = vec(self.size.x/2 - self.padding - self.text.size.x/2, 0)
 
         if self.alignment == "CENTRE" then
@@ -315,10 +316,14 @@ EditBoxClass = {
         self.caret.position = vec(self.text.position.x -self.text.size.x/2 + tw, 0)
     end;
 
+    resizedCallback = function (self)
+        self:update()
+    end,
+
     putCaretAt = function (self, pos)
 		self.before = self.value:sub(0, pos)
 		self.after =  self.value:sub(pos+1, #self.value)
-		self:updateChildrenSize()
+		self:update()
     end;		
 	
     selectAll = function (self)

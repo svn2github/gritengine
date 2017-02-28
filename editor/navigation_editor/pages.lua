@@ -496,7 +496,7 @@ local navigation_editor = {
             alpha = 1;    
         }
         _windows[#_windows+1] = self.windows.tools
-        set_active_window(self.windows.tools)
+        window_focus_grab(self.windows.tools)
         return self.windows.tools
     end;
     
@@ -516,7 +516,7 @@ local navigation_editor = {
             alpha = 1;    
         }
         _windows[#_windows+1] = self.windows.debug
-        set_active_window(self.windows.debug)
+        window_focus_grab(self.windows.debug)
         return self.windows.debug
     end;    
 }

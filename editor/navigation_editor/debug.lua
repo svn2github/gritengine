@@ -1,9 +1,8 @@
 
-hud_class `Debug` (extends(WindowClass)
-{
+hud_class `Debug` `/common/gui/Window` {
     init = function (self)
         WindowClass.init(self)
-        self.toolsel = gui.boxsizer(true, "vertical", self)
+        self.toolsel = gui.boxsizer(true, "vertical", self.contentArea)
         self.toolsel.zOrder = 5
         self.toolsel.alpha = 0
 
@@ -121,5 +120,5 @@ hud_class `Debug` (extends(WindowClass)
     mouseMoveCallback = function (self, local_pos, screen_pos, inside)
         WindowClass.mouseMoveCallback(self, local_pos, screen_pos, inside)
     end;
-})
+}
 

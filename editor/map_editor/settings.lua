@@ -7,7 +7,7 @@ hud_class `Settings` `/common/gui/Window` {
             -- safe_destroy(self.parent.parent.parent)
         -- end;
         
-        self.content = gui.notebook(self)
+        self.content = gui.notebook(self.contentArea)
 
         self.content.general_panel = gui.notebookpanel()
         

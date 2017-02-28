@@ -27,7 +27,7 @@ hud_class `ScrollBar`
     
     init = function (self)
         self.needsInputCallbacks = true
-        self.needsParentResizedCallbacks = false
+        self.needsResizedCallbacks = true
 
         -- When dragging, this records the mouse position at the time of click.
         self.inside = false
@@ -134,7 +134,7 @@ hud_class `ScrollBar`
         self:updateColour()
     end,
 
-    updateChildrenSize = function (self)
+    resizedCallback = function (self)
         self:update()
     end,
 
@@ -223,6 +223,7 @@ hud_class `ScrollArea` {
         assert(self.scrollX or self.scrollY)
 
         self.needsInputCallbacks = true
+        self.needsResizedCallbacks = true
 
         self.content.parent = self
         self.content.zOrder = 1
@@ -249,11 +250,11 @@ hud_class `ScrollArea` {
             end,
         }
 
-        self:updateChildrenSize()
+        self:update()
     end,
 
     -- Called when our size is updated externally.
-    updateChildrenSize = function (self)
+    resizedCallback = function (self)
         self:update()
     end,
 

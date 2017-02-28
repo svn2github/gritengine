@@ -14,7 +14,7 @@ function open_map_dialog()
         position = vec(0, 0);
         resizeable = true;
         size = vec2(560, 390);
-        min_size = vec2(470, 290);
+        minSize = vec2(470, 290);
         colour = _current_theme.colours.window.background;
         alpha = 1;
         choices = { "Grit Map (*.gmap)", "Lua Script (*.lua)" };
@@ -45,7 +45,7 @@ function save_map_dialog()
         position = vec(0, 0);
         resizeable = true;
         size = vec2(560, 390);
-        min_size = vec2(470, 290);
+        minSize = vec2(470, 290);
         colour = _current_theme.colours.window.background;
         alpha = 1;
         choices = { "Grit Map (*.gmap)", "Lua Script (*.lua)" };
@@ -590,7 +590,7 @@ function Editor:init()
         position = vec(0, 0),
         resizeable = true,
         size = vec(620, 500),
-        min_size = vec2(620, 500),
+        minSize = vec2(620, 500),
         -- colour = _current_theme.colours.window.background;
         alpha = 1,
         enabled = false,

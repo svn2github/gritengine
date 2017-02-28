@@ -1,13 +1,13 @@
 hud_class `Settings` `/common/gui/Window` {
 
+    closeClicked = function(self)
+        game_manager.currentMode:setInDebugModeSettings(false)
+    end,
+
     init = function (self)
         WindowClass.init(self)
         
-        self.close_btn.pressedCallback = function (self)
-            game_manager.currentMode:setInDebugModeSettings(false)
-        end;
-
-        self.content = gui.notebook(self)
+        self.content = gui.notebook(self.contentArea)
 
         -- GENERAL
         self.content.general_panel = gui.notebookpanel()

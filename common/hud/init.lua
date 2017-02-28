@@ -187,6 +187,7 @@ function common_hud_reset()
     end
     env_cycle_editor = hud_object `EnvCycleEditor` { zOrder=6 }
     env_cycle_editor.position = env_cycle_editor.size/2 + vec(50, 10)
+    env_cycle_editor.enabled = false
 
     -- Lens flare
     safe_destroy(lens_flare)
@@ -207,13 +208,6 @@ function common_hud_reset()
         consoleEnabled = console_enabled;
         selectedPane = selected_pane;
         buttonDescs = {
-            {
-                name = "Env Cycle Editor";
-                panel = env_cycle_editor;
-                onChange = function (self, to)
-                    self.panel:setClosestToTime(env.secondsSinceMidnight/60/60)
-                end;
-            },
             {
                 name = "Music Player";
                 panel = music_player;

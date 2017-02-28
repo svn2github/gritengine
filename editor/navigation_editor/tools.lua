@@ -1,6 +1,5 @@
 
-hud_class `Tools` (extends(WindowClass)
-{
+hud_class `Tools` `/common/gui/Window` {
     init = function (self)
         WindowClass.init(self)
         self.tool = {}    
@@ -8,7 +7,7 @@ hud_class `Tools` (extends(WindowClass)
 
     show_temp_obstacle_tool = function(self)
         safe_destroy(self.tool)
-        self.tool = gui.object({ parent = self, size = vec(100, 100), alpha = 0, colour = vec(1, 0, 1), align = vec(0, 1), expand_x = true })
+        self.tool = gui.object({ parent = self.contentArea, size = vec(100, 100), alpha = 0, colour = vec(1, 0, 1), align = vec(0, 1), expand_x = true })
         -- self.tool.title = gui.text({
             -- value = "Create :";
             -- font = `/common/fonts/ArialBold12`;
@@ -34,7 +33,7 @@ hud_class `Tools` (extends(WindowClass)
     
     show_offmesh_tool = function(self)
         safe_destroy(self.tool)
-        self.tool = gui.object({ parent = self, size = vec(100, 100), alpha = 0, colour = vec(1, 0, 1), align = vec(0, 1), expand_x = true })
+        self.tool = gui.object({ parent = self.contentArea, size = vec(100, 100), alpha = 0, colour = vec(1, 0, 1), align = vec(0, 1), expand_x = true })
         self.tool.radiobuttons = {}
         
         self.points = {}
@@ -78,14 +77,14 @@ hud_class `Tools` (extends(WindowClass)
     
     show_convex_tool = function(self)
         safe_destroy(self.tool)
-        self.tool = gui.object({ parent = self, size = vec(100, 100), alpha = 0, colour = vec(1, 0, 1), align = vec(0, 1), expand_x = true })
+        self.tool = gui.object({ parent = self.contentArea, size = vec(100, 100), alpha = 0, colour = vec(1, 0, 1), align = vec(0, 1), expand_x = true })
         -- playing_binds:bind("middle", function() end)
         game_manager.currentMode.leftMouseClick = function()  end;
     end;    
     
     show_crowd_tool = function(self)
         safe_destroy(self.tool)
-        self.tool = gui.object({ parent = self, size = vec(100, 100), alpha = 0, colour = vec(1, 0, 1), align = vec(0, 1), expand_x = true })
+        self.tool = gui.object({ parent = self.contentArea, size = vec(100, 100), alpha = 0, colour = vec(1, 0, 1), align = vec(0, 1), expand_x = true })
         self.tool.radiobuttons = {}
         
         self.tool.bxsz = gui.boxsizer(true, "vertical", self.tool)
@@ -140,4 +139,4 @@ hud_class `Tools` (extends(WindowClass)
     mouseMoveCallback = function (self, local_pos, screen_pos, inside)
         WindowClass.mouseMoveCallback(self, local_pos, screen_pos, inside)
     end;
-})
+}

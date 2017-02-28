@@ -53,6 +53,7 @@ local Control = {
         end
         self.inside = false
         self.greyed = not not self.greyed
+        self.needsResizedCallbacks = true
     end;
     
     mouseMoveCallback = function (self, local_pos, screen_pos, inside)
@@ -87,12 +88,15 @@ local Control = {
         end
     end;
     
-    updateChildrenSize = function(self)
+    update = function(self)
         if self.showCaption then
             self.label:setRect(-self.size.x/2,-self.size.y/2, self.size.x/2-self.width+1,self.size.y/2)
-            self.label:updateChildrenSize()
         end
     end;
+
+    resizedCallback = function (self)
+        self:update()
+    end,
 
     receiveDrag = function (self, other)
     end;
@@ -113,7 +117,7 @@ hud_class `ColourControl` (extends(Control) {
         self.alphaSquare = hud_object `/common/hud/Rect` {parent=self, texture = `CapsuleAlpha.png`}
         self:setColour(self.initialColour, self.initialAlpha)
         self:updateAppearance()
-        self:updateChildrenSize();
+        self:update()
     end;
     destroy = function(self)
     end;
@@ -138,8 +142,8 @@ hud_class `ColourControl` (extends(Control) {
     getDragColour = function(self)
         return self.square.colour
     end;
-    updateChildrenSize = function(self)
-        Control.updateChildrenSize(self)
+    update = function(self)
+        Control.update(self)
         self.square:setRect(     self.size.x/2-self.width, -self.size.y/2, self.size.x/2,self.size.y/2)
         self.alphaSquare:setRect(self.size.x/2-self.width, -self.size.y/2, self.size.x/2, self.size.y/2)
     end;
@@ -189,7 +193,7 @@ hud_class `ValueControl` (extends(Control) {
             end;
             onClick = function() self:onClick() end;
         }
-        self:updateChildrenSize()
+        self:update()
         self:setValue(self.initialValue)
     end;
     destroy = function(self)
@@ -198,10 +202,9 @@ hud_class `ValueControl` (extends(Control) {
         Control.setGreyed(self, v)
         self.valueDisplay:setGreyed(self.greyed)
     end;
-    updateChildrenSize = function(self)
-        Control.updateChildrenSize(self)
+    update = function(self)
+        Control.update(self)
         self.valueDisplay:setRect(self.size.x/2-self.width+1,-self.size.y/2+1, self.size.x/2-1,self.size.y/2-1)
-        self.valueDisplay:updateChildrenSize()
     end;
     -- from outside in
     setValue = function (self, v)
@@ -229,7 +232,7 @@ hud_class `EnumControl` (extends (Control) {
         Control.init(self)
         self.valueDisplay = hud_object `/common/hud/Label` {parent=self, borderColour=vec(0,0,0)}
         self:setValue(self.value)
-        self:updateChildrenSize()
+        self:update()
     end;
     destroy = function (self)
     end;
@@ -237,10 +240,9 @@ hud_class `EnumControl` (extends (Control) {
         Control.setGreyed(self, v)
         self.valueDisplay:setGreyed(self.greyed)
     end;
-    updateChildrenSize = function (self)
-        Control.updateChildrenSize(self)
+    update = function (self)
+        Control.update(self)
         self.valueDisplay:setRect(self.size.x/2-self.width,-self.size.y/2, self.size.x/2,self.size.y/2)
-        self.valueDisplay:updateChildrenSize()
     end;
     setValue = function (self, v)
         self.valueDisplay.text.text = self.options[v] or "???"

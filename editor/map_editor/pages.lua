@@ -140,7 +140,7 @@ local map_editor_page = {
                 },    
                 {},
                 {
-                    callback = function() open_window(self.windows.settings)end;
+                    callback = function() window_open(self.windows.settings)end;
                     name = "Editor Settings";
                     tip = "Open Editor Settings";
                     icon = map_editor_icons.config;
@@ -162,7 +162,7 @@ local map_editor_page = {
                 {},
                 -- {
                     -- callback = function()
-                        -- open_window(self.windows.content_browser)
+                        -- window_open(self.windows.content_browser)
                     -- end;
                     -- name = "Content browser";
                     -- tip = "Open Content Browser window";
@@ -170,25 +170,25 @@ local map_editor_page = {
                 -- },
                 
                 -- {
-                    -- callback = function() open_window(self.windows.object_properties) end;
+                    -- callback = function() window_open(self.windows.object_properties) end;
                     -- name = "Object Properties";
                     -- tip = "Open Object Properties window";
                     -- icon = map_editor_icons.object_properties;
                 -- },
                 -- {
-                    -- callback = function() open_window(self.windows.material_editor) end;
+                    -- callback = function() window_open(self.windows.material_editor) end;
                     -- name = "Material Editor";
                     -- tip = "Open Material Editor window";
                     -- icon = map_editor_icons.material_editor;
                 -- },
                 -- {
-                    -- callback = function() open_window(self.windows.level_properties) end;
+                    -- callback = function() window_open(self.windows.level_properties) end;
                     -- name = "Map properties";
                     -- tip = "Open Map Properties window";
                     -- icon = map_editor_icons.world_properties;
                 -- },
                 -- {
-                    -- callback = function() open_window(self.windows.outliner) end;
+                    -- callback = function() window_open(self.windows.outliner) end;
                     -- name = "Outliner";
                     -- tip = "Open Outliner window";
                     -- icon = map_editor_icons.new;
@@ -372,7 +372,7 @@ local map_editor_page = {
             end
         ), "Show Collision")
         self.toolbar:addSeparator()
-        self.toolbar:addTool("Editor Settings", map_editor_icons.config, (function() open_window(self.windows.settings) end), "Editor Settings")
+        self.toolbar:addTool("Editor Settings", map_editor_icons.config, (function() window_open(self.windows.settings) end), "Editor Settings")
 
         self.mlefttoolbar = gui.toolbar({
             parent = hud_centre;
@@ -415,7 +415,7 @@ local map_editor_page = {
         
         self.mlefttoolbar:addSeparator()
         
-        self.mlefttoolbar:addTool("Object Properties", map_editor_icons.object_properties, function(self) open_window(editor_interface.map_editor_page.windows.object_properties) end, "Map Properties")
+        self.mlefttoolbar:addTool("Object Properties", map_editor_icons.object_properties, function(self) window_open(editor_interface.map_editor_page.windows.object_properties) end, "Map Properties")
         --self.mlefttoolbar:addTool("Content Browser", map_editor_icons.content_browser, function(self) if editor_interface.map_editor_page.windows.content_browser == nil or editor_interface.map_editor_page.windows.content_browser.destroyed then editor_interface.map_editor_page.windows.content_browser = create_content_browser() end end, "Content Browser")
         self.mlefttoolbar:addTool("Content Browser", map_editor_icons.content_browser, function(self)
             local wnd = editor_interface.map_editor_page.windows.content_browser
@@ -424,7 +424,7 @@ local map_editor_page = {
             end
         end, "Content Browser")
 
-        self.mlefttoolbar:addTool("Map Config", map_editor_icons.world_properties, function(self) open_window(editor_interface.map_editor_page.windows.level_properties) end, "Map Config")
+        self.mlefttoolbar:addTool("Map Config", map_editor_icons.world_properties, function(self) window_open(editor_interface.map_editor_page.windows.level_properties) end, "Map Config")
         self.mlefttoolbar:addSeparator()
         
         -- Status bar

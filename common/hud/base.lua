@@ -26,13 +26,7 @@ hud_class `Stretcher` {
     init = function (self)  
         self.needsParentResizedCallbacks = true;    
         self.child.parent = self
-        self:updateChildrenSize()
-    end;    
-    updateChildrenSize = function (self)
         self.child.size = self.size
-        if self.child.updateChildrenSize then
-            self.child:updateChildrenSize()
-        end
     end;    
     -- Override this to specify a different rectangle within the parent.
     calcRect = function (self, psize)
@@ -41,7 +35,7 @@ hud_class `Stretcher` {
     parentResizedCallback = function (self, psize)
         local l, b, r, t = self:calcRect(psize)
         self:setRect(l, b, r, t)
-        self:updateChildrenSize()
+        self.child.size = self.size
     end;
 }   
 
@@ -53,6 +47,10 @@ hud_top = hud_top or hud_object `Positioner` { factor = vec(0.5, 1.0) }
 hud_top_left = hud_top_left or hud_object `Positioner` { factor = vec(0.0, 1.0) }
 hud_top_right = hud_top_right or hud_object `Positioner` { factor = vec(1.0, 1.0) }
 
+--[[ The focus is a simple concept:
+- One hud_object at a time may have the focus.
+- There is a callback for receiving / losing the focus.
+]]
 hud_focus = hud_focus or nil
 function hud_focus_grab(v)
     if hud_focus ~= nil and not hud_focus.destroyed then

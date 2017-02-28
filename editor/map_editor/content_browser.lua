@@ -212,15 +212,15 @@ hud_class `FloatingObject` {
     end,
 }
 
-hud_class `ContentBrowser` (extends(WindowClass) {
+hud_class `ContentBrowser` `/common/gui/Window` {
 
     title = "Class Browser",
 
     -- Must always begin and end with a '/'.
     currentDir = '/',
     size = vec2(560, 320),
-    min_size = vec2(470, 235),
-    alpha = 1,
+    minSize = vec2(470, 235),
+    contentAreaAlpha = 1,
     
     init = function (self)
         WindowClass.init(self)
@@ -231,7 +231,7 @@ hud_class `ContentBrowser` (extends(WindowClass) {
         self.dirTree = gui.object({
             colour = vec(0.2, 0.2, 0.2);
             alpha = 1;
-            parent = self;
+            parent = self.contentArea;
             size = vec(180, self.size.y-120);
             align = vec(-1, 1);
             offset = vec(5, -35);
@@ -259,7 +259,7 @@ hud_class `ContentBrowser` (extends(WindowClass) {
         }
         self.scrollAreaStretcher = hud_object `/common/hud/Stretcher` {
             child = self.scrollArea,
-            parent = self,
+            parent = self.contentArea,
             calcRect = function(self, psize)
                 return 115 - psize.x/2, 5 - psize.y/2, psize.x/2 - 5, psize.y/2 - 35
             end,
@@ -275,7 +275,7 @@ hud_class `ContentBrowser` (extends(WindowClass) {
             end;
             icon_texture = _gui_textures.arrow_up;
             position = vec2(0, 0);
-            parent = self;
+            parent = self.contentArea;
             colour = vec(1, 1, 1)*0.5;
             defaultColour = V_ID*0.5;
             hoverColour = V_ID*0.6;
@@ -286,7 +286,7 @@ hud_class `ContentBrowser` (extends(WindowClass) {
         })
 
         self.editBox = hud_object `/common/gui/window_editbox` {
-            parent = self;
+            parent = self.contentArea;
             value = self.currentDir;
             alignment = 'LEFT';
             size = vec(50, 20);
@@ -359,7 +359,7 @@ hud_class `ContentBrowser` (extends(WindowClass) {
         self.scrollArea:update()
         self.fileExplorer:reset()
     end,
-})
+}
 
 local content_browserx = nil
 
@@ -373,6 +373,6 @@ function create_content_browser()
         position = vec(200, -200),
     }
     _windows[#_windows + 1] = content_browserx
-    set_active_window(content_browserx)
+    window_focus_grab(content_browserx)
     return content_browserx
 end

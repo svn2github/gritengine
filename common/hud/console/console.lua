@@ -48,6 +48,7 @@ hud_class `Console` {
 
         self.needsFrameCallbacks = true
         self.needsInputCallbacks = true
+        self.needsResizedCallbacks = true
 
         self.lastCompletionsList = nil
         self.lastCompletionIndex = 0
@@ -115,7 +116,7 @@ hud_class `Console` {
         end
     end;
 
-    updateChildrenSize = function (self)
+    resizedCallback = function (self)
 
         local font_height = gfx_font_line_height(self.font)
 

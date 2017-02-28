@@ -32,7 +32,6 @@ hud_class `window_editbox` (extends(table.extends(_gui.class, EditBoxClass))
 	parentResizedCallback = function(self, psize)
 		_gui.class.parentResizedCallback(self, psize)
 		self:parentresizecb(psize)
-		self:updateChildrenSize()		
 	end;
 	
 	parentresizecb = function (self, psize)
@@ -88,10 +87,6 @@ hud_class `BrowserIcon` {
 	end;
 	
 	destroy = function (self)
-		self.needsFrameCallbacks = false
-		self.needsParentResizedCallbacks = false
-		
-		self:destroy()
 	end;
 	
 	mouseMoveCallback = function (self, local_pos, screen_pos, inside)
@@ -171,7 +166,7 @@ hud_class `IconFlow` (extends(_gui.class)
 		self.items = {}
         self.selected = nil
     end;
-	
+
 	parentResizedCallback = function (self, psize)
 		self.size = vec(psize.x, self.size.y)
         -- y component is now overwritten.
@@ -263,8 +258,7 @@ hud_class `IconFlow` (extends(_gui.class)
 	end;
 })
 
-hud_class `FileDialog` (extends(WindowClass)
-{
+hud_class `FileDialog` `/common/gui/Window` {
 	btn_size = vec(100, 25);
 	
 	choices = { "All Files (*.*)" };
@@ -276,7 +270,7 @@ hud_class `FileDialog` (extends(WindowClass)
 
 		self.ok_button = gui.button({
 			caption = "OK";
-			parent = self;
+			parent = self.contentArea;
 			pressedCallback = function ()
 				self:handleCallback()
 			end;
@@ -289,7 +283,7 @@ hud_class `FileDialog` (extends(WindowClass)
 		})		
 		self.cancel_button = gui.button({
 			caption = "Cancel";
-			parent = self;
+			parent = self.contentArea;
 			pressedCallback = function ()
 				self.enabled = false
 			end;
@@ -301,7 +295,7 @@ hud_class `FileDialog` (extends(WindowClass)
 			size = self.btn_size;
 		})		
 		self.selectbox = gui.selectbox({
-			parent = self;
+			parent = self.contentArea;
 			choices = self.choices;
 			selection = 0;
 			align = vec(-1, -1);
@@ -316,7 +310,7 @@ hud_class `FileDialog` (extends(WindowClass)
 		end;
 		
 		self.file_edbox = hud_object `window_editbox` {
-			parent = self;
+			parent = self.contentArea;
 			value = "";
 			alignment = "LEFT";
 			enterCallback = function()
@@ -335,7 +329,7 @@ hud_class `FileDialog` (extends(WindowClass)
 
 		self.file_explorer = hud_object `IconFlow` {
 			position = vec2(0, 0),
-			parent = self,
+			parent = self.contentArea,
 			size = vec2(self.size.x-20, self.size.y-120),
 			alpha = 0,
 			zOrder = 1,
@@ -350,7 +344,7 @@ hud_class `FileDialog` (extends(WindowClass)
         }
         self.scrollAreaStretcher = hud_object `/common/hud/Stretcher` {
             child = self.scrollArea,
-            parent = self,
+            parent = self.contentArea,
             calcRect = function(self, psize)
                 return 115 - psize.x/2, 80 - psize.y/2, psize.x/2 - 5, psize.y/2 - 40
             end,
@@ -365,7 +359,7 @@ hud_class `FileDialog` (extends(WindowClass)
                 file_dialog:updateFileExplorer()
 			end;
 			icon_texture = _gui_textures.arrow_up;
-			parent = self;
+			parent = self.contentArea;
 			colour = V_ID*0.5;
 			defaultColour = V_ID*0.5;
 			hoverColour = V_ID*0.6;
@@ -379,7 +373,7 @@ hud_class `FileDialog` (extends(WindowClass)
 		self.newfolder_btn = gui.imagebutton({
 			pressedCallback = do_nothing;
 			icon_texture = _gui_textures.new_folder;
-			parent = self;
+			parent = self.contentArea;
 			colour = V_ID*0.5;
 			defaultColour = V_ID*0.5;
 			hoverColour = V_ID*0.6;
@@ -392,7 +386,7 @@ hud_class `FileDialog` (extends(WindowClass)
 		self.iconsize_btn = gui.imagebutton({
 			pressedCallback = do_nothing;
 			icon_texture = `/common/gui/icons/help.png`;-- TODO: replace by a proper icon
-			parent = self;
+			parent = self.contentArea;
 			colour = V_ID*0.5;
 			defaultColour = V_ID*0.5;
 			hoverColour = V_ID*0.6;
@@ -403,7 +397,7 @@ hud_class `FileDialog` (extends(WindowClass)
 		})
 
 		self.dir_edbox = hud_object `window_editbox` {
-			parent = self;
+			parent = self.contentArea;
 			value = self.currentDir;
 			alignment = "LEFT";
 			size = vec(50, 20);
@@ -503,7 +497,7 @@ hud_class `FileDialog` (extends(WindowClass)
 	callback = function(self, str)
 		return true
 	end;
-})
+}
 
 _open_file_dialog = nil
 _save_file_dialog = nil

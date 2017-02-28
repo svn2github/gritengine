@@ -101,7 +101,7 @@ hud_class `Scale` {
 
         self.slider = hud_object `Rect` {parent=self.sliderMidground, colour=vec(0, 0, 0)}
         self.sliderInside = hud_object `Rect` {parent=self.slider, colour=self.fgColour}
-        self:updateChildrenSize()
+        self:update()
 
         self.inside = false
         self.dragging = false
@@ -237,7 +237,11 @@ hud_class `Scale` {
     updateValue = function (self)
     end;
 
-    updateChildrenSize = function (self)
+    resizedCallback = function (self)
+        self:update()
+    end,
+
+    update = function (self)
         local sz = self.size
         local left   = -sz.x/2
         local right  =  sz.x/2
@@ -246,7 +250,6 @@ hud_class `Scale` {
         self.sliderBackground:setRect(left+1, bottom+1, right-1-self.textWidth-1, top-1)
         self.sliderMidground:setRect(left+1, bottom+1, right-1-self.textWidth-1, top-1)
         self.editBox:setRect(right - 1 - self.textWidth + self.textSeparation, bottom + 1, right - 1, top - 1)
-        self.editBox:updateChildrenSize()
         self.slider.size = vec(3, sz.y-2)
         self.sliderInside.size = vec(1, sz.y-2)
         self:updateAppearance()

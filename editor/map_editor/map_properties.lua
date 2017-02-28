@@ -206,7 +206,7 @@ hud_class `Expand_List` {
     parentResizedCallback = function (self, psize)
         self.base.size = vec2(psize.x-8, self.base.size.y)
         self.container.size = vec2(psize.x-8, self.container.size.y)
-        self.position = vec2(0, self.parent.border.size.y/2-self.parent.draggable_area.size.y/2)
+        self.position = vec2(0, self.parent.contentArea.size.y/2-self.parent.titleBar.size.y/2)
     end;
     
     mouseMoveCallback = function (self, local_pos, screen_pos, inside)

@@ -61,12 +61,17 @@ hud_class `Button` {
             }
         end
         
-        self:updateChildrenSize()
         self.state = "PASSIVE"
-        self:refreshState();
+        self:refreshState()
+        self.needsResizedCallbacks = true
+        self:update()
     end;
 
-    updateChildrenSize = function (self)
+    resizedCallback = function (self)
+        self:update()
+    end,
+
+    update = function (self)
         if self.borderTexture then
             self.border.size = self.size
         end

@@ -246,14 +246,15 @@ hud_class `MenuBarButton` {
             texture = self.borderTexture,
             colour = self.borderColour,
             parent = self,
-            cornered = true
+            cornered = true,
+            size = self.size,
         })
         
-        self:updateChildrenSize()
         self:refreshState();
+        self.needsResizedCallbacks = true
     end;
 
-    updateChildrenSize = function (self)
+    resizedCallback = function (self)
         self.border.size = self.size
     end;
    
@@ -417,7 +418,9 @@ hud_class `MenuBar` (extends(_gui.class)
 
     buttonCallback = function (self, ev)
 		if self.selected == nil then return end
-		if ev == "+left" and not mouse_inside_any_menu() then
+        -- mouse_inside_any_menu got removed.  Not sure how best to implement this now.
+		-- if ev == "+left" and not mouse_inside_any_menu() then
+		if ev == "+left" and self.inside then
 			self:unselect()
         end
     end;

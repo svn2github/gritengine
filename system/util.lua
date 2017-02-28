@@ -930,13 +930,13 @@ if okDialogWindow == nil then
 		value = message;
 		size = vec(600, 150);
 		colour = 0.25 * vec(1, 1, 1);
-		parent = okDialogWindow;
+		parent = okDialogWindow.contentArea;
 		position = vec2(0, 25);
 	}
 
 	okDialogButton = hud_object `../common/hud/Button` {
 		caption = "Ok";
-		parent = okDialogWindow;
+		parent = okDialogWindow.contentArea;
 		size = vec(600, 50);
 		position = vec(0,-75);
 		functiontocall = functioncall;
@@ -966,13 +966,13 @@ if yesnoDialogWindow == nil then
 		value = message;
 		size = vec(600, 150);
 		colour = 0.25 * vec(1, 1, 1);
-		parent = yesnoDialogWindow;
+		parent = yesnoDialogWindow.contentArea;
 		position = vec2(0, 25);
 	}
 
 	yesDialogButton = hud_object `../common/hud/Button` {
 		caption = "YES";
-		parent = yesnoDialogWindow;
+		parent = yesnoDialogWindow.contentArea;
 		size = vec(300, 50);
 		position = vec(-150,-75);
 		functiontocall = functioncall;
@@ -983,7 +983,7 @@ if yesnoDialogWindow == nil then
 	}
 	noDialogButton = hud_object `../common/hud/Button` {
 		caption = "NO";
-		parent = yesnoDialogWindow;
+		parent = yesnoDialogWindow.contentArea;
 		size = vec(300, 50);
 		position = vec(150,-75);
 		functiontocall = functioncall;
@@ -1013,13 +1013,13 @@ if yesnocancelDialogWindow == nil then
 		value = message;
 		size = vec(600, 150);
 		colour = 0.25 * vec(1, 1, 1);
-		parent = yesnocancelDialogWindow;
+		parent = yesnocancelDialogWindow.contentArea;
 		position = vec2(0, 25);
 	}
 
 	yesCDialogButton = hud_object `../common/hud/Button` {
 		caption = "YES";
-		parent = yesnocancelDialogWindow;
+		parent = yesnocancelDialogWindow.contentArea;
 		size = vec(200, 50);
 		position = vec(-200,-75);
 		functiontocall = functioncall;
@@ -1030,7 +1030,7 @@ if yesnocancelDialogWindow == nil then
 	}
 	noCDialogButton = hud_object `../common/hud/Button` {
 		caption = "NO";
-		parent = yesnocancelDialogWindow;
+		parent = yesnocancelDialogWindow.contentArea;
 		size = vec(200, 50);
 		position = vec(0,-75);
 		functiontocall = functioncall;
@@ -1041,7 +1041,7 @@ if yesnocancelDialogWindow == nil then
 	}
 	cancelCDialogButton = hud_object `../common/hud/Button` {
 		caption = "CANCEL";
-		parent = yesnocancelDialogWindow;
+		parent = yesnocancelDialogWindow.contentArea;
 		size = vec(200, 50);
 		position = vec(200,-75);
 		functiontocall = functioncall;
