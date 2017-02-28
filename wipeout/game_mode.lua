@@ -305,7 +305,7 @@ class `TestShip` (ColClass) {
             local P, D = -15, -300
 
             local AA = P * tensor_dev + D * tensor_dev_change
-            game_manager:debugText(1, 'Normal: %d', #AA)
+            -- game_manager:debugText(1, 'Normal: %d', #AA)
             if #AA > 100 then
                 printf('Normal: %d' % #AA)
             end
@@ -330,7 +330,7 @@ class `TestShip` (ColClass) {
             if #A > 100 then
                 A = norm(A) * 100
             end
-            game_manager:debugText(2, 'Position: %d', #A)
+            -- game_manager:debugText(2, 'Position: %d', #A)
             body:force(body.mass * A, body.worldPosition)
         end
 
@@ -349,7 +349,7 @@ class `TestShip` (ColClass) {
             if #A > 100 then
                 A = norm(A) * 100
             end
-            game_manager:debugText(3, 'Velocity: %d', #A)
+            -- game_manager:debugText(3, 'Velocity: %d', #A)
             body:force(body.mass * A, body.worldPosition)
         end
 
@@ -367,7 +367,7 @@ class `TestShip` (ColClass) {
             if #AA > 20 then
                 AA = norm(AA) * 20
             end
-            game_manager:debugText(4, 'Steering: %d', #AA)
+            -- game_manager:debugText(4, 'Steering: %d', #AA)
             body:torque(body.inertia * AA)
         end
 
