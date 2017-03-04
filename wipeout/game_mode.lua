@@ -181,24 +181,44 @@ class `TestShip` (ColClass) {
         local dist, ground, ground_normal, ground_mat = physics_cast(pos, ray, true, 0)
     end,
 
-    -- initial_vel and velocity returned is in in local space, does not have z component.
-    logicalUpdate = function(self, initial_pos, initial_ort, initial_vel, elapsed_secs)
-        local instance = self.instance
-        local body = instance.body
-        local gravity = physics_get_gravity()
-        local vehicle_up = initial_ort * vec(0, 0, 1)
-        local ray = self.hoverHeight * -2 * vehicle_up
-        local dist, ground, ground_normal, ground_mat = physics_sweep_sphere(0.001, initial_pos, ray, true, 0, body)
-        local pos = initial_pos
+    --[[
+    Compute a new logical position, orientation, and velocity.
 
-        if dist == nil or ground_mat ~= ACTIVE_SURFACE or (instance.handbrake and vehicle_up.z < 10) then
+    Logical update assumes we are approximately on the road.  It computes the position /
+    orientation that would put us the correct distance from the road in the correct
+    direction and with the correct orientation.
+
+    initial_vel and velocity returned is in in local space, does not have z component.
+    Params:
+        initial_pos: Position from the last update.
+        initial_up: vector3, current vertical normal
+        initial_vel: vector2, velocity in local space (y forwards)
+        elapsed_secs: Time since last update.
+    Returns:
+        new values for the 3 initial parameters (pos, up, vel)
+        or no return values if we're not approximately on the road
+    ]]
+    logicalUpdate = function(self, initial_pos, initial_up, initial_vel, elapsed_secs)
+        local instance = self.instance
+        local gravity = physics_get_gravity()
+        local ray = self.hoverHeight * -2 * initial_up
+        local dist, ground, ground_normal, ground_mat =
+            physics_cast(initial_pos, ray, true, 0, instance.body)
+        if dist == nil then
+            -- We may have shot a ray down a crack.  Cracks sometimes happen when the polys don't
+            -- mesh properly.
+            dist, ground, ground_normal, ground_mat =
+                physics_sweep_sphere(0.04, initial_pos, ray, true, 0, instance.body)
+        end
+
+        if dist == nil or ground_mat ~= ACTIVE_SURFACE then
             return
         end
 
         local ground_pos = initial_pos + dist * ray
 
         -- Set position and orientation to track hover location.
-        pos = ground_pos + self.hoverHeight * ground_normal
+        local pos = ground_pos + self.hoverHeight * ground_normal
 
         -- Simulate friction
         local vel_fwd = initial_vel.y
@@ -209,7 +229,7 @@ class `TestShip` (ColClass) {
         end
         local vel_lat = initial_vel.x
         vel_lat = vel_lat * self.connectedLateralDrag ^ elapsed_secs
-        local vel = vec(vel_lat, vel_fwd, 0)
+        local vel = vec(vel_lat, vel_fwd)
         
         -- Cap speed.
         local speed = #vel
@@ -225,10 +245,18 @@ class `TestShip` (ColClass) {
         local instance = self.instance
         local body = instance.body
 
-        local pos, ort, vel = self:logicalUpdate(
-            body.worldPosition, body.worldOrientation, instance.velocity, elapsed_secs)
+        local pos, up, vel = self:logicalUpdate(
+            body.worldPosition,
+            body.worldOrientation * vec(0, 0, 1),
+            instance.velocity,
+            elapsed_secs)
 
+        -- If we're near enough to a surface to hook on.
         local on_ground = pos ~= nil
+
+        game_manager:debugText(3, '%s', on_ground)
+
+        -- If we're near enough to a surface to hook on, but not the right way up.
         local upside_down = false
 
         if not on_ground then
@@ -254,9 +282,12 @@ class `TestShip` (ColClass) {
                     max_penetration = penetration
                     on_ground = true
                     upside_down = true
-                    ort = normal
+                    up = normal
                     pos = world_pos
                 end
+            end
+            if on_ground then
+                print ('latched on')
             end
             physics_test(self.hoverHeight * 2, body.worldPosition, false, test_func)
             local slow_enough = #bvel < self.resetSpeedMax
@@ -277,7 +308,7 @@ class `TestShip` (ColClass) {
             instance.velocity = vel
 
             emit_debug_marker(pos, vec(0, 0, 1), elapsed_secs, 1)
-            emit_debug_marker(pos - ort * self.hoverHeight, vec(0, 1, 1), elapsed_secs, 1)
+            emit_debug_marker(pos - up * self.hoverHeight, vec(0, 1, 1), elapsed_secs, 1)
         end
 
         if not on_ground then
@@ -285,16 +316,66 @@ class `TestShip` (ColClass) {
             return
         end
 
+        body.ghost = false
+        if on_ground and not upside_down and self.instance.handbrake then
+            -- Fast mode.
+            body.ghost = true
+
+            -- printf("up: %s", up)
+            body.worldOrientation = quat(body.worldOrientation * vec(0, 0, 1), up) * body.worldOrientation
+            local speed = #vel
+            if speed > self.speedMax then
+                vel = vel * self.speedMax / speed
+            end
+            local world_vel = body.worldOrientation * vec3(vel, 0)
+            body.worldPosition = pos + world_vel * elapsed_secs
+            body.linearVelocity = world_vel
+            local angular_velocity = (instance.shouldSteerLeft + instance.shouldSteerRight) * elapsed_secs
+            body.worldOrientation = quat(angular_velocity, body.worldOrientation * vec(0, 0, -1)) * body.worldOrientation
+
+            --[[
+            local max_penetration = -1
+            local pos
+            local function test_func(body, sz, local_pos, world_pos, normal, penetration, mat)
+                if body == instance.body then return end
+                if mat ~= ACTIVE_SURFACE then return end
+                if penetration > max_penetration then
+                    max_penetration = penetration
+                    on_ground = true
+                    upside_down = true
+                    up = normal
+                    pos = world_pos
+                end
+            end
+            physics_test(self.hoverHeight * 2, body.worldPosition, false, test_func)
+            ]]
+
+            -- Cast the ship forwards.
+            -- If there is no intersection, then we are done.
+
+            -- If there is an intersection, modify vector according to contact normal and try again.
+            -- Need to be able to tell the difference between ok collisions with the track curving,
+            -- and bad collisions with the side of the track / obstacles.
+            -- Bad collisions can be handled by reducing velocity, and the momentum can be used to
+            -- decide whether to harm the ship, bring it out of "fast" mode, turn it into a
+            -- "projectile" or whatever.
+
+            body:force(-physics_get_gravity(), pos)
+
+            return
+        end
+
         -- Smooth orientation.  Avoid bumpy track problem.
         -- norm(slerp(ort, instance.displayOrientation, 0.001 ^ elapsed_secs)))
+
         do
             -- Use a PID loop to align body with logical orientation (ground normal).
 
-            local up = body.worldOrientation * vec(0, 0, 1)
-            local tensor_dev = cross(ort, up)
-            if dot(ort, up) < 0 and #tensor_dev > 0.01 then
+            local actual_up = body.worldOrientation * vec(0, 0, 1)
+            local tensor_dev = cross(up, actual_up)
+            if dot(up, actual_up) < 0 and #tensor_dev > 0.01 then
                 -- Avoid a problem where we don't have enough strength to flip the craft when
-                -- dot(ort, up) is approximately -1.
+                -- dot(up, actual_up) is approximately -1.
                 -- Artificially inflate the tensor to its max amount when we're upside down.
                 tensor_dev = norm(tensor_dev)
             end
@@ -307,7 +388,7 @@ class `TestShip` (ColClass) {
             local AA = P * tensor_dev + D * tensor_dev_change
             -- game_manager:debugText(1, 'Normal: %d', #AA)
             if #AA > 100 then
-                printf('Normal: %d' % #AA)
+                printf('Normal: %d', #AA)
             end
             body:torque(body.inertia * AA)
         end
@@ -335,9 +416,9 @@ class `TestShip` (ColClass) {
         end
 
         do
-            -- Use a PID loop to align body with logical velocity.
+            -- Use a PID loop to align body's velocity with logical velocity.
             local current_vel = (inv(body.worldOrientation) * body.linearVelocity) * vec(1, 1, 0)
-            local vel_dev = current_vel - vel
+            local vel_dev = current_vel - vec3(vel, 0)
             local vel_dev_change = (vel_dev - instance.lastVelDev) / elapsed_secs
             instance.lastVelDev = vel_dev
 
@@ -360,10 +441,10 @@ class `TestShip` (ColClass) {
             -- Project angular velocity tensor to remove the "about ground normal" component.
             -- Using the ground normal instead of the ship's normal avoids problems with when the
             -- ship is at a degenerate angle to the track.
-            local current_steering_ang_vel = dot(body.angularVelocity, ort)
+            local current_steering_ang_vel = dot(body.angularVelocity, up)
             local steering_change_needed = steering_ang_vel - current_steering_ang_vel
 
-            local AA = ort * steering_change_needed / elapsed_secs
+            local AA = up * steering_change_needed / elapsed_secs
             if #AA > 20 then
                 AA = norm(AA) * 20
             end
