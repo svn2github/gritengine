@@ -40,7 +40,7 @@ material `Barrier` {
     diffuseMap = `Barrier.dds`,
     emissiveMap = `Barrier.dds`,
     emissiveMask = vec(0.3, 0.3, 0.3),
-    alphaRejectThreshold = 0.0,
+    alphaRejectThreshold = 0.3,
     additionalLighting = true,
 }
 
