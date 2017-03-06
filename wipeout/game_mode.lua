@@ -11,106 +11,60 @@ local ACTIVE_SURFACE = `Track`
 
 --[[
 
-The logical model derives a position for the ship relative to the track.  This uses a point on the
-track, a direction, and a distance to compute the position and orientation of the ship.  The
-distance is fixed, the computation of the point and normal depend on where the vehicle is and what
-the track looks like under the vehicle.  There are two logical models currently proposed:
+General notes on wipeout ship dynamics
+======================================
 
-The one-ray logical model shoots one ray from the center of the ship in the ship's -Z axis to find a
-point on the track, then uses the normal of the surface that point.  The ship will intersect the
-track in places where the track is more concave than the ship is convex for the given hover
-distance.
+Logical model
+-------------
 
-The four-ray logical model shoots a ray from each corner of the ship (modelled as an arbitrary
-4-sided convex shape) in the ship's -Z axis.  The four positions and normals are averaged.  This
-model will intersect the track if there is a lump between where the rays hit.  There is a question
-as to what should happen if only 3 of the rays hit the track.
+The logical model derives a position for the ship when it is glued to the track.  This computes a
+new position, alignment (expressed as a track normal) and 2d velocity from the previous values of
+those variables.  Experiments indicated that the best logical model involved a single ray.  from the
+center of the ship in the ship's -Z axis to find a point on the track, then uses the normal of the
+surface that point.  The ship will inevitably intersect the track in places where the track is more
+concave than the ship is convex for the given hover distance.  In order to avoid falling down tiny
+gaps between polygons, if the ray hits nothing, it is followed by a sphere cast.  Using the sphere
+cast in the first pass turned out to cause oscillations.
 
-Both n-ray logical models suffer from discontinuities in ground normal due to the curvature of the
-track.  The four-ray logical model has more discontinuities (a four-wheeled car going over a speed
-bump can have 4 bumps) but they should be lesser in magnitude because of the averaging.
+We also tried a four ray model shooting a ray from each corner of the ship (modelled as an arbitrary
+trapezoid) in the ship's -Z axis.  This has the following challenges:  1) How to combine the ray
+results to position the ship.  2) What happens if not all the rays hit.  3) A ship going over a bump
+has 4 "bumps" instead of 1.  The model can also still intersect the track if it is too convex.
 
-When the craft is not parallel with the track, small changes in craft position (e.g. thrust or
-rotation) will result in large changes in distance to the ground.  The one-ray logical model always
-has the ship perpendicular to the ground normal.  If the ship is not moved by the player, subsequent
-rays will be in-line with the previous ray.  The 4-ray logical model does not have this property.
-Therefore, it can oscillate because after orientating the ship, the rays will not necessarily hit
-where they hit before and can get a different normal.
+We did not try cube or hull sweeps.  These will make combining normals even harder.  However, in the
+case of the hull sweep, the ship will never intersect the track.
 
-The convex-cast logical model does a convex cast in the ship's -Z direction.  Any collisions are
-disregarded except with the track.  The returned normals are that of the triangles hit.  They will
-have to be averaged or some other technique used.  This can lead to oscillation.
+The normal from the track must be smoothed over time before updating the ship's position because the
+discontinuities from one polygon to another cause a headache-inducing jarring effect when travelling
+at speed.
 
-My conclusion is that the only reliable method is the one-ray logical model, even with the challenge
-of having to deal with the inevitable track intersections.
+The one ray model was attractive despite its various challenges because it was relatively free from
+oscillations.  Oscillations are avoided because the ship is always positioned in a location where
+the next ray overlays the previous ray, therefore gets the same result.  Even the sphere cast did
+not have this property.
 
+Two modes
+---------
 
-Resolving collisions with barriers, other ships, etc.:
+The logical model inevitably results in positioning the ship such that it intersects the track.
+This happens because of the "curbs" at the sides of the track are too convex / concave to fit the
+ship.  This can be fixed by, rather than updating the ship's position, orientaiton, and velocity
+directly from the logical level, we instead apply forces using a PID loop to encourage the ship to
+be in the right places.  These forces are then combined with other forces from collisions (e.g. with
+the track).  This produces quite natural and appealing ship behavior.  However, the system fails at
+speed when going into the loop-the-loops.
 
-The logical model must have push back from a collision engine of some sort.  Collisions with the
-track must be prevented by putting the physics body in a different place to the logical model, or
-just ignored.
+The loop-the-loops are highly concave and the velocities are high.  Any kind of normal smoothing to
+avoid the jarring effect of polygon transitions means that the ship intersects the track going
+through the loop-the-loops, at anything over about 30mph.  To fix this, we have a second mode of
+control which is used at high speed only and only when properly aligned with the track.
 
-The PID approach tries to continuously pull the physical body towards the logical model.  Collisions
-with the track are likely because PID is too soft to keep the ship a fixed distance from the track.
-Sometimes the logical model intersects the track anyway, so the PID loops will pull the ship against
-the track.  At high speeds, more collisions are likely.  Collisions with the track can be allowed,
-at least at low speed.
-
-The direct update approach sets the physics body position and orientation to the logical model and
-then allows collisions and other forces to influence the position further.  Unfortunately, this
-results in oscillation due to discontinuities in where the logical model believes the ship should be
-(e.g. discontinuities in track normal).  Collisions with the track must therefore be disabled.
-
-The ghost approach is to disable collisions entirely and implement the collision detection manually.
-Sweep the hull forwards and see what it intersects.  Collisions with the track are ignored.
-
-2) Other ships.
-
-Need to register only one collision per pair and share momentum.  Collisions with barrier must take
-precedence.  Resolving collisions properly requires a solver :(
-
-3) The barrier
-
-Ship must not cross the barrier.  Update position and orientation appropriately (we probably want to
-slide along the barrier).  There should be a friction penalty for hitting the barrier.
-
-4) Some other static obstacle?
-
-Can behave just like the barrier as a default.  We may also want to disable ships for greater
-penalties (electric shock, etc), depending on the obstacle.  Can even destroy ships.
-
-5) Dynamic obstacles?
-
-Not strictly necessary but would be nice to demonstrate the dynamics engine.  We can apply forces to
-represent collisions with these, much like the actor can push a car.
-
-
-Collision resolution:
-
-Resolve collisions between ships first, transfer momentum.  Then, resolve constraints with immovable
-objects.  This will result in momentum being 'lost' but over time hopefully it works out.
-
-]]
-
---[[
-
-One-ray logical model updates logical position and orientation.  Ship rotation and thrust directly
-control logical position and orientation.
-
-At low speeds, a PID loop is used to pull ship towards logical position and orientation.  Physical
-position / orientation then copied to logical model for next iteration.  Thrust sets physical
-velocity.  Hopefully PID loop dampens any oscillations.  Rotation may have to directly change
-orientation (no PID loop) if rotating is not snappy enough.
-
-At high speeds, collision with the track is disabled.  This avoids some collisions and may be enough
-to keep using the PID loop at higher speeds.
-
-At very high speeds, when the PID loop is too squishy and we fly through the track, the physical
-position / orientation is updated directly every frame, allowed to collide, then set back into the
-logical model again.
-
-A final option is to disable collision detection entirely and use convex hull casts.
+In the high speed mode, the ship's position and orientation are updated directly from the physical
+model.  Collision detection for the ship is disabled (ghost mode) to avoid fighting with collision
+resolution impulses.  A convex hull sweep test is used to detect collisions with anything other than
+the track.  When a collision is detected, control returns to the PID system for at least 1 second.
+This typically results in a "real" collision which sufficiently interferes with the motion of the
+ship that we do not return to fast mode until everything is fully resolved.
 
 ]]
 
@@ -370,14 +324,14 @@ class `TestShip` (ColClass) {
                 -- interpolate it for us.  However, change the position to the right distance
                 -- from the track.
                 body.worldPosition = pos
-                game_manager:debugText(1, 'Mode: Fast')
                 return
             end
 
             -- We're going to hit something.  Fall through to the regular logic now.
             instance.lastCollided = seconds()
         end
-        game_manager:debugText(1, 'Mode: Slow')
+
+        -- Slow mode.
 
         instance.groundOrientation = body.worldOrientation
 
