@@ -199,7 +199,7 @@ hud_class `FloatingObject` {
         elseif ev == "-left" then
             self:droppedCallback()
             if self.newObjectName ~= nil then
-                game_manager.currentMode.map:applyChange()
+                game_manager.currentMode.mapFile:applyChange()
                 self.newObjectName = nil
             end
             self:droppedCallback()
