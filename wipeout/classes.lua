@@ -60,7 +60,7 @@ end
 class `ChevronLight` (ColClass) {
     renderingDistance = 200,
     placementZOffset = 0,
-    lights = { light(0, 2, 0), light(0, -0.5, 0), light(0, -3, 0) },
+    lights = { light(0, -3, 0), light(0, -0.5, 0), light(0, 2, 0) },
     activate = function(self, instance)
         ColClass.activate(self, instance)
         self.needsFrameCallbacks = true
@@ -69,10 +69,14 @@ class `ChevronLight` (ColClass) {
         self.needsFrameCallbacks = false
         ColClass.deactivate(self, instance)
     end,
-    frameCallback = function (self, elapsed_secs)
+    setLightEnabled = function(self, num, v)
+        self.instance.gfx:setEmissiveEnabled(`ChevronLight` .. num, v)
+        self.instance.lights[num].enabled = v
+    end,
+    frameCallback = function(self, elapsed_secs)
         local s = seconds() % 1
-        self.instance.gfx:setEmissiveEnabled(`ChevronLight1`, s <= .3)
-        self.instance.gfx:setEmissiveEnabled(`ChevronLight2`, s > .3 and s <= .6)
-        self.instance.gfx:setEmissiveEnabled(`ChevronLight3`, s > .6)
+        self:setLightEnabled(1, s <= .3)
+        self:setLightEnabled(2, s > .3 and s <= .6)
+        self:setLightEnabled(3, s > .6)
     end,
 }
