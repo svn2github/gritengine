@@ -129,19 +129,14 @@ class `TestShip` (ColClass) {
 
     hoverHeight = 1,
     steerMax = 80,  -- degrees/sec
+    speedModeSwitch = 20,  -- metres/sec
     speedMax = 100,  -- metres/sec
     acceleration = 10,
-    initialVelocity = vec(0, 0, 0),
     invertedDrag = 1,  -- Multiple of speed to apply as deceleration
     disconnectionDrag = 0.3,  -- Multiple of speed to apply as deceleration
     resetSpeedMax = 3,  -- metres/sec
     connectedBrakeDrag = 0.5,  -- Proportion of speed lost per second.
     connectedLateralDrag = 0.5,  -- Proportion of speed lost per second.
-
-	frontLeftJet = vec(-1, 4, 0),
-	frontRightJet = vec(1, 4, 0),
-	rearLeftJet = vec(-2, -2, 0),
-	rearRightJet = vec(2, -2, 0),
 
     activate = function(self, instance)
         if ColClass.activate(self, instance) then
@@ -152,23 +147,34 @@ class `TestShip` (ColClass) {
         instance.push = 0
         instance.shouldSteerLeft, instance.shouldSteerRight = 0, 0
         instance.onGround = false
-        instance.velocity = self.initialVelocity
+        instance.velocity = vec(0, 0, 0)
         instance.body.ghost = false
         instance.body.angularDamping = 0.8
         instance.body.linearDamping = 0
         instance.lastPosDev = vec(0, 0, 0)
         instance.lastVelDev = vec(0, 0, 0)
         instance.lastTensorDev = vec(0, 0, 0)
+        -- In slow mode, this is the same as body.worldOrientation.
+        -- In fast mode, this is the orientation of the craft if it were perfectly aligned.
+        -- We smooth this out because it is too bumpy.  The reason it is too bumpy is inherent to
+        -- having a track defined by polygons.  The lighting may be smooth, but the physics is not.
+        -- In slow mode the PID loop provides the smoothing.
+        instance.groundOrientation = self.rot or Q_ID
         instance.body.collisionCallback = function (...) self:collisionCallback(...) end
+        instance.lastCollided = 0
+        instance.lastPosition = instance.body.worldPosition
     end,
 
     collisionCallback = function (self, life, impulse, other, m, mo, pen, pos, poso, norm)
         if impulse <= 1000 then
             return
         end
+        self.instance.lastCollided = seconds()
+        --[[
         printf('Collision, speed %d, impulse %d',
                #self.instance.body.linearVelocity * 60 * 60 / METRES_PER_MILE,
                impulse)
+        ]]
     end,
 
     deactivate = function(self, instance)
@@ -222,11 +228,18 @@ class `TestShip` (ColClass) {
 
         -- Simulate friction
         local vel_fwd = initial_vel.y
-        vel_fwd = vel_fwd + instance.push * self.acceleration * elapsed_secs
-        if instance.push == 0 then
-            -- Implicit brakes
-            vel_fwd = vel_fwd * self.connectedBrakeDrag ^ elapsed_secs
+        if vel_fwd > 0 then
+            if instance.push <= 0 then
+                -- Implicit brakes
+                vel_fwd = vel_fwd * self.connectedBrakeDrag ^ elapsed_secs
+            end
+        else
+            if instance.push >= 0 then
+                -- Implicit brakes
+                vel_fwd = vel_fwd * self.connectedBrakeDrag ^ elapsed_secs
+            end
         end
+        vel_fwd = vel_fwd + instance.push * self.acceleration * elapsed_secs
         local vel_lat = initial_vel.x
         vel_lat = vel_lat * self.connectedLateralDrag ^ elapsed_secs
         local vel = vec(vel_lat, vel_fwd)
@@ -244,17 +257,16 @@ class `TestShip` (ColClass) {
 
         local instance = self.instance
         local body = instance.body
+        instance.lastPosition = body.worldPosition
 
         local pos, up, vel = self:logicalUpdate(
             body.worldPosition,
-            body.worldOrientation * vec(0, 0, 1),
+            instance.groundOrientation * vec(0, 0, 1),
             instance.velocity,
             elapsed_secs)
 
         -- If we're near enough to a surface to hook on.
         local on_ground = pos ~= nil
-
-        game_manager:debugText(3, '%s', on_ground)
 
         -- If we're near enough to a surface to hook on, but not the right way up.
         local upside_down = false
@@ -286,19 +298,16 @@ class `TestShip` (ColClass) {
                     pos = world_pos
                 end
             end
-            if on_ground then
-                print ('latched on')
-            end
             physics_test(self.hoverHeight * 2, body.worldPosition, false, test_func)
             local slow_enough = #bvel < self.resetSpeedMax
             if on_ground then
                 -- Drag
                 body:force(body.mass * -self.invertedDrag * bvel, body:localToWorld(vec(0, -1, 0)))
-                local col = vec(1, 0, 0)
-                if slow_enough then
-                    col = vec(1, 1, 1)
-                end
-                emit_debug_marker(pos, col, elapsed_secs, 1)
+                -- local col = vec(1, 0, 0)
+                -- if slow_enough then
+                --     col = vec(1, 1, 1)
+                -- end
+                -- emit_debug_marker(pos, col, elapsed_secs, 1)
             else
                 -- Drag
                 body:force(body.mass * -self.disconnectionDrag * bvel, body:localToWorld(vec(0, -1, 0)))
@@ -307,8 +316,8 @@ class `TestShip` (ColClass) {
             -- Store for next iteration.
             instance.velocity = vel
 
-            emit_debug_marker(pos, vec(0, 0, 1), elapsed_secs, 1)
-            emit_debug_marker(pos - up * self.hoverHeight, vec(0, 1, 1), elapsed_secs, 1)
+            -- emit_debug_marker(pos, vec(0, 0, 1), elapsed_secs, 1)
+            -- emit_debug_marker(pos - up * self.hoverHeight, vec(0, 1, 1), elapsed_secs, 1)
         end
 
         if not on_ground then
@@ -316,57 +325,61 @@ class `TestShip` (ColClass) {
             return
         end
 
+        local vel = instance.velocity
+        local speed = #vel
+
         body.ghost = false
-        if on_ground and not upside_down and self.instance.handbrake then
+        if on_ground and not upside_down and speed > self.speedModeSwitch and seconds() - instance.lastCollided > 1 then
             -- Fast mode.
             body.ghost = true
+            body:force(-physics_get_gravity(), pos)
 
-            -- printf("up: %s", up)
-            body.worldOrientation = quat(body.worldOrientation * vec(0, 0, 1), up) * body.worldOrientation
-            local speed = #vel
+            local current_ort = body.worldOrientation
+            local current_up = current_ort * vec(0, 0, 1)
+            local desired_ort = quat(current_up, up) * current_ort
+
             if speed > self.speedMax then
                 vel = vel * self.speedMax / speed
             end
-            local world_vel = body.worldOrientation * vec3(vel, 0)
-            body.worldPosition = pos + world_vel * elapsed_secs
-            body.linearVelocity = world_vel
-            local angular_velocity = (instance.shouldSteerLeft + instance.shouldSteerRight) * elapsed_secs
-            body.worldOrientation = quat(angular_velocity, body.worldOrientation * vec(0, 0, -1)) * body.worldOrientation
+            local world_vel = current_ort * vec3(vel, 0)
 
-            --[[
-            local max_penetration = -1
-            local pos
-            local function test_func(body, sz, local_pos, world_pos, normal, penetration, mat)
-                if body == instance.body then return end
-                if mat ~= ACTIVE_SURFACE then return end
-                if penetration > max_penetration then
-                    max_penetration = penetration
-                    on_ground = true
-                    upside_down = true
-                    up = normal
-                    pos = world_pos
-                end
+            local steering_angular_velocity = (instance.shouldSteerLeft + instance.shouldSteerRight) * elapsed_secs
+            local steering_angular_quat = quat(steering_angular_velocity, desired_ort * vec(0, 0, -1))
+
+
+            local ray = world_vel * elapsed_secs
+            local colliding = false
+            local function cb(dist, body, normal, mat)
+                if mat == ACTIVE_SURFACE then return end
+                colliding = true
             end
-            physics_test(self.hoverHeight * 2, body.worldPosition, false, test_func)
-            ]]
-
             -- Cast the ship forwards.
-            -- If there is no intersection, then we are done.
+            physics_sweep_col_mesh(body.meshName, desired_ort, pos, ray, false, 0, cb, body)
 
-            -- If there is an intersection, modify vector according to contact normal and try again.
-            -- Need to be able to tell the difference between ok collisions with the track curving,
-            -- and bad collisions with the side of the track / obstacles.
-            -- Bad collisions can be handled by reducing velocity, and the momentum can be used to
-            -- decide whether to harm the ship, bring it out of "fast" mode, turn it into a
-            -- "projectile" or whatever.
+            if not colliding then
+                -- Proceed with the fast-mode simulation.
+       
+                instance.groundOrientation = steering_angular_quat * desired_ort
+                body.worldOrientation =
+                    steering_angular_quat * slerp(desired_ort, current_ort, 0.0001 ^ elapsed_secs)
+                body.linearVelocity = world_vel
+                -- Note that the body.worldOrientation may not actually be "correct" as it is
+                -- smoothed.
 
-            body:force(-physics_get_gravity(), pos)
+                -- Do not interpolate the position, instead set the velocity and let Bullet
+                -- interpolate it for us.  However, change the position to the right distance
+                -- from the track.
+                body.worldPosition = pos
+                game_manager:debugText(1, 'Mode: Fast')
+                return
+            end
 
-            return
+            -- We're going to hit something.  Fall through to the regular logic now.
+            instance.lastCollided = seconds()
         end
+        game_manager:debugText(1, 'Mode: Slow')
 
-        -- Smooth orientation.  Avoid bumpy track problem.
-        -- norm(slerp(ort, instance.displayOrientation, 0.001 ^ elapsed_secs)))
+        instance.groundOrientation = body.worldOrientation
 
         do
             -- Use a PID loop to align body with logical orientation (ground normal).
@@ -387,9 +400,9 @@ class `TestShip` (ColClass) {
 
             local AA = P * tensor_dev + D * tensor_dev_change
             -- game_manager:debugText(1, 'Normal: %d', #AA)
-            if #AA > 100 then
-                printf('Normal: %d', #AA)
-            end
+            -- if #AA > 100 then
+            --     printf('Normal: %d', #AA)
+            -- end
             body:torque(body.inertia * AA)
         end
 
@@ -427,10 +440,10 @@ class `TestShip` (ColClass) {
             local A = body.worldOrientation * (P*vel_dev + D*vel_dev_change)
             -- When we clash with collisions, we're not going to win.  So avoid applying huge forces
             -- that make the simulation unstable.
-            if #A > 100 then
-                A = norm(A) * 100
+            if #A > 200 then
+               --  game_manager:debugText(3, 'Velocity: %d', #A)
+                A = norm(A) * 200
             end
-            -- game_manager:debugText(3, 'Velocity: %d', #A)
             body:force(body.mass * A, body.worldPosition)
         end
 
@@ -530,7 +543,7 @@ function GameMode:init()
 end
 
 
-function ThirdPersonGameMode:frameCallback(elapsed_secs)
+function GameMode:frameCallback(elapsed_secs)
     BaseGameMode.frameCallback(self, elapsed_secs)
     local obj = self.vehicle or self.protagonist
     local instance = obj.instance
