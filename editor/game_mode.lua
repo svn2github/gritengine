@@ -316,9 +316,7 @@ function Editor:setDebugMode(v)
         notify("Press F5 to return to the editor", vec(1, 0.5, 0), vec(1, 1, 1))
     else
         editor_debug_play_binds.enabled = false
-        if self.controlObj ~= nil then
-            self:toggleBoard()
-        end
+        self:setMouseCapture(false)
 
         for _, obj in ipairs(object_all()) do
             -- TODO(dcunnin):  This does not reset persistent state.  Put code in map.lua to do
