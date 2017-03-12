@@ -74,6 +74,8 @@ function GameMode:init()
 	
 	playing_actor_binds.enabled = true
 
+	playing_binds.mouseCapture = false
+
 	playing_binds:bind("right", function() playing_binds.mouseCapture = true end, function() playing_binds.mouseCapture = false end)
 	
 	playing_binds:bind("left", function() local pos = mouse_pick_pos() if pos then pos = navigation_nearest_point_on_navmesh(pos) end if pos then crowd_move(pos) end end)
