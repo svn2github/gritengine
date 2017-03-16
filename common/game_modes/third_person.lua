@@ -68,6 +68,12 @@ end
 function ThirdPersonGameMode:playerKill()
     self.playerDeathTimer = 0
     self.centreNotify.text = 'WASTED!'
+    if self.vehicle then
+      self.vehicle = nil
+    end
+    if main and main.controlObj then
+       main.controlObj = nil       
+    end
     playing_actor_binds.enabled = false
     playing_vehicle_binds.enabled = false
 end
