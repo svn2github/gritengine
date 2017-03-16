@@ -52,8 +52,8 @@ function save_map_dialog()
         callback = function(self, str)
             str = '/' .. str
             if resource_exists(str) then
-                local save_overwrite = function (boolean)
-                    if boolean then
+                local save_overwrite = function (number)
+                    if number == 1 then
                         local status, msg = pcall(game_manager.currentMode.saveCurrentMapAs, game_manager.currentMode, str)
                         if status then
                             notify("Saved!", vec(0, 1, 0), V_ID)
@@ -64,7 +64,10 @@ function save_map_dialog()
                         end
                     end
                 end;
-                create_dialog("SAVE", "Would you like to overwrite "..str.."?", "yesnocancel", save_overwrite)
+				--Usage: The 3rd variable is now a table allowing as many buttons as you want and returns the number in the displayed error. 
+				--Example {"1","blue","tree"} 
+				--"1" will return 1, "blue" will return 2, "tree" will return 3, ETC...
+                showDialog("SAVE", "Would you like to overwrite "..str.."?", {"Yes","No"}, save_overwrite) 
                 return false
             else
                 local status, msg = pcall(game_manager.currentMode.saveCurrentMapAs, game_manager.currentMode, str)

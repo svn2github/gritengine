@@ -919,166 +919,48 @@ end
 
 function valid_object(obj) if obj and obj.instance and not obj.destroyed then return true else return false end end
 
-okDialogWindow = nil
-okDialogText = nil
-okDialogButton = nil
+dialogObjects = {}
 
-function okDialogcreation(subject, message, functioncall)
-if okDialogWindow == nil then
-	okDialogWindow = gui.window(subject, vec2(-1000,-1000), false, vec2(600, 200))
-	okDialogText = hud_object `../common/hud/Label` {
-		value = message;
-		size = vec(600, 150);
-		colour = 0.25 * vec(1, 1, 1);
-		parent = okDialogWindow.contentArea;
-		position = vec2(0, 25);
-	}
-
-	okDialogButton = hud_object `../common/hud/Button` {
-		caption = "Ok";
-		parent = okDialogWindow.contentArea;
-		size = vec(600, 50);
-		position = vec(0,-75);
-		functiontocall = functioncall;
-		pressedCallback = (function (self) 
-			print("Choice selected!") 
-			okDialogButton.functiontocall(true) 
-			okDialogWindow.position = vec2(-1000,-1000)
-		end);
-	}
-	okDialogWindow.position = vec2(0,0)
-else
-	okDialogWindow:setTitle(subject)
-	okDialogText:setValue(message)
-	okDialogWindow.position = vec2(0,0)
-end
-end
-
-yesnoDialogWindow = nil
-yesnoDialogText = nil
-yesDialogButton = nil
-noDialogButton = nil
-
-function yesnoDialogcreation(subject, message, functioncall)
-if yesnoDialogWindow == nil then
-	yesnoDialogWindow = gui.window(subject, vec2(-1000,-1000), false, vec2(600, 200))
-	yesnoDialogText = hud_object `../common/hud/Label` {
-		value = message;
-		size = vec(600, 150);
-		colour = 0.25 * vec(1, 1, 1);
-		parent = yesnoDialogWindow.contentArea;
-		position = vec2(0, 25);
-	}
-
-	yesDialogButton = hud_object `../common/hud/Button` {
-		caption = "YES";
-		parent = yesnoDialogWindow.contentArea;
-		size = vec(300, 50);
-		position = vec(-150,-75);
-		functiontocall = functioncall;
-		pressedCallback = (function (self) 
-			yesDialogButton.functiontocall(true) 
-			yesnoDialogWindow.position = vec2(-1000,-1000)
-		end);
-	}
-	noDialogButton = hud_object `../common/hud/Button` {
-		caption = "NO";
-		parent = yesnoDialogWindow.contentArea;
-		size = vec(300, 50);
-		position = vec(150,-75);
-		functiontocall = functioncall;
-		pressedCallback = (function (self) 
-			noDialogButton.functiontocall(false) 
-			yesnoDialogWindow.position = vec2(-1000,-1000)
-		end);
-	}
-	yesnoDialogWindow.position = vec2(0,0)
-else
-	yesnoDialogWindow:setTitle(subject)
-	yesnoDialogText:setValue(message)
-	yesnoDialogWindow.position = vec2(0,0)
-end
-end
-
-yesnocancelDialogWindow = nil
-yesnocancelDialogText = nil
-yesCDialogButton = nil
-noCDialogButton = nil
-cancelCDialogButton = nil
-
-function yesnocancelDialogcreation(subject, message, functioncall)
-if yesnocancelDialogWindow == nil then
-	yesnocancelDialogWindow = gui.window(subject, vec2(-1000,-1000), false, vec2(600, 200))
-	yesnocancelDialogText = hud_object `../common/hud/Label` {
-		value = message;
-		size = vec(600, 150);
-		colour = 0.25 * vec(1, 1, 1);
-		parent = yesnocancelDialogWindow.contentArea;
-		position = vec2(0, 25);
-	}
-
-	yesCDialogButton = hud_object `../common/hud/Button` {
-		caption = "YES";
-		parent = yesnocancelDialogWindow.contentArea;
-		size = vec(200, 50);
-		position = vec(-200,-75);
-		functiontocall = functioncall;
-		pressedCallback = (function (self) 
-			yesCDialogButton.functiontocall(true) 
-			yesnocancelDialogWindow.position = vec2(-1000,-1000)
-		end);
-	}
-	noCDialogButton = hud_object `../common/hud/Button` {
-		caption = "NO";
-		parent = yesnocancelDialogWindow.contentArea;
-		size = vec(200, 50);
-		position = vec(0,-75);
-		functiontocall = functioncall;
-		pressedCallback = (function (self) 
-			noCDialogButton.functiontocall(false) 
-			yesnocancelDialogWindow.position = vec2(-1000,-1000)
-		end);
-	}
-	cancelCDialogButton = hud_object `../common/hud/Button` {
-		caption = "CANCEL";
-		parent = yesnocancelDialogWindow.contentArea;
-		size = vec(200, 50);
-		position = vec(200,-75);
-		functiontocall = functioncall;
-		pressedCallback = (function (self) 
-			cancelCDialogButton.functiontocall(nil) 
-			yesnocancelDialogWindow.position = vec2(-1000,-1000)
-		end);
-	}
-	yesnocancelDialogWindow.position = vec2(0,0)
-else
-	yesnocancelDialogWindow:setTitle(subject)
-	yesnocancelDialogText:setValue(message)
-	yesnocancelDialogWindow.position = vec2(0,0)
-end
-end
-
-
-function create_dialog(subject, message, options, functioncall) --Example: create_dialog("Hello", "This is a message!", "ok", print)
+function showDialog(subject, message, options, functioncall)--showDialog("Subject", "Grit Engine", {"Red","Green","Blue"}, print)
 	if subject == nil then subject = "Dialog" end
 	if message ~= nil and functioncall ~= nil then
-		if options ~= nil then 
-			if options == "yesnocancel" then
-				yesnocancelDialogcreation(subject, message, functioncall)
-				yesnocancelDialogWindow.zOrder = 7
-			elseif options == "yesno" then
-				yesnoDialogcreation(subject, message, functioncall)
-				yesnoDialogWindow.zOrder = 7
-			elseif options == "ok" then
-				okDialogcreation(subject, message, functioncall)
-				okDialogWindow.zOrder = 7
-			else
-				
+		local dialogsToDelete = {}
+		local dialogWindowID = #dialogObjects+1
+		dialogObjects[dialogWindowID] = gui.window(subject, vec2(-1000,-1000), false, vec2(600, 200))
+		table.insert(dialogsToDelete, dialogWindowID)
+		local dialogTextID = #dialogObjects+1
+		dialogObjects[dialogTextID] = hud_object `../common/hud/Label` {
+			value = message;
+			size = vec(600, 150);
+			colour = 0.25 * vec(1, 1, 1);
+			parent = dialogObjects[dialogWindowID].contentArea;
+			position = vec2(0, 25);
+		}
+		table.insert(dialogsToDelete, dialogTextID)
+		if options ~= nil then
+			for i=1,#options do
+					local dialogButtonID = #dialogObjects+1
+					dialogObjects[dialogButtonID] = hud_object `../common/hud/Button` {
+						caption = options[i];
+						parent = dialogObjects[dialogWindowID].contentArea;
+						size = vec(600/#options, 50);
+						position = vec(-600+(600/#options/2+((i)*600/#options)),-75);
+						functiontocall = functioncall;
+						pressedCallback = (function (self) 
+							dialogObjects[dialogWindowID].position = vec2(-1000,-1000)
+							dialogObjects[dialogButtonID].functiontocall(i) 
+							dialogsToDelete = dialogsToDelete
+							for i=1,#dialogsToDelete do
+								dialogObjects[i] = nil
+								dialogsToDelete[i] = nil
+							end
+						end);
+					}
+					table.insert(dialogsToDelete, dialogButtonID)
 			end
-		else --(<--Default)
-			--Make dialog with no button
-			--Make yes and no return true for yes or false for no
 		end
+		dialogObjects[dialogWindowID].position = vec2(0,0)
+		dialogObjects[dialogWindowID].zOrder = 7
 	else
 		print("Dialog message is not valid!")
 	end
