@@ -7,6 +7,41 @@ material `DummyVehicle` {
     },
 }
 
+
+shader `DummyVehicleJet` {
+
+    map = uniform_texture_2d(1, 1, 1);
+
+    vertexCode = [[
+        out.position = transform_to_world(vert.position.xyz);
+    ]],
+
+    dangsCode = [[
+        out.diffuse = 0;
+        out.alpha = 0;
+    ]],
+
+    -- alphaMask is not used to attenuate the emissive lighting here, allowing you to use it
+    -- to attenuate the diffuse component only, for glowing gasses, etc.
+    additionalCode = [[
+        var uv = vert.coord0.xy;
+        var c = sample(mat.map, uv);
+        out.colour = gamma_decode(c.rgb) * body.paintDiffuse0;
+    ]],
+}
+
+
+
+material `DummyVehicleJet` {
+    shader = `DummyVehicleJet`,
+    sceneBlend = 'ALPHA',
+    backfaces = true,
+    additionalLighting = true,
+    castShadows = false,
+
+    map = `DummyVehicle.png`,
+}
+
 local ACTIVE_SURFACE = `Track`
 
 --[[
@@ -71,6 +106,7 @@ ship that we do not return to fast mode until everything is fully resolved.
 class `TestShip` (ColClass) {
 
     gfxMesh = `DummyVehicle.mesh`,
+    jetMesh = `DummyVehicleJet.mesh`,
     colMesh = `DummyVehicle.gcol`,
     controllable = 'VEHICLE', 
     boomLengthMin = 5,
@@ -79,24 +115,37 @@ class `TestShip` (ColClass) {
     driverExitQuat = Q_ID,
     cameraTrack = true,
     -- Can set this higher when we have a solution for not putting the camera in the track.
-    camAttachPos = vec(0,0, 1),
+    camAttachPos = vec(0,0, 0.3),
 
-    hoverHeight = 1,
+    jetColourThrustSlow = vec(.7, .13, .1) * 0.8,
+    jetColourThrustFast = vec(2, .23, .18)* 1.5,
+    jetColourCoastSlow = vec(.01, .01, .01),
+    jetColourCoastFast = vec(.4, .01, 0.005),
+    jetColourBrakeSlow = vec(.01, .01, .04),
+    jetColourBrakeFast = vec(0, .1, .3),
+    jetScaleMax = 3,
+    jetPosition = vec(0, -2.09617, 0.18313),
+
+    hoverHeight = 1.5,
     steerMax = 80,  -- degrees/sec
     speedModeSwitch = 20,  -- metres/sec
     speedMax = 100,  -- metres/sec
     acceleration = 10,
     invertedDrag = 1,  -- Multiple of speed to apply as deceleration
-    disconnectionDrag = 0.3,  -- Multiple of speed to apply as deceleration
+    disconnectionDrag = 0.5,  -- Multiple of speed to apply as deceleration
     resetSpeedMax = 3,  -- metres/sec
-    connectedBrakeDrag = 0.5,  -- Proportion of speed lost per second.
-    connectedLateralDrag = 0.5,  -- Proportion of speed lost per second.
+    connectedBrakeDrag = 0.4,  -- Proportion of speed lost per second.
+    connectedCoastDrag = 0.2,  -- Proportion of speed lost per second.
+    connectedLateralDrag = 0.3,  -- Proportion of speed lost per second.
 
     activate = function(self, instance)
         if ColClass.activate(self, instance) then
             return true
         end
         self.needsStepCallbacks = true
+        instance.jet = gfx_body_make(self.jetMesh)
+        instance.jet.parent = instance.gfx
+        instance.jet.localPosition = self.jetPosition
         instance.boomLengthSelected = (self.boomLengthMax + self.boomLengthMin)/2
         instance.push = 0
         instance.shouldSteerLeft, instance.shouldSteerRight = 0, 0
@@ -117,6 +166,10 @@ class `TestShip` (ColClass) {
         instance.body.collisionCallback = function (...) self:collisionCallback(...) end
         instance.lastCollided = 0
         instance.lastPosition = instance.body.worldPosition
+    end,
+
+    setJetColour = function(self, colour)
+        self.instance.jet:setPaintColour(0, colour, 0, 0, 0)
     end,
 
     collisionCallback = function (self, life, impulse, other, m, mo, pen, pos, poso, norm)
@@ -172,6 +225,7 @@ class `TestShip` (ColClass) {
         end
 
         if dist == nil or ground_mat ~= ACTIVE_SURFACE then
+            self:setJetColour(vec(0, 0, 0))
             return
         end
 
@@ -182,17 +236,35 @@ class `TestShip` (ColClass) {
 
         -- Simulate friction
         local vel_fwd = initial_vel.y
+        local speed_factor = math.abs(vel_fwd / self.speedMax)
         if vel_fwd > 0 then
-            if instance.push <= 0 then
-                -- Implicit brakes
+            if instance.push < 0 then
+                -- Braking
+                self:setJetColour(lerp(self.jetColourBrakeSlow, self.jetColourBrakeFast, speed_factor))
                 vel_fwd = vel_fwd * self.connectedBrakeDrag ^ elapsed_secs
+            elseif instance.push == 0 then
+                -- Coasting
+                self:setJetColour(lerp(self.jetColourCoastSlow, self.jetColourCoastFast, speed_factor))
+                vel_fwd = vel_fwd * self.connectedCoastDrag ^ elapsed_secs
+            else
+                -- Accelerating (no drag).
+                self:setJetColour(lerp(self.jetColourThrustSlow, self.jetColourThrustFast, speed_factor))
             end
         else
             if instance.push >= 0 then
-                -- Implicit brakes
+                -- Braking
+                self:setJetColour(lerp(self.jetColourBrakeSlow, self.jetColourBrakeFast, speed_factor))
                 vel_fwd = vel_fwd * self.connectedBrakeDrag ^ elapsed_secs
+            elseif instance.push == 0 then
+                -- Coasting
+                self:setJetColour(lerp(self.jetColourCoastSlow, self.jetColourCoastFast, speed_factor))
+                vel_fwd = vel_fwd * self.connectedCoastDrag ^ elapsed_secs
+            else
+                -- Accelerating (no drag).
+                self:setJetColour(lerp(self.jetColourThrustSlow, self.jetColourThrustFast, speed_factor))
             end
         end
+        instance.jet.localScale = vec(1, lerp(1, self.jetScaleMax, speed_factor), 1)
         vel_fwd = vel_fwd + instance.push * self.acceleration * elapsed_secs
         local vel_lat = initial_vel.x
         vel_lat = vel_lat * self.connectedLateralDrag ^ elapsed_secs

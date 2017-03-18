@@ -49,6 +49,8 @@ shader `Default` {
         out.specular = gamma_decode(gloss_texel.r) * mat.specularMask;
     ]],
 
+    -- alphaMask is not used to attenuate the emissive lighting here, allowing you to use it
+    -- to attenuate the diffuse component only, for glowing gasses, etc.
     additionalCode = [[
         var uv = vert.coord0.xy * mat.textureScale + global.time * mat.textureAnimation;
         var c = sample(mat.emissiveMap, uv);

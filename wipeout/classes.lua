@@ -64,6 +64,7 @@ class `ChevronLight` (ColClass) {
     activate = function(self, instance)
         ColClass.activate(self, instance)
         self.needsFrameCallbacks = true
+        self:frameCallback(0)
     end,
     deactivate = function(self, instance)
         self.needsFrameCallbacks = false
