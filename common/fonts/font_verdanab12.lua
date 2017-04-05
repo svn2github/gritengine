@@ -96,3 +96,15 @@ local codepoints = {
     [0x007e] = {   39,   16,   10,   16 }, -- ~
 }
 gfx_font_define(`VerdanaBold12`, `font_verdanab12.png`, 16, codepoints)
+
+material `VerdanaBold12` {
+    shader = `Font`,
+    diffuseMap = `font_verdanab12.png`,
+    alphaRejectThreshold = 0.5,
+}
+
+material `VerdanaBold12Alpha` {
+    shader = `Font`,
+    diffuseMap = `font_verdanab12.png`,
+    sceneBlend = "ALPHA";
+}

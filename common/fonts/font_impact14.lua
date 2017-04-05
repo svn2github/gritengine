@@ -96,3 +96,15 @@ local codepoints = {
     [0x007e] = {   90,   92,    7,   18 }, -- ~
 }
 gfx_font_define(`Impact14`, `font_impact14.png`, 18, codepoints)
+
+material `Impact14` {
+    shader = `Font`,
+    diffuseMap = `font_impact14.png`,
+    alphaRejectThreshold = 0.5,
+}
+
+material `Impact14Alpha` {
+    shader = `Font`,
+    diffuseMap = `font_impact14.png`,
+    sceneBlend = "ALPHA";
+}

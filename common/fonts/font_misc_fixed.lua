@@ -2275,3 +2275,15 @@ local codepoints = {
     [0x2aff] = {  504,  148,    6,   13 }, -- ⫿
 }
 gfx_font_define(`misc.fixed`, `font_misc_fixed.png`, 13, codepoints)
+
+material `misc.fixed` {
+    shader = `Font`,
+    diffuseMap = `font_misc_fixed.png`,
+    alphaRejectThreshold = 0.5,
+}
+
+material `misc.fixedAlpha` {
+    shader = `Font`,
+    diffuseMap = `font_misc_fixed.png`,
+    sceneBlend = "ALPHA";
+}

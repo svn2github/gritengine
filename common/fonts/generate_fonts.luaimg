@@ -78,6 +78,19 @@ function make_font(tex_sz, font_sz, font, wide_font, tex_name, lua_name, codepoi
 
         file:write("}\n");
         file:write('gfx_font_define(`'..font_name..'`, `'..tex_name..'`, '..vert_sz..', codepoints)\n')
+        file:write('\n')
+        file:write('material `'..font_name..'` {\n')
+        file:write('    shader = `Font`,\n')
+        file:write('    diffuseMap = `'..tex_name..'`,\n')
+        file:write('    alphaRejectThreshold = 0.5,\n')
+        file:write('}\n')
+        file:write('\n')
+        file:write('material `'..font_name..'Alpha` {\n')
+        file:write('    shader = `Font`,\n')
+        file:write('    diffuseMap = `'..tex_name..'`,\n')
+        file:write('    sceneBlend = "ALPHA";\n')
+        file:write('}\n')
+
 
         file:close()
 

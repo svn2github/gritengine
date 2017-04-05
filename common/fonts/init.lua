@@ -1,3 +1,5 @@
+include `shader.lua`
+
 include `font_misc_fixed.lua`
 
 include `font_tiny_font.lua`

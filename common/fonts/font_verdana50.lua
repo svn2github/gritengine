@@ -96,3 +96,15 @@ local codepoints = {
     [0x007e] = {  405,  140,   41,   62 }, -- ~
 }
 gfx_font_define(`Verdana50`, `font_verdana50.png`, 62, codepoints)
+
+material `Verdana50` {
+    shader = `Font`,
+    diffuseMap = `font_verdana50.png`,
+    alphaRejectThreshold = 0.5,
+}
+
+material `Verdana50Alpha` {
+    shader = `Font`,
+    diffuseMap = `font_verdana50.png`,
+    sceneBlend = "ALPHA";
+}

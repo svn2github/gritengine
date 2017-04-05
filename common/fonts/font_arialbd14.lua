@@ -96,3 +96,15 @@ local codepoints = {
     [0x007e] = {  119,   32,    8,   16 }, -- ~
 }
 gfx_font_define(`ArialBold14`, `font_arialbd14.png`, 16, codepoints)
+
+material `ArialBold14` {
+    shader = `Font`,
+    diffuseMap = `font_arialbd14.png`,
+    alphaRejectThreshold = 0.5,
+}
+
+material `ArialBold14Alpha` {
+    shader = `Font`,
+    diffuseMap = `font_arialbd14.png`,
+    sceneBlend = "ALPHA";
+}
