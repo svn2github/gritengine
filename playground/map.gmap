@@ -1661,8 +1661,8 @@ return {
               rot = quat(-0.7698452, 0, 0, -0.6382306),
             }
         },
-        ["unnamed_297"] = {
-            `/common/sounds/waterfall`,
+        ["waterfall_sound"] = {
+            `/common/sounds/Waterfall`,
             vec(47.648121, -18.556641, 1.653778),
             {
               orientation = quat(0.7071068, 0, 0, -0.7071068),

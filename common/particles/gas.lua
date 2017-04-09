@@ -118,7 +118,7 @@ particle `DebugMarker` {
 }       
 
 function emit_debug_marker (pos, colour, life, size)
-    pos = pos or pick_pos(nil, true)
+    pos = pos or pick_pos()
     if pos == nil then return end
     colour = colour or vector3(1,0,0)
     life = life or 10

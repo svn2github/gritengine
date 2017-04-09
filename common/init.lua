@@ -10,6 +10,7 @@ include `MoveSpinClass.lua`
 include `game_modes/init.lua`
 
 include `fonts/init.lua`
+include `sounds/init.lua`
 
 include `hud/init.lua`
 include `gui/init.lua`

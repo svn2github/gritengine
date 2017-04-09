@@ -81,6 +81,7 @@ end
 function EditorMap:populateOne(name, object)
     local body = table.clone(object[3] or {})
     body.name = name
+    body.editorVisualisation = true
     local obj_actual = object_add(object[1], object[2], body)
     self:updateObjectSelectedVisualisation(name, obj_actual)
     return obj_actual

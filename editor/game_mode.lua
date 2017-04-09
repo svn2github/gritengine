@@ -350,9 +350,6 @@ end
 function Editor:newMap()
     gfx_option("RENDER_SKY", true)
     
-    -- Triggers particles to disappear.  We need a better way to render sprites.
-    unload_icons = true
-    
     navigation_reset()
     
     -- no fog and a smooth background colour
@@ -375,8 +372,6 @@ function Editor:openMap(map_file)
 
     widget_manager:unselectAll()
 
-    -- unload_icons = true
-    
     -- you can create a new map and include a lua that cointains object placements
     gfx_option("RENDER_SKY", true)
     
@@ -388,7 +383,6 @@ function Editor:openMap(map_file)
     self.camYaw = cam_yaw_angle()
 
     
-    create_world_icons()
     -- if update_map_properties ~= nil then
         -- update_map_properties()
     -- end
