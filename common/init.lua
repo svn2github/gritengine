@@ -23,6 +23,8 @@ include `mat/init.lua`
 
 include `weapons/init.lua`
 
+include `decals/init.lua`
+
 include `carcols.lua`
 
 include `props/init.lua`
