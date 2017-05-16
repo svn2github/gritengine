@@ -39,3 +39,4 @@ var cloud_sun_dir = normalise(sun_cloud_dome_pos - cloud_dome_pos);
 var emboss = lerp(dot(cloud_n, cloud_sun_dir), 1.0, 0.5);
 out.colour = emboss * global.skyCloudColour * cloud_atten * cloud;
 out.alpha = cloud_atten * cloud;
+out.colour = out.colour * out.alpha;

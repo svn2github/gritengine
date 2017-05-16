@@ -115,12 +115,12 @@ mouse_pos_abs = V_ZERO
 function physics_step (elapsed_secs)
     local _, initial_allocs = get_alloc_stats()
 
-    -- Do this before step callbacks so that if they create debug particles with timeouts of
-    -- elapsed_secs, they don't immediately disappear.
-    gfx_particle_pump(elapsed_secs)
     object_do_step_callbacks(elapsed_secs)
     game_manager:stepUpdate(elapsed_secs)
     physics_update()
+
+    gfx_tracer_body_pump(elapsed_secs)
+    gfx_particle_pump(elapsed_secs)
 
     local _, final_allocs = get_alloc_stats()
     main.physicsAllocs = final_allocs - initial_allocs
@@ -209,9 +209,11 @@ function main:run (...)
             navigation_update(elapsed_secs)				
         end
 
-        -- GRAPHICS
+        -- INTERPOLATED GRAPHICS and FRAME UPDATES
         if gfx_window_active() then
-            physics_update_graphics(main.physicsEnabled and main.physicsLeftOver or 0)
+            local left_over_time = main.physicsEnabled and main.physicsLeftOver or 0
+            physics_update_graphics(left_over_time)
+            gfx_tracer_body_set_left_over_time(left_over_time)
             physics_draw()
         end
         game_manager:frameUpdate(elapsed_secs)
