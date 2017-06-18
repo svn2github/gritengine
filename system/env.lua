@@ -66,6 +66,7 @@ function env_recompute()
                               quat(sun_adjusted_time, V_SOUTH) *
                               quat(env.earthTilt, V_EAST)
     local moon_orientation = space_orientation * quat(env.moonPhase, V_SOUTH)
+    local moon_body_orientation = space_orientation * quat(env.moonPhase + 180, V_SOUTH)
     local sky_ent = env_sky['sky']
     local moon_ent = env_sky['moon']
 
@@ -74,7 +75,7 @@ function env_recompute()
         sky_ent.orientation = space_orientation
     end
     if moon_ent ~= nil then 
-        moon_ent.orientation = moon_orientation
+        moon_ent.orientation = moon_body_orientation
     end
     
     -- Account for the apparent movement of the Sun around the Earth due to seasons.
