@@ -570,6 +570,23 @@ function extends_keep_existing(existing, parent)
 end
 
 function make_instance_mt(class,fr,fw,fts)
+        if type(fts) ~= "function" then fts = function() return fts end end
+        if fr == nil and fw == nil then
+                -- Optimized case.
+                return {
+                        __index = function(t,k) 
+                                return class[k]
+                        end,
+                        __newindex = function(t,k,v)
+                                if class[k] ~= nil then
+                                        class[k] = v
+                                else
+                                        rawset(t,k,v)
+                                end
+                        end,
+                        __tostring = fts
+                }
+        end
         fr = fr or function() return nil end
         fw = fw or function() return nil end
         return {

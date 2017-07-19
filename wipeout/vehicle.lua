@@ -10,8 +10,6 @@ material `DummyVehicle` {
 
 shader `DummyVehicleJet` {
 
-    map = uniform_texture_2d(1, 1, 1);
-
     vertexCode = [[
         out.position = transform_to_world(vert.position.xyz);
     ]],
@@ -24,12 +22,24 @@ shader `DummyVehicleJet` {
     -- alphaMask is not used to attenuate the emissive lighting here, allowing you to use it
     -- to attenuate the diffuse component only, for glowing gasses, etc.
     additionalCode = [[
+        var pi = asin(1.0) * 2;
+
         var uv = vert.coord0.xy;
-        var c = sample(mat.map, uv);
-        out.colour = gamma_decode(c.rgb) * body.paintDiffuse0;
+        var colour = body.paintDiffuse0;
+        var long_anim_state = body.paintMetallic0;
+        var circ_anim_state = body.paintGloss0;
+        var num_features = body.paintSpecular0;
+
+        // uv.x is 1 near the engine and fades out to 0
+        out.colour = pow(uv.x, 3.0) * colour;
+
+        // longitudinal oscillation
+        out.colour = out.colour * (sin((uv.x * num_features + long_anim_state) * pi * 2) / 3 + 0.6666);
+
+        // circumference oscillation
+        out.colour = out.colour * (sin((uv.y * num_features + circ_anim_state) * pi * 2) / 4 + 0.75);
     ]],
 }
-
 
 
 material `DummyVehicleJet` {
@@ -38,8 +48,6 @@ material `DummyVehicleJet` {
     backfaces = true,
     additionalLighting = true,
     castShadows = false,
-
-    map = `DummyVehicle.png`,
 }
 
 local ACTIVE_SURFACE = `Track`
@@ -109,8 +117,8 @@ class `TestShip` (ColClass) {
     jetMesh = `DummyVehicleJet.mesh`,
     colMesh = `DummyVehicle.gcol`,
     controllable = 'VEHICLE', 
-    boomLengthMin = 5,
-    boomLengthMax = 30,
+    boomLengthMin = 3,
+    boomLengthMax = 20,
     driverExitPos = vector3(-1.45, -0.24, 0.49),
     driverExitQuat = Q_ID,
     cameraTrack = true,
@@ -138,6 +146,7 @@ class `TestShip` (ColClass) {
     hoverHeight = 1.5,
     steerMax = 80,  -- degrees/sec
     speedModeSwitch = 20,  -- metres/sec
+    speedFast = 70,  -- special visual effects begin
     speedMax = 100,  -- metres/sec
     acceleration = 10,
     invertedDrag = 1,  -- Multiple of speed to apply as deceleration
@@ -157,7 +166,10 @@ class `TestShip` (ColClass) {
         instance.jet.localPosition = self.jetPosition
         instance.boomLengthSelected = (self.boomLengthMax + self.boomLengthMin)/2
         instance.push = 0
+        instance.longAnimState = 0
+        instance.circAnimState = 0
         instance.shouldSteerLeft, instance.shouldSteerRight = 0, 0
+        instance.steeringControl = DigitalControl.new(self.steerMax, 400, 700, 1000)
         instance.onGround = false
         instance.velocity = vec(0, 0, 0)
         instance.body.ghost = false
@@ -175,6 +187,8 @@ class `TestShip` (ColClass) {
         instance.body.collisionCallback = function (...) self:collisionCallback(...) end
         instance.lastCollided = 0
         instance.lastPosition = instance.body.worldPosition
+        instance.secondsSinceLastAttached = 0
+        instance.secondsSinceLastAirborne = 0
         if self.trails then
             instance.trails = {}
             for k, trail in pairs(self.trails) do
@@ -187,7 +201,7 @@ class `TestShip` (ColClass) {
             end
             instance.body.stepCallback = function()
                 local instance = self.instance
-                local alpha = clamp((instance.velocity.y - 70) / 30, 0, 1) * 0.1
+                local alpha = clamp((instance.velocity.y - self.speedFast) / 30, 0, 0.1)
                 for k, trail in pairs(instance.trails) do
                     trail.alpha = alpha
                     trail.localPosition = instance.body:localToWorld(self.trails[k].pos)
@@ -196,8 +210,47 @@ class `TestShip` (ColClass) {
         end
     end,
 
-    setJetColour = function(self, colour)
-        self.instance.jet:setPaintColour(0, colour, 0, 0, 0)
+    --[[
+    Args:
+        airborne: bool
+        speed_factor: 0 -> 1, stationary to max speed
+        push: -1, 0 or 1
+    --]]
+    setJetEffect = function(self, elapsed_secs, airborne, speed_factor, push)
+        local colour = vec(0, 0, 0)
+        local instance = self.instance
+
+        local long_freq = speed_factor * push * 10
+        local circ_freq = lerp(speed_factor, 0.3, 3)
+        local features = 3
+        if speed_factor * self.speedMax > self.speedFast then
+            features = 5
+            long_freq = long_freq * 2
+            circ_freq = circ_freq * 3
+        end
+        instance.longAnimState = (instance.longAnimState + elapsed_secs * long_freq) % 1
+        instance.circAnimState = (instance.circAnimState + elapsed_secs * circ_freq) % 1
+        
+        colour = lerp(self.jetColourThrustSlow, self.jetColourThrustFast, speed_factor)
+
+        -- Fade jet in / out according to whether we are attached to the track.
+        if airborne then
+            self.instance.secondsSinceLastAirborne = 0
+            self.instance.secondsSinceLastAttached =
+                self.instance.secondsSinceLastAttached + elapsed_secs
+            colour = colour * clamp(1 - self.instance.secondsSinceLastAttached, 0, 1)
+        else
+            self.instance.secondsSinceLastAttached = 0
+            self.instance.secondsSinceLastAirborne =
+                self.instance.secondsSinceLastAirborne + elapsed_secs
+            colour = colour * clamp(self.instance.secondsSinceLastAirborne * 3, 0, 1)
+        end
+
+        -- index, diff, met, gloss, spec
+        instance.jet:setPaintColour(0, colour, instance.longAnimState, instance.circAnimState, features)
+
+        local jet_scale = lerp(1, self.jetScaleMax, speed_factor)
+        instance.jet.localScale = vec(1, jet_scale, 1)
     end,
 
     collisionCallback = function (self, life, impulse, other, m, mo, pen, pos, poso, norm)
@@ -260,9 +313,38 @@ class `TestShip` (ColClass) {
                 physics_sweep_sphere(0.04, initial_pos, ray, true, 0, instance.body)
         end
 
+        local vel_fwd = initial_vel.y
+        local speed_factor = math.abs(vel_fwd / self.speedMax)
+        local thrust_dir 
+        if vel_fwd > 0 then
+            if instance.push < 0 then
+                -- Braking
+                thrust_dir = -1
+            elseif instance.push == 0 then
+                -- Coasting
+                thrust_dir = 0
+            else
+                -- Accelerating
+                thrust_dir = 1
+            end
+        else
+            if instance.push >= 0 then
+                thrust_dir = -1
+                -- Braking
+            elseif instance.push == 0 then
+                -- Coasting
+                thrust_dir = 0
+            else
+                -- Accelerating
+                thrust_dir = 1
+            end
+        end
+
         if dist == nil or ground_mat ~= ACTIVE_SURFACE then
-            self:setJetColour(vec(0, 0, 0))
+            self:setJetEffect(elapsed_secs, true, speed_factor, instance.push)
             return
+        else
+            self:setJetEffect(elapsed_secs, false, speed_factor, instance.push)
         end
 
         local ground_pos = initial_pos + dist * ray
@@ -271,36 +353,15 @@ class `TestShip` (ColClass) {
         local pos = ground_pos + self.hoverHeight * ground_normal
 
         -- Simulate friction
-        local vel_fwd = initial_vel.y
-        local speed_factor = math.abs(vel_fwd / self.speedMax)
-        if vel_fwd > 0 then
-            if instance.push < 0 then
-                -- Braking
-                self:setJetColour(lerp(self.jetColourBrakeSlow, self.jetColourBrakeFast, speed_factor))
-                vel_fwd = vel_fwd * self.connectedBrakeDrag ^ elapsed_secs
-            elseif instance.push == 0 then
-                -- Coasting
-                self:setJetColour(lerp(self.jetColourCoastSlow, self.jetColourCoastFast, speed_factor))
-                vel_fwd = vel_fwd * self.connectedCoastDrag ^ elapsed_secs
-            else
-                -- Accelerating (no drag).
-                self:setJetColour(lerp(self.jetColourThrustSlow, self.jetColourThrustFast, speed_factor))
-            end
+        if thrust_dir > 0 then
+            -- Accelerating (no drag).
+        elseif thrust_dir == 0 then
+            -- Coasting
+            vel_fwd = vel_fwd * self.connectedCoastDrag ^ elapsed_secs
         else
-            if instance.push >= 0 then
-                -- Braking
-                self:setJetColour(lerp(self.jetColourBrakeSlow, self.jetColourBrakeFast, speed_factor))
-                vel_fwd = vel_fwd * self.connectedBrakeDrag ^ elapsed_secs
-            elseif instance.push == 0 then
-                -- Coasting
-                self:setJetColour(lerp(self.jetColourCoastSlow, self.jetColourCoastFast, speed_factor))
-                vel_fwd = vel_fwd * self.connectedCoastDrag ^ elapsed_secs
-            else
-                -- Accelerating (no drag).
-                self:setJetColour(lerp(self.jetColourThrustSlow, self.jetColourThrustFast, speed_factor))
-            end
+            -- Braking
+            vel_fwd = vel_fwd * self.connectedBrakeDrag ^ elapsed_secs
         end
-        instance.jet.localScale = vec(1, lerp(1, self.jetScaleMax, speed_factor), 1)
         vel_fwd = vel_fwd + instance.push * self.acceleration * elapsed_secs
         local vel_lat = initial_vel.x
         vel_lat = vel_lat * self.connectedLateralDrag ^ elapsed_secs
@@ -318,6 +379,14 @@ class `TestShip` (ColClass) {
     stepCallback = function(self, elapsed_secs)
 
         local instance = self.instance
+
+        local steering_digital_control = instance.shouldSteerLeft + instance.shouldSteerRight
+
+        local smoothed_steering = instance.steeringControl:pump(elapsed_secs, steering_digital_control)
+        game_manager:debugText(1, 'Steer: %f', smoothed_steering)
+
+        local steering_angular_velocity = smoothed_steering
+
         local body = instance.body
         instance.lastPosition = body.worldPosition
 
@@ -405,8 +474,7 @@ class `TestShip` (ColClass) {
             end
             local world_vel = current_ort * vec3(vel, 0)
 
-            local steering_angular_velocity = (instance.shouldSteerLeft + instance.shouldSteerRight) * elapsed_secs
-            local steering_angular_quat = quat(steering_angular_velocity, desired_ort * vec(0, 0, -1))
+            local steering_angular_quat = quat(-steering_angular_velocity * elapsed_secs, desired_ort * vec(0, 0, 1))
 
 
             local ray = world_vel * elapsed_secs
@@ -510,17 +578,16 @@ class `TestShip` (ColClass) {
         end
 
         do
-            -- Apply steering directly, not with forces but by setting velocity.
-            local steering_ang_vel = -math.rad(instance.shouldSteerLeft + instance.shouldSteerRight)
-
             -- Project angular velocity tensor to remove the "about ground normal" component.
             -- Using the ground normal instead of the ship's normal avoids problems with when the
             -- ship is at a degenerate angle to the track.
             local current_steering_ang_vel = dot(body.angularVelocity, up)
-            local steering_change_needed = steering_ang_vel - current_steering_ang_vel
+            local steering_change_needed = math.rad(-steering_angular_velocity) - current_steering_ang_vel
 
+            -- Angular acceleration required to set the angular velocity appropriately.
             local AA = up * steering_change_needed / elapsed_secs
             if #AA > 20 then
+                -- Put a cap on it.
                 AA = norm(AA) * 20
             end
             -- game_manager:debugText(4, 'Steering: %d', #AA)

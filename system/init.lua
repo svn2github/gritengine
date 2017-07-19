@@ -325,6 +325,8 @@ include `navigation_system.lua`
 
 include `weapon_effect_manager.lua`
 
+include `digital_control.lua`
+
 include `/common/init.lua` 
 
 function reset_everything()

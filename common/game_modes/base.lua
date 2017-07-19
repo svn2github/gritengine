@@ -23,7 +23,7 @@ function BaseGameMode:init()
     -- Integer in range [0, 3]
     -- Actual boom length is a function of this.
     -- Zoom operations inc / dec the notch by 1.
-    self.boomNotch = 0
+    self.boomNotch = 2
 
     main.camPos = self.spawnPos
     main.camQuat = self.spawnRot
