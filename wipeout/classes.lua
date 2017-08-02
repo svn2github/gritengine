@@ -6,8 +6,12 @@ for i=1,20 do
     class (`wipeo`..string.format("_%02d",i)) (ColClass) { castShadows=true, renderingDistance = 1000 }
 end
 
-class `speedpad` (BaseClass) {castShadows=true,renderingDistance=500}
-class `weaponpad` (BaseClass) {castShadows=true,renderingDistance=500}
+class `SpeedPad` (ColClass) {
+    renderingDistance=500,
+}
+class `WeaponPad` (ColClass) {
+    renderingDistance=500,
+}
 
 local SpinningClass = extends (ColClass) {
     activate = function (self,instance,class)

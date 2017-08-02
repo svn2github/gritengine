@@ -106,3 +106,19 @@ physical_material `Track` {
     tyreSmoke = hot_tyre_smoke,
     flammable = 0.25,
 }
+
+physical_material `SpeedPad` {
+    interactionGroup = SmoothSoftGroup,
+    roadTyreFriction = 0.8,
+    offRoadTyreFriction = 0.6,
+    tyreSmoke = hot_tyre_smoke,
+    flammable = 0.25,
+}
+
+physical_material `WeaponPad` {
+    interactionGroup = SmoothSoftGroup,
+    roadTyreFriction = 0.8,
+    offRoadTyreFriction = 0.6,
+    tyreSmoke = hot_tyre_smoke,
+    flammable = 0.25,
+}

@@ -50,7 +50,17 @@ material `DummyVehicleJet` {
     castShadows = false,
 }
 
-local ACTIVE_SURFACE = `Track`
+SPEED_PAD_SURFACE = `SpeedPad`
+SPEED_PAD_MULTIPLIER = 1.5
+SPEED_PAD_TIMEOUT = 4
+SPEED_PAD_IMPULSE = 20
+WEAPON_PAD_SURFACE = `SpeedPad`
+
+local ACTIVE_SURFACES = {
+    [`Track`] = true,
+    [SPEED_PAD_SURFACE] = true,
+    [WEAPON_PAD_SURFACE] = true,
+}
 
 --[[
 
@@ -127,10 +137,8 @@ class `TestShip` (ColClass) {
 
     jetColourThrustSlow = vec(.7, .13, .1) * 0.8,
     jetColourThrustFast = vec(2, .23, .18)* 1.5,
-    jetColourCoastSlow = vec(.01, .01, .01),
-    jetColourCoastFast = vec(.4, .01, 0.005),
-    jetColourBrakeSlow = vec(.01, .01, .04),
-    jetColourBrakeFast = vec(0, .1, .3),
+    jetColourSpeedPadSlow = vec(.13, .7, .1) * 0.8,
+    jetColourSpeedPadFast = vec(.23, 2, .18)* 1.5,
     jetScaleMax = 3,
     jetPosition = vec(0, -2.09617, 0.18313),
 
@@ -145,16 +153,19 @@ class `TestShip` (ColClass) {
 
     hoverHeight = 1.5,
     steerMax = 80,  -- degrees/sec
+    tiltFactor =  0.10,  -- factor of steering used for tilt
     speedModeSwitch = 20,  -- metres/sec
     speedFast = 70,  -- special visual effects begin
     speedMax = 100,  -- metres/sec
     acceleration = 10,
-    invertedDrag = 1,  -- Multiple of speed to apply as deceleration
+    attachedDrag = 1,  -- Multiple of speed to apply as deceleration
     disconnectionDrag = 0.5,  -- Multiple of speed to apply as deceleration
     resetSpeedMax = 3,  -- metres/sec
     connectedBrakeDrag = 0.4,  -- Proportion of speed lost per second.
     connectedCoastDrag = 0.2,  -- Proportion of speed lost per second.
     connectedLateralDrag = 0.3,  -- Proportion of speed lost per second.
+    floatAnimFreq = 0.3,
+    floatAnimMagnitude = 0.1,
 
     activate = function(self, instance)
         if ColClass.activate(self, instance) then
@@ -170,6 +181,7 @@ class `TestShip` (ColClass) {
         instance.circAnimState = 0
         instance.shouldSteerLeft, instance.shouldSteerRight = 0, 0
         instance.steeringControl = DigitalControl.new(self.steerMax, 400, 700, 1000)
+        instance.tilt = 0
         instance.onGround = false
         instance.velocity = vec(0, 0, 0)
         instance.body.ghost = false
@@ -189,6 +201,8 @@ class `TestShip` (ColClass) {
         instance.lastPosition = instance.body.worldPosition
         instance.secondsSinceLastAttached = 0
         instance.secondsSinceLastAirborne = 0
+        instance.floatAnimPos = 0
+        instance.timeSinceSpeedPad = SPEED_PAD_TIMEOUT  -- Avoid it triggering immediately.
         if self.trails then
             instance.trails = {}
             for k, trail in pairs(self.trails) do
@@ -208,6 +222,18 @@ class `TestShip` (ColClass) {
                 end
             end
         end
+        instance.body.updateCallback = function(p, q)
+            instance.camAttachPos = p + q * self.camAttachPos
+            instance.gfx.localPosition = p
+            instance.gfx.localOrientation = q * quat(instance.tilt, vec(0, 1, 0))
+            self.pos = p
+        end
+
+    end,
+
+    speedEffect = function (self)
+        local instance = self.instance
+        return instance.timeSinceSpeedPad < SPEED_PAD_TIMEOUT
     end,
 
     --[[
@@ -232,6 +258,10 @@ class `TestShip` (ColClass) {
         instance.circAnimState = (instance.circAnimState + elapsed_secs * circ_freq) % 1
         
         colour = lerp(self.jetColourThrustSlow, self.jetColourThrustFast, speed_factor)
+
+        if self:speedEffect() then
+            colour = lerp(self.jetColourSpeedPadSlow, self.jetColourSpeedPadFast, speed_factor / SPEED_PAD_MULTIPLIER)
+        end
 
         -- Fade jet in / out according to whether we are attached to the track.
         if airborne then
@@ -340,11 +370,18 @@ class `TestShip` (ColClass) {
             end
         end
 
-        if dist == nil or ground_mat ~= ACTIVE_SURFACE then
+        if dist == nil or not ACTIVE_SURFACES[ground_mat] then
             self:setJetEffect(elapsed_secs, true, speed_factor, instance.push)
             return
         else
             self:setJetEffect(elapsed_secs, false, speed_factor, instance.push)
+        end
+
+        if ground_mat == SPEED_PAD_SURFACE then
+            if instance.timeSinceSpeedPad > 0.1 then
+                vel_fwd = vel_fwd + SPEED_PAD_IMPULSE
+            end
+            instance.timeSinceSpeedPad = 0
         end
 
         local ground_pos = initial_pos + dist * ray
@@ -369,9 +406,15 @@ class `TestShip` (ColClass) {
         
         -- Cap speed.
         local speed = #vel
-        if speed > self.speedMax then
-            vel = vel * self.speedMax / speed
+        local max_speed = self.speedMax
+        if self:speedEffect() then
+            max_speed = max_speed * SPEED_PAD_MULTIPLIER
         end
+        if speed > max_speed then
+            vel = vel * max_speed / speed
+        end
+
+        instance.timeSinceSpeedPad = instance.timeSinceSpeedPad + elapsed_secs
 
         return pos, ground_normal, vel
     end,
@@ -385,7 +428,8 @@ class `TestShip` (ColClass) {
         local smoothed_steering = instance.steeringControl:pump(elapsed_secs, steering_digital_control)
         game_manager:debugText(1, 'Steer: %f', smoothed_steering)
 
-        local steering_angular_velocity = smoothed_steering
+        -- calc desired_tilt as a multiple of smoothed_steering
+        instance.tilt = smoothed_steering * self.tiltFactor
 
         local body = instance.body
         instance.lastPosition = body.worldPosition
@@ -403,63 +447,50 @@ class `TestShip` (ColClass) {
         local upside_down = false
 
         if not on_ground then
+            -- Projectile motion, make our own values for pos, vel, up using projectile model.
 
-            -- Projectile motion, surrender to physics engine.
-
+            pos = body.worldPosition
             local bvel = body.linearVelocity
 
-            instance.velocity = instance.velocity * self.connectedBrakeDrag ^ elapsed_secs
-            if #bvel < #instance.velocity then
-                instance.velocity = #bvel * norm(instance.velocity)
+            vel = instance.velocity
+            vel = vel * self.connectedBrakeDrag ^ elapsed_secs
+            if #bvel < #vel then
+                vel = #bvel * norm(vel)
             end
             instance.lastPosDev = vec(0, 0, 0)
             instance.lastVelDev = vec(0, 0, 0)
 
             -- Maybe we're inverted, try to hook on to the nearest surface in any direction.
             local max_penetration = -1
-            local pos
             local function test_func(body, sz, local_pos, world_pos, normal, penetration, mat)
                 if body == instance.body then return end
-                if mat ~= ACTIVE_SURFACE then return end
+                if not ACTIVE_SURFACES[mat] then return end
                 if penetration > max_penetration then
                     max_penetration = penetration
                     on_ground = true
                     upside_down = true
                     up = normal
-                    pos = world_pos
                 end
             end
-            physics_test(self.hoverHeight * 2, body.worldPosition, false, test_func)
-            local slow_enough = #bvel < self.resetSpeedMax
-            if on_ground then
-                -- Drag
-                body:force(body.mass * -self.invertedDrag * bvel, body:localToWorld(vec(0, -1, 0)))
-                -- local col = vec(1, 0, 0)
-                -- if slow_enough then
-                --     col = vec(1, 1, 1)
-                -- end
-                -- emit_debug_marker(pos, col, elapsed_secs, 1)
-            else
-                -- Drag
-                body:force(body.mass * -self.disconnectionDrag * bvel, body:localToWorld(vec(0, -1, 0)))
+            physics_test(self.hoverHeight * 2, pos, false, test_func)
+
+            local drag = on_ground and self.attachedDrag or self.disconnectionDrag
+            body:force(body.mass * -drag * bvel, body:localToWorld(vec(0, -1, 0)))
+
+            if not on_ground then
+                instance.lastTensorDev = vec(0, 0, 0)
+                -- Store for next iteration.
+                instance.velocity = vel
+                instance.groundOrientation = body.worldOrientation
+                return
             end
-        else
-            -- Store for next iteration.
-            instance.velocity = vel
-
-            -- emit_debug_marker(pos, vec(0, 0, 1), elapsed_secs, 1)
-            -- emit_debug_marker(pos - up * self.hoverHeight, vec(0, 1, 1), elapsed_secs, 1)
         end
 
-        if not on_ground then
-            instance.lastTensorDev = vec(0, 0, 0)
-            return
-        end
+        -- Store for next iteration.
+        instance.velocity = vel
 
-        local vel = instance.velocity
         local speed = #vel
 
-        body.ghost = false
         if on_ground and not upside_down and speed > self.speedModeSwitch and seconds() - instance.lastCollided > 1 then
             -- Fast mode.
             body.ghost = true
@@ -469,18 +500,19 @@ class `TestShip` (ColClass) {
             local current_up = current_ort * vec(0, 0, 1)
             local desired_ort = quat(current_up, up) * current_ort
 
-            if speed > self.speedMax then
-                vel = vel * self.speedMax / speed
-            end
+            -- speed should already be clipped by logicalUpdate
+            -- if speed > self.speedMax then
+            --   vel = vel * self.speedMax / speed
+            --nd
             local world_vel = current_ort * vec3(vel, 0)
 
-            local steering_angular_quat = quat(-steering_angular_velocity * elapsed_secs, desired_ort * vec(0, 0, 1))
+            local steering_angular_quat = quat(-smoothed_steering * elapsed_secs, desired_ort * vec(0, 0, 1))
 
 
             local ray = world_vel * elapsed_secs
             local colliding = false
             local function cb(dist, body, normal, mat)
-                if mat == ACTIVE_SURFACE then return end
+                if ACTIVE_SURFACES[mat] then return end
                 colliding = true
             end
             -- Cast the ship forwards.
@@ -509,6 +541,7 @@ class `TestShip` (ColClass) {
 
         -- Slow mode.
 
+        body.ghost = false
         instance.groundOrientation = body.worldOrientation
 
         do
@@ -539,6 +572,12 @@ class `TestShip` (ColClass) {
         if upside_down then
             return
         end
+
+        -- TODO(dcunnin): offset pos according to float animation
+        instance.floatAnimPos = (instance.floatAnimPos + elapsed_secs * self.floatAnimFreq) % 1
+        local float_amount = math.sin(instance.floatAnimPos * math.pi * 2) * self.floatAnimMagnitude
+
+        pos = pos + float_amount * up
 
         do
             -- Use a PID loop to align body with logical position.
@@ -582,7 +621,7 @@ class `TestShip` (ColClass) {
             -- Using the ground normal instead of the ship's normal avoids problems with when the
             -- ship is at a degenerate angle to the track.
             local current_steering_ang_vel = dot(body.angularVelocity, up)
-            local steering_change_needed = math.rad(-steering_angular_velocity) - current_steering_ang_vel
+            local steering_change_needed = math.rad(-smoothed_steering) - current_steering_ang_vel
 
             -- Angular acceleration required to set the angular velocity appropriately.
             local AA = up * steering_change_needed / elapsed_secs
