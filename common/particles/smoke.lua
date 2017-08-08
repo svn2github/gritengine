@@ -24,7 +24,7 @@ end
 function emit_smoke (pos, vel, start_size, end_size, colour, life)
     start_size = start_size or 0.3
     end_size = end_size or 1
-    colour = colour or vector3(1,1,1)
+    colour = colour or vec(1, 1, 1)
     life = life or 3
     local r1 = start_size/2
     local r2 = end_size/2
@@ -45,7 +45,7 @@ tire_smoke_max = 50
 function emit_textured_smoke (pos, vel, start_size, end_size, colour, life)
     start_size = start_size or 0.3
     end_size = end_size or 1
-    colour = colour or vector3(1,1,1)
+    colour = colour or vec(1, 1, 1)
     life = life or 3
     local r1 = start_size/2
     local r2 = end_size/2
@@ -67,15 +67,16 @@ function emit_textured_smoke (pos, vel, start_size, end_size, colour, life)
 end
 
 
-function puff_textured(pos)
+function puff_textured(pos, colour)
     local radius = 5
     local time = 3
     for i=1,5 do
+        -- 4 compass directions and up, plus a bit of randomness and V_UP
         local dir = i==5 and V_UP or quat(i*90,V_UP) * V_NORTH
         dir = radius * dir 
         dir = dir + random_vector3_sphere() + V_UP
         -- colour works best if all particles are the same colour
-        local rand_colour = 0.7*vector3(1,1,1)
+        local rand_colour = colour or 0.7 * vec(1, 1, 1)
         local r1 = radius/3
         local r2 = 4*radius
         gfx_particle_emit(`TexturedSmoke`, pos, {
