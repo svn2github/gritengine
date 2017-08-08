@@ -50,6 +50,86 @@ material `DummyVehicleJet` {
     castShadows = false,
 }
 
+    
+--[[
+]]
+
+particle `JetSmoke` {
+    map = `/common/particles/GenericParticleSheet.dds`,
+
+    frames = { 896,640, 128, 128, },
+    frame = 0,
+
+    diffuse = vec(.23, 2, .18),
+    velocity = vec(0, 0, 0),
+
+    life = 1,
+
+    alphaCurve = Plot {
+        [0] = 1,
+        [0.2] = 0.3,
+        [0.5] = 0.1,
+        [1] = 0,
+    },
+	alphaMask = 1,
+
+    -- Acceleration over lifetime.
+    convectionCurve = PlotV3 {
+        [0] = vec(0, 0, 25),
+        [0.25] = vec(0, 0, 25),
+        [1] = vec(0, 0, 0),
+    },
+
+
+    behaviour = function (tab, elapsed)
+        tab.age = tab.age + elapsed / tab.life
+        if tab.age > 1 then
+            return false
+        end 
+
+        if tab.velocity then
+            local vel = tab.velocity
+            if tab.convectionCurve then
+				local accel = tab.convectionCurve[tab.age]
+                vel = vel + accel * elapsed
+            end
+            tab.position = tab.position + vel * elapsed
+            tab.velocity = math.pow(0.01, elapsed) * tab.velocity
+        end
+
+        tab.volume = lerp(tab.initialVolume, tab.maxVolume, tab.age)
+        local radius = math.pow(tab.volume/math.pi*3/4, 1/3) -- sphere: V = 4/3πr³
+        tab.dimensions = (2 * radius) * vec(1, 1, 0.5)
+        
+        local alpha = tab.alphaCurve[tab.age]
+        tab.alpha = alpha * tab.alphaMask
+
+        -- colour is constant, but attenuate it with alpha
+        tab.diffuse = tab.initialDiffuse * alpha
+    end,
+}
+
+--[[
+  Args:
+    pos: Where to emit the smoke
+	time: How long have we been emitting smoke (0 to 1).
+]]
+function emit_jet_smoke(pos, time)
+	local r1 = .3
+	local r2 = 2
+	local speed_colour = vec(.23, 2, .18)
+	gfx_particle_emit(`JetSmoke`, pos, {
+		angle = 360 * math.random(),
+		initialVolume = 4/3 * math.pi * r1*r1*r1,  -- volume of sphere
+		maxVolume = 4/3 * math.pi * r2*r2*r2,  -- volume of sphere
+		diffuse = speed_colour,
+		initialDiffuse = speed_colour,
+		age = 0,
+		alphaMask = 1 - time,
+	})
+end
+
+
 SPEED_PAD_SURFACE = `SpeedPad`
 SPEED_PAD_MULTIPLIER = 1.5
 SPEED_PAD_TIMEOUT = 4
@@ -484,6 +564,12 @@ class `TestShip` (ColClass) {
                 instance.groundOrientation = body.worldOrientation
                 return
             end
+        end
+
+        local smoke_length = 0.3  -- How many seconds to emit speed pad smoke.
+        if instance.timeSinceSpeedPad < smoke_length then
+            local ppos = body:localToWorld(self.jetPosition)
+			emit_jet_smoke(ppos, instance.timeSinceSpeedPad /  smoke_length)
         end
 
         -- Store for next iteration.
