@@ -305,7 +305,7 @@ hud_class `.` {
                 },
             },
 
-            hud_object "/common/hud/Border" {
+            hud_object `/common/hud/Border` {
                 padding = 8;
                 colour = 0.25 * vec(1,1,1);
                 texture = `/common/hud/CornerTextures/Border04.png`;
