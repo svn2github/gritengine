@@ -24,7 +24,7 @@ function map_build_empty()
             name        = "Insert name here",
         },
 
-      -- Position when spawning in the editor.
+      -- Position when spawning in the Grit Editor.
         editor = {
             cam_pos  = vec(0, 0, 0),
             cam_quat = quat(1, 0, 0, 0),
