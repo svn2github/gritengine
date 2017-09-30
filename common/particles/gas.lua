@@ -177,7 +177,7 @@ particle `Explosion3` {
 }   
 
 particle `Explosion4` {
-    map = "GenericParticleSheet.dds";
+    map = `GenericParticleSheet.dds`;
     blending = "ADD";
     frames = {
                   0,256,   128, 128,
