@@ -29,7 +29,7 @@ hud_class `StatusBar` {
 		}
 		self.line:setThickness(1)
 		
-		self.text = hud_text_add("/common/fonts/Arial12")
+		self.text = hud_text_add(`/common/fonts/Arial12`)
 		self.text.parent = self
 		self.text.colour = _current_theme.colours.status_bar.text
 		self:setText("")
