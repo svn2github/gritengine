@@ -52,7 +52,7 @@ applied, and can be cancelled / undone / redone atomically.
 --
 -- It is assumed Grit classes follow a certain protocol, e.g. instance.body, instance.gfx, body.rot,
 -- etc.  This should be documented, and ideally a simpler "editor interface" should be defined for
--- objects to play nicely with the editor.
+-- objects to play nicely with the Grit Editor.
 
 
 EditorMap = EditorMap or {
@@ -203,7 +203,7 @@ end
 function EditorMap:applyEnvironment()
     env_reset()
     env.secondsSinceMidnight = self.currentState.environment.time
-    -- Not this, we want to control time manually in the editor.
+    -- Not this, we want to control time manually in the Grit Editor.
     -- env.clockRate = self.currentState.environment.clock_rate
     env.clockRate = 0
     if self.currentState.environment.env_cycle_file ~= nil then
