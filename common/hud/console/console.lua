@@ -7,7 +7,7 @@ hud_class `Console` {
     alpha = 0.9;
     border = 4;
     colour = vec(0.1, 0.1, 0.1);
-    --texture = "/common/hud/CornerTextures/SquareFilledWhiteBorder.png";
+    --texture = `/common/hud/CornerTextures/SquareFilledWhiteBorder.png`;
     --cornered = true;
 
     textColour = vec(.75, .75, .75);
