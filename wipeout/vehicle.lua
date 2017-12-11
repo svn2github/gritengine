@@ -506,7 +506,7 @@ class `TestShip` (ColClass) {
         local steering_digital_control = instance.shouldSteerLeft + instance.shouldSteerRight
 
         local smoothed_steering = instance.steeringControl:pump(elapsed_secs, steering_digital_control)
-        game_manager:debugText(1, 'Steer: %f', smoothed_steering)
+        -- game_manager:debugText(1, 'Steer: %f', smoothed_steering)
 
         -- calc desired_tilt as a multiple of smoothed_steering
         instance.tilt = smoothed_steering * self.tiltFactor
