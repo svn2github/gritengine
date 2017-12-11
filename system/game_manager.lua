@@ -50,6 +50,19 @@ function reset_binds()
     editor_debug_play_binds.enabled = false
 end
 
+
+--[[
+A game mode needs the following things:
+:init()
+:destroy()
+:setPause(boolean)
+:frameCallback(elapsed_secs)
+:stepCallback(elapsed_secs)
+:receiveButton(button, state)
+:mouseMove(rel)
+:debugText(index, str)
+--]]
+
 game_manager = {
     gameModes = { };
     currentMode = nil;

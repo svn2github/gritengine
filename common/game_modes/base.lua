@@ -9,6 +9,16 @@ BaseGameMode = BaseGameMode or {
 
 -- Define them outside of the object to allow re-reading the file to hot-swap out functions.
 
+--[[
+BaseGameMode provides some very basic features:
+- Control playing_binds
+- Relative mouse movement, that populates camYaw/camPitch fields and lastMouseMoveTime
+- Routines to force load the map at a particular point and display a progress bar
+- Boom length control (boom not used anywhere)
+- debugText that just prints
+- Stub implementations of the other methods needed by a game mode
+]]
+
 function BaseGameMode:init()
 
     playing_binds.enabled = true
@@ -33,7 +43,7 @@ end
 
 function BaseGameMode:loadMap()
     loading_screen:setMapName(self.name)
-    loading_screen:setStatus('Background loading resources...')
+    loading_screen:setStatus('Loading resources...')
     include_map(self.map)
 end
 
