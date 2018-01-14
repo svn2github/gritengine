@@ -59,7 +59,12 @@ hud_class `BrowserIcon` {
     end,
     
     mouseMoveCallback = function (self, local_pos, screen_pos, inside)
-        self.inside = inside
+        self.inside =  (
+			inside and not (
+				mouse_pos_abs.y > (self.parent.parent.derivedPosition.y + self.parent.parent.size.y/2) or
+				mouse_pos_abs.y < (self.parent.parent.derivedPosition.y - self.parent.parent.size.y/2)
+			)
+		)
         self:updateColour()
         if self.mouseDown and not self.dragging and  #(screen_pos - self.draggingPos) > 30 then
             self.dragging = true
