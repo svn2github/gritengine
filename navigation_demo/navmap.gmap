@@ -7,7 +7,7 @@ return {
         description = 'Insert description here',
     },
     editor = {
-        cam_pos = vec(0.000000, 0.000000, 0.000000),
+        cam_pos = vec(-15.871391, -12.367006, 7.525404),
         cam_quat = quat(1, 0, 0, 0),
     },
     env_cubes = {
