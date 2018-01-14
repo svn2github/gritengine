@@ -256,6 +256,7 @@ hud_class `ContentBrowser` `/common/gui/Window` {
                 -- Hide icons that spill out.
                 content_browser.fileExplorer:reset()
             end,
+			stencil = true,
         }
         self.scrollAreaStretcher = hud_object `/common/hud/Stretcher` {
             child = self.scrollArea,

@@ -14,6 +14,11 @@ hud_class `window_editbox` (extends(table.extends(_gui.class, EditBoxClass))
     textColour = _current_theme.colours.editbox.text;
     borderColour = _current_theme.colours.editbox.border;
 	selectionColour = _current_theme.colours.editbox.selected_text_background;
+	backgroundEditingColour = vec(0.5, 0.5, 0.5);
+	
+	backgroundHoverColour = vec(0.7, 0.7, 0.7);
+	textEditingColour = vec(1, 1, 1);
+	textHoverColour = vec(0.3, 0.3, 0.3);
 	
     colour = _current_theme.colours.editbox.background;
     font = _current_theme.colours.editbox.font;
@@ -90,10 +95,16 @@ hud_class `BrowserIcon` {
 	end;
 	
 	mouseMoveCallback = function (self, local_pos, screen_pos, inside)
-		self.inside = inside
+		self.inside = (
+			inside and not (
+				mouse_pos_abs.y > (self.parent.parent.derivedPosition.y + self.parent.parent.size.y/2) or
+				mouse_pos_abs.y < (self.parent.parent.derivedPosition.y - self.parent.parent.size.y/2)
+			)
+		)
+
         local icon_flow = self.parent
 		if not self.dragging and icon_flow.selected ~= self then
-			if inside then
+			if self.inside then
 				self.colour = self.hoverColour
 				self.alpha = 0.5
 			else
@@ -247,9 +258,9 @@ hud_class `IconFlow` (extends(_gui.class)
     -- Enable only the items which fit fully within our bounds.
 	updateItems = function(self)
 		for i = 1, #self.items do
-			--if (self.items[i].position.y + self.position.y + self.items[i].size.y/2 < -self.parent.size.y/2 or self.items[i].position.y + self.position.y - self.items[i].size.y > self.parent.size.y/2) then
-			-- TEMPORARY(until draw only inside parent): (after that, use the commented line above)
-			if (self.items[i].position.y + self.position.y - self.items[i].size.y/2 < -self.parent.size.y/2-10 or self.items[i].position.y + self.position.y + self.items[i].size.y/2 > self.parent.size.y/2+10) then
+			if ((self.items[i].position.y + self.items[i].size.y/2) + self.position.y < -self.parent.size.y/2 or
+				(self.items[i].position.y - self.items[i].size.y/2) + self.position.y > self.parent.size.y/2
+			) then
 				self.items[i].enabled = false
 			else
 				self.items[i].enabled = true
@@ -341,6 +352,7 @@ hud_class `FileDialog` `/common/gui/Window` {
             scrollCallback = function (self)
                 file_dialog.file_explorer:reset()
             end,
+			stencil = true,
         }
         self.scrollAreaStretcher = hud_object `/common/hud/Stretcher` {
             child = self.scrollArea,
@@ -354,9 +366,10 @@ hud_class `FileDialog` `/common/gui/Window` {
 			pressedCallback = function(self)
                 if file_dialog.currentDir == '/' then return end
                 -- Strip off last dir.
+				if file_dialog.currentDir:sub(-1) ~= "/" then file_dialog.currentDir = file_dialog.currentDir.."/" end
                 file_dialog.currentDir = file_dialog.currentDir:match('(.*/)[^/]*/')
-                file_dialog.editBox:setValue(file_dialog.currentDir)
-                file_dialog:updateFileExplorer()
+                file_dialog.dir_edbox:setValue(file_dialog.currentDir)
+                file_dialog:update_file_explorer(file_dialog.currentDir)
 			end;
 			icon_texture = _gui_textures.arrow_up;
 			parent = self.contentArea;
@@ -407,7 +420,7 @@ hud_class `FileDialog` `/common/gui/Window` {
 			expand_offset = vec(-120, 0);
 		}
 		self.dir_edbox.enterCallback = function(self)
-            if self.value.sub(-1) ~= '/' then
+            if self.value:sub(-1) ~= '/' then
                 self:setValue(self.value .. '/')
             end
             file_dialog.currentDir = self.value
