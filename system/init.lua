@@ -346,12 +346,12 @@ include `/detached/characters/init.lua`
 
 
 -- Game modes
-include `/editor/init.lua`
-include `/sponza/init.lua`
-include `/navigation_demo/init.lua`
-include `/playground/init.lua`
-include `/detached/init.lua`
-include `/wipeout/init.lua`
+safe_include `/editor/init.lua`
+safe_include `/sponza/init.lua`
+safe_include `/navigation_demo/init.lua`
+safe_include `/playground/init.lua`
+safe_include `/detached/init.lua`
+safe_include `/wipeout/init.lua`
 
 include `welcome_msg.lua`
 
