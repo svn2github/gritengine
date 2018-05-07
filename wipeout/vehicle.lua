@@ -19,8 +19,6 @@ shader `DummyVehicleJet` {
         out.alpha = 0;
     ]],
 
-    -- alphaMask is not used to attenuate the emissive lighting here, allowing you to use it
-    -- to attenuate the diffuse component only, for glowing gasses, etc.
     additionalCode = [[
         var pi = asin(1.0) * 2;
 
@@ -308,7 +306,22 @@ class `TestShip` (ColClass) {
             instance.gfx.localOrientation = q * quat(instance.tilt, vec(0, 1, 0))
             self.pos = p
         end
-
+        --[[ WIP
+        instance.body.collisionCallback = function (life, impulse, other, m, mo,
+                                                    pen, pos, poso, norm)
+            -- How to turn this noisy signal into a useful signal for noises,
+            -- sparks, etc.
+            -- We have, for each tick, n collisions.
+            -- We want to handle independent but simultaneous collisions independently.
+            -- Does the other, mo remain constant for the duration of the 'life'?
+            -- We could remember (could do this in C++ for performance) the previous collisions of
+            -- previous frames and try to define
+            -- collisionBegin(other, m, mo), collisionUpdate(penetration, pos), collisionEnd().
+            -- In doing so, we can filter out contact points with zero / minimal penetration.
+            if impulse == 0 then return end
+            print(life, impulse, pen)
+        end
+        ]]
     end,
 
     speedEffect = function (self)
